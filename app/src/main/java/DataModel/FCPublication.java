@@ -7,24 +7,24 @@ import java.util.Date;
  */
 public class FCPublication {
 
-    private static final String PUBLICATION_UNIQUE_ID_KEY = "id";
-    private static final String PUBLICATION_VERSION_KEY = "version";
-    private static final String PUBLICATION_TITLE_KEY = "title";
-    private static final String PUBLICATION_SUBTITLE_KEY = "subtitle";
-    private static final String PUBLICATION_ADDRESS_KEY = "address";
-    private static final String PUBLICATION_TYPE_OF_COLLECTION_KEY = "type_of_collecting";
-    private static final String PUBLICATION_LATITUDE_KEY = "latitude";
-    private static final String PUBLICATION_LONGITUDE_KEY = "longitude";
-    private static final String PUBLICATION_STARTING_DATE_KEY = "starting_date";
-    private static final String PUBLICATION_ENDING_DATE_KEY = "ending_date";
-    private static final String PUBLICATION_CONTACT_INFO_KEY = "contact_info";
-    private static final String PUBLICATION_PHOTO_URL = "photo_url";
-    private static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
+    public static final String PUBLICATION_UNIQUE_ID_KEY = "id";
+    public static final String PUBLICATION_VERSION_KEY = "version";
+    public static final String PUBLICATION_TITLE_KEY = "title";
+    public static final String PUBLICATION_SUBTITLE_KEY = "subtitle";
+    public static final String PUBLICATION_ADDRESS_KEY = "address";
+    public static final String PUBLICATION_TYPE_OF_COLLECTION_KEY = "type_of_collecting";
+    public static final String PUBLICATION_LATITUDE_KEY = "latitude";
+    public static final String PUBLICATION_LONGITUDE_KEY = "longitude";
+    public static final String PUBLICATION_STARTING_DATE_KEY = "starting_date";
+    public static final String PUBLICATION_ENDING_DATE_KEY = "ending_date";
+    public static final String PUBLICATION_CONTACT_INFO_KEY = "contact_info";
+    public static final String PUBLICATION_PHOTO_URL = "photo_url";
+    public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
 
-    private static final String DID_REGISTER_FOR_CURRENT_PUBLICATION = "did_Register_for_current_publication";
-    private static final String DID_MODIFY_COORDS = "did_modify_coords";
-    private static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
-    private static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
+    public static final String DID_REGISTER_FOR_CURRENT_PUBLICATION = "did_Register_for_current_publication";
+    public static final String DID_MODIFY_COORDS = "did_modify_coords";
+    public static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
+    public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
 
     private int uniqueId;
 
