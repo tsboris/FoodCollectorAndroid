@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/enter_name_string"
+        android:inputType="textShortMessage">
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/descriptName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/enter_description_name_string"
+        android:inputType="textShortMessage">
+
+    </EditText>
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/address_string"/>
+
+    <!--<TextView-->
+        <!--android:id="@+id/header"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/autoCompleteTextView"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:text="Selected Place:"-->
+        <!--android:textStyle="bold"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/name1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/header"-->
+        <!--android:layout_marginTop="20dp"/>-->
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/name"/>
+
+    <!--<TextView-->
+        <!--android:id="@+id/place_id"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/address"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/phone"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/place_id"-->
+        <!--android:autoLink="phone"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/web"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_below="@+id/phone"-->
+        <!--android:autoLink="web"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/att"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:autoLink="web"/>-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/poweredBy"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@+id/att"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:src="@drawable/powered_by_google_light"/>-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/truiton_image"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:layout_above="@+id/poweredBy"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginBottom="-20dp"-->
+        <!--/>-->
+
+    <!--<Button-->
+        <!--android:id="@+id/mapButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/location"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:text="@string/show_map_string" />-->
+
+
+    <!--Start Date and Time-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_time_set_string" />
+
+        <Button
+            android:id="@+id/start_time_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_time_string" />
+
+        <TextView
+            android:id="@+id/start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_date_set_string" />
+
+        <Button
+            android:id="@+id/start_date_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_date_string" />
+
+        <TextView
+            android:id="@+id/startTitle"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:text="@string/start_string" />
+
+    </LinearLayout>
+
+    <!--End Date and Time-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_time_set_string" />
+
+        <Button
+            android:id="@+id/end_time_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_time_string" />
+
+        <TextView
+            android:id="@+id/end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_date_set_string" />
+
+        <Button
+            android:id="@+id/end_date_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_date_string" />
+
+        <TextView
+            android:id="@+id/endTitle"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:text="@string/end_string" />
+
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/pickupMethodGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right">
+
+
+        <RadioButton
+            android:id="@+id/callToPublisher"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/call_to_publisher_string" />
+
+        <RadioButton
+            android:id="@+id/freePickup"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:layout_gravity="right"
+            android:text="@string/free_pickup_string" />
+    </RadioGroup>
+
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imgView"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/no_photo_placeholder" />
+
+    <Button
+        android:id="@+id/publishButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/publish_string" />
+</LinearLayout>

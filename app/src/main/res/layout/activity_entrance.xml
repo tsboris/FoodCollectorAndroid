@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/welcome"
+        android:text="@string/welcome_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+        android:id="@+id/publishText"
+        android:text="@string/publish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15pt"
+        android:layout_marginTop="25dp"
+            />
+
+
+        <upp.foodonet.RoundedImageView
+            android:id="@+id/publishImage"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:src="@drawable/first_screen_donate" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/pickupText"
+            android:text="@string/pickup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15pt"
+            android:layout_marginTop="25dp"/>
+
+        <upp.foodonet.RoundedImageView
+            android:id="@+id/pickupImage"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:onClick="Pickup"
+            android:src="@drawable/first_screen_collect" />
+
+    </LinearLayout>
+
+</LinearLayout>
