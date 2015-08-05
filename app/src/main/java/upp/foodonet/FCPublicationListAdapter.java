@@ -84,7 +84,7 @@ class FCPublicationListAdapter extends BaseAdapter {
 
 
         ImageView imgViewItem = (ImageView) convertView.findViewById(R.id.imageView);
-        imgViewItem.setImageURI(newItem.getPhotoUrl());
+        imgViewItem.setImageURI(newItem.getPhotoUrlAsUri());
 
 
 

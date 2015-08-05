@@ -67,4 +67,9 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<Void, Void, Void> {
 
         return null;
     }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        callbackHandler.OnUpdateLocalDBComplete(result);
+    }
 }

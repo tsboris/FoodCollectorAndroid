@@ -8,14 +8,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 
 /**
  * Created by Asher on 21-Jul-15.
@@ -72,6 +76,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     @Override
     protected void onPostExecute(String s) {
         //super.onPostExecute(s);
+        Log.i("mytag","data loaded from http, calling callback");
         callbackListener.OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray)));
     }
 }

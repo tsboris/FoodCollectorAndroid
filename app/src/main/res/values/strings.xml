@@ -24,5 +24,8 @@
     <string name="welcome_string">ברוכים הבאים</string>
     <string name="publish">רוצה לפרסם</string>
     <string name="pickup">רוצה לאסוף</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

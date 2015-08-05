@@ -34,7 +34,7 @@
             android:name=".AddNewFCPublicationActivity"
             android:label="@string/title_activity_add_new_fcpublication" >
         </activity>
-       
+
         <provider
             android:name=".FooDoNetSQLProvider"
             android:authorities="foodonet.foodcollector.sqlprovider"
@@ -44,6 +44,17 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_entrance" >
+        </activity>
+
+        <service
+            android:name=".FooDoNetService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
+        <activity
+            android:name=".SplashScreenActivity"
+            android:label="@string/title_activity_splash_screen" >
         </activity>
     </application>
 

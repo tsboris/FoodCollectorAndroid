@@ -1,8 +1,7 @@
 package FooDoNetSQLClasses;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import DataModel.FCPublication;
+import android.database.sqlite.SQLiteDatabase;
 
 /**
  * Created by Asher on 14.07.2015.
@@ -41,6 +40,8 @@ public class FCPublicationsTable {
         sb.append(FCPublication.PUBLICATION_PHOTO_URL);
         sb.append(" text null, ");
         sb.append(FCPublication.PUBLICATION_COUNT_OF_REGISTER_USERS_KEY);
+        sb.append(" int not null, ");
+        sb.append(FCPublication.PUBLICATION_IS_ON_AIR_KEY);
         sb.append(" int not null);");
         return sb.toString();
     }

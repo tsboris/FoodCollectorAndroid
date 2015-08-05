@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 
 import DataModel.FCPublication;

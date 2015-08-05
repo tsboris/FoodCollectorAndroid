@@ -30,6 +30,10 @@ public class InternalRequest {
         publications = pubs;
     }
 
+    public InternalRequest(int com){
+        ActionCommand = com;
+    }
+
     public int ActionCommand;
     public JSONObject jsonObject;
     public JSONArray jsonArray;

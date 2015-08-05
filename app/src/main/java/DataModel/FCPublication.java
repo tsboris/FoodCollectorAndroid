@@ -33,7 +33,7 @@ public class FCPublication implements Serializable {
     public static final String PUBLICATION_CONTACT_INFO_KEY = "contact_info";
     public static final String PUBLICATION_PHOTO_URL = "photo_url";
     public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
-    //public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
+    public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
 
     public static final String DID_REGISTER_FOR_CURRENT_PUBLICATION = "did_Register_for_current_publication";
     public static final String DID_MODIFY_COORDS = "did_modify_coords";
@@ -43,7 +43,7 @@ public class FCPublication implements Serializable {
         countOfRegisteredUsers = 0;
     }
 
-    public FCPublication(String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, Uri photoUrl){
+    public FCPublication(String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, String photoUrl, boolean isOnAir){
         this();
         setTitle(title);
         setSubtitle(subtitle);
@@ -55,6 +55,7 @@ public class FCPublication implements Serializable {
         setEndingDate(endingDate);
         setContactInfo(contactInfo);
         setPhotoUrl(photoUrl);
+        setIsOnAir(isOnAir);
     }
 
     // Create a new Item from data packaged in an Intent
@@ -201,22 +202,12 @@ public class FCPublication implements Serializable {
         this.contactInfo = contactInfo;
     }
 
-    //private Boolean isOnAir;
+    private boolean isOnAir;
 
-    public Boolean getIsOnAir() {
-/*
-        Calendar currentDate = Calendar.getInstance();
-        Calendar publicationEndDate = Calendar.getInstance();
-        currentDate.setTime(new Date());
-        publicationEndDate.setTime(getEndingDate());
-        return currentDate.before(publicationEndDate);
-*/
-        return getEndingDateUnixTime() > (new Date()).getTime();
-    }
+    public boolean getIsOnAir(){return isOnAir;}
 
-    //public void setIsOnAir(Boolean isOnAir) {
-    //    this.isOnAir = isOnAir;
-    //}
+    public void setIsOnAir(boolean isOnAir){this.isOnAir = isOnAir;}
+
 
     private Boolean didModifyCoords;
 
@@ -229,13 +220,17 @@ public class FCPublication implements Serializable {
     }
 
 
-    private Uri photoUrl;
+    private String photoUrl;
 
-    public Uri getPhotoUrl() {
+    public String getPhotoUrl() {
         return photoUrl;
     }
 
-    public void setPhotoUrl(Uri photoUrl) {
+    public Uri getPhotoUrlAsUri(){
+        return Uri.parse(photoUrl);
+    }
+
+    public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
 
@@ -271,7 +266,8 @@ public class FCPublication implements Serializable {
                         PUBLICATION_ENDING_DATE_KEY,
                         PUBLICATION_CONTACT_INFO_KEY,
                         PUBLICATION_PHOTO_URL,
-                        PUBLICATION_COUNT_OF_REGISTER_USERS_KEY
+                        PUBLICATION_COUNT_OF_REGISTER_USERS_KEY,
+                        PUBLICATION_IS_ON_AIR_KEY,
                 };
     }
 
@@ -288,8 +284,9 @@ public class FCPublication implements Serializable {
         cv.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
         cv.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
         cv.put(PUBLICATION_CONTACT_INFO_KEY, getContactInfo());
-        //cv.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
+        cv.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
         cv.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
+        cv.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
         return cv;
     }
 
@@ -309,7 +306,8 @@ public class FCPublication implements Serializable {
                 publication.setStartingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_STARTING_DATE_KEY)));
                 publication.setEndingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_ENDING_DATE_KEY)));
                 publication.setContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_CONTACT_INFO_KEY)));
-                //publication.setPhotoUrl(cursor.getString(cursor.getColumnIndex(PUBLICATION_PHOTO_URL)));
+                publication.setPhotoUrl(cursor.getString(cursor.getColumnIndex(PUBLICATION_PHOTO_URL)));
+                publication.setIsOnAir(cursor.getInt(cursor.getColumnIndex(PUBLICATION_IS_ON_AIR_KEY)) == 1);
                 result.add(publication);
             } while (cursor.moveToNext());
         }
@@ -345,8 +343,9 @@ public class FCPublication implements Serializable {
             publication.setStartingDate(jo.getLong(PUBLICATION_STARTING_DATE_KEY));
             publication.setEndingDate(jo.getLong(PUBLICATION_ENDING_DATE_KEY));
             publication.setContactInfo(jo.getString(PUBLICATION_CONTACT_INFO_KEY));
-            //publication.setPhotoUrl(jo.getString(PUBLICATION_PHOTO_URL));
+            publication.setPhotoUrl(jo.getString(PUBLICATION_PHOTO_URL));
             //publication.setCountOfRegisteredUsers(jo.getInt(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY));
+            publication.setIsOnAir(jo.getBoolean(PUBLICATION_IS_ON_AIR_KEY));
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("mytag", e.getMessage());
@@ -371,6 +370,7 @@ public class FCPublication implements Serializable {
             jsonObject.put(PUBLICATION_CONTACT_INFO_KEY, getContactInfo());
             jsonObject.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
             jsonObject.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
+            jsonObject.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
