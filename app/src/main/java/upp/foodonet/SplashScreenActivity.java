@@ -27,7 +27,7 @@ public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToServ
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_splash_screen);
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
         SplashScreenHolder ssh = new SplashScreenHolder();
@@ -140,12 +140,10 @@ public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToServ
     }
 
     private void StartNextActivity(){
-/*
-        Intent intent = new Intent(this, SqlLoaderResultActivity.class);
+        Intent intent = new Intent(this, EntranceActivity.class);
         //publicationsFromDB.addAll(publicationsFromServer);
         intent.putExtra("loaderResult", publicationsUpdatedList);
         this.startActivity(intent);
-*/
     }
 
 
