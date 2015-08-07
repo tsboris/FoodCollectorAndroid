@@ -5,26 +5,54 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.Bidi;
+import java.util.ArrayList;
+import java.util.Locale;
 
-public class EntranceActivity extends Activity {
+import DataModel.FCPublication;
+import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
+
+
+public class EntranceActivity extends FooDoNetCustomActivityConnectedToService {
+
+    Button btn_give, btn_take;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
 
-        TextView welcomeView = (TextView) findViewById(R.id.welcome);
-        welcomeView.setBackgroundColor(Color.BLUE);
+        // Why do we need this?
+        //TextView welcomeView = (TextView) findViewById(R.id.welcome);
+        //welcomeView.setBackgroundColor(Color.BLUE);
+        //=====
 
+        btn_give = (Button)findViewById(R.id.btn_entrance_give);
+        btn_take = (Button)findViewById(R.id.btn_entrance_take);
+
+        Drawable img_give = getResources().getDrawable( R.drawable.first_screen_donate );
+        Drawable img_take = getResources().getDrawable( R.drawable.first_screen_collect);
+        img_give.setBounds( 0, 0, 60, 60 );
+        img_take.setBounds( 0, 0, 60, 60 );
+        btn_give.setCompoundDrawables(null, null, img_give, null); btn_give.setCompoundDrawablePadding(10);
+        btn_take.setCompoundDrawables(img_take, null, null, null );
+
+        Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+            Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
+
+/*
         TextView publishTextView = (TextView) findViewById(R.id.publishText);
         publishTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,7 +60,7 @@ public class EntranceActivity extends Activity {
                 Intent intent = new Intent(EntranceActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-        });
+            });
 
         RoundedImageView publishImageView = (RoundedImageView) findViewById(R.id.publishImage);
         //publishImageView.setBackgroundColor(Color.BLUE);
@@ -46,6 +74,7 @@ public class EntranceActivity extends Activity {
                 startActivity(intent);
             }
         });
+        */
 
 
 
@@ -71,5 +100,15 @@ public class EntranceActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnNotifiedToFetchData() {
+
+    }
+
+    @Override
+    public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
+
     }
 }
