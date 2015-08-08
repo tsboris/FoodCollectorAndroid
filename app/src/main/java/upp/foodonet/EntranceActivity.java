@@ -25,7 +25,9 @@ import DataModel.FCPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
-public class EntranceActivity extends FooDoNetCustomActivityConnectedToService {
+public class EntranceActivity
+        extends FooDoNetCustomActivityConnectedToService
+        implements View.OnClickListener {
 
     Button btn_give, btn_take;
 
@@ -44,13 +46,15 @@ public class EntranceActivity extends FooDoNetCustomActivityConnectedToService {
 
         Drawable img_give = getResources().getDrawable( R.drawable.first_screen_donate );
         Drawable img_take = getResources().getDrawable( R.drawable.first_screen_collect);
-        img_give.setBounds( 0, 0, 60, 60 );
-        img_take.setBounds( 0, 0, 60, 60 );
+        img_give.setBounds(0, 0, 60, 60);
+        img_take.setBounds(0, 0, 60, 60);
         btn_give.setCompoundDrawables(null, null, img_give, null); btn_give.setCompoundDrawablePadding(10);
-        btn_take.setCompoundDrawables(img_take, null, null, null );
+        btn_take.setCompoundDrawables(img_take, null, null, null);
 
         Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
             Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
+
+        btn_take.setOnClickListener(this);
 
 /*
         TextView publishTextView = (TextView) findViewById(R.id.publishText);
@@ -110,5 +114,15 @@ public class EntranceActivity extends FooDoNetCustomActivityConnectedToService {
     @Override
     public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_entrance_take:
+                Intent mapIntent = new Intent(this, MapAndListActivity.class);
+                startActivity(mapIntent);
+                break;
+        }
     }
 }

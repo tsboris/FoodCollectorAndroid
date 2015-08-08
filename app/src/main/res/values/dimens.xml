@@ -6,6 +6,17 @@
     <color name="white">#FFFFFF</color>
 
 
-    <integer name="min_splash_screen_time">1</integer>
+    <integer name="min_splash_screen_time">2</integer>
     <integer name="fetch_data_scheduler_repeat_time">5</integer>
+
+    <!-- from Test Application -->
+    <color name="white_a50">#ff00ff00</color>
+    <color name="list_background">#FFFFFF</color>
+    <color name="list_background_pressed">#CCCCCC</color>
+    <color name="list_divider">#003300</color>
+    <color name="list_item_title">#333300</color>
+    <color name="event_list_item_background_onair">#99FF33</color>
+    <color name="event_list_item_background_expired">#FF8080</color>
+    <!-- ====================== -->
+
 </resources>
