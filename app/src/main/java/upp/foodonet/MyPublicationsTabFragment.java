@@ -1,40 +1,71 @@
 package upp.foodonet;
 
-import android.app.Fragment;
-import android.app.ListActivity;
-import android.content.Intent;
+import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.SimpleCursorAdapter;
 
+//import Adapters.FCPublicationListAdapter;
 import DataModel.FCPublication;
 
 
-public class MyPublicationsTabFragment extends android.support.v4.app.Fragment {
+public class MyPublicationsTabFragment
+        extends android.support.v4.app.Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int ADD_TODO_ITEM_REQUEST = 0;
-    FCPublicationListAdapter mAdapter;
+    //FCPublicationListAdapter mAdapter;
+    private Context context;
+    SimpleCursorAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_publications_tab, container, false);
+
+        String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
+        int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+
+        getLoaderManager().initLoader(0, null, this);
+        adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
+                to, 0);
+
 /*
         adapter = new ListOfEventsAdapter(itemsList, context);
         lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);
         lv_events_list.setAdapter(adapter);
 */
         return view;
+    }
+
+    public void SetContext(Context context){
+        this.context = context;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(context == null) return null;
+        String[] projection = FCPublication.GetColumnNamesArray();
+        android.support.v4.content.CursorLoader cursorLoader
+                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 
 /*

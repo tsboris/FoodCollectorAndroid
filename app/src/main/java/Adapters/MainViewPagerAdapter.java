@@ -19,11 +19,14 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     SupportMapFragment mapFragment;
     MyPublicationsTabFragment myPublicationsTabFragment;
+    Context parentContext;
     final int NUM_ITEMS = 2;
 
-    public MainViewPagerAdapter(FragmentManager fragmentManager){
+    public MainViewPagerAdapter(Context context, FragmentManager fragmentManager){
         super(fragmentManager);
+        parentContext = context;
         myPublicationsTabFragment = new MyPublicationsTabFragment();
+        myPublicationsTabFragment.SetContext(parentContext);
         //eventsTabFragment = new ListOfEventsTabFragment();
     }
 

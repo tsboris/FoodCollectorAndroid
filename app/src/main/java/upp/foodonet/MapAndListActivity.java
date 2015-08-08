@@ -48,7 +48,7 @@ public class MapAndListActivity
         drawerList.setOnItemClickListener(this);*/
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         mainPager = (ViewPager)findViewById(R.id.main_Pager);
-        mainPagerAdapter = new MainViewPagerAdapter(fm);
+        mainPagerAdapter = new MainViewPagerAdapter(this, fm);
         mainPagerAdapter.SetMapFragment(this);
         //mainPagerAdapter.SetListFragment(eventArrayList, this);
         mainPager.setAdapter(mainPagerAdapter);

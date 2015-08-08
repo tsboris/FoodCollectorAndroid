@@ -1,4 +1,5 @@
-package upp.foodonet;
+/*
+package Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DataModel.FCPublication;
+import upp.foodonet.R;
 
+*/
 /**
  * Created by artyomshapet on 7/18/15.
- */
-class FCPublicationListAdapter extends BaseAdapter {
+ *//*
+
+public class FCPublicationListAdapter extends BaseAdapter {
 
     public final List<FCPublication> mItems = new ArrayList<FCPublication>();
     private final Context mContext;
@@ -91,3 +95,4 @@ class FCPublicationListAdapter extends BaseAdapter {
         return convertView;
     }
 }
+*/
