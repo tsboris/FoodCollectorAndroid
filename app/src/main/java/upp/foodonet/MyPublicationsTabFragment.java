@@ -9,9 +9,13 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 //import Adapters.FCPublicationListAdapter;
+import java.util.List;
+
 import DataModel.FCPublication;
 
 
@@ -24,11 +28,17 @@ public class MyPublicationsTabFragment
     private Context context;
     SimpleCursorAdapter adapter;
 
+    ListView lv_my_publications;
+    Button btn_new_publication;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_publications_tab, container, false);
+
+        lv_my_publications = (ListView)view.findViewById(R.id.lst_my_publications_list);
+        btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
 
         String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
         int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
@@ -36,7 +46,7 @@ public class MyPublicationsTabFragment
         getLoaderManager().initLoader(0, null, this);
         adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
                 to, 0);
-
+        lv_my_publications.setAdapter(adapter);
 /*
         adapter = new ListOfEventsAdapter(itemsList, context);
         lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);

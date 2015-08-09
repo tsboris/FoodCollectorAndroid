@@ -20,7 +20,8 @@ import java.util.Date;
  */
 public class FCPublication implements Serializable {
 
-    public static final String PUBLICATION_UNIQUE_ID_KEY = "id";
+    public static final String PUBLICATION_UNIQUE_ID_KEY = "_id";
+    public static final String PUBLICATION_UNIQUE_ID_KEY_JSON = "id";
     public static final String PUBLICATION_VERSION_KEY = "version";
     public static final String PUBLICATION_TITLE_KEY = "title";
     public static final String PUBLICATION_SUBTITLE_KEY = "subtitle";
@@ -332,7 +333,7 @@ public class FCPublication implements Serializable {
         if(jo == null) return null;
         FCPublication publication = new FCPublication();
         try {
-            publication.setUniqueId(jo.getInt(PUBLICATION_UNIQUE_ID_KEY));
+            publication.setUniqueId(jo.getInt(PUBLICATION_UNIQUE_ID_KEY_JSON));
             publication.setTitle(jo.getString(PUBLICATION_TITLE_KEY));
             publication.setSubtitle(jo.getString(PUBLICATION_SUBTITLE_KEY));
             publication.setVersion(jo.getInt(PUBLICATION_VERSION_KEY));

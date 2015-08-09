@@ -14,7 +14,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/foodonet_logo_200_200"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 <!--
@@ -24,15 +24,17 @@
 -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0" />
+            android:value="AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak" />
 
         <activity
             android:name=".EntranceActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".AddNewFCPublicationActivity"
-            android:label="@string/title_activity_add_new_fcpublication" >
+            android:label="@string/title_activity_add_new_fcpublication"
+            android:screenOrientation="portrait">
         </activity>
 
         <provider
@@ -40,11 +42,6 @@
             android:authorities="foodonet.foodcollector.sqlprovider"
             android:enabled="true"
             android:multiprocess="true" />
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_entrance" >
-        </activity>
 
         <service
             android:name=".FooDoNetService"
@@ -54,7 +51,8 @@
 
         <activity
             android:name=".SplashScreenActivity"
-            android:label="@string/title_activity_splash_screen" >
+            android:label="@string/title_activity_splash_screen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,7 +62,8 @@
         </activity>
         <activity
             android:name=".MapAndListActivity"
-            android:label="@string/title_activity_map_and_list" >
+            android:label="@string/title_activity_map_and_list"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
