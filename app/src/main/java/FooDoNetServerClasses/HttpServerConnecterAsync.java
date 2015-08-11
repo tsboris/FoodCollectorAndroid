@@ -72,6 +72,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
+
                 return "";
             default:
                 return "";
