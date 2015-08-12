@@ -89,6 +89,16 @@ public class MapAndListActivity
     }
 
     @Override
+    public void OnGooglePlayServicesCheckError() {
+
+    }
+
+    @Override
+    public void OnInternetNotConnected() {
+
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     }

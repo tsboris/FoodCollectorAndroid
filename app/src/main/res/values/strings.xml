@@ -34,6 +34,7 @@
     <!-- Server strings -->
     <string name="server_base_url">https://fd-server.herokuapp.com</string>
     <string name="server_publications_subfolder">publications</string>
+    <string name="notifications_server_id">585244341740</string>
 
 
 </resources>

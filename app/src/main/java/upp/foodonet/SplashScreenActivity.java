@@ -42,6 +42,7 @@ public class SplashScreenActivity
         setContentView(R.layout.activity_splash_screen);
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
+        RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
         /*HttpServerConnecterAsync connecter = new HttpServerConnecterAsync(getResources().getString(R.string.server_base_url), this);
@@ -108,6 +109,16 @@ public class SplashScreenActivity
     @Override
     public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
         Log.i("food", "LoadUpdatedListOfPublications mainActivity");
+    }
+
+    @Override
+    public void OnGooglePlayServicesCheckError() {
+
+    }
+
+    @Override
+    public void OnInternetNotConnected() {
+
     }
 
     @Override
@@ -192,7 +203,10 @@ public class SplashScreenActivity
         if(preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
             OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_POST_REGISTER, true));
             return;
+        } else {
+            FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
         }
+
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String imei = tm.getDeviceId();
 
