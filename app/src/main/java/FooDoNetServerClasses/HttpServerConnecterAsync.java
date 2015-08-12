@@ -32,6 +32,8 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     private String responseString;
     private JSONArray responseJSONArray;
 
+    private final String PUBLICATIONS_SERVER_SUBFOLDER_NAME = "publications";
+
 
     public HttpServerConnecterAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
         this.baseUrl = baseUrl;
@@ -44,8 +46,9 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
             return "";
         switch (params[0].ActionCommand){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
+                String get_publications_url = baseUrl + "/" + PUBLICATIONS_SERVER_SUBFOLDER_NAME;
                 try {
-                    HttpGet httpGet = new HttpGet(baseUrl);
+                    HttpGet httpGet = new HttpGet(get_publications_url);
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpResponse response = httpClient.execute(httpGet);
                     int resonseStatus = response.getStatusLine().getStatusCode();
@@ -67,6 +70,9 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 return null;
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                return "";
+            case InternalRequest.ACTION_POST_REGISTER:
+
                 return "";
             default:
                 return "";

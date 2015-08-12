@@ -1,13 +1,17 @@
 package upp.foodonet;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.preference.Preference;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,13 +19,21 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
+import FooDoNetServerClasses.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
-public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToService implements LoaderManager.LoaderCallbacks<Cursor> {
+public class SplashScreenActivity
+        extends FooDoNetCustomActivityConnectedToService
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        IFooDoNetServerCallback {
     private int min_splash_screen_duration;
     ArrayList<FCPublication> publicationsFromDB, publicationsFromServer, publicationsUpdatedList;
     boolean flagWaitTaskFinished, flagSQLLoaderFinished;
+
+    private final String PREFERENCES_KEY_BOOL_IF_REGISTERED = "ifRegistered";
+    private final String MY_TAG = "food_splashscreen";
 
 
     @Override
@@ -30,6 +42,7 @@ public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToServ
         setContentView(R.layout.activity_splash_screen);
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
+        RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
         /*HttpServerConnecterAsync connecter = new HttpServerConnecterAsync(getResources().getString(R.string.server_base_url), this);
@@ -98,6 +111,45 @@ public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToServ
         Log.i("food", "LoadUpdatedListOfPublications mainActivity");
     }
 
+    @Override
+    public void OnGooglePlayServicesCheckError() {
+
+    }
+
+    @Override
+    public void OnInternetNotConnected() {
+
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        if(response == null) {
+            Log.e(MY_TAG, "server connection task called back with null response");
+            return;
+        }
+        switch (response.Status){
+            case InternalRequest.STATUS_FAIL:
+                Log.e(MY_TAG, "server callback status failed");
+                return;
+            case InternalRequest.STATUS_OK:
+                switch (response.ActionCommand){
+                    case InternalRequest.ACTION_POST_REGISTER:
+                        SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, true);
+                        editor.commit();
+                        break;
+                    default:
+                        Log.e(MY_TAG, "Unexpected callback to splashscreen from server connecter. Action: " + response.ActionCommand);
+                        return;
+                }
+        }
+    }
+
+    private void ContinueAfterRegister(){
+
+    }
+
     /*
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
@@ -144,6 +196,20 @@ public class SplashScreenActivity  extends FooDoNetCustomActivityConnectedToServ
         //publicationsFromDB.addAll(publicationsFromServer);
         intent.putExtra("loaderResult", publicationsUpdatedList);
         this.startActivity(intent);
+    }
+
+    private void RegisterIfNotRegisteredYet(){
+        SharedPreferences preference = getPreferences(Context.MODE_PRIVATE);
+        if(preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
+            OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_POST_REGISTER, true));
+            return;
+        } else {
+            FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
+        }
+
+        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String imei = tm.getDeviceId();
+
     }
 
 

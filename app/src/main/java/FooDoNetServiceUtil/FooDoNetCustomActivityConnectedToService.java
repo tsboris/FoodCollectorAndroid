@@ -1,8 +1,10 @@
 package FooDoNetServiceUtil;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -12,9 +14,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import FooDoNetServerClasses.ConnectionDetector;
 import FooDoNetServerClasses.HttpServerConnecterAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.InternalRequest;
@@ -27,6 +33,8 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
 
     FooDoNetService fooDoNetService;
     boolean isBoundedToService;
+
+    private final String MY_TAG = "food_abstract_fActivity";
 
     public IFooDoNetServiceCallback serviceCallback = this;
 
@@ -48,6 +56,15 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
         super.onStop();
     }
 
+    @Override
+    protected void onResume() {
+        if(!CheckInternetConnection())
+            OnInternetNotConnected();
+        if(!CheckPlayServices())
+            OnGooglePlayServicesCheckError();
+        super.onResume();
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -63,9 +80,33 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
         }
     };
 
+    protected boolean CheckPlayServices() {
+        Log.i(MY_TAG, "checking isGooglePlayServicesAvailable...");
+        final int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                Log.e(MY_TAG, "UserRecoverableError: " + resultCode);
+            }
+            Log.e(MY_TAG, "Google Play Services Error: " + resultCode);
+            return false;
+        }
+        Log.w(MY_TAG, "Google Play Services available!");
+        return true;
+    }
+
+    protected boolean CheckInternetConnection(){
+        Log.i(MY_TAG, "Checking internet connection...");
+        ConnectionDetector cd = new ConnectionDetector(getBaseContext());
+        return cd.isConnectingToInternet();
+    }
+
     @Override
     public abstract void OnNotifiedToFetchData();
 
     @Override
     public abstract void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList);
+
+    public abstract void OnGooglePlayServicesCheckError();
+
+    public abstract void OnInternetNotConnected();
 }

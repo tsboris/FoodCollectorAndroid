@@ -117,6 +117,16 @@ public class EntranceActivity
     }
 
     @Override
+    public void OnGooglePlayServicesCheckError() {
+
+    }
+
+    @Override
+    public void OnInternetNotConnected() {
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_entrance_take:
