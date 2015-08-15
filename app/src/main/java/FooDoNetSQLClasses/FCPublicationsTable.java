@@ -17,6 +17,8 @@ public class FCPublicationsTable {
         sb.append("(");
         sb.append(FCPublication.PUBLICATION_UNIQUE_ID_KEY);
         sb.append(" integer primary key autoincrement, ");
+        sb.append(FCPublication.PUBLICATION_PUBLISHER_UUID);
+        sb.append(" text not null, ");
         sb.append(FCPublication.PUBLICATION_VERSION_KEY);
         sb.append(" integer not null, ");
         sb.append(FCPublication.PUBLICATION_TITLE_KEY);

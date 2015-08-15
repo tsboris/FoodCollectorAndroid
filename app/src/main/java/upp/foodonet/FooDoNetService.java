@@ -94,7 +94,9 @@ public class FooDoNetService
             case taskServer:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnecterAsync(serverBaseUrl, this);
-                connecterToServer.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS));
+                connecterToServer.execute(
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                                getResources().getString(R.string.server_get_publications_path)));
                 break;
             case taskSQL:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);

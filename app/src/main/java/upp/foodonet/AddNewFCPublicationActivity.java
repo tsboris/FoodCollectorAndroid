@@ -56,8 +56,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private EditText mNameText;
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
-    private AutoCompleteTextView mAutocompleteTextView;
-    private static final String LOG_TAG = "MainActivity";
+    private AutoCompleteTextView atv_address;
+    private static final String MY_TAG = "food_newPublication";
     private TextView mNameTextView;
     private TextView mAddressTextView;
     private TextView mIdTextView;
@@ -103,19 +103,19 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 .enableAutoManage(AddNewFCPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddNewFCPublicationActivity.this)
                 .addConnectionCallbacks(this)
                 .build();
-        mAutocompleteTextView = (AutoCompleteTextView) findViewById(R.id
-                .autoCompleteTextView);
-        mAutocompleteTextView.setThreshold(3);
+        atv_address = (AutoCompleteTextView) findViewById(R.id
+                .actv_address_new_publication);
+        atv_address.setThreshold(3);
         //mNameTextView = (TextView) findViewById(R.id.name1);
         mAddressTextView = (TextView) findViewById(R.id.address);
         //mIdTextView = (TextView) findViewById(R.id.place_id);
         //mPhoneTextView = (TextView) findViewById(R.id.phone);
         //mWebTextView = (TextView) findViewById(R.id.web);
         //mAttTextView = (TextView) findViewById(R.id.att);
-        mAutocompleteTextView.setOnItemClickListener(mAutocompleteClickListener);
+        atv_address.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
-        mAutocompleteTextView.setAdapter(mPlaceArrayAdapter);
+        atv_address.setAdapter(mPlaceArrayAdapter);
 
         // Date and Time
         startDateView = (TextView) findViewById(R.id.start_date);
@@ -221,7 +221,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 String title = mNameText.getText().toString();
                 // Package FCPublication data into an Intent
                 Intent data = new Intent();
-                FCPublication.packageIntent(data, mNameText.getText().toString(), imageURI);
+                //FCPublication.packageIntent(data, mNameText.getText().toString(), imageURI);
+
 
                 // return data Intent and finish
                 setResult(RESULT_OK, data);
@@ -258,11 +259,11 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
             final String placeId = String.valueOf(item.placeId);
-            Log.i(LOG_TAG, "Selected: " + item.description);
+            Log.i(MY_TAG, "Selected: " + item.description);
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-            Log.i(LOG_TAG, "Fetching details for ID: " + item.placeId);
+            Log.i(MY_TAG, "Fetching details for ID: " + item.placeId);
         }
     };
 
@@ -271,7 +272,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Log.e(LOG_TAG, "Place query did not complete. Error: " +
+                Log.e(MY_TAG, "Place query did not complete. Error: " +
                         places.getStatus().toString());
                 return;
             }
@@ -293,13 +294,13 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     @Override
     public void onConnected(Bundle bundle) {
         mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
-        Log.i(LOG_TAG, "Google Places API connected.");
+        Log.i(MY_TAG, "Google Places API connected.");
 
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
+        Log.e(MY_TAG, "Google Places API connection failed with error code: "
                 + connectionResult.getErrorCode());
 
         Toast.makeText(this,
@@ -311,7 +312,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     @Override
     public void onConnectionSuspended(int i) {
         mPlaceArrayAdapter.setGoogleApiClient(null);
-        Log.e(LOG_TAG, "Google Places API connection suspended.");
+        Log.e(MY_TAG, "Google Places API connection suspended.");
     }
 
     @Override

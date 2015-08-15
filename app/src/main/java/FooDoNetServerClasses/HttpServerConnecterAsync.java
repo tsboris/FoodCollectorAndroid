@@ -32,9 +32,6 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     private String responseString;
     private JSONArray responseJSONArray;
 
-    private final String PUBLICATIONS_SERVER_SUBFOLDER_NAME = "publications";
-
-
     public HttpServerConnecterAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
         this.baseUrl = baseUrl;
         this.callbackListener = callbackListener;
@@ -44,32 +41,12 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     protected String doInBackground(InternalRequest... params) {
         if(params.length == 0 || params[0] == null)
             return "";
+        String server_sub_path = params[0].ServerSubPath;
         switch (params[0].ActionCommand){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                String get_publications_url = baseUrl + "/" + PUBLICATIONS_SERVER_SUBFOLDER_NAME;
-                try {
-                    HttpGet httpGet = new HttpGet(get_publications_url);
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpResponse response = httpClient.execute(httpGet);
-                    int resonseStatus = response.getStatusLine().getStatusCode();
-                    Log.i("mytag", response.toString());
-                    if(resonseStatus == 200){
-                        HttpEntity entity = response.getEntity();
-                        String data = EntityUtils.toString(entity);
-                        responseJSONArray = new JSONArray(data);
-                        responseString = responseJSONArray.toString();
-                        Log.i("myTag", responseString);
-                    }
-
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return null;
+                Post();
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                Get(server_sub_path);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
 
@@ -83,6 +60,37 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     protected void onPostExecute(String s) {
         //super.onPostExecute(s);
         Log.i("mytag","data loaded from http, calling callback");
-        callbackListener.OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray)));
+        callbackListener.OnServerRespondedCallback(
+                new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                        FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray),null));
     }
+
+    private InternalRequest Post(){
+        return null;
+    }
+
+    private InternalRequest Get(String server_sub_path){
+        String get_publications_url = baseUrl + "/" + server_sub_path;
+        try {
+            HttpGet httpGet = new HttpGet(get_publications_url);
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpResponse response = httpClient.execute(httpGet);
+            int resonseStatus = response.getStatusLine().getStatusCode();
+            Log.i("mytag", response.toString());
+            if(resonseStatus == 200){
+                HttpEntity entity = response.getEntity();
+                String data = EntityUtils.toString(entity);
+                responseJSONArray = new JSONArray(data);
+                responseString = responseJSONArray.toString();
+                Log.i("myTag", responseString);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;    }
 }
