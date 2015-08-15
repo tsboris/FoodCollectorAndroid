@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import DataModel.FCPublication;
@@ -25,6 +26,8 @@ import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
  * Created by Asher on 21-Jul-15.
  */
 public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, String> {
+
+    private final String MY_TAG = "food_httpConnecterAsync";
 
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
@@ -45,6 +48,9 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
         switch (params[0].ActionCommand){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 Post();
+                return "";
+            case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
+                return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 Get(server_sub_path);
                 return "";
@@ -59,10 +65,19 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     @Override
     protected void onPostExecute(String s) {
         //super.onPostExecute(s);
-        Log.i("mytag","data loaded from http, calling callback");
+        Log.i(MY_TAG,"data loaded from http, calling callback");
         callbackListener.OnServerRespondedCallback(
                 new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                        FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray),null));
+                        FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray), null));
+    }
+
+    private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){
+        Get(server_sub_path);
+        ArrayList<FCPublication> fetchedPublications = FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray);
+        if(fetchedPublications == null || fetchedPublications.size() == 0){
+
+        }
+        return null;
     }
 
     private InternalRequest Post(){
@@ -76,7 +91,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse response = httpClient.execute(httpGet);
             int resonseStatus = response.getStatusLine().getStatusCode();
-            Log.i("mytag", response.toString());
+            Log.i(MY_TAG, response.toString());
             if(resonseStatus == 200){
                 HttpEntity entity = response.getEntity();
                 String data = EntityUtils.toString(entity);
