@@ -43,7 +43,7 @@
 
                 <category android:name="upp.foodonet" />
 
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <!--action android:name="com.google.android.c2dm.intent.REGISTRATION" /-->
             </intent-filter>
         </receiver>
         <!--
@@ -101,6 +101,14 @@
             android:label="@string/title_activity_map_and_list"
             android:screenOrientation="portrait" >
         </activity>
+
+        <service
+            android:name=".FooDoNetGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
 
         <service
             android:name=".FooDoNetInstanceIDListenerService"
