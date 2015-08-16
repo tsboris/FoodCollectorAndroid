@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
-    public static final int FC_DATABASE_VERSION = 1;
+    public static final int FC_DATABASE_VERSION = 2;
 
     public FooDoNetSQLHelper(Context context) {
         super(context, FC_DATABASE_NAME, null, FC_DATABASE_VERSION);

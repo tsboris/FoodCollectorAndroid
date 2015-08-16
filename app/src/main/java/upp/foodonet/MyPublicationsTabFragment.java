@@ -1,6 +1,7 @@
 package upp.foodonet;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
@@ -21,7 +22,8 @@ import DataModel.FCPublication;
 
 public class MyPublicationsTabFragment
         extends android.support.v4.app.Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        View.OnClickListener{
 
     private static final int ADD_TODO_ITEM_REQUEST = 0;
     //FCPublicationListAdapter mAdapter;
@@ -39,6 +41,7 @@ public class MyPublicationsTabFragment
 
         lv_my_publications = (ListView)view.findViewById(R.id.lst_my_publications_list);
         btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
+        btn_new_publication.setOnClickListener(this);
 
         String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
         int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
@@ -59,6 +62,8 @@ public class MyPublicationsTabFragment
         this.context = context;
     }
 
+
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(context == null) return null;
@@ -78,7 +83,18 @@ public class MyPublicationsTabFragment
         adapter.swapCursor(null);
     }
 
-/*
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(context, AddNewFCPublicationActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

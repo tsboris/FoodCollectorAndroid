@@ -3,9 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
+<!-- И премию за самые интуитивно понятные имена в коде получает...
+        (барабанная дробь)
+        ЭдитТекст с именем android:id="@+id/name", в котором должен быть FCPublication.TITLE!!!
+        Наши поздравления!! -->
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/et_title_new_publication"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -18,7 +21,7 @@
     </EditText>
 
     <EditText
-        android:id="@+id/descriptName"
+        android:id="@+id/et_subtitle_new_publication"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -30,7 +33,7 @@
     </EditText>
 
     <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView"
+        android:id="@+id/actv_address_new_publication"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"

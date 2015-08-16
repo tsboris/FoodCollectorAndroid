@@ -21,6 +21,7 @@ import java.util.Date;
 public class FCPublication implements Serializable {
 
     public static final String PUBLICATION_UNIQUE_ID_KEY = "_id";
+    public static final String PUBLICATION_PUBLISHER_UUID = "active_device_dev_uuid";
     public static final String PUBLICATION_UNIQUE_ID_KEY_JSON = "id";
     public static final String PUBLICATION_VERSION_KEY = "version";
     public static final String PUBLICATION_TITLE_KEY = "title";
@@ -40,12 +41,14 @@ public class FCPublication implements Serializable {
     public static final String DID_MODIFY_COORDS = "did_modify_coords";
     public static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
 
-    public FCPublication(){
+    public FCPublication() {
         countOfRegisteredUsers = 0;
     }
 
-    public FCPublication(String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, String photoUrl, boolean isOnAir){
+    public FCPublication(int id, String publisherUID, String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, String photoUrl, boolean isOnAir) {
         this();
+        setUniqueId(id);
+        setPublisherUID(publisherUID);
         setTitle(title);
         setSubtitle(subtitle);
         setAddress(address);
@@ -60,7 +63,7 @@ public class FCPublication implements Serializable {
     }
 
     // Create a new Item from data packaged in an Intent
-    public FCPublication(Intent intent) {
+/*  public FCPublication(Intent intent) {
 
         title = intent.getStringExtra(PUBLICATION_TITLE_KEY);
         //photoUrl = Uri.parse( intent.getStringExtra(PUBLICATION_PHOTO_URL));
@@ -72,6 +75,7 @@ public class FCPublication implements Serializable {
         intent.putExtra(PUBLICATION_PHOTO_URL, photoUrl);
 
     }
+*/
 
     private int uniqueId;
 
@@ -81,6 +85,16 @@ public class FCPublication implements Serializable {
 
     public void setUniqueId(int uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    private String publisherUID;
+
+    public void setPublisherUID(String publisherUID) {
+        this.publisherUID = publisherUID;
+    }
+
+    public String getPublisherUID() {
+        return publisherUID;
     }
 
     private int version;
@@ -96,7 +110,7 @@ public class FCPublication implements Serializable {
     private String title;
 
     public String getTitle() {
-        return title == null ? "no title": title;
+        return title == null ? "no title" : title;
     }
 
     public void setTitle(String title) {
@@ -171,8 +185,8 @@ public class FCPublication implements Serializable {
         this.startingDate = startingDate;
     }
 
-    public void setStartingDate(long startingDate){
-        this.startingDate = new Date(startingDate*1000);
+    public void setStartingDate(long startingDate) {
+        this.startingDate = new Date(startingDate * 1000);
     }
 
     private Date endingDate;
@@ -189,8 +203,8 @@ public class FCPublication implements Serializable {
         this.endingDate = endingDate;
     }
 
-    public void setEndingDate(long endingDate){
-        this.endingDate = new Date(endingDate*1000);
+    public void setEndingDate(long endingDate) {
+        this.endingDate = new Date(endingDate * 1000);
     }
 
     private String contactInfo; // make it nullable
@@ -205,9 +219,13 @@ public class FCPublication implements Serializable {
 
     private boolean isOnAir;
 
-    public boolean getIsOnAir(){return isOnAir;}
+    public boolean getIsOnAir() {
+        return isOnAir;
+    }
 
-    public void setIsOnAir(boolean isOnAir){this.isOnAir = isOnAir;}
+    public void setIsOnAir(boolean isOnAir) {
+        this.isOnAir = isOnAir;
+    }
 
 
     private Boolean didModifyCoords;
@@ -227,7 +245,7 @@ public class FCPublication implements Serializable {
         return photoUrl;
     }
 
-    public Uri getPhotoUrlAsUri(){
+    public Uri getPhotoUrlAsUri() {
         return Uri.parse(photoUrl);
     }
 
@@ -248,7 +266,7 @@ public class FCPublication implements Serializable {
         return countOfRegisteredUsers;
     }
 
-    public void setCountOfRegisteredUsers(int value){
+    public void setCountOfRegisteredUsers(int value) {
         countOfRegisteredUsers = value;
     }
 
@@ -256,6 +274,7 @@ public class FCPublication implements Serializable {
         return
                 new String[]{
                         PUBLICATION_UNIQUE_ID_KEY,
+                        PUBLICATION_PUBLISHER_UUID,
                         PUBLICATION_VERSION_KEY,
                         PUBLICATION_TITLE_KEY,
                         PUBLICATION_SUBTITLE_KEY,
@@ -275,6 +294,7 @@ public class FCPublication implements Serializable {
     public ContentValues GetContentValuesRow() {
         ContentValues cv = new ContentValues();
         cv.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
+        cv.put(PUBLICATION_PUBLISHER_UUID, getPublisherUID());
         cv.put(PUBLICATION_VERSION_KEY, getVersion());
         cv.put(PUBLICATION_TITLE_KEY, getTitle());
         cv.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
@@ -291,13 +311,14 @@ public class FCPublication implements Serializable {
         return cv;
     }
 
-    public static ArrayList<FCPublication> GetArrayListOfPublicationsFromCursor(Cursor cursor){
+    public static ArrayList<FCPublication> GetArrayListOfPublicationsFromCursor(Cursor cursor) {
         ArrayList<FCPublication> result = new ArrayList<FCPublication>();
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 FCPublication publication = new FCPublication();
                 publication.setUniqueId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_UNIQUE_ID_KEY)));
+                publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID)));
                 publication.setTitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_TITLE_KEY)));
                 publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
                 publication.setAddress(cursor.getString(cursor.getColumnIndex(PUBLICATION_ADDRESS_KEY)));
@@ -316,11 +337,11 @@ public class FCPublication implements Serializable {
         return result;
     }
 
-    public static ArrayList<FCPublication> GetArrayListOfPublicationsFromJSON(JSONArray ja){
+    public static ArrayList<FCPublication> GetArrayListOfPublicationsFromJSON(JSONArray ja) {
         ArrayList<FCPublication> result = new ArrayList<FCPublication>();
-        for (int i=0;i<ja.length();i++){
+        for (int i = 0; i < ja.length(); i++) {
             try {
-                Log.i("mytag",ja.getJSONObject(i).toString());
+                Log.i("mytag", ja.getJSONObject(i).toString());
                 result.add(ParseSinglePublicationFromJSON(ja.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -329,11 +350,12 @@ public class FCPublication implements Serializable {
         return result;
     }
 
-    public static FCPublication ParseSinglePublicationFromJSON(JSONObject jo){
-        if(jo == null) return null;
+    public static FCPublication ParseSinglePublicationFromJSON(JSONObject jo) {
+        if (jo == null) return null;
         FCPublication publication = new FCPublication();
         try {
             publication.setUniqueId(jo.getInt(PUBLICATION_UNIQUE_ID_KEY_JSON));
+            publication.setPublisherUID(jo.getString(PUBLICATION_PUBLISHER_UUID));
             publication.setTitle(jo.getString(PUBLICATION_TITLE_KEY));
             publication.setSubtitle(jo.getString(PUBLICATION_SUBTITLE_KEY));
             publication.setVersion(jo.getInt(PUBLICATION_VERSION_KEY));
@@ -355,10 +377,11 @@ public class FCPublication implements Serializable {
         return publication;
     }
 
-    public JSONObject GetJSONObject(){
+    public JSONObject GetJSONObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
+            jsonObject.put(PUBLICATION_PUBLISHER_UUID, getPublisherUID());
             jsonObject.put(PUBLICATION_TITLE_KEY, getTitle());
             jsonObject.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
             jsonObject.put(PUBLICATION_VERSION_KEY, getVersion());
@@ -379,21 +402,21 @@ public class FCPublication implements Serializable {
         return jsonObject;
     }
 
-    public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id){
-        if(list == null || list.size() == 0)
+    public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {
+        if (list == null || list.size() == 0)
             return null;
-        for(FCPublication publication: list){
-            if(publication.getUniqueId() == id)
+        for (FCPublication publication : list) {
+            if (publication.getUniqueId() == id)
                 return publication;
         }
         return null;
     }
 
-    public static ArrayList<FCPublication> DeletePublicationFromCollectionByID(ArrayList<FCPublication> list, int id){
-        if(list == null || list.size() == 0)
+    public static ArrayList<FCPublication> DeletePublicationFromCollectionByID(ArrayList<FCPublication> list, int id) {
+        if (list == null || list.size() == 0)
             return null;
         FCPublication lookingFor = GetPublicationFromArrayListByID(list, id);
-        if(lookingFor != null)
+        if (lookingFor != null)
             list.remove(lookingFor);
         return list;
     }
@@ -450,7 +473,6 @@ public class FCPublication implements Serializable {
     }
 */
 }
-
 
 
 //package DataModel;
