@@ -4,11 +4,16 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -20,6 +25,11 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
 
     private static final String ACTION_REGISTER_TO_GCM = "1";
 
+    private static final String REGISTRATION_FIELD_DEVICE_ID = "dev_uuid";
+    private static final String REGISTRATION_FIELD_PUSH_TOKEN = "remote_notification_token";
+    private static final String REGISTRATION_FIELD_IS_IOS = "is_ios";
+    private static final String REGISTRATION_FIELD_LATITUDE = "last_location_latitude";
+    private static final String REGISTRATION_FIELD_LONGITUDE = "";
 
     public static void StartRegisterToGCM(Context context) {
         Intent intent = new Intent(context, FooDoNetInstanceIDListenerService.class);
@@ -62,9 +72,17 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
         String imei = tm.getDeviceId();
         Log.w(MY_TAG, "Got imei: " + imei);
 
+        LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
 
     }
 
-
+    private JSONObject GetRegistrationJSONObject(String imei, String pushKey, Location location){
+        //JSONObject res = new JSONObject();
+        //res.put()
+        return null;
+    }
 
 }

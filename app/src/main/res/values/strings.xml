@@ -36,6 +36,7 @@
     <string name="server_add_new_publication_path">/publications/new</string>
     <string name="server_get_publications_path">publications</string>
     <string name="notifications_server_id">585244341740</string>
+    <string name="register_new_device">/active_devices/new</string>
 
 
 </resources>

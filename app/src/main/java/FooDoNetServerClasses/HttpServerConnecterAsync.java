@@ -47,12 +47,12 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
         String server_sub_path = params[0].ServerSubPath;
         switch (params[0].ActionCommand){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                Post();
+                Get(server_sub_path);
                 return "";
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Get(server_sub_path);
+                Post();
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
 
@@ -86,6 +86,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
 
     private InternalRequest Get(String server_sub_path){
         String get_publications_url = baseUrl + "/" + server_sub_path;
+        Log.i(MY_TAG, "Get: " + get_publications_url);
         try {
             HttpGet httpGet = new HttpGet(get_publications_url);
             HttpClient httpClient = new DefaultHttpClient();

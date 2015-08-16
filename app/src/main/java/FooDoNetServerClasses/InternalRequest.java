@@ -15,6 +15,7 @@ public class InternalRequest {
     public static final int ACTION_GET_ALL_PUBLICATIONS = 0;
     public static final int ACTION_POST_NEW_PUBLICATION = 1;
     public static final int ACTION_POST_REGISTER = 2;
+    public static final int ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION = 3;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
