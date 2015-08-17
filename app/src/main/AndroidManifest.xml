@@ -34,6 +34,18 @@
         android:icon="@drawable/foodonet_logo_200_200"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <activity
+            android:name=".SplashScreenActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -53,9 +65,10 @@
         -->
 
         <!-- Vitaly laptop: AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0 -->
+        <!-- Vitaly desktop: AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak" />
+            android:value="AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0" />
 
         <activity
             android:name=".EntranceActivity"
@@ -80,17 +93,6 @@
             android:exported="false" >
         </service>
 
-        <activity
-            android:name=".SplashScreenActivity"
-            android:label="@string/title_activity_splash_screen"
-            android:screenOrientation="portrait"
-            android:noHistory="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".MapAndListActivity"
             android:label="@string/title_activity_map_and_list"

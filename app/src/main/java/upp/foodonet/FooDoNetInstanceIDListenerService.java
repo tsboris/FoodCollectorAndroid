@@ -52,7 +52,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
                     RegisterToGCM();
                     break;
                 default:
-                    throw new UnsupportedOperationException("Not yet implemented");
+                    throw new UnsupportedOperationException("Not yet implemented, code: " + action);
             }
         }
     }

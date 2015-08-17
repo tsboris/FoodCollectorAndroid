@@ -58,7 +58,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private AutoCompleteTextView atv_address;
     private static final String MY_TAG = "food_newPublication";
-    private TextView mNameTextView;
+    private TextView tv_title;
     private TextView mAddressTextView;
     private TextView mIdTextView;
     private TextView mPhoneTextView;
