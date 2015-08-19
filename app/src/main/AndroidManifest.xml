@@ -34,14 +34,14 @@
         android:icon="@drawable/foodonet_logo_200_200"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".SplashScreenActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -63,6 +63,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCoeHSRmhMEo-S7qx9NXW3p0uONhFq2-eY" />
         -->
+
 
         <!-- Vitaly laptop: AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0 -->
         <!-- Vitaly desktop: AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak -->
@@ -103,9 +104,14 @@
             android:name=".FooDoNetInstanceIDListenerService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".MyPublicationsListActivity"
+            android:label="@string/title_activity_my_publications_list" >
+        </activity>
     </application>
 
 </manifest>
