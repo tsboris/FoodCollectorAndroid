@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
-import FooDoNetServerClasses.HttpServerConnecterAsync;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.InternalRequest;
 import FooDoNetServiceUtil.IFooDoNetCustomServiceBinder;
@@ -32,7 +32,7 @@ public class FooDoNetService
 
     private int count = 0;
 
-    HttpServerConnecterAsync connecterToServer; //1
+    HttpServerConnectorAsync connecterToServer; //1
     FooDoNetSQLExecuterAsync sqlExecuter; //2
     IFooDoNetServiceCallback curretActivityForCallback; //3
     WaiterForScheduler waiter; //4
@@ -93,7 +93,7 @@ public class FooDoNetService
         switch (workPlan[currentIndexInWorkPlan]){
             case taskServer:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                connecterToServer = new HttpServerConnecterAsync(serverBaseUrl, this);
+                connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
                 connecterToServer.execute(
                         new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
                                 getResources().getString(R.string.server_get_publications_path)));

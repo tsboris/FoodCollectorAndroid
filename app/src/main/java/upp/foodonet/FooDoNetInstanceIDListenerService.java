@@ -17,13 +17,18 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import DataModel.UserRegisterData;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.InternalRequest;
 
-public class FooDoNetInstanceIDListenerService extends IntentService {
+public class FooDoNetInstanceIDListenerService extends IntentService implements IFooDoNetServerCallback {
 
     private static final String MY_TAG = "food_intentService_ID";
 
     private static final String ACTION_REGISTER_TO_GCM = "1";
+
+    private static IFooDoNetServerCallback parentForCallback;
 
     private static final String REGISTRATION_FIELD_DEVICE_ID = "dev_uuid";
     private static final String REGISTRATION_FIELD_PUSH_TOKEN = "remote_notification_token";
@@ -34,6 +39,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
     public static void StartRegisterToGCM(Context context) {
         Intent intent = new Intent(context, FooDoNetInstanceIDListenerService.class);
         intent.setAction(ACTION_REGISTER_TO_GCM);
+        parentForCallback = (IFooDoNetServerCallback)context;
         //intent.putExtra(EXTRA_PARAM1, param1);
         //intent.putExtra(EXTRA_PARAM2, param2);
         context.startService(intent);
@@ -59,7 +65,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
 
     private void RegisterToGCM(){
         InstanceID instanceID = InstanceID.getInstance(this);
-        String token;
+        String token = "";
         try {
             token = instanceID.getToken(getString(R.string.notifications_server_id),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
@@ -75,8 +81,12 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
         LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        UserRegisterData userData = new UserRegisterData(imei, token, location.getLatitude(), location.getLongitude());
 
-
+        HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+        connector.execute(
+                new InternalRequest(InternalRequest.ACTION_POST_REGISTER,
+                        getResources().getString(R.string.register_new_device), userData));
     }
 
     private JSONObject GetRegistrationJSONObject(String imei, String pushKey, Location location){
@@ -85,4 +95,8 @@ public class FooDoNetInstanceIDListenerService extends IntentService {
         return null;
     }
 
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+         parentForCallback.OnServerRespondedCallback(response);
+    }
 }

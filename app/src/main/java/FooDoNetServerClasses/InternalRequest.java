@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import DataModel.UserRegisterData;
 
 /**
  * Created by Asher on 23-Jul-15.
@@ -48,11 +49,18 @@ public class InternalRequest {
         Status = status ? STATUS_OK : STATUS_FAIL;
     }
 
+    public InternalRequest(int com, String subPath, UserRegisterData data) {
+        ActionCommand = com;
+        ServerSubPath = subPath;
+        UserRegisterData = data;
+    }
+
     public int ActionCommand;
     public String ServerSubPath;
     public JSONObject jsonObject;
     public JSONArray jsonArray;
     public ArrayList<FCPublication> publications;
+    public UserRegisterData UserRegisterData;
     public int Status;
 
 }

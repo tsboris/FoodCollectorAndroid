@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import DataModel.FCPublication;
 import FooDoNetServerClasses.ConnectionDetector;
-import FooDoNetServerClasses.HttpServerConnecterAsync;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.InternalRequest;
 import upp.foodonet.FooDoNetService;

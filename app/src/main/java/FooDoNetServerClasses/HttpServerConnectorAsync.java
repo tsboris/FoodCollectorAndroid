@@ -22,17 +22,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import DataModel.FCPublication;
+import DataModel.UserRegisterData;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 
 /**
  * Created by Asher on 21-Jul-15.
  */
-public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, String> {
+public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, String> {
 
     private final String MY_TAG = "food_httpConnecterAsync";
 
@@ -41,8 +43,9 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
 
     private String responseString;
     private JSONArray responseJSONArray;
+    private int Action_Command_ID;
 
-    public HttpServerConnecterAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
+    public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
         this.baseUrl = baseUrl;
         this.callbackListener = callbackListener;
     }
@@ -51,8 +54,9 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     protected String doInBackground(InternalRequest... params) {
         if(params.length == 0 || params[0] == null)
             return "";
+        Action_Command_ID = params[0].ActionCommand;
         String server_sub_path = params[0].ServerSubPath;
-        switch (params[0].ActionCommand){
+        switch (Action_Command_ID){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 Get(server_sub_path);
                 return "";
@@ -62,7 +66,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
                 Post(server_sub_path);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
-
+                PostRegisterUser(server_sub_path, params[0].UserRegisterData);
                 return "";
             default:
                 return "";
@@ -72,10 +76,18 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
     @Override
     protected void onPostExecute(String s) {
         //super.onPostExecute(s);
-        Log.i(MY_TAG,"data loaded from http, calling callback");
-        callbackListener.OnServerRespondedCallback(
-                new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                        FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray), null));
+        switch (Action_Command_ID){
+            case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
+                Log.i(MY_TAG,"data loaded from http, calling callback");
+                callbackListener.OnServerRespondedCallback(
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                                FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray), null));
+                break;
+            case InternalRequest.ACTION_POST_REGISTER:
+                Log.i(MY_TAG, "succesfully registered user on server");
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                break;
+        }
     }
 
     private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){
@@ -83,6 +95,36 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
         ArrayList<FCPublication> fetchedPublications = FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray);
         if(fetchedPublications == null || fetchedPublications.size() == 0){
 
+        }
+        return null;
+    }
+
+    private InternalRequest PostRegisterUser(String server_sub_path, UserRegisterData registerData) {
+        String post_url = baseUrl + server_sub_path;
+        try {
+            URL url = new URL(post_url);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            OutputStream outputStream = connection.getOutputStream();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+            registerData.WriteSelfToJSONWriter(writer);
+            writer.close();
+            outputStream.close();
+            int connectionResponse = connection.getResponseCode();
+            switch (connectionResponse){
+                case HttpURLConnection.HTTP_OK:
+
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
