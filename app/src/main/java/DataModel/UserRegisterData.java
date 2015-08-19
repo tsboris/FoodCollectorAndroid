@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by Asher on 19.08.2015.
  */
-public class UserRegisterData implements Serializable {
+public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter {
 
     private static final String MY_TAG = "food_UserRegisterData";
 

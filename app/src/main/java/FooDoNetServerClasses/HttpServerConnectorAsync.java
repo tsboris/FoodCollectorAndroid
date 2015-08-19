@@ -16,8 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import DataModel.FCPublication;
+import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.UserRegisterData;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 
@@ -36,13 +39,19 @@ import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
  */
 public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, String> {
 
-    private final String MY_TAG = "food_httpConnecterAsync";
+    private static final String MY_TAG = "food_httpConnecterAsync";
+
+    private static final String REQUEST_METHOD_POST = "POST";
+    private static final String REQUEST_METHOD_GET = "GET";
 
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
 
     private String responseString;
     private JSONArray responseJSONArray;
+    private JSONObject responseJSONObject;
+    private InternalRequest internalResponse;
+
     private int Action_Command_ID;
 
     public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
@@ -58,15 +67,15 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         String server_sub_path = params[0].ServerSubPath;
         switch (Action_Command_ID){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                Get(server_sub_path);
+                MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
                 return "";
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Post(server_sub_path);
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
-                PostRegisterUser(server_sub_path, params[0].UserRegisterData);
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, false);
                 return "";
             default:
                 return "";
@@ -78,23 +87,116 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         //super.onPostExecute(s);
         switch (Action_Command_ID){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                Log.i(MY_TAG,"data loaded from http, calling callback");
-                callbackListener.OnServerRespondedCallback(
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                                FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray), null));
+                JSONArray resultArray = null;
+                try {
+                    resultArray = new JSONArray(responseString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i(MY_TAG, "data loaded from http, calling callback");
+                    callbackListener.OnServerRespondedCallback(
+                            new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                                    FCPublication.GetArrayListOfPublicationsFromJSON(resultArray), null));
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
-                Log.i(MY_TAG, "succesfully registered user on server");
+                Log.i(MY_TAG, "successfully registered user on server");
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
                 break;
+            case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                Log.i(MY_TAG, "successfully posted new publication to server");
+                callbackListener.OnServerRespondedCallback(internalResponse);
         }
     }
+
+    private void MakeServerRequest(String requestMethod, String server_sub_path, ICanWriteSelfToJSONWriter writableObject, boolean isForResult){
+        String post_url = baseUrl + server_sub_path;
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(post_url);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(15000);
+            connection.setRequestMethod(requestMethod);
+            switch (requestMethod){
+                case REQUEST_METHOD_GET:
+                    connection.setRequestProperty("Content-length", "0");
+                    connection.setUseCaches(false);
+                    connection.setAllowUserInteraction(false);
+                    break;
+                case REQUEST_METHOD_POST:
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    break;
+            }
+            if(writableObject != null) {
+                OutputStream outputStream = connection.getOutputStream();
+                JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                writableObject.WriteSelfToJSONWriter(writer);
+                writer.close();
+                outputStream.close();
+            }
+            connection.connect();
+            int connectionResponse = connection.getResponseCode();
+            switch (connectionResponse){
+                case HttpURLConnection.HTTP_OK:
+                    if(isForResult){
+                        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line+"\n");
+                        }
+                        br.close();
+                        Log.i(MY_TAG, sb.toString());
+                        responseString = sb.toString();
+                    }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.disconnect();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+/*
 
     private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){
         Get(server_sub_path);
         ArrayList<FCPublication> fetchedPublications = FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray);
         if(fetchedPublications == null || fetchedPublications.size() == 0){
 
+        }
+        return null;
+    }
+
+
+    private InternalRequest Post(String server_sub_path){
+        String post_url = baseUrl + server_sub_path;
+        try {
+            URL url = new URL(post_url);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            OutputStream outputStream = connection.getOutputStream();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -117,32 +219,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             int connectionResponse = connection.getResponseCode();
             switch (connectionResponse){
                 case HttpURLConnection.HTTP_OK:
-
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private InternalRequest Post(String server_sub_path){
-        String post_url = baseUrl + server_sub_path;
-        try {
-            URL url = new URL(post_url);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            OutputStream outputStream = connection.getOutputStream();
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-
-        } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,4 +255,5 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             e.printStackTrace();
         }
         return null;    }
+        */
 }
