@@ -1,6 +1,7 @@
 package FooDoNetServerClasses;
 
 import android.os.AsyncTask;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -15,7 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -52,7 +59,7 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Post();
+                Post(server_sub_path);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
 
@@ -80,7 +87,24 @@ public class HttpServerConnecterAsync extends AsyncTask<InternalRequest, Void, S
         return null;
     }
 
-    private InternalRequest Post(){
+    private InternalRequest Post(String server_sub_path){
+        String post_url = baseUrl + server_sub_path;
+        try {
+            URL url = new URL(post_url);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            OutputStream outputStream = connection.getOutputStream();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
