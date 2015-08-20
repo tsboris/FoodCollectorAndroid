@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import DataModel.ICanWriteSelfToJSONWriter;
+import DataModel.UserRegisterData;
 
 /**
  * Created by Asher on 23-Jul-15.
@@ -48,11 +50,18 @@ public class InternalRequest {
         Status = status ? STATUS_OK : STATUS_FAIL;
     }
 
+    public InternalRequest(int com, String subPath, ICanWriteSelfToJSONWriter data) {
+        ActionCommand = com;
+        ServerSubPath = subPath;
+        canWriteSelfToJSONWriterObject = data;
+    }
+
     public int ActionCommand;
     public String ServerSubPath;
     public JSONObject jsonObject;
     public JSONArray jsonArray;
     public ArrayList<FCPublication> publications;
+    public ICanWriteSelfToJSONWriter canWriteSelfToJSONWriterObject;
     public int Status;
 
 }

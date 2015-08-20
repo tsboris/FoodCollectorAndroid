@@ -19,24 +19,22 @@
     <string name="call_to_publisher_string">צור קשר עם המפרסם</string>
     <string name="free_pickup_string">איסוף חופשי</string>
     <string name="title_activity_entrance">EntranceActivity</string>
-
     <string name="welcome_string">ברוכים הבאים</string>
     <string name="publish">רוצה לפרסם</string>
     <string name="pickup">רוצה לאסוף</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Server strings -->
     <string name="server_base_url">https://fd-server.herokuapp.com</string>
     <string name="server_add_new_publication_path">/publications/new</string>
-    <string name="server_get_publications_path">publications</string>
+    <string name="server_get_publications_path">/publications</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices/new</string>
-
+    <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
 </resources>

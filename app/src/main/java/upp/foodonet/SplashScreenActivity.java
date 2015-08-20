@@ -45,7 +45,7 @@ public class SplashScreenActivity
         RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
-        /*HttpServerConnecterAsync connecter = new HttpServerConnecterAsync(getResources().getString(R.string.server_base_url), this);
+        /*HttpServerConnectorAsync connecter = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
         connecter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS));*/
         getSupportLoaderManager().initLoader(0, null, this);
     }

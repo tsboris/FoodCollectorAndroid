@@ -4,12 +4,14 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,10 +20,10 @@ import java.util.Date;
 /**
  * Created by artyomshapet on 6/29/15.
  */
-public class FCPublication implements Serializable {
+public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
 
     public static final String PUBLICATION_UNIQUE_ID_KEY = "_id";
-    public static final String PUBLICATION_PUBLISHER_UUID = "active_device_dev_uuid";
+    public static final String PUBLICATION_PUBLISHER_UUID_KEY = "active_device_dev_uuid";
     public static final String PUBLICATION_UNIQUE_ID_KEY_JSON = "id";
     public static final String PUBLICATION_VERSION_KEY = "version";
     public static final String PUBLICATION_TITLE_KEY = "title";
@@ -274,7 +276,7 @@ public class FCPublication implements Serializable {
         return
                 new String[]{
                         PUBLICATION_UNIQUE_ID_KEY,
-                        PUBLICATION_PUBLISHER_UUID,
+                        PUBLICATION_PUBLISHER_UUID_KEY,
                         PUBLICATION_VERSION_KEY,
                         PUBLICATION_TITLE_KEY,
                         PUBLICATION_SUBTITLE_KEY,
@@ -294,7 +296,7 @@ public class FCPublication implements Serializable {
     public ContentValues GetContentValuesRow() {
         ContentValues cv = new ContentValues();
         cv.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
-        cv.put(PUBLICATION_PUBLISHER_UUID, getPublisherUID());
+        cv.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
         cv.put(PUBLICATION_VERSION_KEY, getVersion());
         cv.put(PUBLICATION_TITLE_KEY, getTitle());
         cv.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
@@ -318,7 +320,7 @@ public class FCPublication implements Serializable {
             do {
                 FCPublication publication = new FCPublication();
                 publication.setUniqueId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_UNIQUE_ID_KEY)));
-                publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID)));
+                publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID_KEY)));
                 publication.setTitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_TITLE_KEY)));
                 publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
                 publication.setAddress(cursor.getString(cursor.getColumnIndex(PUBLICATION_ADDRESS_KEY)));
@@ -355,7 +357,7 @@ public class FCPublication implements Serializable {
         FCPublication publication = new FCPublication();
         try {
             publication.setUniqueId(jo.getInt(PUBLICATION_UNIQUE_ID_KEY_JSON));
-            publication.setPublisherUID(jo.getString(PUBLICATION_PUBLISHER_UUID));
+            publication.setPublisherUID(jo.getString(PUBLICATION_PUBLISHER_UUID_KEY));
             publication.setTitle(jo.getString(PUBLICATION_TITLE_KEY));
             publication.setSubtitle(jo.getString(PUBLICATION_SUBTITLE_KEY));
             publication.setVersion(jo.getInt(PUBLICATION_VERSION_KEY));
@@ -381,7 +383,7 @@ public class FCPublication implements Serializable {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
-            jsonObject.put(PUBLICATION_PUBLISHER_UUID, getPublisherUID());
+            jsonObject.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
             jsonObject.put(PUBLICATION_TITLE_KEY, getTitle());
             jsonObject.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
             jsonObject.put(PUBLICATION_VERSION_KEY, getVersion());
@@ -400,6 +402,30 @@ public class FCPublication implements Serializable {
             return null;
         }
         return jsonObject;
+    }
+
+    public void WriteSelfToJSONWriter(JsonWriter writer){
+        try {
+            writer.beginObject();
+            writer.name(PUBLICATION_UNIQUE_ID_KEY_JSON).value(getUniqueId());
+            writer.name(PUBLICATION_VERSION_KEY).value(getVersion());
+            writer.name(PUBLICATION_TITLE_KEY).value(getTitle());
+            writer.name(PUBLICATION_SUBTITLE_KEY).value(getSubtitle());
+            writer.name(PUBLICATION_PUBLISHER_UUID_KEY).value(getPublisherUID());
+            writer.name(PUBLICATION_ADDRESS_KEY).value(getAddress());
+            writer.name(PUBLICATION_TYPE_OF_COLLECTION_KEY).value(getTypeOfCollecting());
+            writer.name(PUBLICATION_LATITUDE_KEY).value(getLatitude());
+            writer.name(PUBLICATION_LONGITUDE_KEY).value(getLongitude());
+            writer.name(PUBLICATION_STARTING_DATE_KEY).value(getStartingDateUnixTime());
+            writer.name(PUBLICATION_ENDING_DATE_KEY).value(getEndingDateUnixTime());
+            writer.name(PUBLICATION_CONTACT_INFO_KEY).value(getContactInfo());
+            writer.name(PUBLICATION_PHOTO_URL).value(getPhotoUrl());
+            writer.name(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY).value(getCountOfRegisteredUsers());
+            writer.name(PUBLICATION_IS_ON_AIR_KEY).value(getIsOnAir());
+            writer.endObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {

@@ -31,7 +31,7 @@ public class MyPublicationsTabFragment
     SimpleCursorAdapter adapter;
 
     ListView lv_my_publications;
-    Button btn_new_publication;
+    //Button btn_new_publication;
 
     @Nullable
     @Override
@@ -39,9 +39,9 @@ public class MyPublicationsTabFragment
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_publications_tab, container, false);
 
-        lv_my_publications = (ListView)view.findViewById(R.id.lst_my_publications_list);
-        btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
-        btn_new_publication.setOnClickListener(this);
+        lv_my_publications = (ListView)view.findViewById(R.id.lv_all_active_publications);
+        //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
+        //btn_new_publication.setOnClickListener(this);
 
         String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
         int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};

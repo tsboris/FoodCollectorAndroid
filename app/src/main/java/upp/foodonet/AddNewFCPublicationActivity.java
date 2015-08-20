@@ -234,6 +234,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         });
     }
 
+
+    // For image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
