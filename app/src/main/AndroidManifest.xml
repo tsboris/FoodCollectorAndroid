@@ -55,10 +55,12 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak" />
 
+        <!-- Alexander: Server API Key (authorization)-->
         <meta-data
             android:name="Server.API.Key"
             android:value="AIzaSyBG-UhoLKYq5O-wJPw_hLF6t3tyf7vIGjQ" />
 
+        <!-- Alexander: Server Sender ID (project number)-->
         <meta-data
             android:name="Sender.ID"
             android:value="776321412578" />
