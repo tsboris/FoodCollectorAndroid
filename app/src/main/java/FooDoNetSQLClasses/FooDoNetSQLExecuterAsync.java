@@ -8,37 +8,46 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import DataModel.RegisteredUserForPublication;
+import FooDoNetServerClasses.InternalRequest;
 import upp.foodonet.FooDoNetSQLProvider;
 
 /**
  * Created by Asher on 24-Jul-15.
  */
-public class FooDoNetSQLExecuterAsync extends AsyncTask<Void, Void, Void> {
+public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, Void> {
 
     ArrayList<FCPublication> publicationsFromServer;
     ArrayList<FCPublication> publicationsFromDB;
-    ArrayList<FCPublication> result;
+    ArrayList<FCPublication> resultPublications;
+    ArrayList<RegisteredUserForPublication> regUsersFromServer;
+    ArrayList<RegisteredUserForPublication> regUsersFromDB;
+    ArrayList<RegisteredUserForPublication> resultRegUsers;
     IFooDoNetSQLCallback callbackHandler;
     ContentResolver contentResolver;
 
-    public FooDoNetSQLExecuterAsync(ArrayList<FCPublication> fromServer, IFooDoNetSQLCallback callback, ContentResolver content){
-        publicationsFromServer = fromServer;
+    public FooDoNetSQLExecuterAsync(IFooDoNetSQLCallback callback, ContentResolver content){
+    //ArrayList<FCPublication> fromServer removed from parameters
+        //publicationsFromServer = fromServer;
         callbackHandler = callback;
         contentResolver = content;
     }
 
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(InternalRequest... params) {
+        if(params.length == 0) return null;
+        publicationsFromServer = params[0].publications;
+        regUsersFromServer = params[0].registeredUsers;
         if(publicationsFromServer == null || publicationsFromServer.size() == 0
                 || contentResolver == null || callbackHandler == null)
             return null;
         Cursor cursor = contentResolver.query(FooDoNetSQLProvider.CONTENT_URI, FCPublication.GetColumnNamesArray(), null, null, null);
         publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(cursor);
-        result = new ArrayList<FCPublication>();
+        resultPublications = new ArrayList<FCPublication>();
 
         for(FCPublication publicationFromServer : publicationsFromServer){
-            result.add(publicationFromServer);
+            resultPublications.add(publicationFromServer);
             FCPublication pubFromDB = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
             if(pubFromDB == null) {
                 contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publicationFromServer.GetContentValuesRow());
@@ -70,6 +79,6 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        callbackHandler.OnUpdateLocalDBComplete(result);
+        callbackHandler.OnUpdateLocalDBComplete(resultPublications);
     }
 }
