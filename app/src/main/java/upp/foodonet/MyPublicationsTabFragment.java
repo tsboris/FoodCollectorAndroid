@@ -85,8 +85,11 @@ public class MyPublicationsTabFragment
 
     @Override
     public void onClick(View v) {
+        Intent allPubIntent = new Intent(context, AllPublicationsActivity.class);
+        startActivity(allPubIntent);
+/*
         Intent intent = new Intent(context, AddNewFCPublicationActivity.class);
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 0); */
     }
 
     @Override

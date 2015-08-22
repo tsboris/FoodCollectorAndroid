@@ -25,6 +25,8 @@
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>
+    <string name="title_activity_all_publications">AllPublicationsActivity</string>
+    <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -35,6 +37,6 @@
     <string name="server_get_publications_path">/publications</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices/new</string>
-    <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
+
 
 </resources>
