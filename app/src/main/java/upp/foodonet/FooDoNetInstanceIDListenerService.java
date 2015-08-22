@@ -79,7 +79,17 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         Log.w(MY_TAG, "Got imei: " + imei);
 
         LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        if (locationManager == null)
+        {
+            Log.e(MY_TAG, "could not get location!");
+            return;
+        }
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null)
+        {
+            Log.e(MY_TAG, "could not get location!");
+            return;
+        }
 
         UserRegisterData userData = new UserRegisterData(imei, token, location.getLatitude(), location.getLongitude());
 
