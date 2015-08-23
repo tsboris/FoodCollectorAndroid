@@ -36,6 +36,8 @@ public class MyPublicationsTabFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Intent allPubIntent = new Intent(context, AllPublicationsActivity.class);
+        startActivity(allPubIntent);
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_publications_tab, container, false);
 
@@ -85,11 +87,8 @@ public class MyPublicationsTabFragment
 
     @Override
     public void onClick(View v) {
-        Intent allPubIntent = new Intent(context, AllPublicationsActivity.class);
-        startActivity(allPubIntent);
-/*
         Intent intent = new Intent(context, AddNewFCPublicationActivity.class);
-        startActivityForResult(intent, 0); */
+        startActivityForResult(intent, 0);
     }
 
     @Override
