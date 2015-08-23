@@ -31,6 +31,7 @@ import java.util.Calendar;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
+import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 
@@ -51,6 +52,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private JSONArray responseJSONArray;
     private JSONObject responseJSONObject;
     private InternalRequest internalResponse;
+    private ArrayList<FCPublication> resultPublications;
 
     private int Action_Command_ID;
 
@@ -68,6 +70,31 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         switch (Action_Command_ID){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
+                ArrayList<FCPublication> publications = new ArrayList<>();
+                try {
+                    publications = FCPublication.GetArrayListOfPublicationsFromJSON(new JSONArray(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                responseString = "";
+                ArrayList<RegisteredUserForPublication> regedUsers = new ArrayList<>();
+                for(FCPublication pub : publications){
+                    MakeServerRequest(REQUEST_METHOD_GET,
+                            params[1].ServerSubPath.replace("{0}",
+                                    String.valueOf(pub.getUniqueId())), null, true);
+                    try {
+                        regedUsers = RegisteredUserForPublication.
+                                GetArrayListOfRegisteredForPublicationsFromJSON(
+                                        new JSONArray(responseString));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if(regedUsers.size()>0){
+                        pub.setRegisteredForThisPublication(regedUsers);
+                    }
+                    regedUsers.clear();
+                    responseString = "";
+                }
                 return "";
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
                 return "";
@@ -87,16 +114,9 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         //super.onPostExecute(s);
         switch (Action_Command_ID){
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                JSONArray resultArray = null;
-                try {
-                    resultArray = new JSONArray(responseString);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 Log.i(MY_TAG, "data loaded from http, calling callback");
                     callbackListener.OnServerRespondedCallback(
-                            new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                                    FCPublication.GetArrayListOfPublicationsFromJSON(resultArray), null));
+                            new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");

@@ -94,14 +94,14 @@ public class FooDoNetService
             case taskServer:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
-                connecterToServer.execute(
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                                getResources().getString(R.string.server_get_publications_path)));
+                connecterToServer.execute( new InternalRequest[]{
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, getResources().getString(R.string.server_get_publications_path)),
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION, getResources().getString(R.string.server_get_registered_for_publications))});
                 break;
             case taskSQL:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                sqlExecuter = new FooDoNetSQLExecuterAsync(fetchedFromServer, this, getContentResolver());
-                sqlExecuter.execute();
+                sqlExecuter = new FooDoNetSQLExecuterAsync( this, getContentResolver());//fetchedFromServer,
+                sqlExecuter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, fetchedFromServer, null));
                 break;
             case taskActivity:
                 Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);

@@ -272,6 +272,20 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         countOfRegisteredUsers = value;
     }
 
+    private ArrayList<RegisteredUserForPublication> registeredForThisPublication;
+
+    public void setRegisteredForThisPublication(ArrayList<RegisteredUserForPublication> regedUsers){
+        if(registeredForThisPublication == null)
+            registeredForThisPublication = new ArrayList<>();
+        registeredForThisPublication.addAll(regedUsers);
+    }
+
+    public ArrayList<RegisteredUserForPublication> getRegisteredForThisPublication(){
+        if(registeredForThisPublication == null)
+            registeredForThisPublication = new ArrayList<>();
+        return registeredForThisPublication;
+    }
+
     public static String[] GetColumnNamesArray() {
         return
                 new String[]{
