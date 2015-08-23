@@ -25,20 +25,21 @@
         android:id="@+id/linearLayout"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <LinearLayout
-            android:id="@+id/ll_btn_share_mainScreen"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"/>
+
         <LinearLayout
+            android:id="@+id/ll_btn_share_welcomeScreen"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1">
             <Button
-                android:id="@+id/btn_entrance_give"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@null"
@@ -50,7 +51,6 @@
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/imageButton1"
                 android:background="@drawable/donate_v6_3x"
                 android:layout_weight="1"
                 android:layout_marginTop="5dp"
@@ -71,7 +71,6 @@
             android:layout_weight="1">
 
             <Button
-                android:id="@+id/btn_entrance_take"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@null"
@@ -82,9 +81,9 @@
                 />
 
             <ImageButton
+                android:id="@+id/ll_btn_pick_welcomeScreen"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/imageButton3"
                 android:background="@drawable/collect_v6_3x"
                 android:layout_weight="1"
                 android:layout_marginTop="5dp"
@@ -98,7 +97,7 @@
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/ll_btn_pick_mainScreen"
+            android:id="@+id/ll_btn_ask_welcomeScreen"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
