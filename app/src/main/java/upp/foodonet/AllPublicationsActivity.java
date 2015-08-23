@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import android.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +25,6 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class AllPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private final String MY_TAG = "AllPublicationsActivity";
 
@@ -34,20 +33,22 @@ public class AllPublicationsActivity
         super.onCreate(savedInstanceState);
         Log.i(MY_TAG, "entering");
 
-        getLoaderManager().initLoader(0, null, this);
-
         setContentView(R.layout.activity_all_publications);
 
         // Get ListView object from xml
         listView = (ListView) findViewById(R.id.lv_all_publications_list);
 
+        // arranging data supply: initialaze adapter and connect to listview
         String[] columns = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
         int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
-
         adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, columns, to, 0);
         listView.setAdapter(adapter);
 
+        // starting cursor loader
+        loaderCallback = new CursorLoaderCallback(this, adapter);
+        getLoaderManager().initLoader(0, null, loaderCallback);
 
+        // this is for user to be able to click on list elements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -58,7 +59,7 @@ public class AllPublicationsActivity
                 int itemPosition     = position;
 
                 // ListView Clicked item value
-                String  itemValue    = (String) listView.getItemAtPosition(position);
+                String  itemValue    = listView.getItemAtPosition(position).toString();
 
                 // Show Alert
                 Toast.makeText(getApplicationContext(),
@@ -69,31 +70,6 @@ public class AllPublicationsActivity
 
         });
     }
-
-    //region LoaderManager.LoaderCallbacks implementation
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.i(MY_TAG, " onCreateLoader");
-        String[] projection = FCPublication.GetColumnNamesArray();
-        android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
-        return cursorLoader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.i(MY_TAG, " swapping cursor");
-        adapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        Log.i(MY_TAG, " onLoaderReset");
-        adapter.swapCursor(null);
-    }
-    //endregion
-
 
     // region FooDoNetCustomActivityConnectedToService implementation
     @Override
@@ -119,4 +95,5 @@ public class AllPublicationsActivity
 
     private ListView listView;
     private SimpleCursorAdapter adapter;
+    private LoaderManager.LoaderCallbacks<Cursor> loaderCallback;
 }
