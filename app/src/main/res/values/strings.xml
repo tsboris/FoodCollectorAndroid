@@ -20,8 +20,9 @@
     <string name="free_pickup_string">איסוף חופשי</string>
     <string name="title_activity_entrance">EntranceActivity</string>
     <string name="welcome_string">ברוכים הבאים</string>
-    <string name="publish">רוצה לפרסם</string>
-    <string name="pickup">רוצה לאסוף</string>
+    <string name="publish">לשתף מזון</string>
+    <string name="pickup">לאסוף מזון</string>
+    <string name="ask_food">לבקש מזון</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>
