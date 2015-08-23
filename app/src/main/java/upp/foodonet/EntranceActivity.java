@@ -45,6 +45,8 @@ public class EntranceActivity
         ll_btn_share = (LinearLayout)findViewById(R.id.ll_btn_pick_mainScreen);
         ll_btn_pick = (LinearLayout)findViewById(R.id.ll_btn_share_mainScreen);
         btn_give = (Button)findViewById(R.id.btn_entrance_give);
+        ll_btn_pick.setOnClickListener(this);
+
      /*   Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
         Drawable img_take = getResources().getDrawable( R.drawable.collect_v6_3x);
         Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
