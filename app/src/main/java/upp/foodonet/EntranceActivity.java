@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.Bidi;
@@ -28,9 +29,9 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 public class EntranceActivity
         extends FooDoNetCustomActivityConnectedToService
         implements View.OnClickListener {
-
-    Button btn_give, btn_take;
-
+    private static final String MY_TAG = "food_EntanceActivity";
+    LinearLayout ll_btn_share,ll_btn_pick;
+    Button btn_give;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,20 +42,22 @@ public class EntranceActivity
         //welcomeView.setBackgroundColor(Color.BLUE);
         //=====
 
+        ll_btn_share = (LinearLayout)findViewById(R.id.ll_btn_pick_mainScreen);
+        ll_btn_pick = (LinearLayout)findViewById(R.id.ll_btn_share_mainScreen);
         btn_give = (Button)findViewById(R.id.btn_entrance_give);
-        btn_take = (Button)findViewById(R.id.btn_entrance_take);
-
-        Drawable img_give = getResources().getDrawable( R.drawable.first_screen_donate );
-        Drawable img_take = getResources().getDrawable( R.drawable.first_screen_collect);
-        img_give.setBounds(0, 0, 60, 60);
-        img_take.setBounds(0, 0, 60, 60);
+     /*   Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
+        Drawable img_take = getResources().getDrawable( R.drawable.collect_v6_3x);
+        Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
+        img_give.setBounds(0, 0, 300, 300);
+        img_take.setBounds(0, 0, 300, 300);
         btn_give.setCompoundDrawables(null, null, img_give, null); btn_give.setCompoundDrawablePadding(10);
-        btn_take.setCompoundDrawables(img_take, null, null, null);
+        btn_take.setCompoundDrawables(null, null, img_take, null);
+        btn_ask.setCompoundDrawables(null, null, img_ask, null);*/
 
         Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-            Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
+        Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
 
-        btn_take.setOnClickListener(this);
+
 
 /*
         TextView publishTextView = (TextView) findViewById(R.id.publishText);
@@ -129,10 +132,18 @@ public class EntranceActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_entrance_take:
+            case R.id.ll_btn_pick_mainScreen:
                 Intent mapIntent = new Intent(this, MapAndListActivity.class);
                 startActivity(mapIntent);
                 break;
+          /*  case R.id.ll_btn_share_mainScreen:
+                Intent myPublicationList = new Intent(this, MyPublicationsListActivity.class);
+                startActivity(myPublicationList);
+                break;*/
+            /*case R.id.btn_entrance_ask:
+                Intent  = new Intent(this, MapAndListActivity.class);
+                startActivity();
+                break;*/
         }
     }
 }
