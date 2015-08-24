@@ -27,6 +27,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
 
     private static final int PUBLICATIONS = 10;
     private static final int PUBLICATION_ID = 20;
+    //private static final int PUBLICATIONS_MY_SORTED_CREATE_DATE_DESC = 30;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -43,6 +44,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     static {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH, PUBLICATIONS);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PUBLICATION_ID);
+        //sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/Pubs_my/sort_newest_first", PUBLICATIONS_MY_);
     }
 
     @Override

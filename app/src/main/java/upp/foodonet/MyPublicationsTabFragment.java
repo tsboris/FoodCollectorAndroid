@@ -54,6 +54,7 @@ public class MyPublicationsTabFragment
         adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
                 to, 0);
         lv_my_publications.setAdapter(adapter);
+
 /*
         adapter = new ListOfEventsAdapter(itemsList, context);
         lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);

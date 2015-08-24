@@ -132,10 +132,12 @@
             </intent-filter>
         </service>
 
+<!--
         <activity
-            android:name=".MyPublicationsListActivity"
+            android:name="CodeWeDontUse.MyPublicationsListActivity"
             android:label="@string/title_activity_my_publications_list" >
         </activity>
+-->
     </application>
 
 </manifest>
