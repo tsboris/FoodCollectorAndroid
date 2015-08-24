@@ -28,6 +28,8 @@
     <string name="title_activity_map_and_list">MapAndListActivity</string>
     <string name="title_activity_all_publications">AllPublicationsActivity</string>
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
+    <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
+    <string name="participants_report">Report on participants</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
