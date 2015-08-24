@@ -9,4 +9,5 @@ import DataModel.FCPublication;
  */
 public interface IFooDoNetSQLCallback {
     public void OnUpdateLocalDBComplete(ArrayList<FCPublication> publications);
+    public void OnGetPublicationForListCompleted(ArrayList<FCPublication> publicationsForList);
 }

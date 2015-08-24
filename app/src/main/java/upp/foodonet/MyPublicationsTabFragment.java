@@ -47,7 +47,7 @@ public class MyPublicationsTabFragment
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
-        String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
+        String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
         int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
 
         getLoaderManager().initLoader(0, null, this);
@@ -72,9 +72,9 @@ public class MyPublicationsTabFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(context == null) return null;
-        String[] projection = FCPublication.GetColumnNamesArray();
+        String[] projection = FCPublication.GetColumnNamesForListArray();
         android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
+                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC, projection, null, null, null);
         return cursorLoader;
     }
 

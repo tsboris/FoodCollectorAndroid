@@ -19,6 +19,8 @@ public class InternalRequest {
     public static final int ACTION_POST_NEW_PUBLICATION = 1;
     public static final int ACTION_POST_REGISTER = 2;
     public static final int ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION = 3;
+    public static final int ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC = 4;
+    public static final int ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER = 5;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;

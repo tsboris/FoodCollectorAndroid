@@ -88,7 +88,7 @@ public class SplashScreenActivity
             return;
         }
 
-        publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(data);
+        publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
 
         flagSQLLoaderFinished = true;
 

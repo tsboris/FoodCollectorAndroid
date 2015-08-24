@@ -44,7 +44,7 @@ public class FooDoNetService
     int currentIndexInWorkPlan;
     int[] workPlan = new int[]{1,2,3,4};
 
-    private final String myTag = "foodService";
+    private final String MY_TAG = "food_SchedulerService";
     private String serverBaseUrl;
 
     ArrayList<FCPublication> fetchedFromServer, loadedFromSQL;
@@ -54,7 +54,7 @@ public class FooDoNetService
 
     @Override
     public void onCreate() {
-        Log.i("food", "creating service...");
+        Log.i(MY_TAG, "creating service...");
         mustRun = true;
         secondsToWait = getResources().getInteger(R.integer.fetch_data_scheduler_repeat_time);
         serverBaseUrl = getResources().getString(R.string.server_base_url);
@@ -63,7 +63,7 @@ public class FooDoNetService
 
     @Override
     public void onDestroy() {
-        Log.i("food", "destroing service");
+        Log.i(MY_TAG, "destroing service");
         mustRun = false;
         super.onDestroy();
     }
@@ -76,41 +76,41 @@ public class FooDoNetService
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("food", "service binded");
+        Log.i(MY_TAG, "service binded");
         isAnyoneConnected = true;
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i("food", "service unbinded");
+        Log.i(MY_TAG, "service unbinded");
         isAnyoneConnected = false;
         return super.onUnbind(intent);
     }
 
     private void DoNextTaskFromWorkPlan(){
-        Log.i(myTag, "DoingNextTaskFromPlan");
+        Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]){
             case taskServer:
-                Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
+                Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
                 connecterToServer.execute( new InternalRequest[]{
                         new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, getResources().getString(R.string.server_get_publications_path)),
                         new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION, getResources().getString(R.string.server_get_registered_for_publications))});
                 break;
             case taskSQL:
-                Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
+                Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 sqlExecuter = new FooDoNetSQLExecuterAsync( this, getContentResolver());//fetchedFromServer,
-                sqlExecuter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, fetchedFromServer, null));
+                sqlExecuter.execute(new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
                 break;
             case taskActivity:
-                Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
+                Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 currentCallbackHandler.LoadUpdatedListOfPublications(loadedFromSQL);
                 currentIndexInWorkPlan = getNextIndex(currentIndexInWorkPlan, workPlan);
                 DoNextTaskFromWorkPlan();
                 return;
             case taskWaiter:
-                Log.i(myTag, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
+                Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 waiter = new WaiterForScheduler();
                 waiter.execute(secondsToWait);
                 break;
@@ -126,16 +126,21 @@ public class FooDoNetService
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-        Log.i(myTag, "finished task server");
+        Log.i(MY_TAG, "finished task server");
         fetchedFromServer = response.publications;
         DoNextTaskFromWorkPlan();
     }
 
     @Override
     public void OnUpdateLocalDBComplete(ArrayList<FCPublication> publications) {
-        Log.i(myTag, "finished task sql");
+        Log.i(MY_TAG, "finished task sql");
         loadedFromSQL = publications;
         DoNextTaskFromWorkPlan();
+    }
+
+    @Override
+    public void OnGetPublicationForListCompleted(ArrayList<FCPublication> publicationsForList) {
+        Log.e(MY_TAG, "Unexpected callback!");
     }
 
     public class FooDoNetCustomServiceBinder extends Binder implements IFooDoNetCustomServiceBinder {
