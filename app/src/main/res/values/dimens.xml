@@ -18,6 +18,7 @@
     <color name="event_list_item_background_onair">#99FF33</color>
     <color name="event_list_item_background_expired">#FF8080</color>
     <color name="basic_blue">#0079FF</color>
+    <color name="transparent">#00000000</color>
     <!-- ====================== -->
 
 </resources>
