@@ -31,8 +31,7 @@ public class EntranceActivity
         extends FooDoNetCustomActivityConnectedToService
         implements View.OnClickListener {
     private static final String MY_TAG = "food_EntanceActivity";
-    LinearLayout ll_btn_share, ll_btn_ask;
-    ImageButton ll_btn_pick;
+    Button btn_pick, btn_share, btn_ask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,18 +42,23 @@ public class EntranceActivity
         //welcomeView.setBackgroundColor(Color.BLUE);
         //=====
 
-        ll_btn_share = (LinearLayout)findViewById(R.id.ll_btn_share_welcomeScreen);
-        ll_btn_pick = (ImageButton)findViewById(R.id.ll_btn_pick_welcomeScreen);
-        ll_btn_ask = (LinearLayout)findViewById(R.id.ll_btn_ask_welcomeScreen);
-        ll_btn_pick.setOnClickListener(this);
-     /*   Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
+        btn_share = (Button)findViewById(R.id.btn_share_welcomeScreen);
+        btn_pick = (Button)findViewById(R.id.btn_pick_welcomeScreen);
+        btn_ask = (Button)findViewById(R.id.btn_ask_welcomeScreen);
+        btn_pick.setOnClickListener(this);
+        //btn_ask.setOnClickListener(this);
+        btn_share.setOnClickListener(this);
+
+        Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
         Drawable img_take = getResources().getDrawable( R.drawable.collect_v6_3x);
         Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
-        img_give.setBounds(0, 0, 300, 300);
-        img_take.setBounds(0, 0, 300, 300);
-        btn_give.setCompoundDrawables(null, null, img_give, null); btn_give.setCompoundDrawablePadding(10);
-        btn_take.setCompoundDrawables(null, null, img_take, null);
-        btn_ask.setCompoundDrawables(null, null, img_ask, null);*/
+        img_give.setBounds(0, 0, 90, 90);
+        img_take.setBounds(0, 0, 90, 90);
+        img_ask.setBounds(0, 0, 90, 90);
+        btn_share.setCompoundDrawables(null, null, img_give, null);
+            btn_share.setCompoundDrawablePadding(10);
+        btn_pick.setCompoundDrawables(null, null, img_take, null);
+        btn_ask.setCompoundDrawables(null, null, img_ask, null);
 
         //Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
         //Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
@@ -134,7 +138,7 @@ public class EntranceActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.ll_btn_pick_welcomeScreen:
+            case R.id.btn_pick_welcomeScreen:
                 Intent mapIntent = new Intent(this, MapAndListActivity.class);
                 startActivity(mapIntent);
                 break;
