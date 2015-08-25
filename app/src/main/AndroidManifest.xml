@@ -69,7 +69,7 @@
         <!-- Vitaly desktop: AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak" />
+            android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
 
         <!-- Alexander: Server API Key (authorization)-->
         <meta-data
