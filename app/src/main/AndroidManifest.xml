@@ -92,11 +92,13 @@
             android:screenOrientation="portrait" >
         </activity>
 
+<!--
         <activity
             android:name=".AllPublicationsActivity"
             android:label="@string/title_activity_all_publications"
             android:screenOrientation="portrait" >
          </activity>
+-->
 
         <provider
             android:name=".FooDoNetSQLProvider"

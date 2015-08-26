@@ -1,3 +1,4 @@
+/*
 package upp.foodonet;
 
 import android.content.ContentResolver;
@@ -97,3 +98,4 @@ public class AllPublicationsActivity
     private SimpleCursorAdapter adapter;
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallback;
 }
+*/

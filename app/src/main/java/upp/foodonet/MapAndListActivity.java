@@ -37,7 +37,7 @@ public class MapAndListActivity
     ViewPager mainPager;
     MainViewPagerAdapter mainPagerAdapter;
     ActionBarDrawerToggle mDrawerToggle;
-    MyPublicationsTabFragment myPublicationsTabFragment;
+    //MyPublicationsTabFragment myPublicationsTabFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
