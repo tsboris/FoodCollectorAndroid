@@ -139,13 +139,13 @@ public class EntranceActivity
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_pick_welcomeScreen:
-                Intent mapIntent = new Intent(this, MapAndListActivity.class);
-                startActivity(mapIntent);
+                Intent mapListIntent = new Intent(this, MapAndListActivity.class);
+                startActivity(mapListIntent);
                 break;
-          /*  case R.id.ll_btn_share_mainScreen:
-                Intent myPublicationList = new Intent(this, MyPublicationsListActivity.class);
-                startActivity(myPublicationList);
-                break;*/
+            case R.id.btn_share_welcomeScreen:
+                Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
+                startActivity(myPubsIntent);
+                break;
             /*case R.id.btn_entrance_ask:
                 Intent  = new Intent(this, MapAndListActivity.class);
                 startActivity();

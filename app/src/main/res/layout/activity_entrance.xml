@@ -22,7 +22,7 @@
         android:textSize="30sp"
         android:textColor="@color/basic_blue"
         android:drawingCacheQuality="high"
-        android:text="@string/pickup"
+        android:text="@string/publish"
         android:background="@color/transparent"
         android:layout_below="@+id/btn_pick_welcomeScreen"
         android:layout_centerHorizontal="true" />
@@ -33,7 +33,7 @@
         android:textSize="30sp"
         android:textColor="@color/basic_blue"
         android:drawingCacheQuality="high"
-        android:text="@string/publish"
+        android:text="@string/pickup"
         android:background="@color/transparent"
         android:layout_below="@+id/welcome"
         android:layout_alignLeft="@+id/btn_share_welcomeScreen"

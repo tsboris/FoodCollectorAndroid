@@ -55,7 +55,7 @@
 
                 <category android:name="upp.foodonet" />
 
-                <!--action android:name="com.google.android.c2dm.intent.REGISTRATION" /-->
+                <!-- action android:name="com.google.android.c2dm.intent.REGISTRATION" / -->
             </intent-filter>
         </receiver>
         <!--
@@ -71,12 +71,12 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
 
-        <!-- Alexander: Server API Key (authorization)-->
+        <!-- Alexander: Server API Key (authorization) -->
         <meta-data
             android:name="Server.API.Key"
             android:value="AIzaSyBG-UhoLKYq5O-wJPw_hLF6t3tyf7vIGjQ" />
 
-        <!-- Alexander: Server Sender ID (project number)-->
+        <!-- Alexander: Server Sender ID (project number) -->
         <meta-data
             android:name="Sender.ID"
             android:value="776321412578" />
@@ -92,13 +92,13 @@
             android:screenOrientation="portrait" >
         </activity>
 
-<!--
+        <!--
         <activity
             android:name=".AllPublicationsActivity"
             android:label="@string/title_activity_all_publications"
             android:screenOrientation="portrait" >
          </activity>
--->
+        -->
 
         <provider
             android:name=".FooDoNetSQLProvider"
@@ -125,7 +125,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".FooDoNetInstanceIDListenerService"
             android:exported="false" >
@@ -134,12 +133,16 @@
             </intent-filter>
         </service>
 
-<!--
+        <!--
         <activity
             android:name="CodeWeDontUse.MyPublicationsListActivity"
             android:label="@string/title_activity_my_publications_list" >
         </activity>
--->
+        -->
+        <activity
+            android:name=".MyPublicationsActivity"
+            android:label="@string/title_activity_my_publications" >
+        </activity>
     </application>
 
 </manifest>

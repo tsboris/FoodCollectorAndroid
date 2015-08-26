@@ -64,6 +64,31 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:orientation="horizontal">
+
+            <ToggleButton android:id="@+id/tgl_btn_take_maplst"
+                android:textOn="@string/pickup"
+                android:textOff="@string/pickup"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+
+            <ToggleButton android:id="@+id/tgl_btn_share_maplst"
+                android:textOn="@string/publish"
+                android:textOff="@string/publish"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
