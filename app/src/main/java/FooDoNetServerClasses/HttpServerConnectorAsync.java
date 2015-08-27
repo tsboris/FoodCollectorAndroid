@@ -95,8 +95,14 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     regedUsers.clear();
                     responseString = "";
                 }
+                if(publications.size()>0) {
+                    if(resultPublications == null)
+                        resultPublications = new ArrayList<>();
+                    resultPublications.addAll(publications);
+                }
                 return "";
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
+
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
@@ -108,6 +114,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 return "";
         }
     }
+
 
     @Override
     protected void onPostExecute(String s) {

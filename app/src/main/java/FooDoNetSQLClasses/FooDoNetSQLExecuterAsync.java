@@ -49,17 +49,21 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     return null;
                 Cursor cursor = contentResolver.query(FooDoNetSQLProvider.CONTENT_URI, FCPublication.GetColumnNamesArray(), null, null, null);
                 publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(cursor, false);
+                cursor.close();
+                cursor = null;
+                cursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_REGS, RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
+                ArrayList<RegisteredUserForPublication> regs = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cursor);
                 resultPublications = new ArrayList<FCPublication>();
 
                 for (FCPublication publicationFromServer : publicationsFromServer) {
                     resultPublications.add(publicationFromServer);
                     FCPublication pubFromDB = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
                     if (pubFromDB == null) {
-                        contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publicationFromServer.GetContentValuesRow());
+                        InsertPublicationToDB(contentResolver, publicationFromServer);
                     } else {
                         if (pubFromDB.getVersion() < publicationFromServer.getVersion()) {
-                            contentResolver.delete(Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + pubFromDB.getUniqueId()), null, null);
-                            contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publicationFromServer.GetContentValuesRow());
+                            DeletePublicationFromDB(contentResolver, pubFromDB);
+                            InsertPublicationToDB(contentResolver, publicationFromServer);
                         }
                         publicationsFromDB.remove(pubFromDB);
                     }
@@ -69,8 +73,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     if (publicationFromDB.getUniqueId() == 0) {
 
                     } else {
-                        contentResolver.delete(Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + publicationFromDB.getUniqueId()), null, null);
                         toRemoveFromDB.add(publicationFromDB.getUniqueId());
+                        DeletePublicationFromDB(contentResolver, publicationFromDB);
                     }
                 }
                 for (Integer i : toRemoveFromDB) {
@@ -80,16 +84,30 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
             case InternalRequest.ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC:
                 Cursor publicationsForListCursor
                         = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC,
-                                                FCPublication.GetColumnNamesForListArray(), null,null,null);
+                        FCPublication.GetColumnNamesForListArray(), null, null, null);
                 publicationsForList = FCPublication.GetArrayListOfPublicationsFromCursor(publicationsForListCursor, true);
                 break;
         }
         return null;
     }
 
+    private void InsertPublicationToDB(ContentResolver contentResolver, FCPublication publication){
+        contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publication.GetContentValuesRow());
+        for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+            contentResolver.insert(FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION, reg.GetContentValuesRow());
+    }
+
+    private void DeletePublicationFromDB(ContentResolver contentResolver, FCPublication publication){
+        for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+            contentResolver.delete(
+                    Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_FOR_PUBLICATION + "/" + reg.getId()), null, null);
+        contentResolver.delete(Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()), null, null);
+
+    }
+
     @Override
     protected void onPostExecute(Void aVoid) {
-        switch (incomingRequest.ActionCommand){
+        switch (incomingRequest.ActionCommand) {
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
                 callbackHandler.OnUpdateLocalDBComplete(resultPublications);
                 return;
