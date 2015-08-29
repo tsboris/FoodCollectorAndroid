@@ -6,8 +6,8 @@
     <color name="white">#FFFFFF</color>
 
 
-    <integer name="min_splash_screen_time">2</integer>
-    <integer name="fetch_data_scheduler_repeat_time">30</integer>
+    <integer name="min_splash_screen_time">10</integer>
+    <integer name="fetch_data_scheduler_repeat_time">10</integer>
 
     <!-- from Test Application -->
     <color name="white_a50">#ff00ff00</color>

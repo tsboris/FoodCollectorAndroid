@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
@@ -27,9 +28,11 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
     ArrayList<RegisteredUserForPublication> regUsersFromServer;
     ArrayList<RegisteredUserForPublication> regUsersFromDB;
     ArrayList<RegisteredUserForPublication> resultRegUsers;
+    FCPublication newPublicationForSaving;
     IFooDoNetSQLCallback callbackHandler;
     ContentResolver contentResolver;
     InternalRequest incomingRequest;
+    int newNegativeID;
 
     public FooDoNetSQLExecuterAsync(IFooDoNetSQLCallback callback, ContentResolver content) {
         //ArrayList<FCPublication> fromServer removed from parameters
@@ -56,8 +59,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 cursor = null;
                 cursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_REGS, RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
                 ArrayList<RegisteredUserForPublication> regs = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cursor);
+                cursor.close();
                 resultPublications = new ArrayList<FCPublication>();
-
                 for (FCPublication publicationFromServer : publicationsFromServer) {
                     resultPublications.add(publicationFromServer);
                     FCPublication pubFromDB = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
@@ -89,13 +92,33 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC,
                         FCPublication.GetColumnNamesForListArray(), null, null, null);
                 publicationsForList = FCPublication.GetArrayListOfPublicationsFromCursor(publicationsForListCursor, true);
+                publicationsForListCursor.close();
                 break;
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
                 if(params[0].publicationForSaving == null){
                     Log.e(MY_TAG, "got null publication for saving");
                     return null;
                 }
-                contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, params[0].publicationForSaving.GetContentValuesRow());
+                newPublicationForSaving = params[0].publicationForSaving;
+                if(params[0].publicationForSaving.getUniqueId() == 0){
+                    Cursor newNegativeIDCursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
+                            new String[] { FCPublication.PUBLICATION_NEW_NEGATIVE_ID }, null, null, null);
+                    if(newNegativeIDCursor.moveToFirst()){
+                        newNegativeID
+                                = newNegativeIDCursor.getInt(
+                                        newNegativeIDCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
+                        if(newNegativeID>0)
+                            newNegativeID = 0;
+                        newPublicationForSaving.setUniqueId(newNegativeID);
+                    } else {
+                        Log.e(MY_TAG, "cant get data from cursor, moveToFirst() == false");
+                    }
+                    newNegativeIDCursor.close();
+                }
+                Uri newRowURLForLog
+                        = contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, newPublicationForSaving.GetContentValuesRow());
+                Log.i(MY_TAG, "insert succeeded! id: " + newPublicationForSaving.getUniqueId()
+                                + "; new row url: " + newRowURLForLog );
                 break;
         }
         return null;
@@ -111,7 +134,9 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
         for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
             contentResolver.delete(
                     Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_FOR_PUBLICATION + "/" + reg.getId()), null, null);
-        contentResolver.delete(Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()), null, null);
+        Uri deleteUri = publication.getUniqueId() < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
+        int idToDelete = publication.getUniqueId() < 0 ? publication.getUniqueId() * -1 : publication.getUniqueId();
+        contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);
 
     }
 
@@ -123,8 +148,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, resultPublications));
                 break;
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
-                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, newPublicationForSaving));
                 break;
+/*  not needed
+            case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, newNegativeID));
+                break;
+*/
         }
     }
 }

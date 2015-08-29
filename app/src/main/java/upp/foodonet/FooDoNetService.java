@@ -4,10 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -22,6 +28,9 @@ public class FooDoNetService
         extends Service
         implements IFooDoNetServerCallback, IFooDoNetSQLCallback {
     IFooDoNetServiceCallback currentCallbackHandler;
+
+    public final static int ACTION_START = 1;
+    public final static int ACTION_WORK_DONE = 2;
 
     private final IBinder mBinder = new FooDoNetCustomServiceBinder();
 
@@ -46,6 +55,9 @@ public class FooDoNetService
 
     private final String MY_TAG = "food_SchedulerService";
     private String serverBaseUrl;
+
+    //Handler callbackHandler;
+    Messenger callbackMessenger;
 
     ArrayList<FCPublication> fetchedFromServer, loadedFromSQL;
 
@@ -74,21 +86,46 @@ public class FooDoNetService
         return 0;
     }
 
+    /**
+     * Handler of incoming messages from clients.
+     */
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case ACTION_START:
+                    callbackMessenger = msg.replyTo;
+                    //callbackHandler = msg.getTarget();
+                    StartScheduler();
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    /**
+     * Target we publish for clients to send messages to IncomingHandler.
+     */
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(MY_TAG, "service binded");
         isAnyoneConnected = true;
-        return mBinder;
+        return mMessenger.getBinder();
+        //return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(MY_TAG, "service unbinded");
         isAnyoneConnected = false;
+        onDestroy();
         return super.onUnbind(intent);
     }
 
-    private void DoNextTaskFromWorkPlan(){
+    private void DoNextTaskFromWorkPlan() {
+        if(!mustRun) return;
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]){
             case taskServer:
@@ -105,13 +142,20 @@ public class FooDoNetService
                 break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                currentCallbackHandler.LoadUpdatedListOfPublications(loadedFromSQL);
+                //currentCallbackHandler.LoadUpdatedListOfPublications(loadedFromSQL);
+                Message m = Message.obtain(null, ACTION_WORK_DONE, loadedFromSQL);
+                try {
+                    callbackMessenger.send(m);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                //callbackHandler.dispatchMessage(m);
                 currentIndexInWorkPlan = getNextIndex(currentIndexInWorkPlan, workPlan);
                 DoNextTaskFromWorkPlan();
                 return;
             case taskWaiter:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                waiter = new WaiterForScheduler();
+                waiter = new WaiterForScheduler(finishedSleepingHandler);
                 waiter.execute(secondsToWait);
                 break;
             default:
@@ -154,32 +198,60 @@ public class FooDoNetService
         }
     }
 
-    public void StartScheduler(IFooDoNetServiceCallback callback) {
-        currentCallbackHandler = callback;
+    public void StartScheduler(){//IFooDoNetServiceCallback callback) {
+        //currentCallbackHandler = callback;
         currentIndexInWorkPlan = 0;
         DoNextTaskFromWorkPlan();
         Log.i("food", "starting scheduler...");
     }
 
+    Handler finishedSleepingHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    DoNextTaskFromWorkPlan();
+                    break;
+                default:
+                    Log.e(MY_TAG, "Handler got unexpected msg.what");
+                    break;
+            }
+        }
+    };
+
     private class WaiterForScheduler extends AsyncTask<Integer, Void, Void>{
+
+        Handler callbackHandler;
+
+        public WaiterForScheduler(Handler handler){
+            callbackHandler = handler;
+        }
 
         @Override
         protected Void doInBackground(Integer... params) {
             if (params.length == 0 || params[0] <= 0)
                 throw new IllegalArgumentException("service scheduler got no time param");
-            try {
+            final int secsToSleep = params[0];
                 Log.i("food", "scheduler sleeps...");
-                Thread.sleep(params[0] * 1000, 0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TimeUnit.SECONDS.sleep(secsToSleep);
+                            callbackHandler.sendEmptyMessage(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             Log.i("food", "finished sleeping");
-            DoNextTaskFromWorkPlan();
+            //callbackHandler.sendEmptyMessage(0);
+            //DoNextTaskFromWorkPlan();
         }
     }
 }

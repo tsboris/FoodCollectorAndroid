@@ -40,6 +40,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
 
     public static final String PUBLICATION_NUMBER_OF_REGISTERED = "num_of_regs";
+    public static final String PUBLICATION_NEW_NEGATIVE_ID = "new_neg_id";
 
     public static final String DID_REGISTER_FOR_CURRENT_PUBLICATION = "did_Register_for_current_publication";
     public static final String DID_MODIFY_COORDS = "did_modify_coords";

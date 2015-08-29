@@ -13,7 +13,7 @@ import DataModel.RegisteredUserForPublication;
 public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
-    public static final int FC_DATABASE_VERSION = 5;
+    public static final int FC_DATABASE_VERSION = 6;
 
     public FooDoNetSQLHelper(Context context) {
         super(context, FC_DATABASE_NAME, null, FC_DATABASE_VERSION);
@@ -23,12 +23,14 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         FCPublicationsTable.onCreate(db);
         RegisteredForPublicationTable.onCreate(db);
+        PublicationReportsTable.onCreate(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         FCPublicationsTable.onUpgrade(db);
         RegisteredForPublicationTable.onUpgrade(db);
+        PublicationReportsTable.onUpgrade(db);
     }
 
     public static final String RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC
@@ -46,11 +48,18 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + "ON PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
             + " = REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
             + " GROUP BY "
+            + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_ADDRESS_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_PHOTO_URL
             + " ORDER BY PUBS." +FCPublication.PUBLICATION_UNIQUE_ID_KEY + " DESC";
+
+    public static final String RAW_SELECT_NEW_NEGATIVE_ID
+            = " SELECT " + FCPublication.PUBLICATION_UNIQUE_ID_KEY
+            + " - 1 AS " + FCPublication.PUBLICATION_NEW_NEGATIVE_ID
+            + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
+            + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " LIMIT 1";
 
 
 }

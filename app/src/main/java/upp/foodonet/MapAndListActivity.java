@@ -105,7 +105,8 @@ public class MapAndListActivity
 
     @Override
     public void OnNotifiedToFetchData() {
-
+        Toast.makeText(this, MY_TAG + " OnNotifiedToFetchData()", Toast.LENGTH_LONG);
+        Log.i(MY_TAG, "OnNotifiedToFetchData()");
     }
 
     @Override
