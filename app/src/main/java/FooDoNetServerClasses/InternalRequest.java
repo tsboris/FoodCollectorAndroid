@@ -21,6 +21,7 @@ public class InternalRequest {
     public static final int ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION = 3;
     public static final int ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC = 4;
     public static final int ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER = 5;
+    public static final int ACTION_SQL_SAVE_NEW_PUBLICATION = 6;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -29,6 +30,7 @@ public class InternalRequest {
     public String ServerSubPath;
     public JSONObject jsonObject;
     public JSONArray jsonArray;
+    public FCPublication publicationForSaving;
     public ArrayList<FCPublication> publications;
     public ArrayList<RegisteredUserForPublication> registeredUsers;
     public ICanWriteSelfToJSONWriter canWriteSelfToJSONWriterObject;
@@ -44,6 +46,16 @@ public class InternalRequest {
         ActionCommand = com;
         jsonArray = arr;
         ServerSubPath = sub_path;
+    }
+
+    public InternalRequest(int com, ArrayList<FCPublication> publications){
+        ActionCommand = com;
+        this.publications = publications;
+    }
+
+    public InternalRequest(int com, FCPublication newPublication){
+        ActionCommand = com;
+        this.canWriteSelfToJSONWriterObject = newPublication;
     }
 
 /*

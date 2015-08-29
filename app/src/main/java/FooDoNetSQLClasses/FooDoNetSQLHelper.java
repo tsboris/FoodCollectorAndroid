@@ -39,10 +39,11 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + "PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_PHOTO_URL + ", "
-            + "COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") " + FCPublication.PUBLICATION_NUMBER_OF_REGISTERED
-            + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS,"
-            + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME + " REGS "
-            + "WHERE PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
+            + "COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") "
+            + FCPublication.PUBLICATION_NUMBER_OF_REGISTERED
+            + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS "
+            + "LEFT JOIN " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME + " REGS "
+            + "ON PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
             + " = REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
             + " GROUP BY "
             + "PUBS." + FCPublication.PUBLICATION_ADDRESS_KEY + ", "

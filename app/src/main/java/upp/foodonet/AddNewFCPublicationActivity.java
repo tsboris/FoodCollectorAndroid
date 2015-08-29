@@ -56,8 +56,11 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private EditText mNameText;
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
-    private AutoCompleteTextView atv_address;
     private static final String MY_TAG = "food_newPublication";
+
+    public static final String RESULT_FCPUBLICATION_STRING_KEY = "resultPublication";
+
+    private AutoCompleteTextView atv_address;
     private TextView tv_title;
     private TextView mAddressTextView;
     private TextView mIdTextView;
@@ -218,11 +221,10 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
 //                // Date
 //                String fullDate = dateString + " " + timeString;
 
-                String title = mNameText.getText().toString();
-                // Package FCPublication data into an Intent
                 Intent data = new Intent();
-                //FCPublication.packageIntent(data, mNameText.getText().toString(), imageURI);
 
+                // FOR ARTEM - HERE YOU MUST PUT NEW PUBLICATION TO EXTRA
+                //data.putExtra(RESULT_FCPUBLICATION_STRING_KEY, publication);
 
                 // return data Intent and finish
                 setResult(RESULT_OK, data);

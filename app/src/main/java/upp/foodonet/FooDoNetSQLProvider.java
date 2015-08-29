@@ -103,7 +103,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.setTables(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown URI: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " +  uri);
         }
 
         SQLiteDatabase db = database.getWritableDatabase();

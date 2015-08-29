@@ -3,6 +3,8 @@ package upp.foodonet;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,12 +14,19 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
+import FooDoNetServerClasses.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener {
+        implements View.OnClickListener, IFooDoNetServerCallback, IFooDoNetSQLCallback {
+
+    private static final String MY_TAG = "food_myPublications";
 
     Button btn_add_new_publication;
     ToggleButton tgl_btn_navigate_share;
@@ -87,6 +96,34 @@ public class MyPublicationsActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data == null || resultCode != RESULT_OK) {
+            Log.e(MY_TAG,
+                    "got bad result from addNew: resultCode = " + requestCode
+                            + ", data = " + data == null ? "null":"obj");
+            return;
+        }
+        FCPublication newPublication
+                = (FCPublication)data.getSerializableExtra(
+                        AddNewFCPublicationActivity.RESULT_FCPUBLICATION_STRING_KEY);
+        if(newPublication == null){
+            Log.e(MY_TAG, "got null publication");
+            return;
+        }
+        FooDoNetSQLExecuterAsync sqlSaveTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+
+
+        String serverBaseUrl = getResources().getString(R.string.server_base_url);
+        if(TextUtils.isEmpty(serverBaseUrl)) {
+            Log.e(MY_TAG, "got empty string server_base_url");
+        } else {
+            HttpServerConnectorAsync saveNewPubTask = new HttpServerConnectorAsync(serverBaseUrl, this);
+            saveNewPubTask.execute(
+                    new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication));
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_add_new_myPubsLst:
@@ -103,5 +140,15 @@ public class MyPublicationsActivity
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+
     }
 }

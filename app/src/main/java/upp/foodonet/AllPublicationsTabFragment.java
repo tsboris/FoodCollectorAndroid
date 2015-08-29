@@ -91,9 +91,11 @@ public class AllPublicationsTabFragment
         startActivityForResult(intent, 0);
     }
 
+    // NOT SURE IF THIS WILL BE USED - maybe there will be result after openin existing pub
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     /*

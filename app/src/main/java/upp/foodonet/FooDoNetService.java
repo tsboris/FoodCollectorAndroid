@@ -132,15 +132,14 @@ public class FooDoNetService
     }
 
     @Override
-    public void OnUpdateLocalDBComplete(ArrayList<FCPublication> publications) {
+    public void OnSQLTaskComplete(InternalRequest request) {
+        if(request.ActionCommand != InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER){
+            Log.e(MY_TAG,"Unexpected action code!!");
+            return;
+        }
         Log.i(MY_TAG, "finished task sql");
-        loadedFromSQL = publications;
+        loadedFromSQL = request.publications;
         DoNextTaskFromWorkPlan();
-    }
-
-    @Override
-    public void OnGetPublicationForListCompleted(ArrayList<FCPublication> publicationsForList) {
-        Log.e(MY_TAG, "Unexpected callback!");
     }
 
     public class FooDoNetCustomServiceBinder extends Binder implements IFooDoNetCustomServiceBinder {

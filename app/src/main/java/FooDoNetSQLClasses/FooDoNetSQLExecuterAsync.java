@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ import upp.foodonet.FooDoNetSQLProvider;
  * Created by Asher on 24-Jul-15.
  */
 public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, Void> {
+
+    private static final String MY_TAG = "food_sqlAsyncTask";
 
     ArrayList<FCPublication> publicationsFromServer;
     ArrayList<FCPublication> publicationsFromDB;
@@ -87,6 +90,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         FCPublication.GetColumnNamesForListArray(), null, null, null);
                 publicationsForList = FCPublication.GetArrayListOfPublicationsFromCursor(publicationsForListCursor, true);
                 break;
+            case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
+                if(params[0].publicationForSaving == null){
+                    Log.e(MY_TAG, "got null publication for saving");
+                    return null;
+                }
+                contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, params[0].publicationForSaving.GetContentValuesRow());
+                break;
         }
         return null;
     }
@@ -109,10 +119,12 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
     protected void onPostExecute(Void aVoid) {
         switch (incomingRequest.ActionCommand) {
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
-                callbackHandler.OnUpdateLocalDBComplete(resultPublications);
-                return;
             case InternalRequest.ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC:
-
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, resultPublications));
+                break;
+            case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
+                break;
         }
     }
 }
