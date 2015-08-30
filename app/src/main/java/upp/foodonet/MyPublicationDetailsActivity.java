@@ -49,13 +49,13 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         postAddressTextView =            (TextView) findViewById(R.id.post_address);
         publicationDescriptionTextView = (TextView) findViewById(R.id.publication_description);
 
-        interestedPersonsCountTextView.setText(R.string.going_to_collect + "  "
+        interestedPersonsCountTextView.setText(getString(R.string.going_to_collect) + "  "
                 + Integer.toString(publication.getRegisteredForThisPublication().size()));
         postAddressTextView.setText(publication.getAddress());
         publicationDescriptionTextView.setText(publication.getSubtitle());
 
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
-        cancelPublicationButton.setText(R.string.cancel_publication);
+        cancelPublicationButton.setText(getString(R.string.cancel_publication));
 
         // Show Alert
         cancelPublicationButton.setOnClickListener(new View.OnClickListener() {
