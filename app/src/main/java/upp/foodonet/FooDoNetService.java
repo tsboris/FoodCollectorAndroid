@@ -132,13 +132,18 @@ public class FooDoNetService
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
                 connecterToServer.execute( new InternalRequest[]{
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, getResources().getString(R.string.server_get_publications_path)),
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION, getResources().getString(R.string.server_get_registered_for_publications))});
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                                getResources().getString(R.string.server_get_publications_path)),
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION,
+                                getResources().getString(R.string.server_get_registered_for_publications)),
+                        new InternalRequest(InternalRequest.ACTION_GET_PUBLICATION_REPORTS,
+                                getResources().getString(R.string.server_get_publication_report))});
                 break;
             case taskSQL:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 sqlExecuter = new FooDoNetSQLExecuterAsync( this, getContentResolver());//fetchedFromServer,
-                sqlExecuter.execute(new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
+                sqlExecuter.execute(
+                        new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
                 break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);

@@ -40,8 +40,6 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         Intent intent = new Intent(context, FooDoNetInstanceIDListenerService.class);
         intent.setAction(ACTION_REGISTER_TO_GCM);
         parentForCallback = (IFooDoNetServerCallback)context;
-        //intent.putExtra(EXTRA_PARAM1, param1);
-        //intent.putExtra(EXTRA_PARAM2, param2);
         context.startService(intent);
     }
 
@@ -58,7 +56,8 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
                     RegisterToGCM();
                     break;
                 default:
-                    throw new UnsupportedOperationException("Not yet implemented, code: " + action);
+                    return;
+                    //throw new UnsupportedOperationException("Not yet implemented, code: " + action);
             }
         }
     }

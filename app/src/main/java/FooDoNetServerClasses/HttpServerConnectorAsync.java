@@ -34,6 +34,7 @@ import java.util.Calendar;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -81,6 +82,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 responseString = "";
                 ArrayList<RegisteredUserForPublication> regedUsers = new ArrayList<>();
+                ArrayList<PublicationReport> pubReports = new ArrayList<>();
                 for (FCPublication pub : publications) {
                     MakeServerRequest(REQUEST_METHOD_GET,
                             params[1].ServerSubPath.replace("{0}",
@@ -91,11 +93,27 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                                         new JSONArray(responseString));
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    } finally {
+                        responseString = "";
+                    }
+                    MakeServerRequest(REQUEST_METHOD_GET,
+                            params[2].ServerSubPath.replace("{0}",
+                                    String.valueOf(pub.getUniqueId())), null, true);
+                    try {
+                        pubReports = PublicationReport.
+                                GetArrayListOfPublicationReportsFromJSON(
+                                        new JSONArray(responseString));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                     if (regedUsers.size() > 0) {
                         pub.setRegisteredForThisPublication(regedUsers);
                     }
+                    if (pubReports.size() > 0) {
+                        pub.setPublicationReports(pubReports);
+                    }
                     regedUsers.clear();
+                    pubReports.clear();
                     responseString = "";
                 }
                 if (publications.size() > 0) {
@@ -147,17 +165,13 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(15000);
-            //connection.setRequestMethod(requestMethod);
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod(requestMethod);
+            //connection.setRequestMethod("GET");
             switch (requestMethod) {
                 case REQUEST_METHOD_GET:
-                    //connection.setRequestProperty("Content-length", "0");
+                    connection.setRequestProperty("Content-length", "0");
                     connection.setUseCaches(false);
                     connection.setAllowUserInteraction(false);
-                    if (writableObject != null) {
-                        //connection.setDoInput(true);
-                        connection.setDoOutput(true);
-                    }
                     break;
                 case REQUEST_METHOD_POST:
                     connection.setDoInput(true);
@@ -168,8 +182,9 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 OutputStream outputStream = connection.getOutputStream();
                 JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 writableObject.WriteSelfToJSONWriter(writer);
-                writer.flush();
+                //writer.flush();
                 writer.close();
+                outputStream.flush();
                 outputStream.close();
 /*                //
 

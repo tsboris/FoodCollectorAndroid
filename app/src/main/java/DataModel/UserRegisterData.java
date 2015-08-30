@@ -68,7 +68,7 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
             writer.name(USER_DATA_PUSH_TOKEN).value(get_Push_Token());
             writer.name(USER_DATA_LATITUDE).value(get_Latitude());
             writer.name(USER_DATA_LONGITUDE).value(get_Longitude());
-            writer.name(USER_DATA_IS_IOS).value(get_Is_IOS());
+            writer.name(USER_DATA_IS_IOS).value(Boolean.toString(get_Is_IOS()));
             writer.endObject();
         } catch (IOException e) {
             Log.e(MY_TAG, e.toString());

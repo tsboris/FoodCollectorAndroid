@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServerClasses.InternalRequest;
 import upp.foodonet.FooDoNetSQLProvider;
@@ -128,12 +129,18 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
         contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publication.GetContentValuesRow());
         for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
             contentResolver.insert(FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION, reg.GetContentValuesRow());
+        for(PublicationReport pr : publication.getPublicationReports()){
+            contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, pr.GetContentValuesRow());
+        }
     }
 
     private void DeletePublicationFromDB(ContentResolver contentResolver, FCPublication publication){
         for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
             contentResolver.delete(
                     Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_FOR_PUBLICATION + "/" + reg.getId()), null, null);
+        for(PublicationReport pr : publication.getPublicationReports())
+            contentResolver.delete(
+                    Uri.parse(FooDoNetSQLProvider.URI_GET_ALL_REPORTS + "/" + pr.getId()), null, null);
         Uri deleteUri = publication.getUniqueId() < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
         int idToDelete = publication.getUniqueId() < 0 ? publication.getUniqueId() * -1 : publication.getUniqueId();
         contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);

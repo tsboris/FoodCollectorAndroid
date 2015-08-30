@@ -27,6 +27,7 @@ public class InternalRequest {
     public static final int ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER = 5;
     public static final int ACTION_SQL_SAVE_NEW_PUBLICATION = 6;
     public static final int ACTION_SQL_GET_NEW_NEGATIVE_ID = 7;
+    public static final int ACTION_GET_PUBLICATION_REPORTS = 8;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;

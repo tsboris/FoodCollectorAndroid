@@ -298,6 +298,20 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return registeredForThisPublication;
     }
 
+    private ArrayList<PublicationReport> publicationReports;
+
+    public void setPublicationReports(ArrayList<PublicationReport> reports){
+        if(publicationReports == null)
+            publicationReports = new ArrayList<>();
+        publicationReports.addAll(reports);
+    }
+
+    public ArrayList<PublicationReport> getPublicationReports(){
+        if(publicationReports == null)
+            publicationReports = new ArrayList<>();
+        return publicationReports;
+    }
+
     public static String[] GetColumnNamesArray() {
         return
                 new String[]{

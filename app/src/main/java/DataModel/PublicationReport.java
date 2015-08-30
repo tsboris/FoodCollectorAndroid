@@ -1,8 +1,16 @@
 package DataModel;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.util.JsonWriter;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -10,7 +18,10 @@ import java.util.Date;
  */
 public class PublicationReport implements Serializable, ICanWriteSelfToJSONWriter {
 
+    private static final String MY_TAG = "food_PublicationReport";
+
     public static final String PUBLICATION_REPORT_FIELD_KEY_ID = "_id";
+    public static final String PUBLICATION_REPORT_FIELD_KEY_ID_SERVER = "id";
     public static final String PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID = "publication_unique_id";
     public static final String PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION = "publication_version";
     public static final String PUBLICATION_REPORT_FIELD_KEY_REPORT = "report";
@@ -25,6 +36,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         setDate_reported(date);
         setDevice_uuid(dev_UID);
     }
+
+    public PublicationReport(){}
 
     private int id;
     public int getId(){
@@ -86,7 +99,68 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
                 };
     }
 
-    //todo: continue
+    public static ArrayList<PublicationReport> GetArrayListOfPublicationReportsFromCursor(Cursor cursor) {
+        ArrayList<PublicationReport> result = new ArrayList<PublicationReport>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                PublicationReport pr = new PublicationReport();
+                pr.setId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_ID)));
+                pr.setPublication_id(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID)));
+                pr.setPublication_version(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION)));
+                pr.setDate_reported(cursor.getLong(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DATE)));
+                pr.setDevice_uuid(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID)));
+                pr.setReport(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT)));
+                result.add(pr);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public static ArrayList<PublicationReport> GetArrayListOfPublicationReportsFromJSON(JSONArray ja) {
+        ArrayList<PublicationReport> result = new ArrayList<PublicationReport>();
+        for (int i = 0; i < ja.length(); i++) {
+            try {
+                Log.i(MY_TAG, ja.getJSONObject(i).toString());
+                result.add(ParseSinglePublicationReportFromJSON(ja.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public static PublicationReport ParseSinglePublicationReportFromJSON(JSONObject jo) {
+        if (jo == null) return null;
+        PublicationReport pr = new PublicationReport();
+        try {
+            pr.setId(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_ID_SERVER));
+            pr.setPublication_id(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID));
+            pr.setPublication_version(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION));
+            pr.setDate_reported(jo.getLong(PUBLICATION_REPORT_FIELD_KEY_DATE));
+            pr.setDevice_uuid(jo.getString(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID));
+            pr.setReport(jo.getString(PUBLICATION_REPORT_FIELD_KEY_REPORT));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(MY_TAG, e.getMessage());
+            return null;
+        }
+        return pr;
+    }
+
+    public ContentValues GetContentValuesRow() {
+        ContentValues cv = new ContentValues();
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_ID, getId());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID, getPublication_id());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION, getPublication_version());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_DATE, getDate_reported_unix_time());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID, getDevice_uuid());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_REPORT, getReport());
+        return cv;
+    }
+
+
 
     @Override
     public void WriteSelfToJSONWriter(JsonWriter writer) {
