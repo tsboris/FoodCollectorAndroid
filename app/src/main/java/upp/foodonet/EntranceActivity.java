@@ -1,28 +1,19 @@
 package upp.foodonet;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.text.Bidi;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import DataModel.FCPublication;
+import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -36,6 +27,8 @@ public class EntranceActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
+
+        startMyPublicationDetailsActivity();
 
         // Why do we need this?
         //TextView welcomeView = (TextView) findViewById(R.id.welcome);
@@ -87,6 +80,32 @@ public class EntranceActivity
 
 
 
+    }
+
+    private void startMyPublicationDetailsActivity()
+    {
+        FCPublication samplePub = new FCPublication();
+        samplePub.setTitle("pomodori");
+        samplePub.setSubtitle("pomodori in boxes a 3 kg");
+        samplePub.setPhotoUrl("");
+        samplePub.setAddress("Ramat Gan, HaRoeh 257");
+
+        ArrayList<RegisteredUserForPublication> regUsers = new ArrayList<RegisteredUserForPublication>();
+        RegisteredUserForPublication u1 = new RegisteredUserForPublication();
+        u1.setId(11111);
+        regUsers.add(u1);
+        RegisteredUserForPublication u2 = new RegisteredUserForPublication();
+        u2.setId(2222);
+        regUsers.add(u2);
+        RegisteredUserForPublication u3 = new RegisteredUserForPublication();
+        u1.setId(3333);
+        regUsers.add(u3);
+        samplePub.setRegisteredForThisPublication(regUsers);
+
+        Intent intent = new Intent(this, MyPublicationDetailsActivity.class);
+        intent.putExtra(MyPublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
+
+        startActivity(intent);
     }
 
     @Override

@@ -21,6 +21,8 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
 {
+    public static final String PUBLICATION_PARAM = "publication";
+
     private final String MY_TAG = "MyPublicationDetailsActivity";
 
     //region Activity
