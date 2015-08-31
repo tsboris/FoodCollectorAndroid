@@ -1,56 +1,61 @@
 package upp.foodonet;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
-import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
-import FooDoNetSQLClasses.IFooDoNetSQLCallback;
-import FooDoNetServerClasses.HttpServerConnectorAsync;
-import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, IFooDoNetServerCallback, IFooDoNetSQLCallback {
-
-    private static final String MY_TAG = "food_myPublications";
-
-    Button btn_add_new_publication;
-    ToggleButton tgl_btn_navigate_share;
-    ToggleButton tgl_btn_navigate_take;
+        implements View.OnClickListener {
+    SearchView src_all_pub_listView;
+    Button btn_add_new_publication ,btn_navigate_share ,btn_navigate_take,btn_active_pub,btn_not_avtive_pub,btn_ending_pub;
+/*    ToggleButton tgl_btn_navigate_share;
+      ToggleButton tgl_btn_navigate_take;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_publications);
 
+        src_all_pub_listView = (SearchView)findViewById(R.id.searchView1);
+        btn_ending_pub = (Button)findViewById(R.id.btn_publication_active);
+        btn_not_avtive_pub = (Button)findViewById(R.id.btn_publication_notActive);
+        btn_active_pub = (Button)findViewById(R.id.btn_publication_active);
         btn_add_new_publication = (Button)findViewById(R.id.btn_add_new_myPubsLst);
         btn_add_new_publication.setOnClickListener(this);
-        tgl_btn_navigate_share = (ToggleButton)findViewById(R.id.tgl_btn_share_mypubs);
-        tgl_btn_navigate_take = (ToggleButton)findViewById(R.id.tgl_btn_take_mypubs);
+        btn_navigate_share = (Button)findViewById(R.id.btn_share_mypubs);
+        btn_navigate_take = (Button)findViewById(R.id.btn_take_mypubs);
         //tgl_btn_navigate_share.setOnClickListener(this);
-        tgl_btn_navigate_take.setOnClickListener(this);
+        btn_navigate_take.setOnClickListener(this);
+
+        Drawable navigate_share = getResources().getDrawable( R.drawable.donate_v6_30x30 );
+        Drawable navigate_take = getResources().getDrawable( R.drawable.collect_v6_30x30);
+        navigate_share.setBounds(0, 0, 30, 30);
+        navigate_take.setBounds(0, 0, 30, 30);
+        btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
+        btn_navigate_share.setCompoundDrawablePadding(10);
+        btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        tgl_btn_navigate_take.setChecked(false);
-        tgl_btn_navigate_take.setEnabled(true);
-        tgl_btn_navigate_share.setEnabled(false);
+        // btn_navigate_take.setChecked(false);
+        btn_navigate_take.setEnabled(true);
+        btn_navigate_share.setEnabled(false);
     }
 
     @Override
@@ -96,34 +101,6 @@ public class MyPublicationsActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data == null || resultCode != RESULT_OK) {
-            Log.e(MY_TAG,
-                    "got bad result from addNew: resultCode = " + requestCode
-                            + ", data = " + data == null ? "null":"obj");
-            return;
-        }
-        FCPublication newPublication
-                = (FCPublication)data.getSerializableExtra(
-                        AddNewFCPublicationActivity.RESULT_FCPUBLICATION_STRING_KEY);
-        if(newPublication == null){
-            Log.e(MY_TAG, "got null publication");
-            return;
-        }
-        FooDoNetSQLExecuterAsync sqlSaveTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-
-
-        String serverBaseUrl = getResources().getString(R.string.server_base_url);
-        if(TextUtils.isEmpty(serverBaseUrl)) {
-            Log.e(MY_TAG, "got empty string server_base_url");
-        } else {
-            HttpServerConnectorAsync saveNewPubTask = new HttpServerConnectorAsync(serverBaseUrl, this);
-            saveNewPubTask.execute(
-                    new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication));
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_add_new_myPubsLst:
@@ -132,7 +109,7 @@ public class MyPublicationsActivity
                 break;
             //case R.id.tgl_btn_share_mypubs:
             //    break;
-            case R.id.tgl_btn_take_mypubs:
+            case R.id.btn_take_mypubs:
                 Intent intent = new Intent(this, MapAndListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -140,15 +117,5 @@ public class MyPublicationsActivity
                 startActivity(intent);
                 break;
         }
-    }
-
-    @Override
-    public void OnServerRespondedCallback(InternalRequest response) {
-
-    }
-
-    @Override
-    public void OnSQLTaskComplete(InternalRequest request) {
-
     }
 }

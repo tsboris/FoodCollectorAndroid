@@ -1,48 +1,107 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="upp.foodonet.MyPublicationsActivity">
 
-    <ListView android:id="@+id/lst_my_publications_list"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="70dp"
+        android:text="@string/title_my_publications"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@color/basic_blue"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/btn_add_new_myPubsLst" />
 
     <Button android:id="@+id/btn_add_new_myPubsLst"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
-        android:drawableBottom="@drawable/ic_plusone_medium_off_client"/>
-
+        android:text="+"
+        android:textSize="35sp"
+        android:textColor="@color/white"
+        android:background="@color/basic_blue"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_below="@+id/textView"
+        android:id="@+id/linearLayout">
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_ending"
+            android:id="@+id/btn_publicatin_ending"
+            android:textColor="@color/basic_blue"
+            android:layout_below="@+id/textView"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/textView"
+            android:background="@color/transparent"
+            android:layout_weight="1" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_not_active"
+            android:id="@+id/btn_publication_notActive"
+            android:textColor="@color/basic_blue"
+            android:background="@color/transparent"
+            android:layout_below="@+id/textView"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button"
+            android:layout_weight="1" />
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_active"
+            android:id="@+id/btn_publication_active"
+            android:textColor="@color/basic_blue"
+            android:background="@color/transparent"
+            android:layout_below="@+id/textView"
+            android:layout_toRightOf="@+id/button2"
+            android:layout_toEndOf="@+id/button2"
+            android:layout_weight="1" />
+    </LinearLayout>
+    <SearchView
+        android:id="@+id/searchView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:searchIcon="@android:drawable/ic_search_category_default"
+        android:layout_below="@+id/linearLayout"
+        tools:ignore="UnusedAttribute" />
+    <ListView android:id="@+id/lst_my_publications_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchView1" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:orientation="horizontal">
-
-        <ToggleButton android:id="@+id/tgl_btn_take_mypubs"
-            android:textOn="@string/pickup"
-            android:textOff="@string/pickup"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@+id/lst_my_publications_list"
+        android:layout_alignLeft="@+id/lst_my_publications_list"
+        android:layout_alignStart="@+id/lst_my_publications_list">
+        <Button
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="60dp" />
-
-        <ToggleButton android:id="@+id/tgl_btn_share_mypubs"
-            android:textOn="@string/publish"
-            android:textOff="@string/publish"
+            android:layout_height="match_parent"
+            android:text="@string/pickup_btn"
+            android:id="@+id/btn_take_mypubs"
+            android:textSize="10sp"
+            android:layout_weight="1" />
+        <Button
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="60dp" />
-
+            android:layout_height="match_parent"
+            android:text="@string/share_btn"
+            android:textSize="10sp"
+            android:id="@+id/btn_share_mypubs"
+            android:layout_weight="1" />
     </LinearLayout>
-
 </RelativeLayout>
