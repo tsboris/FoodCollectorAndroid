@@ -40,7 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/publication_ending"
-            android:id="@+id/btn_publicatin_ending"
+            android:id="@+id/btn_publication_ending"
             android:textColor="@color/basic_blue"
             android:layout_below="@+id/textView"
             android:layout_alignLeft="@+id/textView"

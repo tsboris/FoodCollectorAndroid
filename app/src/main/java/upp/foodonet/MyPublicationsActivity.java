@@ -31,7 +31,7 @@ public class MyPublicationsActivity
         setContentView(R.layout.activity_my_publications);
 
         src_all_pub_listView = (SearchView)findViewById(R.id.searchView1);
-        btn_ending_pub = (Button)findViewById(R.id.btn_publication_active);
+        btn_ending_pub = (Button)findViewById(R.id.btn_publication_ending);
         btn_not_avtive_pub = (Button)findViewById(R.id.btn_publication_notActive);
         btn_active_pub = (Button)findViewById(R.id.btn_publication_active);
         btn_add_new_publication = (Button)findViewById(R.id.btn_add_new_myPubsLst);
