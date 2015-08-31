@@ -5,15 +5,21 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
@@ -22,8 +28,10 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
 {
     public static final String PUBLICATION_PARAM = "publication";
+    private static final int PHOTO_RADIUS = 15;
 
     private final String MY_TAG = "MyPublicationDetailsActivity";
+
 
     //region Activity
     @Override
@@ -54,6 +62,8 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         postAddressTextView.setText(publication.getAddress());
         publicationDescriptionTextView.setText(publication.getSubtitle());
 
+        LoadPhoto(this.publication.getPhotoUrl());
+
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
         cancelPublicationButton.setText(getString(R.string.cancel_publication));
 
@@ -63,6 +73,35 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),
                         MY_TAG + " cancelPublicationButton  clicked!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void LoadPhoto(String photoUrlString)
+    {
+        if (photoUrlString==null || photoUrlString.isEmpty()){
+            Log.i(MY_TAG, "photo url was null or empty");
+            return;
+        }
+
+        URL url = null;
+        try {
+            url = new URL(photoUrlString);
+            photoBmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            Bitmap roundBmp = RoundedImageView.getRoundedCroppedBitmap(photoBmp, PHOTO_RADIUS);
+            photoButton = (ImageButton)findViewById(R.id.photoButton);
+            photoButton.setImageBitmap(roundBmp);
+        } catch (MalformedURLException e) {
+            Log.e(MY_TAG, "malformed photo url: " + e.getMessage());
+        } catch (IOException e) {
+            Log.e(MY_TAG, "error opening internet connection to photo url: " + e.getMessage());
+        }
+
+        photoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " photo clicked!", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -120,4 +159,6 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     private TextView publicationDescriptionTextView;
     private Button cancelPublicationButton;
 
+    private ImageButton photoButton;
+    private Bitmap photoBmp;
 }

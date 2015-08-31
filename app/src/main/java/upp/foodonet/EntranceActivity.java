@@ -87,7 +87,7 @@ public class EntranceActivity
         FCPublication samplePub = new FCPublication();
         samplePub.setTitle("pomodori");
         samplePub.setSubtitle("pomodori in boxes a 3 kg");
-        samplePub.setPhotoUrl("");
+        samplePub.setPhotoUrl("http://static.adzerk.net/Advertisers/90bd75b000054d73ad21a6f72a11fc14.jpg");
         samplePub.setAddress("Ramat Gan, HaRoeh 257");
 
         ArrayList<RegisteredUserForPublication> regUsers = new ArrayList<RegisteredUserForPublication>();
