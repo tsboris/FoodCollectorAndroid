@@ -23,14 +23,17 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import FooDoNetServerClasses.DownloadImageTask;
+import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
+    implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
     private static final int PHOTO_RADIUS = 15;
 
-    private final String MY_TAG = "MyPublicationDetailsActivity";
+    private static final String MY_TAG = "MyPublicationDetailsActivity";
 
 
     //region Activity
@@ -84,6 +87,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             return;
         }
 
+        /*
         URL url = null;
         try {
             url = new URL(photoUrlString);
@@ -97,6 +101,24 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             Log.e(MY_TAG, "error opening internet connection to photo url: " + e.getMessage());
         }
 
+        photoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " photo clicked!", Toast.LENGTH_LONG).show();
+            }
+        });
+        */
+
+        new DownloadImageTask(this).execute(photoUrlString);
+    }
+
+    @Override
+    public void OnImageDownloaded(Bitmap result) {
+        this.photoBmp = result;
+        Bitmap roundBmp = RoundedImageView.getRoundedCroppedBitmap(photoBmp, PHOTO_RADIUS);
+        photoButton = (ImageButton)findViewById(R.id.photoButton);
+        photoButton.setImageBitmap(roundBmp);
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,4 +183,5 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
     private ImageButton photoButton;
     private Bitmap photoBmp;
+
 }
