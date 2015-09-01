@@ -31,7 +31,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
-    private static final int PHOTO_RADIUS = 15;
+    private static final int PHOTO_RADIUS = 150;
 
     private static final String MY_TAG = "MyPublicationDetailsActivity";
 
@@ -107,8 +107,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
                 Toast.makeText(getApplicationContext(),
                         MY_TAG + " photo clicked!", Toast.LENGTH_LONG).show();
             }
-        });
-        */
+        }); */
 
         new DownloadImageTask(this).execute(photoUrlString);
     }
