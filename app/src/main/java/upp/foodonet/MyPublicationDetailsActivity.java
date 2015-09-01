@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
+import DataModel.RegisteredUserForPublication;
 import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
@@ -31,7 +34,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
-    private static final int PHOTO_RADIUS = 150;
+    private static final int PHOTO_RADIUS = 200;
 
     private static final String MY_TAG = "MyPublicationDetailsActivity";
 
@@ -56,21 +59,18 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             subtitleTextView.setText(publication.getTitle());
         }
 
-        interestedPersonsCountTextView = (TextView) findViewById(R.id.interested_persons_count);
         postAddressTextView =            (TextView) findViewById(R.id.post_address);
         publicationDescriptionTextView = (TextView) findViewById(R.id.publication_description);
 
-        interestedPersonsCountTextView.setText(getString(R.string.going_to_collect) + "  "
-                + Integer.toString(publication.getRegisteredForThisPublication().size()));
         postAddressTextView.setText(publication.getAddress());
         publicationDescriptionTextView.setText(publication.getSubtitle());
 
         LoadPhoto(this.publication.getPhotoUrl());
 
+        showInterestedsList();
+
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
         cancelPublicationButton.setText(getString(R.string.cancel_publication));
-
-        // Show Alert
         cancelPublicationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +78,31 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
                         MY_TAG + " cancelPublicationButton  clicked!", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void showInterestedsList() {
+        interestedPersonsCountTextView = (TextView) findViewById(R.id.interested_persons_count);
+        interestedPersonsCountTextView.setText(getString(R.string.going_to_collect) + "  "
+                + Integer.toString(publication.getRegisteredForThisPublication().size()));
+
+        interestedsListView = (ListView)findViewById(R.id.lst_interested_persons_list);
+        ArrayList<String> interestedPersonsInfoList = mapRegisteredPersonsToStringArray(
+                publication.getRegisteredForThisPublication()
+        );
+        interestedsAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                interestedPersonsInfoList);
+        interestedsListView.setAdapter(interestedsAdapter);
+    }
+
+    private ArrayList<String> mapRegisteredPersonsToStringArray(ArrayList<RegisteredUserForPublication> arg)
+    {
+        ArrayList<String> l = new ArrayList<String>();
+        for (RegisteredUserForPublication u: arg) {
+            l.add( Integer.toString( u.getId()) );
+        }
+        return l;
     }
 
     private void LoadPhoto(String photoUrlString)
@@ -178,6 +203,8 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     private TextView interestedPersonsCountTextView;
     private TextView postAddressTextView;
     private TextView publicationDescriptionTextView;
+    private ListView interestedsListView;
+    private ArrayAdapter<String> interestedsAdapter;
     private Button cancelPublicationButton;
 
     private ImageButton photoButton;
