@@ -3,27 +3,25 @@ package upp.foodonet;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-//import Adapters.FCPublicationListAdapter;
-import java.util.List;
-
 import DataModel.FCPublication;
 
-
-public class MyPublicationsTabFragment
+/**
+ * Created by Asher on 26.08.2015.
+ */
+public class AllPublicationsTabFragment
         extends android.support.v4.app.Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        View.OnClickListener{
+        View.OnClickListener {
 
     private static final int ADD_TODO_ITEM_REQUEST = 0;
     //FCPublicationListAdapter mAdapter;
@@ -36,21 +34,25 @@ public class MyPublicationsTabFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+/*
+        Intent allPubIntent = new Intent(context, AllPublicationsActivity.class);
+        startActivity(allPubIntent);
+*/
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_my_publications_tab, container, false);
+        View view = inflater.inflate(R.layout.fragment_all_publications_activity, container, false);
 
-        lv_my_publications = (ListView)view.findViewById(R.id.lv_all_active_publications);
+        lv_my_publications = (ListView) view.findViewById(R.id.lv_all_active_publications);
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
-        String[] from = new String[] {FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_SUBTITLE_KEY};
-        int[] to = new int[] {R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
+        int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
 
         getLoaderManager().initLoader(0, null, this);
         adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
                 to, 0);
         lv_my_publications.setAdapter(adapter);
+
 /*
         adapter = new ListOfEventsAdapter(itemsList, context);
         lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);
@@ -59,18 +61,17 @@ public class MyPublicationsTabFragment
         return view;
     }
 
-    public void SetContext(Context context){
+    public void SetContext(Context context) {
         this.context = context;
     }
 
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(context == null) return null;
-        String[] projection = FCPublication.GetColumnNamesArray();
+        if (context == null) return null;
+        String[] projection = FCPublication.GetColumnNamesForListArray();
         android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
+                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC, projection, null, null, null);
         return cursorLoader;
     }
 
@@ -90,9 +91,11 @@ public class MyPublicationsTabFragment
         startActivityForResult(intent, 0);
     }
 
+    // NOT SURE IF THIS WILL BE USED - maybe there will be result after openin existing pub
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     /*

@@ -1,5 +1,7 @@
 package FooDoNetServerClasses;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,10 +17,17 @@ import DataModel.UserRegisterData;
  */
 public class InternalRequest {
 
+    private static final String MY_TAG = "food_internalRequest";
+
     public static final int ACTION_GET_ALL_PUBLICATIONS = 0;
     public static final int ACTION_POST_NEW_PUBLICATION = 1;
     public static final int ACTION_POST_REGISTER = 2;
     public static final int ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION = 3;
+    public static final int ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC = 4;
+    public static final int ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER = 5;
+    public static final int ACTION_SQL_SAVE_NEW_PUBLICATION = 6;
+    public static final int ACTION_SQL_GET_NEW_NEGATIVE_ID = 7;
+    public static final int ACTION_GET_PUBLICATION_REPORTS = 8;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -27,10 +36,12 @@ public class InternalRequest {
     public String ServerSubPath;
     public JSONObject jsonObject;
     public JSONArray jsonArray;
+    public FCPublication publicationForSaving;
     public ArrayList<FCPublication> publications;
     public ArrayList<RegisteredUserForPublication> registeredUsers;
     public ICanWriteSelfToJSONWriter canWriteSelfToJSONWriterObject;
     public int Status;
+    public int newNegativeID;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;
@@ -44,6 +55,26 @@ public class InternalRequest {
         ServerSubPath = sub_path;
     }
 
+    public InternalRequest(int com, ArrayList<FCPublication> publications){
+        ActionCommand = com;
+        this.publications = publications;
+    }
+
+    public InternalRequest(int com, FCPublication newPublication){
+        ActionCommand = com;
+        switch (ActionCommand){
+            case ACTION_SQL_SAVE_NEW_PUBLICATION:
+                publicationForSaving = newPublication;
+                break;
+            case ACTION_POST_NEW_PUBLICATION:
+                canWriteSelfToJSONWriterObject = newPublication;
+                break;
+            default:
+                Log.e(MY_TAG, "ctor (int,fcpub): unexpected action: " + ActionCommand);
+                break;
+        }
+    }
+
 /*
     public InternalRequest(int com, ArrayList<FCPublication> pubs, String sub_path) {
         ActionCommand = com;
@@ -51,6 +82,11 @@ public class InternalRequest {
         ServerSubPath = sub_path;
     }
 */
+
+    public InternalRequest(int com, int newNegativeIDFromSQL){
+        ActionCommand = com;
+        newNegativeID = newNegativeIDFromSQL;
+    }
 
     public InternalRequest(int com, String sub_path) {
         ActionCommand = com;

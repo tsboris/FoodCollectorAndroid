@@ -1,17 +1,20 @@
 package upp.foodonet;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,30 +33,52 @@ public class MapAndListActivity
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMyLocationChangeListener,
         AdapterView.OnItemClickListener,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener {
+
+    private static final String MY_TAG = "food_mapAndList";
 
     GoogleMap googleMap;
     DrawerLayout drawerLayout;
     ViewPager mainPager;
     MainViewPagerAdapter mainPagerAdapter;
     ActionBarDrawerToggle mDrawerToggle;
-    MyPublicationsTabFragment myPublicationsTabFragment;
+    //MyPublicationsTabFragment myPublicationsTabFragment;
+
+    ToggleButton tgl_btn_navigate_share;
+    ToggleButton tgl_btn_navigate_take;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_and_list);
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        tgl_btn_navigate_share = (ToggleButton) findViewById(R.id.tgl_btn_share_maplst);
+        tgl_btn_navigate_take = (ToggleButton) findViewById(R.id.tgl_btn_take_maplst);
+        tgl_btn_navigate_share.setOnClickListener(this);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         /*drawerList = (ListView)findViewById(R.id.list_slidermenu);
         drawerList.setOnItemClickListener(this);*/
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        mainPager = (ViewPager)findViewById(R.id.main_Pager);
+        mainPager = (ViewPager) findViewById(R.id.main_Pager);
         mainPagerAdapter = new MainViewPagerAdapter(this, fm);
         mainPagerAdapter.SetMapFragment(this);
+        Log.i(MY_TAG, "onCreate sets map");
         //mainPagerAdapter.SetListFragment(eventArrayList, this);
         mainPager.setAdapter(mainPagerAdapter);
         mainPager.addOnPageChangeListener(this);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        tgl_btn_navigate_share.setChecked(false);
+        tgl_btn_navigate_share.setEnabled(true);
+        tgl_btn_navigate_take.setChecked(true);
+        tgl_btn_navigate_take.setEnabled(false);
     }
 
     @Override
@@ -80,7 +105,8 @@ public class MapAndListActivity
 
     @Override
     public void OnNotifiedToFetchData() {
-
+        Toast.makeText(this, MY_TAG + " OnNotifiedToFetchData()", Toast.LENGTH_LONG);
+        Log.i(MY_TAG, "OnNotifiedToFetchData()");
     }
 
     @Override
@@ -155,5 +181,21 @@ public class MapAndListActivity
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tgl_btn_share_maplst:
+                Intent intent = new Intent(this, MyPublicationsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            //case R.id.tgl_btn_take_maplst:
+            //   break;
+        }
     }
 }

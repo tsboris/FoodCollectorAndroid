@@ -8,13 +8,16 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,12 +28,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -56,18 +62,18 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     private int Action_Command_ID;
 
-    public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener){
+    public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener) {
         this.baseUrl = baseUrl;
         this.callbackListener = callbackListener;
     }
 
     @Override
     protected String doInBackground(InternalRequest... params) {
-        if(params.length == 0 || params[0] == null)
+        if (params.length == 0 || params[0] == null)
             return "";
         Action_Command_ID = params[0].ActionCommand;
         String server_sub_path = params[0].ServerSubPath;
-        switch (Action_Command_ID){
+        switch (Action_Command_ID) {
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
                 ArrayList<FCPublication> publications = new ArrayList<>();
@@ -78,7 +84,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 responseString = "";
                 ArrayList<RegisteredUserForPublication> regedUsers = new ArrayList<>();
-                for(FCPublication pub : publications){
+                ArrayList<PublicationReport> pubReports = new ArrayList<>();
+                for (FCPublication pub : publications) {
                     MakeServerRequest(REQUEST_METHOD_GET,
                             params[1].ServerSubPath.replace("{0}",
                                     String.valueOf(pub.getUniqueId())), null, true);
@@ -88,18 +95,41 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                                         new JSONArray(responseString));
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    } finally {
+                        responseString = "";
                     }
-                    if(regedUsers.size()>0){
+                    MakeServerRequest(REQUEST_METHOD_GET,
+                            params[2].ServerSubPath.replace("{0}",
+                                    String.valueOf(pub.getUniqueId())), null, true);
+                    try {
+                        pubReports = PublicationReport.
+                                GetArrayListOfPublicationReportsFromJSON(
+                                        new JSONArray(responseString));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (regedUsers.size() > 0) {
                         pub.setRegisteredForThisPublication(regedUsers);
                     }
+                    if (pubReports.size() > 0) {
+                        pub.setPublicationReports(pubReports);
+                    }
                     regedUsers.clear();
+                    pubReports.clear();
                     responseString = "";
+                }
+                if (publications.size() > 0) {
+                    if (resultPublications == null)
+                        resultPublications = new ArrayList<>();
+                    resultPublications.addAll(publications);
                 }
                 return "";
             case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
+
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                //MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                Get(server_sub_path, (FCPublication)params[0].canWriteSelfToJSONWriterObject);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, false);
@@ -109,14 +139,15 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
+
     @Override
     protected void onPostExecute(String s) {
         //super.onPostExecute(s);
-        switch (Action_Command_ID){
+        switch (Action_Command_ID) {
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 Log.i(MY_TAG, "data loaded from http, calling callback");
-                    callbackListener.OnServerRespondedCallback(
-                            new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
+                callbackListener.OnServerRespondedCallback(
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");
@@ -128,7 +159,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
-    private void MakeServerRequest(String requestMethod, String server_sub_path, ICanWriteSelfToJSONWriter writableObject, boolean isForResult){
+    private void MakeServerRequest(String requestMethod, String server_sub_path, ICanWriteSelfToJSONWriter writableObject, boolean isForResult) {
         String post_url = baseUrl + server_sub_path;
         HttpURLConnection connection = null;
         try {
@@ -137,37 +168,69 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(15000);
             connection.setRequestMethod(requestMethod);
-            switch (requestMethod){
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setUseCaches(false);
+            //connection.setRequestMethod("GET");
+            byte[] bytes = null;
+            switch (requestMethod) {
                 case REQUEST_METHOD_GET:
                     connection.setRequestProperty("Content-length", "0");
-                    connection.setUseCaches(false);
                     connection.setAllowUserInteraction(false);
                     break;
                 case REQUEST_METHOD_POST:
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
+                    String str = "{\"active_device\":{\"last_location_longitude\":\"34.85003149\", \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":\"32.11102827\", \"is_ios\":\"false\", \"remote_notiﬁcation_token\":\"1234\"}}";
+                    bytes = str.getBytes("UTF-8");
+                    connection.setRequestProperty("Content-length", String.valueOf(bytes.length));
                     break;
             }
-            if(writableObject != null) {
+            //connection.connect();
+            if (writableObject != null) {
+
                 OutputStream outputStream = connection.getOutputStream();
+                Map<String, Object> regData = writableObject.GetJsonMapStringObject();
+                JSONObject jo = new JSONObject(regData);
+                OutputStreamWriter osw = new OutputStreamWriter(outputStream);
+                Log.wtf(MY_TAG, jo.toString());
+                outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+/*
                 JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 writableObject.WriteSelfToJSONWriter(writer);
+                //writer.flush();
                 writer.close();
+                outputStream.flush();
                 outputStream.close();
+                */
+/*                //
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuffer sb = new StringBuffer();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                String answer = sb.toString();
+                Log.i(MY_TAG, answer);
+
+                //*/
             }
-            connection.connect();
+            Log.i(MY_TAG, "sending: " + connection.toString());
             int connectionResponse = connection.getResponseCode();
-            switch (connectionResponse){
+            switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
-                    if(isForResult){
+                    if (isForResult) {
                         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         StringBuilder sb = new StringBuilder();
                         String line;
                         while ((line = br.readLine()) != null) {
-                            sb.append(line+"\n");
+                            sb.append(line + "\n");
                         }
                         br.close();
-                        Log.i(MY_TAG, sb.toString());
+                        Log.i(MY_TAG, this.hashCode() + sb.toString());
                         responseString = sb.toString();
                     }
             }
@@ -181,6 +244,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             if (connection != null) {
                 try {
                     connection.disconnect();
+                    connection = null;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -188,6 +252,56 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
+    private InternalRequest Get(String server_sub_path, FCPublication publication) {
+        String get_publications_url = baseUrl + "/" + server_sub_path;
+        Log.i(MY_TAG, "Get: " + get_publications_url);
+        try {
+            HttpGet httpGet = new HttpGet(get_publications_url);
+            HttpClient client = new DefaultHttpClient();
+            HttpGetWithEntity myGet = new HttpGetWithEntity(get_publications_url);
+            myGet.setEntity(new StringEntity(publication.GetJSONObject().toString(), "UTF8"));
+            HttpResponse response = client.execute(myGet);
+            int resonseStatus = response.getStatusLine().getStatusCode();
+            Log.i(MY_TAG, response.toString());
+            if (resonseStatus == 200) {
+                HttpEntity entity = response.getEntity();
+                String data = EntityUtils.toString(entity);
+                responseJSONArray = new JSONArray(data);
+                responseString = responseJSONArray.toString();
+                Log.i("myTag", responseString);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
+
+        public HttpGetWithEntity() {
+            super();
+        }
+
+        public HttpGetWithEntity(URI uri) {
+            super();
+            setURI(uri);
+        }
+
+        public HttpGetWithEntity(String uri) {
+            super();
+            setURI(URI.create(uri));
+        }
+
+        @Override
+        public String getMethod() {
+            return HttpGet.METHOD_NAME;
+        }
+    }
 /*
 
     private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){

@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class RegisteredUserForPublication implements Serializable {
 
-    private static final String MY_TAG = "food_RegisteredUserForPublication";
+    private static final String MY_TAG = "food_RegForPublication";
 
     public static final String REGISTERED_FOR_PUBLICATION_KEY_ID = "_id";
     public static final String REGISTERED_FOR_PUBLICATION_KEY_ID_SERVER = "id";
@@ -109,7 +109,7 @@ public class RegisteredUserForPublication implements Serializable {
         ArrayList<RegisteredUserForPublication> result = new ArrayList<RegisteredUserForPublication>();
         for (int i = 0; i < ja.length(); i++) {
             try {
-                Log.i("mytag", ja.getJSONObject(i).toString());
+                Log.i(MY_TAG, ja.getJSONObject(i).toString());
                 result.add(ParseSingleRegisteredForPublicationFromJSON(ja.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -129,7 +129,7 @@ public class RegisteredUserForPublication implements Serializable {
             rufp.setDevice_registered_uuid(jo.getString(REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID));
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("mytag", e.getMessage());
+            Log.e(MY_TAG, e.getMessage());
             return null;
         }
         return rufp;

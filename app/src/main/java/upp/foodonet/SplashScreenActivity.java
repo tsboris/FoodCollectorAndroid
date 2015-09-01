@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.Preference;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -17,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.LogRecord;
 
 import DataModel.FCPublication;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
@@ -45,9 +49,11 @@ public class SplashScreenActivity
         RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
+
+        flagSQLLoaderFinished = true;
         /*HttpServerConnectorAsync connecter = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
         connecter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS));*/
-        getSupportLoaderManager().initLoader(0, null, this);
+        //getSupportLoaderManager().initLoader(0, null, this);
     }
 
 
@@ -88,9 +94,9 @@ public class SplashScreenActivity
             return;
         }
 
-        publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(data);
+        //publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
 
-        flagSQLLoaderFinished = true;
+        //flagSQLLoaderFinished = true;
 
         if(AllLoaded())
             StartNextActivity();
@@ -132,6 +138,7 @@ public class SplashScreenActivity
                 Log.e(MY_TAG, "server callback status failed");
                 return;
             case InternalRequest.STATUS_OK:
+/*
                 switch (response.ActionCommand){
                     case InternalRequest.ACTION_POST_REGISTER:
                         SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
@@ -142,7 +149,8 @@ public class SplashScreenActivity
                     default:
                         Log.e(MY_TAG, "Unexpected callback to splashscreen from server connecter. Action: " + response.ActionCommand);
                         return;
-                }
+
+                }*/
         }
     }
 
@@ -170,17 +178,40 @@ public class SplashScreenActivity
     }
     */
 
+    Handler splashScreenHoldWaitCompeleteHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    if(AllLoaded())
+                        StartNextActivity();
+                    break;
+                default:
+                    Log.e(MY_TAG, "Handler got unexpected msg.what");
+                    break;
+            }
+        }
+    };
+
     private class SplashScreenHolder extends AsyncTask<Point, Void, Void> {
 
 
         @Override
-        protected Void doInBackground(Point... params) {
-            try {
-                Thread.sleep(1000 * params[0].x, 0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            flagWaitTaskFinished = true;
+        protected Void doInBackground(final Point... params) {
+            final int secondsToSleep = params[0].x;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            TimeUnit.SECONDS.sleep(secondsToSleep);
+                            flagWaitTaskFinished = true;
+                            splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                //Thread.sleep(1000 * params[0].x, 0);
             return null;
         }
 
@@ -207,8 +238,8 @@ public class SplashScreenActivity
             FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
         }
 
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        String imei = tm.getDeviceId();
+        //TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        //String imei = tm.getDeviceId();
 
     }
 
@@ -216,4 +247,5 @@ public class SplashScreenActivity
 
     private boolean AllLoaded(){
         return flagSQLLoaderFinished && flagWaitTaskFinished;
-    }}
+    }
+}

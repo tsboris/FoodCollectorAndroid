@@ -9,15 +9,20 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.PersistableBundle;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 import DataModel.FCPublication;
 import FooDoNetServerClasses.ConnectionDetector;
@@ -33,6 +38,7 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
 
     FooDoNetService fooDoNetService;
     boolean isBoundedToService;
+    Messenger boundedService;
 
     private final String MY_TAG = "food_abstract_fActivity";
 
@@ -58,13 +64,14 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
 
     @Override
     protected void onResume() {
-        if(!CheckInternetConnection())
+        if (!CheckInternetConnection())
             OnInternetNotConnected();
-        if(!CheckPlayServices())
+        if (!CheckPlayServices())
             OnGooglePlayServicesCheckError();
         super.onResume();
     }
 
+/*
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -79,6 +86,7 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
             isBoundedToService = false;
         }
     };
+*/
 
     protected boolean CheckPlayServices() {
         Log.i(MY_TAG, "checking isGooglePlayServicesAvailable...");
@@ -94,7 +102,7 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
         return true;
     }
 
-    protected boolean CheckInternetConnection(){
+    protected boolean CheckInternetConnection() {
         Log.i(MY_TAG, "Checking internet connection...");
         ConnectionDetector cd = new ConnectionDetector(getBaseContext());
         return cd.isConnectingToInternet();
@@ -109,4 +117,39 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
     public abstract void OnGooglePlayServicesCheckError();
 
     public abstract void OnInternetNotConnected();
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            boundedService = new Messenger(service);
+            isBoundedToService = true;
+            Message m = Message.obtain(null, FooDoNetService.ACTION_START);
+            m.replyTo = callbackMessenger;
+            try {
+                boundedService.send(m);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            boundedService = null;
+            isBoundedToService = false;
+        }
+    };
+
+    class IncomingHandler extends android.os.Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case FooDoNetService.ACTION_WORK_DONE:
+                    OnNotifiedToFetchData();
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    final Messenger callbackMessenger = new Messenger(new IncomingHandler());
+
 }

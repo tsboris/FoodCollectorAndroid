@@ -10,7 +10,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.ArrayList;
 
-import upp.foodonet.MyPublicationsTabFragment;
+import upp.foodonet.AllPublicationsTabFragment;
 
 /**
  * Created by Asher on 20.06.2015.
@@ -18,15 +18,15 @@ import upp.foodonet.MyPublicationsTabFragment;
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     SupportMapFragment mapFragment;
-    MyPublicationsTabFragment myPublicationsTabFragment;
+    AllPublicationsTabFragment allPublicationsTabFragment;
     Context parentContext;
     final int NUM_ITEMS = 2;
 
     public MainViewPagerAdapter(Context context, FragmentManager fragmentManager){
         super(fragmentManager);
         parentContext = context;
-        myPublicationsTabFragment = new MyPublicationsTabFragment();
-        myPublicationsTabFragment.SetContext(parentContext);
+        allPublicationsTabFragment = new AllPublicationsTabFragment();
+        allPublicationsTabFragment.SetContext(parentContext);
         //eventsTabFragment = new ListOfEventsTabFragment();
     }
 
@@ -50,7 +50,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return mapFragment;
             case 1:
-                return myPublicationsTabFragment;//return null;//eventsTabFragment;
+                return allPublicationsTabFragment;//return null;//eventsTabFragment;
             default:
                 return null;
         }

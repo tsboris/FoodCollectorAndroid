@@ -1,28 +1,52 @@
 package upp.foodonet;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.text.Bidi;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import DataModel.FCPublication;
+import DataModel.FCTypeOfCollecting;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.FooDoNetSQLHelper;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
+import FooDoNetServerClasses.InternalRequest;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class EntranceActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener {
+        implements View.OnClickListener, IFooDoNetSQLCallback, IFooDoNetServerCallback{
+
+
+
     private static final String MY_TAG = "food_EntanceActivity";
-    LinearLayout ll_btn_share,ll_btn_pick;
-    Button btn_give;
+    Button btn_pick, btn_share, btn_ask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,22 +59,27 @@ public class EntranceActivity
         //welcomeView.setBackgroundColor(Color.BLUE);
         //=====
 
-        ll_btn_share = (LinearLayout)findViewById(R.id.ll_btn_pick_mainScreen);
-        ll_btn_pick = (LinearLayout)findViewById(R.id.ll_btn_share_mainScreen);
-        btn_give = (Button)findViewById(R.id.btn_entrance_give);
-        ll_btn_pick.setOnClickListener(this);
+        btn_share = (Button)findViewById(R.id.btn_share_welcomeScreen);
+        btn_pick = (Button)findViewById(R.id.btn_pick_welcomeScreen);
+        btn_ask = (Button)findViewById(R.id.btn_ask_welcomeScreen);
+        btn_pick.setOnClickListener(this);
+        btn_share.setOnClickListener(this);
 
-     /*   Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
+        btn_ask.setOnClickListener(this);
+
+        Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
         Drawable img_take = getResources().getDrawable( R.drawable.collect_v6_3x);
         Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
-        img_give.setBounds(0, 0, 300, 300);
-        img_take.setBounds(0, 0, 300, 300);
-        btn_give.setCompoundDrawables(null, null, img_give, null); btn_give.setCompoundDrawablePadding(10);
-        btn_take.setCompoundDrawables(null, null, img_take, null);
-        btn_ask.setCompoundDrawables(null, null, img_ask, null);*/
+        img_give.setBounds(0, 0, 90, 90);
+        img_take.setBounds(0, 0, 90, 90);
+        img_ask.setBounds(0, 0, 90, 90);
+        btn_share.setCompoundDrawables(null, null, img_give, null);
+            btn_share.setCompoundDrawablePadding(10);
+        btn_pick.setCompoundDrawables(null, null, img_take, null);
+        btn_ask.setCompoundDrawables(null, null, img_ask, null);
 
-        Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-        Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
+        //Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+        //Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
 
 
 
@@ -153,18 +182,48 @@ public class EntranceActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.ll_btn_pick_mainScreen:
-                Intent mapIntent = new Intent(this, MapAndListActivity.class);
-                startActivity(mapIntent);
+            case R.id.btn_pick_welcomeScreen:
+                Intent mapListIntent = new Intent(this, MapAndListActivity.class);
+                startActivity(mapListIntent);
                 break;
-          /*  case R.id.ll_btn_share_mainScreen:
-                Intent myPublicationList = new Intent(this, MyPublicationsListActivity.class);
-                startActivity(myPublicationList);
-                break;*/
-            /*case R.id.btn_entrance_ask:
-                Intent  = new Intent(this, MapAndListActivity.class);
-                startActivity();
-                break;*/
+            case R.id.btn_share_welcomeScreen:
+                Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
+                startActivity(myPubsIntent);
+                break;
+            case R.id.btn_ask_welcomeScreen:
+
+
+                //FooDoNetSQLExecuterAsync saveNewTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                //saveNewTask.execute(new InternalRequest(InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, newPublication));
+
+/*
+                HttpServerConnectorAsync postNewPubTask
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication);
+                ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
+                postNewPubTask.execute(ir);
+*/
+
+
+                break;
         }
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        if(request.publicationForSaving == null){
+            Log.e(MY_TAG, "got null request.publicationForSaving");
+            return;
+        }
+        HttpServerConnectorAsync postNewPubTask
+                = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, request.publicationForSaving);
+        ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
+        postNewPubTask.execute(ir);
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+
     }
 }

@@ -1,4 +1,5 @@
-package upp.foodonet;
+/*
+package CodeWeDontUse;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 import DataModel.FCPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
+import upp.foodonet.R;
 
 
 public class MyPublicationsListActivity
@@ -63,3 +65,4 @@ public class MyPublicationsListActivity
 
     }
 }
+*/

@@ -23,26 +23,12 @@
     <string name="publish">לשתף מזון</string>
     <string name="pickup">לאסוף מזון</string>
     <string name="ask_food">לבקש מזון</string>
-    <string name="title_my_publications">השיתופים שלי</string>
-    <string name="share_btn">שיתוף</string>
-    <string name="pickup_btn">איסוף</string>
-    <string name="publication_ending">מסתיים</string>
-    <string name="publication_active">פעיל</string>
-    <string name="publication_not_active">לא פעיל</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>
     <string name="title_activity_all_publications">AllPublicationsActivity</string>
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
-    <!-- my publication details -->
-    <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
-    <string name="participants_report">Report on participants</string>
-    <string name="going_to_collect">persons are going to collect</string>
-    <string name="cancel_publication">cancel publication</string>
-    <string name="cancel_publication_question">Really cancel this publication?</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Server strings -->
@@ -50,7 +36,6 @@
     <string name="server_add_new_publication_path">/publications/new</string>
     <string name="server_get_publications_path">/publications</string>
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
-    <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>

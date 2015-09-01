@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="upp.foodonet.MyPublicationsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="@string/title_my_publications"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@color/basic_blue"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/btn_add_new_myPubsLst" />
+
+    <Button android:id="@+id/btn_add_new_myPubsLst"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:text="+"
+        android:textSize="35sp"
+        android:textColor="@color/white"
+        android:background="@color/basic_blue"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_below="@+id/textView"
+        android:id="@+id/linearLayout">
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_ending"
+            android:id="@+id/btn_publication_ending"
+            android:textColor="@color/basic_blue"
+            android:layout_below="@+id/textView"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/textView"
+            android:background="@color/transparent"
+            android:layout_weight="1" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_not_active"
+            android:id="@+id/btn_publication_notActive"
+            android:textColor="@color/basic_blue"
+            android:background="@color/transparent"
+            android:layout_below="@+id/textView"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button"
+            android:layout_weight="1" />
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/publication_active"
+            android:id="@+id/btn_publication_active"
+            android:textColor="@color/basic_blue"
+            android:background="@color/transparent"
+            android:layout_below="@+id/textView"
+            android:layout_toRightOf="@+id/button2"
+            android:layout_toEndOf="@+id/button2"
+            android:layout_weight="1" />
+    </LinearLayout>
+    <SearchView
+        android:id="@+id/searchView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:searchIcon="@android:drawable/ic_search_category_default"
+        android:layout_below="@+id/linearLayout"
+        tools:ignore="UnusedAttribute" />
+
+    <ListView android:id="@+id/lv_my_publications_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchView1"></ListView>
+
+<!--    <ListView android:id="@+id/lst_my_publications_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/searchView1" />-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@+id/lv_my_publications_list"
+        android:layout_alignLeft="@+id/lv_my_publications_list"
+        android:layout_alignStart="@+id/lv_my_publications_list">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/pickup_btn"
+            android:id="@+id/btn_take_mypubs"
+            android:textSize="10sp"
+            android:layout_weight="1" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/share_btn"
+            android:textSize="10sp"
+            android:id="@+id/btn_share_mypubs"
+            android:layout_weight="1" />
+    </LinearLayout>
+</RelativeLayout>

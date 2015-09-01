@@ -69,7 +69,7 @@
         <!-- Vitaly desktop: AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDiWQSysYwTHWjJYd4uBMX5-3mN9SciDak" />
+            android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
 
         <!-- Alexander: Server API Key (authorization) -->
         <meta-data
@@ -91,11 +91,14 @@
             android:label="@string/title_activity_add_new_fcpublication"
             android:screenOrientation="portrait" >
         </activity>
+
+        <!--
         <activity
             android:name=".AllPublicationsActivity"
             android:label="@string/title_activity_all_publications"
             android:screenOrientation="portrait" >
-        </activity>
+         </activity>
+        -->
 
         <provider
             android:name=".FooDoNetSQLProvider"
@@ -130,9 +133,15 @@
             </intent-filter>
         </service>
 
+        <!--
         <activity
-            android:name=".MyPublicationsListActivity"
+            android:name="CodeWeDontUse.MyPublicationsListActivity"
             android:label="@string/title_activity_my_publications_list" >
+        </activity>
+        -->
+        <activity
+            android:name=".MyPublicationsActivity"
+            android:label="@string/title_activity_my_publications" >
         </activity>
 
         <activity
