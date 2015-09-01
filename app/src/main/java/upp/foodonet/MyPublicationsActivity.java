@@ -1,27 +1,41 @@
 package upp.foodonet;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 
+import CommonUtil.CommonUtil;
 import DataModel.FCPublication;
+import DataModel.FCTypeOfCollecting;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener {
+        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     SearchView src_all_pub_listView;
     Button btn_add_new_publication ,btn_navigate_share ,btn_navigate_take,btn_active_pub,btn_not_avtive_pub,btn_ending_pub;
+    ListView lv_my_publications_list;
+    Cursor cursor_my_publications;
+    SimpleCursorAdapter adapter;
 /*    ToggleButton tgl_btn_navigate_share;
       ToggleButton tgl_btn_navigate_take;*/
 
@@ -48,6 +62,13 @@ public class MyPublicationsActivity
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
         btn_navigate_share.setCompoundDrawablePadding(10);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
+
+        lv_my_publications_list = (ListView)findViewById(R.id.lv_my_publications_list);
+        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
+        int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+        adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, from, to);
+        lv_my_publications_list.setAdapter(adapter);
+
     }
 
     @Override
@@ -56,6 +77,9 @@ public class MyPublicationsActivity
         // btn_navigate_take.setChecked(false);
         btn_navigate_take.setEnabled(true);
         btn_navigate_share.setEnabled(false);
+
+        StartLoadingCursorForList(0);
+
     }
 
     @Override
@@ -104,8 +128,10 @@ public class MyPublicationsActivity
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_add_new_myPubsLst:
-                Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
-                startActivityForResult(addNewPubIntent, 1);
+                //Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
+                //startActivityForResult(addNewPubIntent, 1);
+                AddNumberOfTestPublicationsToSql(5);
+                StartLoadingCursorForList(0);
                 break;
             //case R.id.tgl_btn_share_mypubs:
             //    break;
@@ -118,4 +144,52 @@ public class MyPublicationsActivity
                 break;
         }
     }
+
+    // Vitaly 31/08/2015
+    // this is temp code for checking list
+    private static FCPublication GetNewIndexedPublicationForTest(Context context, int index){
+        String imei = CommonUtil.GetIMEI(context);
+        Date sDate = new Date();
+        Date eDate;
+        Calendar c = Calendar.getInstance();
+        c.setTime(sDate);
+        c.add(Calendar.DATE, 5);
+        eDate = c.getTime();
+        FCPublication newPublication
+                = new FCPublication(index, imei, "test pub " + index, "", "some address " + index,
+                FCTypeOfCollecting.ContactPublisher, 0, 0,
+                sDate, eDate, "", "", true);
+        return newPublication;
+    }
+
+    private void AddNumberOfTestPublicationsToSql(int numberOfPublications){
+        for(int i = 0; i < numberOfPublications; i++)
+            getContentResolver().insert(FooDoNetSQLProvider.CONTENT_URI,
+                    GetNewIndexedPublicationForTest(this, i).GetContentValuesRow());
+    }
+
+    private void StartLoadingCursorForList(int filterTypeID){
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = FCPublication.GetColumnNamesForListArray();
+        android.support.v4.content.CursorLoader cursorLoader
+                = new android.support.v4.content.CursorLoader(this,
+                    FooDoNetSQLProvider.URI_GET_MY_PUBS_FOR_LIST_ID_DESC,
+                    projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
+    }
+
 }

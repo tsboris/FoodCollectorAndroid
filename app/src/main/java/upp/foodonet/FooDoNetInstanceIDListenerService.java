@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import CommonUtil.CommonUtil;
 import DataModel.UserRegisterData;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
@@ -73,8 +74,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
             e.printStackTrace();
         }
 
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        String imei = tm.getDeviceId();
+        String imei = CommonUtil.GetIMEI(this);
         Log.w(MY_TAG, "Got imei: " + imei);
 
         LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);

@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by artyomshapet on 6/29/15.
@@ -482,6 +483,11 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Map<String, Object> GetJsonMapStringObject() {
+        return null;
     }
 
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {

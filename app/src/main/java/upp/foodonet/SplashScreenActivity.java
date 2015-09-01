@@ -247,4 +247,5 @@ public class SplashScreenActivity
 
     private boolean AllLoaded(){
         return flagSQLLoaderFinished && flagWaitTaskFinished;
-    }}
+    }
+}

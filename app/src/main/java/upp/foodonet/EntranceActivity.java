@@ -162,27 +162,18 @@ public class EntranceActivity
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:
-                TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-                String imei = tm.getDeviceId();
-                Date sDate = new Date();
-                Date eDate;
-                Calendar c = Calendar.getInstance();
-                c.setTime(sDate);
-                c.add(Calendar.DATE, 5);
-                eDate = c.getTime();
-                FCPublication newPublication
-                        = new FCPublication(0, imei, "test pub title", "", "some address",
-                                                FCTypeOfCollecting.ContactPublisher, 0, 0,
-                                                sDate, eDate, "", "", true);
+
 
                 //FooDoNetSQLExecuterAsync saveNewTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 //saveNewTask.execute(new InternalRequest(InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, newPublication));
 
+/*
                 HttpServerConnectorAsync postNewPubTask
                         = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
                 InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication);
                 ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
                 postNewPubTask.execute(ir);
+*/
 
 
                 break;
