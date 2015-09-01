@@ -1,12 +1,10 @@
 package upp.foodonet;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,9 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
@@ -67,20 +62,52 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
         LoadPhoto(this.publication.getPhotoUrl());
 
-        showInterestedsList();
+        makeInterestedsList();
 
+        makeTheCancelDialog();
+
+        makeCancelButton();
+    }
+
+    //region methods making parts of activity (to call in OnCreate)
+    private void makeCancelButton() {
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
         cancelPublicationButton.setText(getString(R.string.cancel_publication));
         cancelPublicationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),
-                        MY_TAG + " cancelPublicationButton  clicked!", Toast.LENGTH_LONG).show();
+                cancelPublicationDialog.show();
             }
         });
     }
 
-    private void showInterestedsList() {
+    private void makeTheCancelDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.cancel_publication);
+        builder.setMessage(R.string.cancel_publication_question);
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+
+        });
+
+        cancelPublicationDialog = builder.create();
+    }
+
+    private void makeInterestedsList() {
         interestedPersonsCountTextView = (TextView) findViewById(R.id.interested_persons_count);
         interestedPersonsCountTextView.setText(getString(R.string.going_to_collect) + "  "
                 + Integer.toString(publication.getRegisteredForThisPublication().size()));
@@ -104,6 +131,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         }
         return l;
     }
+    //endregion
 
     private void LoadPhoto(String photoUrlString)
     {
@@ -206,6 +234,8 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     private ListView interestedsListView;
     private ArrayAdapter<String> interestedsAdapter;
     private Button cancelPublicationButton;
+
+    private AlertDialog cancelPublicationDialog;
 
     private ImageButton photoButton;
     private Bitmap photoBmp;
