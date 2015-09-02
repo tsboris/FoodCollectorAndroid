@@ -29,6 +29,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
+    public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final int PHOTO_RADIUS = 200;
 
     private static final String MY_TAG = "MyPublicationDetailsActivity";
@@ -42,8 +43,10 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
         try {
             Intent i = getIntent();
-            this.publication = (FCPublication) i.getSerializableExtra("publication");
-        } catch (Exception ex) {
+            this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
+            this.isOwnPublication = (Boolean)i.getSerializableExtra(IS_OWN_PUBLICATION_PARAM);
+        }
+        catch (Exception ex) {
             Log.e(MY_TAG, "error deserializing passed FCPublication: " + ex.getMessage());
             return;
         }
@@ -64,9 +67,13 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
         makeInterestedsList();
 
-        makeTheCancelDialog();
 
-        makeCancelButton();
+        if (isOwnPublication)
+        {
+            makeTheCancelDialog();
+
+            makeCancelButton();
+        }
     }
 
     //region methods making parts of activity (to call in OnCreate)
@@ -93,6 +100,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             public void onClick(DialogInterface dialog, int which) {
 
                 dialog.dismiss();
+                MyPublicationDetailsActivity.this.finishWithCancelPublicationResult();
             }
         });
 
@@ -105,6 +113,14 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         });
 
         cancelPublicationDialog = builder.create();
+    }
+
+    private void finishWithCancelPublicationResult()
+    {
+        Intent intent= new Intent();
+        setResult(RESULT_OK, intent);
+        intent.putExtra("userAction", "cancelPublication");
+        finish();
     }
 
     private void makeInterestedsList() {
@@ -239,5 +255,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
     private ImageButton photoButton;
     private Bitmap photoBmp;
+
+    private boolean isOwnPublication;
 
 }
