@@ -46,7 +46,7 @@ public class EntranceActivity
         btn_pick = (Button)findViewById(R.id.btn_pick_welcomeScreen);
         btn_ask = (Button)findViewById(R.id.btn_ask_welcomeScreen);
         btn_pick.setOnClickListener(this);
-        //btn_ask.setOnClickListener(this);
+        btn_ask.setOnClickListener(this);
         btn_share.setOnClickListener(this);
 
         Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
@@ -146,10 +146,10 @@ public class EntranceActivity
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
-            /*case R.id.btn_entrance_ask:
-                Intent  = new Intent(this, MapAndListActivity.class);
-                startActivity();
-                break;*/
+            case R.id.btn_ask_welcomeScreen:
+                Intent newPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
+                startActivity(newPubIntent);
+                break;
         }
     }
 }
