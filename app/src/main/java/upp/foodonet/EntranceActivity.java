@@ -46,6 +46,9 @@ public class EntranceActivity
 
     private static final String MY_TAG = "food_EntanceActivity";
     Button btn_pick, btn_share, btn_ask;
+
+    public static final int REQUEST_ADD_NEW_PUBLICATION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +165,8 @@ public class EntranceActivity
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:
-
+                Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
+                startActivityForResult(addNewPubIntent, REQUEST_ADD_NEW_PUBLICATION);
 
                 //FooDoNetSQLExecuterAsync saveNewTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 //saveNewTask.execute(new InternalRequest(InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, newPublication));
@@ -177,6 +181,23 @@ public class EntranceActivity
 
 
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(MY_TAG, "Entered onActivityResult()");
+
+        FCPublication pub = new FCPublication();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ADD_NEW_PUBLICATION)
+            {
+                pub = (FCPublication) data.getExtras().get("publication");
+            }
+        }
+        if (resultCode == RESULT_CANCELED) {
+
         }
     }
 
