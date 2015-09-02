@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +31,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
+
     private static final int PHOTO_RADIUS = 200;
 
     private static final String MY_TAG = "MyPublicationDetailsActivity";
@@ -39,7 +41,6 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_publication_details);
 
         try {
             Intent i = getIntent();
@@ -47,8 +48,15 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             this.isOwnPublication = (Boolean)i.getSerializableExtra(IS_OWN_PUBLICATION_PARAM);
         }
         catch (Exception ex) {
-            Log.e(MY_TAG, "error deserializing passed FCPublication: " + ex.getMessage());
+            Log.e(MY_TAG, "error deserializing passed parameters: " + ex.getMessage());
             return;
+        }
+
+        if (this.isOwnPublication){
+            setContentView(R.layout.activity_my_publication_details);
+        }
+        else{
+            setContentView(R.layout.activity_foreign_publication_details);
         }
 
         if (publication.getTitle() != null) {
@@ -65,8 +73,12 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
         LoadPhoto(this.publication.getPhotoUrl());
 
-        makeInterestedsList();
+        if (!isOwnPublication)
+        {
+            makeBlueButtons();
+        }
 
+        makeInterestedsList();
 
         if (isOwnPublication)
         {
@@ -77,6 +89,30 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     }
 
     //region methods making parts of activity (to call in OnCreate)
+    private void makeBlueButtons()
+    {
+        btnCall = (Button)findViewById(R.id.btn_call);
+        Drawable img_call = getResources().getDrawable( R.drawable.call_2x);
+        img_call.setBounds(0, 0, 30, 30);
+        btnCall.setCompoundDrawables(null, null, img_call, null);
+
+        btnRishum = (Button)findViewById(R.id.btn_rishum);
+        Drawable img_rishum = getResources().getDrawable( R.drawable.rishum_2x);
+        img_rishum.setBounds(0, 0, 30, 30);
+        btnRishum.setCompoundDrawables(null, null, img_rishum, null);
+
+        btnSms = (Button)findViewById(R.id.btn_sms);
+        Drawable img_sms = getResources().getDrawable( R.drawable.sms_2x);
+        img_sms.setBounds(0, 0, 30, 30);
+        btnSms.setCompoundDrawables(null, null, img_sms, null);
+
+        btnNavigate = (Button)findViewById(R.id.btn_navigate);
+        Drawable img_navigate = getResources().getDrawable( R.drawable.navigate_2x);
+        img_navigate.setBounds(0, 0, 30, 30);
+        btnNavigate.setCompoundDrawables(null, null, img_navigate, null);
+    }
+
+
     private void makeCancelButton() {
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
         cancelPublicationButton.setText(getString(R.string.cancel_publication));
@@ -250,6 +286,8 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     private ListView interestedsListView;
     private ArrayAdapter<String> interestedsAdapter;
     private Button cancelPublicationButton;
+
+    Button btnCall, btnRishum, btnSms, btnNavigate;
 
     private AlertDialog cancelPublicationDialog;
 

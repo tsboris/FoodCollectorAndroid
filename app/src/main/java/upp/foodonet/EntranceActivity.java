@@ -133,7 +133,7 @@ public class EntranceActivity
 
         Intent intent = new Intent(this, MyPublicationDetailsActivity.class);
         intent.putExtra(MyPublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
-        intent.putExtra(MyPublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, true);
+        intent.putExtra(MyPublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, false);
 
         startActivity(intent);
     }
