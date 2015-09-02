@@ -1,16 +1,23 @@
 package upp.foodonet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,6 +30,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,23 +51,39 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import DataModel.FCPublication;
+import DataModel.FCTypeOfCollecting;
 
 
 public class AddNewFCPublicationActivity extends FragmentActivity
-implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,View.OnClickListener {
 
-    private EditText mNameText;
+    private static final String MY_TAG = "food_newPublication";
+    public static final String PUBLICATION_KEY = "publication";
+    public static final String START_DATE_PICKER_KEY = "startDatePicker";
+    public static final String START_TIME_PICKER_KEY = "startTimePicker";
+    public static final String END_DATE_PICKER_KEY = "endDatePicker";
+    public static final String END_TIME_PICKER_KEY = "endTimePicker";
+
+    public static final int REQUEST_CAMERA = 1;
+    public static final int SELECT_FILE = 2;
+
+    private EditText mTitleText;
+
+
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
-    private static final String MY_TAG = "food_newPublication";
-
-    public static final String RESULT_FCPUBLICATION_STRING_KEY = "resultPublication";
-
     private AutoCompleteTextView atv_address;
     private TextView tv_title;
     private TextView mAddressTextView;
@@ -76,29 +100,44 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private static String dateStartString;
     private static String timeEndString;
     private static String dateEndString;
+
     private static TextView startDateView;
     private static TextView startTimeView;
     private static TextView endDateView;
     private static TextView endTimeView;
 
-    private RadioGroup mPickupRadioGroup;
+    private static Button startDatePickerButton;
+    private static Button startTimePickerButton;
+    private static Button endDatePickerButton;
+    private static Button endTimePickerButton;
 
-    private ImageView mImageView;
+    private static CheckBox chkCallToPublisher;
+
+    private ImageView mAddPicImageView;
+    private ImageView mChoosenPicImageView;
     private Uri imageURI;
 
+    private static Button submitButton;
 
     private Date mDate;
 
-    public enum PickupStatus {
-        FREE, CALL
-    };
+    private static FCPublication publication;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_publication);
 
-        mNameText = (EditText) findViewById(R.id.name);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras == null) {
+            publication = new FCPublication();
+        } else {
+            publication = (FCPublication)extras.get(PUBLICATION_KEY);
+        }
+
+        mTitleText = (EditText) findViewById(R.id.et_title_new_publication);
 
         // Auto complete
         mGoogleApiClient = new GoogleApiClient.Builder(AddNewFCPublicationActivity.this)
@@ -120,120 +159,56 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 BOUNDS_MOUNTAIN_VIEW, null);
         atv_address.setAdapter(mPlaceArrayAdapter);
 
-        // Date and Time
-        startDateView = (TextView) findViewById(R.id.start_date);
-        startTimeView = (TextView) findViewById(R.id.start_time);
-        endDateView = (TextView) findViewById(R.id.end_date);
-        endTimeView = (TextView) findViewById(R.id.end_time);
+        // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
+        startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
+        startDatePickerButton.setOnClickListener(this);
 
+        startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
+        startTimePickerButton.setOnClickListener(this);
 
+        endDatePickerButton = (Button) findViewById(R.id.end_date_picker_button);
+        endDatePickerButton.setOnClickListener(this);
+
+        endTimePickerButton = (Button) findViewById(R.id.end_time_picker_button);
+        endTimePickerButton.setOnClickListener(this);
 
         // Set the default date and time
         setDefaultDateTime();
 
-        // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
-        final Button startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
-        startDatePickerButton.setOnClickListener(new View.OnClickListener() {
+        chkCallToPublisher = (CheckBox) findViewById(R.id.chkCallToPublisher);
+        chkCallToPublisher.setOnClickListener(this);
 
+        mAddPicImageView = (ImageView)findViewById(R.id.imgAddPicture);
+        mAddPicImageView.setOnClickListener(this);
+
+        mChoosenPicImageView = (ImageView)findViewById(R.id.imgView);
+
+        submitButton = (Button) findViewById(R.id.publishButton);
+        submitButton.setOnClickListener(this);
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library", "Cancel" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddNewFCPublicationActivity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+                } else if (items[item].equals("Choose from Library")) {
+                    Intent intent = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
             }
         });
-
-        // OnClickListener for the Time button, calls showTimePickerDialog() to show the Time Dialog
-        final Button startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
-        startTimePickerButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showTimePickerDialog();
-            }
-        });
-
-        final Button endDatePickerButton = (Button) findViewById(R.id.end_date_picker_button);
-        endDatePickerButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-
-        // OnClickListener for the Time button, calls showTimePickerDialog() to
-        // show the Time Dialog
-        final Button endTimePickerButton = (Button) findViewById(R.id.end_time_picker_button);
-        endTimePickerButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showTimePickerDialog();
-            }
-        });
-
-        mPickupRadioGroup = (RadioGroup) findViewById(R.id.pickupMethodGroup);
-
-        mImageView = (ImageView)findViewById(R.id.imgView);
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select image for publication"), 1);
-
-
-//                Bitmap bmp = BitmapFactory.decodeFile(miFoto);
-//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
-//                InputStream in = new ByteArrayInputStream(bos.toByteArray());
-//                ContentBody foto = new InputStreamBody(in, "image/jpeg", "filename");
-            }
-        });
-
-        final Button submitButton = (Button) findViewById(R.id.publishButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("FOODONET", "Entered submitButton.OnClickListener.onClick()");
-
-                // TODO - gather ToDoItem data
-
-
-
-//                int radioButtonID = mPriorityRadioGroup.getCheckedRadioButtonId();
-//                View radioButton = mPriorityRadioGroup.findViewById(radioButtonID);
-//                int idx = mPriorityRadioGroup.indexOfChild(radioButton);
-//				// Get Priority
-//				Priority priority = Priority.values()[idx];
-//                Priority priority = getPriority();
-//
-//
-//                int radioButtonIDstatus = mStatusRadioGroup.getCheckedRadioButtonId();
-//                View radioButtonStatus = mStatusRadioGroup.findViewById(radioButtonIDstatus);
-//                int idxStatus = mStatusRadioGroup.indexOfChild(radioButtonStatus);
-//                // Get Status
-//                Status status = Status.values()[idxStatus];
-//
-//                // Title
-//                String titleString = mTitleText.getText().toString();
-//
-//                // Date
-//                String fullDate = dateString + " " + timeString;
-
-                Intent data = new Intent();
-
-                // FOR ARTEM - HERE YOU MUST PUT NEW PUBLICATION TO EXTRA
-                //data.putExtra(RESULT_FCPUBLICATION_STRING_KEY, publication);
-
-                // return data Intent and finish
-                setResult(RESULT_OK, data);
-                finish();
-
-
-
-            }
-        });
+        builder.show();
     }
 
 
@@ -241,20 +216,58 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.i("FOODONET", "Entered onActivityResult()");
+        Log.i(MY_TAG, "Entered onActivityResult()");
 
-
-        if (requestCode == 1) {
-            if(resultCode == RESULT_OK){
-
-                imageURI = data.getData();
-                mImageView.setImageURI(data.getData());
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA)
+            {
+                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+                File destination = new File(Environment.getExternalStorageDirectory(),
+                        System.currentTimeMillis() + ".jpg");
+                FileOutputStream fo;
+                try {
+                    destination.createNewFile();
+                    fo = new FileOutputStream(destination);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+                    publication.setPhotoUrl(destination.getPath());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mChoosenPicImageView.setImageBitmap(thumbnail);
             }
-            if (resultCode == RESULT_CANCELED) {
-
+            else if (requestCode == SELECT_FILE)
+            {
+                Uri selectedImageUri = data.getData();
+                String[] projection = { MediaStore.MediaColumns.DATA };
+                Cursor cursor = managedQuery(selectedImageUri, projection, null, null,
+                        null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                cursor.moveToFirst();
+                String selectedImagePath = cursor.getString(column_index);
+                publication.setPhotoUrl(selectedImagePath);
+                Bitmap bm;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(selectedImagePath, options);
+                final int REQUIRED_SIZE = 200;
+                int scale = 1;
+                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                    scale *= 2;
+                options.inSampleSize = scale;
+                options.inJustDecodeBounds = false;
+                bm = BitmapFactory.decodeFile(selectedImagePath, options);
+                mChoosenPicImageView.setImageBitmap(bm);
             }
         }
+        if (resultCode == RESULT_CANCELED) {
 
+        }
     }
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener
@@ -285,7 +298,15 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
             CharSequence attributions = places.getAttributions();
 
            // mNameTextView.setText(Html.fromHtml(place.getName() + ""));
-            mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
+            String address = Html.fromHtml(place.getAddress() + "").toString();
+            mAddressTextView.setText(address);
+            double longitude = getLongitudeFromAddress(address);
+            double latitude = getLatitudeFromAddress(address);
+
+            publication.setAddress(address);
+            publication.setLongitude(longitude);
+            publication.setLatitude(latitude);
+
 //            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
 //            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
 //            mWebTextView.setText(place.getWebsiteUri() + "");
@@ -294,6 +315,50 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
 //            }
         }
     };
+
+    public double getLatitudeFromAddress(String strAddress)
+    {
+
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
+        double latitude = 0;
+
+        try
+        {
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address != null) {
+                Address location = address.get(0);
+                latitude = location.getLatitude();
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return latitude;
+    }
+
+    public double getLongitudeFromAddress(String strAddress)
+    {
+
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
+        double longitude = 0;
+
+        try
+        {
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address != null) {
+                Address location = address.get(0);
+                longitude = location.getLongitude();
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return longitude;
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -365,12 +430,12 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         // Set default date
         setDateString(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
                 c.get(Calendar.DAY_OF_MONTH));
-        startDateView.setText(dateStartString);
+        startDatePickerButton.setText(dateStartString);
 
         c.add(Calendar.DATE, 1);
         setDateString(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
                 c.get(Calendar.DAY_OF_MONTH));
-        endDateView.setText(dateEndString);
+        endDatePickerButton.setText(dateEndString);
 
 //
 //        // Set default time
@@ -380,8 +445,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         setTimeString(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
                 c.get(Calendar.MILLISECOND));
 
-        startTimeView.setText(timeStartString);
-        endTimeView.setText(timeEndString);
+        startTimePickerButton.setText(timeStartString);
+        endTimePickerButton.setText(timeEndString);
     }
 
     private static void setDateString(int year, int monthOfYear, int dayOfMonth) {
@@ -438,8 +503,10 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                               int dayOfMonth) {
             setDateString(year, monthOfYear, dayOfMonth);
 
-            startDateView.setText(dateStartString);
-            endDateView.setText(dateEndString);
+            if(this.getTag() == START_DATE_PICKER_KEY)
+                startDatePickerButton.setText(dateStartString);
+            else
+                endDatePickerButton.setText(dateEndString);
         }
 
     }
@@ -465,30 +532,109 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
 
             setTimeString(hourOfDay, minute, 0);
 
-            startTimeView.setText(timeStartString);
-            endTimeView.setText(timeEndString);
+            if(this.getTag() == START_TIME_PICKER_KEY)
+                startTimePickerButton.setText(timeStartString);
+            else
+                endTimePickerButton.setText(timeEndString);
         }
     }
 
-    private void showDatePickerDialog() {
+    private void showStartDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
+        newFragment.show(getFragmentManager(), START_DATE_PICKER_KEY);
     }
 
-    private void showTimePickerDialog() {
+    private void showStartTimePickerDialog() {
         DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), "timePicker");
+        newFragment.show(getFragmentManager(), START_TIME_PICKER_KEY);
     }
 
-    private PickupStatus getStatus() {
+    private void showEndDatePickerDialog() {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), END_DATE_PICKER_KEY);
+    }
 
-        switch (mPickupRadioGroup.getCheckedRadioButtonId()) {
-            case R.id.freePickup: {
-                return PickupStatus.FREE;
-            }
-            default: {
-                return PickupStatus.CALL;
-            }
+    private void showEndTimePickerDialog() {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getFragmentManager(), END_TIME_PICKER_KEY);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.start_date_picker_button:
+                showStartDatePickerDialog();
+                break;
+            case R.id.start_time_picker_button:
+                showStartTimePickerDialog();
+                break;
+            case R.id.end_date_picker_button:
+                showEndDatePickerDialog();
+                break;
+            case R.id.end_time_picker_button:
+                showEndTimePickerDialog();
+                break;
+            case R.id.chkCallToPublisher:
+                if(chkCallToPublisher.isChecked())
+                    publication.setTypeOfCollecting(FCTypeOfCollecting.ContactPublisher);
+                else
+                    publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);
+                break;
+            case R.id.imgAddPicture:
+                selectImage();
+
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivityForResult(Intent.createChooser(intent,"Select image for publication"), 1);
+
+
+//                Bitmap bmp = BitmapFactory.decodeFile(miFoto);
+//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+//                InputStream in = new ByteArrayInputStream(bos.toByteArray());
+//                ContentBody foto = new InputStreamBody(in, "image/jpeg", "filename");
+                break;
+            case R.id.publishButton:
+                Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
+
+                // TODO - gather ToDoItem data
+
+//                // Title
+//                String titleString = mTitleText.getText().toString();
+//
+//                // Date
+//                String fullDate = dateString + " " + timeString;
+
+                String title = mTitleText.getText().toString();
+                publication.setTitle(title);
+
+                String dtStart = startDatePickerButton.getText().toString() + " " + startTimePickerButton.getText().toString() + ":00";
+                Date dateStart = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                try {
+                    dateStart = format.parse(dtStart);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                publication.setStartingDate(dateStart);
+
+                String dtEnd = endDatePickerButton.getText().toString() + " " + endTimePickerButton.getText().toString() + ":00";
+                Date dateEnd = new Date();
+                try {
+                    dateEnd = format.parse(dtEnd);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                publication.setEndingDate(dateEnd);
+
+
+                Intent dataPublicationIntent = new Intent();
+                dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
+                // return data Intent and finish
+                setResult(RESULT_OK, dataPublicationIntent);
+                finish();
+                break;
         }
     }
 }

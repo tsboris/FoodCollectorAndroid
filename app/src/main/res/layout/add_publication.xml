@@ -3,10 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!-- И премию за самые интуитивно понятные имена в коде получает...
-        (барабанная дробь)
-        ЭдитТекст с именем android:id="@+id/name", в котором должен быть FCPublication.TITLE!!!
-        Наши поздравления!! -->
     <EditText
         android:id="@+id/et_title_new_publication"
         android:layout_width="match_parent"
@@ -14,22 +10,10 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="14dp"
         android:ems="10"
-        android:hint="@string/enter_name_string"
+        android:hint="@string/enter_title_string"
         android:inputType="textShortMessage">
 
         <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/et_subtitle_new_publication"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="14dp"
-        android:ems="10"
-        android:hint="@string/enter_description_name_string"
-        android:inputType="textShortMessage">
-
     </EditText>
 
     <AutoCompleteTextView
@@ -140,34 +124,25 @@
         android:layout_height="wrap_content"
         android:gravity="right">
 
-        <TextView
-            android:id="@+id/start_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_time_set_string" />
-
         <Button
             android:id="@+id/start_time_picker_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/choose_time_string" />
+            android:text="@string/no_time_set_string" />
 
-        <TextView
-            android:id="@+id/start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_date_set_string" />
 
         <Button
             android:id="@+id/start_date_picker_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/choose_date_string" />
+            android:text="@string/no_date_set_string" />
 
         <TextView
             android:id="@+id/startTitle"
-            android:layout_width="55dp"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
+            android:textSize="17dp"
+            android:paddingRight="11dp"
             android:text="@string/start_string" />
 
     </LinearLayout>
@@ -180,72 +155,75 @@
         android:layout_height="wrap_content"
         android:gravity="right">
 
-        <TextView
-            android:id="@+id/end_time"
+        <Button
+            android:id="@+id/end_time_picker_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_time_set_string" />
 
         <Button
-            android:id="@+id/end_time_picker_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_time_string" />
-
-        <TextView
-            android:id="@+id/end_date"
+            android:id="@+id/end_date_picker_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_date_set_string" />
 
-        <Button
-            android:id="@+id/end_date_picker_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_date_string" />
-
         <TextView
             android:id="@+id/endTitle"
-            android:layout_width="55dp"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
+            android:textSize="17dp"
+            android:paddingRight="11dp"
             android:text="@string/end_string" />
 
     </LinearLayout>
 
-
-    <RadioGroup
-        android:id="@+id/pickupMethodGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="right">
 
-
-        <RadioButton
-            android:id="@+id/callToPublisher"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:layout_width="wrap_content"
+        <CheckBox
+            android:id="@+id/chkCallToPublisher"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:textSize="17dp"
+            android:layout_marginLeft="10dp"
+            android:paddingRight="11dp"
             android:text="@string/call_to_publisher_string" />
 
-        <RadioButton
-            android:id="@+id/freePickup"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:layout_width="wrap_content"
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <ImageView
+            android:id="@+id/imgAddPicture"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_horizontal|top"
+            android:src="@drawable/camera" />
+
+        <TextView
+            android:id="@+id/tvAddPicture"
+            android:layout_width="165dp"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:layout_gravity="right"
-            android:text="@string/free_pickup_string" />
-    </RadioGroup>
+            android:textSize="17dp"
+            android:paddingRight="11dp"
+            android:text="@string/add_pic_string" />
+
+    </LinearLayout>
+
 
 
     <ImageView
+        android:id="@+id/imgView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/imgView"
+        android:padding="10dp"
         android:layout_gravity="center_horizontal|top"
         android:src="@drawable/no_photo_placeholder" />
 

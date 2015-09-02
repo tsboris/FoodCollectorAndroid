@@ -58,11 +58,11 @@
                 <!-- action android:name="com.google.android.c2dm.intent.REGISTRATION" / -->
             </intent-filter>
         </receiver>
-        <!--
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCoeHSRmhMEo-S7qx9NXW3p0uONhFq2-eY" />
-        -->
+
 
 
         <!-- Vitaly laptop: AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0 -->
