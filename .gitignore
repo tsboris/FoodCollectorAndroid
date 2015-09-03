@@ -1,4 +1,4 @@
-.gradle
+*.gradle
 /.idea
 /local.properties
 /.idea/workspace.xml
@@ -37,3 +37,5 @@ proguard/
 
 # Android Studio Navigation editor temp files
 .navigation/
+
+*.iml

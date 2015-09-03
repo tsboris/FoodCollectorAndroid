@@ -204,8 +204,9 @@
             android:id="@+id/imgAddPicture"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_gravity="center_horizontal|top"
-            android:src="@drawable/camera" />
+            android:layout_gravity="center_horizontal|top" />
+            <!--android:src="@drawable/camera"-->
+
 
         <TextView
             android:id="@+id/tvAddPicture"
