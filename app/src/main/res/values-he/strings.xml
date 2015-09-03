@@ -22,4 +22,11 @@
     <string name="publish">רוצה לפרסם</string>
     <string name="pickup">רוצה לאסוף</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    <!-- my publication details -->
+    <string name="participants_report">משתמשים דיווחי</string>
+    <string name="going_to_collect">לאסוף בדרך</string>
+    <string name="cancel_publication">מחק</string>
+
+
 </resources>

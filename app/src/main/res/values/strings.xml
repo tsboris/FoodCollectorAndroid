@@ -33,6 +33,14 @@
     <string name="title_activity_all_publications">AllPublicationsActivity</string>
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
+    <!-- my publication details -->
+    <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
+    <string name="participants_report">Report on participants</string>
+    <string name="going_to_collect">persons are going to collect</string>
+    <string name="cancel_publication">cancel publication</string>
+    <string name="cancel_publication_question">Really cancel this publication?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Server strings -->

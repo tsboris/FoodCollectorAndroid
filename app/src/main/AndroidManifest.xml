@@ -143,6 +143,13 @@
             android:name=".MyPublicationsActivity"
             android:label="@string/title_activity_my_publications" >
         </activity>
+
+        <activity
+            android:name=".MyPublicationDetailsActivity"
+            android:label="@string/title_activity_my_publication_details"
+            android:screenOrientation="portrait" >
+
+        </activity>
     </application>
 
 </manifest>

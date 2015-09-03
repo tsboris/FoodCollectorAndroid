@@ -35,6 +35,7 @@ import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.InternalRequest;
+import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -53,6 +54,8 @@ public class EntranceActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
+
+        startMyPublicationDetailsActivity();
 
         // Why do we need this?
         //TextView welcomeView = (TextView) findViewById(R.id.welcome);
@@ -109,6 +112,33 @@ public class EntranceActivity
 
 
 
+    }
+
+    private void startMyPublicationDetailsActivity()
+    {
+        FCPublication samplePub = new FCPublication();
+        samplePub.setTitle("pomodori");
+        samplePub.setSubtitle("pomodori in boxes a 3 kg");
+        samplePub.setPhotoUrl("http://static.adzerk.net/Advertisers/90bd75b000054d73ad21a6f72a11fc14.jpg");
+        samplePub.setAddress("Ramat Gan, HaRoeh 257");
+
+        ArrayList<RegisteredUserForPublication> regUsers = new ArrayList<RegisteredUserForPublication>();
+        RegisteredUserForPublication u1 = new RegisteredUserForPublication();
+        u1.setId(11111);
+        regUsers.add(u1);
+        RegisteredUserForPublication u2 = new RegisteredUserForPublication();
+        u2.setId(2222);
+        regUsers.add(u2);
+        RegisteredUserForPublication u3 = new RegisteredUserForPublication();
+        u1.setId(3333);
+        regUsers.add(u3);
+        samplePub.setRegisteredForThisPublication(regUsers);
+
+        Intent intent = new Intent(this, MyPublicationDetailsActivity.class);
+        intent.putExtra(MyPublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
+        intent.putExtra(MyPublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, false);
+
+        startActivity(intent);
     }
 
     @Override
