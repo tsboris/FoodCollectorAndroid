@@ -42,7 +42,7 @@
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
     <string name="notifications_server_id">585244341740</string>
-    <string name="register_new_device">/active_devices.json</string>
+    <string name="register_new_device">/active_devices/new</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
 
 </resources>

@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -18,7 +17,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 
-import CommonUtil.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -40,7 +38,6 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int PUBLICATION_ID = 20;
     private static final int PUBLICATION_ID_NEGATIVE = 21;
     private static final int PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC = 30;
-    private static final int PUBLICATIONS_MY_FOR_LIST_SORTED_ID_DESC = 31;
     private static final int REGS_FOR_PUBLICATION = 40;
     private static final int INSERT_REG_FOR_PUBLICATION = 41;
     private static final int DELETE_REG_FOR_PUBLICATION = 42;
@@ -57,7 +54,6 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_NEGATIVE_ID = "/neg_id";
 
     private static final String EXT_ALL_PUBS_FOR_LIST_ID_DESC_PATH = "/Pubs_ALL_for_list_id_desc";
-    private static final String EXT_MY_PUBS_FOR_LIST_ID_DESC_PATH = "/Pubs_MY_for_list_id_desc";
 
     private static final String EXT_ALL_REGS = "/AllRegisteredForPublications";
 
@@ -79,8 +75,6 @@ public class FooDoNetSQLProvider extends ContentProvider {
 
     public static final Uri URI_PUBLICATION_ID_NEGATIVE
             = Uri.parse(BASE_STRING_FOR_URI + EXT_NEGATIVE_ID);
-    public static final Uri URI_GET_MY_PUBS_FOR_LIST_ID_DESC
-            = Uri.parse(BASE_STRING_FOR_URI + EXT_MY_PUBS_FOR_LIST_ID_DESC_PATH);
     public static final Uri URI_GET_ALL_PUBS_FOR_LIST_ID_DESC
             = Uri.parse(BASE_STRING_FOR_URI + EXT_ALL_PUBS_FOR_LIST_ID_DESC_PATH);
     public static final Uri URI_GET_ALL_REGS = Uri.parse(BASE_STRING_FOR_URI + EXT_ALL_REGS);
@@ -108,7 +102,6 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PUBLICATION_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_NEGATIVE_ID + "/#", PUBLICATION_ID_NEGATIVE);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_ALL_PUBS_FOR_LIST_ID_DESC_PATH, PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC);
-        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_MY_PUBS_FOR_LIST_ID_DESC_PATH, PUBLICATIONS_MY_FOR_LIST_SORTED_ID_DESC);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_ALL_REGS, REGS_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_INSERT_REG, INSERT_REG_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_DELETE_REG + "/#", DELETE_REG_FOR_PUBLICATION);
@@ -132,7 +125,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         checkColumns(projection, uriType);
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        String imei;
+
         switch (uriType) {
             case PUBLICATIONS:
                 queryBuilder.setTables(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME);// + "," + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME
@@ -142,17 +135,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.appendWhere(FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + uri.getLastPathSegment());
                 break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:
-                imei = CommonUtil.GetIMEI(this.getContext());
-                //Log.i(MY_TAG, FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(0));
-                return database.getReadableDatabase()
-                        .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
-                                FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_ID, imei), null);
-                //return database.getReadableDatabase().rawQuery(FooDoNetSQLHelper.RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC, null);
-            case PUBLICATIONS_MY_FOR_LIST_SORTED_ID_DESC:
-                imei = CommonUtil.GetIMEI(this.getContext());
-                return database.getReadableDatabase()
-                        .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
-                                FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ID, imei), null);
+                return database.getReadableDatabase().rawQuery(FooDoNetSQLHelper.RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC, null);
             case REGS_FOR_PUBLICATION:
                 queryBuilder.setTables(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME);
                 break;
@@ -299,7 +282,6 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 available = FCPublication.GetColumnNamesArray();
                 break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:
-            case PUBLICATIONS_MY_FOR_LIST_SORTED_ID_DESC:
                 available = FCPublication.GetColumnNamesForListArray();
                 break;
             case REGS_FOR_PUBLICATION:

@@ -17,7 +17,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +31,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
@@ -168,43 +166,26 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(15000);
             connection.setRequestMethod(requestMethod);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setUseCaches(false);
             //connection.setRequestMethod("GET");
-            byte[] bytes = null;
             switch (requestMethod) {
                 case REQUEST_METHOD_GET:
                     connection.setRequestProperty("Content-length", "0");
+                    connection.setUseCaches(false);
                     connection.setAllowUserInteraction(false);
                     break;
                 case REQUEST_METHOD_POST:
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
-                    String str = "{\"active_device\":{\"last_location_longitude\":\"34.85003149\", \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":\"32.11102827\", \"is_ios\":\"false\", \"remote_notiﬁcation_token\":\"1234\"}}";
-                    bytes = str.getBytes("UTF-8");
-                    connection.setRequestProperty("Content-length", String.valueOf(bytes.length));
                     break;
             }
-            //connection.connect();
             if (writableObject != null) {
-
                 OutputStream outputStream = connection.getOutputStream();
-                Map<String, Object> regData = writableObject.GetJsonMapStringObject();
-                JSONObject jo = new JSONObject(regData);
-                OutputStreamWriter osw = new OutputStreamWriter(outputStream);
-                Log.wtf(MY_TAG, jo.toString());
-                outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
-                outputStream.flush();
-                outputStream.close();
-/*
                 JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 writableObject.WriteSelfToJSONWriter(writer);
                 //writer.flush();
                 writer.close();
                 outputStream.flush();
                 outputStream.close();
-                */
 /*                //
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -219,6 +200,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 //*/
             }
             Log.i(MY_TAG, "sending: " + connection.toString());
+            connection.connect();
             int connectionResponse = connection.getResponseCode();
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:

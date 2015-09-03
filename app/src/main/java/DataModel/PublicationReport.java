@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by Asher on 30.08.2015.
@@ -166,10 +165,5 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
     @Override
     public void WriteSelfToJSONWriter(JsonWriter writer) {
 
-    }
-
-    @Override
-    public Map<String, Object> GetJsonMapStringObject() {
-        return null;
     }
 }
