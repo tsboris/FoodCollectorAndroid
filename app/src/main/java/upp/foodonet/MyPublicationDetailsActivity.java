@@ -34,7 +34,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
     private static final int PHOTO_RADIUS = 200;
 
-    private static final String MY_TAG = "MyPublicationDetailsActivity";
+    private static final String MY_TAG = "food_PubDetails";
 
 
     //region Activity

@@ -5,6 +5,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Asher on 19.08.2015.
@@ -19,7 +22,7 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
     public static final String USER_DATA_LONGITUDE = "last_location_longitude";
     public static final String USER_DATA_IS_IOS = "is_ios";
 
-    public UserRegisterData(String imei, String token, double latitude, double longitude){
+    public UserRegisterData(String imei, String token, double latitude, double longitude) {
         set_Imei(imei);
         set_Push_Token(token);
         set_Latitude(latitude);
@@ -27,52 +30,81 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
     }
 
     private String _imei;
-    public void set_Imei(String imei){
+
+    public void set_Imei(String imei) {
         _imei = imei;
     }
-    public String get_Imei(){
+
+    public String get_Imei() {
         return _imei;
     }
 
     private String _push_token;
-    public void set_Push_Token(String token){
+
+    public void set_Push_Token(String token) {
         _push_token = token;
     }
-    public String get_Push_Token(){
+
+    public String get_Push_Token() {
         return _push_token;
     }
 
     private double _latitude;
-    public void set_Latitude(double latitude){
+
+    public void set_Latitude(double latitude) {
         _latitude = latitude;
     }
-    public double get_Latitude(){
+
+    public double get_Latitude() {
         return _latitude;
     }
 
     private double _longitude;
-    public void set_Longitude(double longitude){
+
+    public void set_Longitude(double longitude) {
         _longitude = longitude;
     }
-    public double get_Longitude(){
+
+    public double get_Longitude() {
         return _longitude;
     }
 
     private final static boolean _is_ios = false;
-    public boolean get_Is_IOS(){ return _is_ios; }
 
-    public void WriteSelfToJSONWriter(JsonWriter writer){
+    public boolean get_Is_IOS() {
+        return _is_ios;
+    }
+
+    public void WriteSelfToJSONWriter(JsonWriter writer) {
         try {
             writer.beginObject();
+            writer.name("active_device");
+            writer.beginObject();
             writer.name(USER_DATA_DEV_UUID_FIELD_NAME).value(get_Imei());
-            writer.name(USER_DATA_PUSH_TOKEN).value(get_Push_Token());
-            writer.name(USER_DATA_LATITUDE).value(get_Latitude());
-            writer.name(USER_DATA_LONGITUDE).value(get_Longitude());
+            writer.name(USER_DATA_PUSH_TOKEN).value("1234");//get_Push_Token());
+            writer.name(USER_DATA_LATITUDE).value(String.valueOf(get_Latitude()));
+            writer.name(USER_DATA_LONGITUDE).value(String.valueOf(get_Longitude()));
             writer.name(USER_DATA_IS_IOS).value(Boolean.toString(get_Is_IOS()));
+            writer.endObject();
             writer.endObject();
         } catch (IOException e) {
             Log.e(MY_TAG, e.toString());
             e.printStackTrace();
         }
     }
+
+    public Map<String, Object> GetJsonMapStringObject() {
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, get_Imei());
+        deviceData.put(USER_DATA_PUSH_TOKEN, "234");//get_Push_Token());
+        deviceData.put(USER_DATA_IS_IOS, false);
+        deviceData.put(USER_DATA_LATITUDE, get_Latitude());
+        deviceData.put(USER_DATA_LONGITUDE, get_Longitude());
+
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+
+        dataToSend.put("active_device", deviceData);
+        return dataToSend;
+    }
+
 }

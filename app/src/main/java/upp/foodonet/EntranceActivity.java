@@ -55,7 +55,7 @@ public class EntranceActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
 
-        startMyPublicationDetailsActivity();
+        //startMyPublicationDetailsActivity();
 
         // Why do we need this?
         //TextView welcomeView = (TextView) findViewById(R.id.welcome);

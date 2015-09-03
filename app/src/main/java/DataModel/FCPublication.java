@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by artyomshapet on 6/29/15.
@@ -380,7 +381,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 if(isForList){
                     publication.setNumberOfRegistered(cursor.getInt(cursor.getColumnIndex(PUBLICATION_NUMBER_OF_REGISTERED)));
                 } else
-                publication.setVersion(cursor.getInt(cursor.getColumnIndex(PUBLICATION_VERSION_KEY)));
+                    publication.setVersion(cursor.getInt(cursor.getColumnIndex(PUBLICATION_VERSION_KEY)));
                 publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID_KEY)));
                 publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
                 publication.setTypeOfCollecting(cursor.getInt(cursor.getColumnIndex(PUBLICATION_TYPE_OF_COLLECTION_KEY)));
@@ -482,6 +483,11 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Map<String, Object> GetJsonMapStringObject() {
+        return null;
     }
 
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {

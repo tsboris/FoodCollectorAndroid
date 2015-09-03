@@ -78,17 +78,23 @@
         android:searchIcon="@android:drawable/ic_search_category_default"
         android:layout_below="@+id/linearLayout"
         tools:ignore="UnusedAttribute" />
-    <ListView android:id="@+id/lst_my_publications_list"
+
+    <ListView android:id="@+id/lv_my_publications_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/searchView1" />
+        android:layout_below="@+id/searchView1"></ListView>
+
+    <!--    <ListView android:id="@+id/lst_my_publications_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchView1" />-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignBottom="@+id/lst_my_publications_list"
-        android:layout_alignLeft="@+id/lst_my_publications_list"
-        android:layout_alignStart="@+id/lst_my_publications_list">
+        android:layout_alignBottom="@+id/lv_my_publications_list"
+        android:layout_alignLeft="@+id/lv_my_publications_list"
+        android:layout_alignStart="@+id/lv_my_publications_list">
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"

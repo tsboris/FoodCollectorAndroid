@@ -89,7 +89,7 @@ public class SplashScreenActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data == null) {
+        if (data == null) {
             Log.e("myTag", "cursor null");
             return;
         }
@@ -98,7 +98,7 @@ public class SplashScreenActivity
 
         //flagSQLLoaderFinished = true;
 
-        if(AllLoaded())
+        if (AllLoaded())
             StartNextActivity();
     }
 
@@ -129,11 +129,11 @@ public class SplashScreenActivity
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-        if(response == null) {
+        if (response == null) {
             Log.e(MY_TAG, "server connection task called back with null response");
             return;
         }
-        switch (response.Status){
+        switch (response.Status) {
             case InternalRequest.STATUS_FAIL:
                 Log.e(MY_TAG, "server callback status failed");
                 return;
@@ -154,7 +154,7 @@ public class SplashScreenActivity
         }
     }
 
-    private void ContinueAfterRegister(){
+    private void ContinueAfterRegister() {
 
     }
 
@@ -178,12 +178,12 @@ public class SplashScreenActivity
     }
     */
 
-    Handler splashScreenHoldWaitCompeleteHandler = new Handler(){
+    Handler splashScreenHoldWaitCompeleteHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
-                    if(AllLoaded())
+                    if (AllLoaded())
                         StartNextActivity();
                     break;
                 default:
@@ -199,39 +199,39 @@ public class SplashScreenActivity
         @Override
         protected Void doInBackground(final Point... params) {
             final int secondsToSleep = params[0].x;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            TimeUnit.SECONDS.sleep(secondsToSleep);
-                            flagWaitTaskFinished = true;
-                            splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TimeUnit.SECONDS.sleep(secondsToSleep);
+                        flagWaitTaskFinished = true;
+                        splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }).start();
-                //Thread.sleep(1000 * params[0].x, 0);
+                }
+            }).start();
+            //Thread.sleep(1000 * params[0].x, 0);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if(AllLoaded())
+            if (AllLoaded())
                 StartNextActivity();
         }
     }
 
-    private void StartNextActivity(){
+    private void StartNextActivity() {
         Intent intent = new Intent(this, EntranceActivity.class);
         //publicationsFromDB.addAll(publicationsFromServer);
         intent.putExtra("loaderResult", publicationsUpdatedList);
         this.startActivity(intent);
     }
 
-    private void RegisterIfNotRegisteredYet(){
+    private void RegisterIfNotRegisteredYet() {
         SharedPreferences preference = getPreferences(Context.MODE_PRIVATE);
-        if(preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
+        if (preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
             OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_POST_REGISTER, true));
             return;
         } else {
@@ -244,7 +244,7 @@ public class SplashScreenActivity
     }
 
 
-
-    private boolean AllLoaded(){
+    private boolean AllLoaded() {
         return flagSQLLoaderFinished && flagWaitTaskFinished;
-    }}
+    }
+}
