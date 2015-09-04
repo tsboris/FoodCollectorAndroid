@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -24,6 +26,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import java.util.ArrayList;
 import java.util.logging.Handler;
 
+import CommonUtilPackage.GetMyLocationAsync;
+import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import FooDoNetServerClasses.ConnectionDetector;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
@@ -34,7 +38,9 @@ import upp.foodonet.FooDoNetService;
 /**
  * Created by Asher on 31-Jul-15.
  */
-public abstract class FooDoNetCustomActivityConnectedToService extends FragmentActivity implements IFooDoNetServiceCallback {
+public abstract class FooDoNetCustomActivityConnectedToService
+        extends FragmentActivity
+        implements IFooDoNetServiceCallback, IGotMyLocationCallback {
 
     FooDoNetService fooDoNetService;
     boolean isBoundedToService;
@@ -118,6 +124,9 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
 
     public abstract void OnInternetNotConnected();
 
+    @Override
+    public void OnGotMyLocationCallback(Location location){ }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             boundedService = new Messenger(service);
@@ -144,6 +153,9 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
                 case FooDoNetService.ACTION_WORK_DONE:
                     OnNotifiedToFetchData();
                     break;
+                case GetMyLocationAsync.ACTION_GET_MY_LOCATION:
+                    OnGotMyLocationCallback((Location)msg.obj);
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -151,5 +163,11 @@ public abstract class FooDoNetCustomActivityConnectedToService extends FragmentA
     }
 
     final Messenger callbackMessenger = new Messenger(new IncomingHandler());
+
+    protected void StartGetMyLocation(){
+        LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, callbackMessenger);
+        locationAsync.execute();
+    }
 
 }

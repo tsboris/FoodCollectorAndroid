@@ -125,7 +125,7 @@ public class FooDoNetService
     }
 
     private void DoNextTaskFromWorkPlan() {
-        if(true)return;
+        //if(true)return;
         if(!mustRun) return;
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]){

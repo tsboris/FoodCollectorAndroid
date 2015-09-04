@@ -1,13 +1,18 @@
 package upp.foodonet;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Point;
 import android.location.Location;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +21,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -34,11 +45,18 @@ public class MapAndListActivity
         GoogleMap.OnMyLocationChangeListener,
         AdapterView.OnItemClickListener,
         ViewPager.OnPageChangeListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String MY_TAG = "food_mapAndList";
 
     GoogleMap googleMap;
+    boolean isMapLoaded;
+    double maxDistance;
+    LatLng average, myLocation;
+    ArrayList<Marker> myMarkers;
+
+
     DrawerLayout drawerLayout;
     ViewPager mainPager;
     MainViewPagerAdapter mainPagerAdapter;
@@ -107,6 +125,7 @@ public class MapAndListActivity
     public void OnNotifiedToFetchData() {
         Toast.makeText(this, MY_TAG + " OnNotifiedToFetchData()", Toast.LENGTH_LONG);
         Log.i(MY_TAG, "OnNotifiedToFetchData()");
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -134,6 +153,10 @@ public class MapAndListActivity
         this.googleMap = googleMap;
         if (this.googleMap != null)
             Toast.makeText(this, "Map loaded!", Toast.LENGTH_SHORT);
+        else{
+            isMapLoaded = true;
+            myMarkers = new ArrayList<>();
+        }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
@@ -156,16 +179,14 @@ public class MapAndListActivity
         };
         drawerLayout.setDrawerListener(mDrawerToggle);
 
+        getSupportLoaderManager().initLoader(0, null, this);
+
+        SetCamera();
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
-    }
-
-    @Override
-    public void onMyLocationChange(Location location) {
-
     }
 
     @Override
@@ -197,5 +218,142 @@ public class MapAndListActivity
             //case R.id.tgl_btn_take_maplst:
             //   break;
         }
+    }
+
+    private void SetCamera() {
+        if (myLocation == null) {
+            maxDistance = 0.009 * 40;
+            StartGetMyLocation();
+        } else {
+            OnReadyToUpdateCamera();
+        }
+    }
+
+    private void OnReadyToUpdateCamera(){
+        Point size = GetScreenSize();
+        int width = size.x;
+        int height = size.y;
+        if (myMarkers != null || myMarkers.size() == 0) {
+            double latitude = 0;
+            double longtitude = 0;
+            int counter = 1;
+            if (myLocation != null) {
+                if (average != null && GetDistance(average, myLocation) < maxDistance)
+                    return;
+
+                latitude += myLocation.latitude;
+                longtitude += myLocation.longitude;
+                counter++;
+            }
+
+            for (Marker m : myMarkers) {
+                latitude += m.getPosition().latitude;
+                longtitude += m.getPosition().longitude;
+                counter++;
+            }
+
+            average = new LatLng(latitude / counter, longtitude / counter);
+
+            maxDistance = 0;
+
+            if (myLocation != null)
+                maxDistance = GetDistance(average, myLocation);
+
+            for (Marker m : myMarkers) {
+                if (GetDistance(average, m.getPosition()) > maxDistance)
+                    maxDistance = GetDistance(average, m.getPosition());
+            }
+
+        } else {
+            average = myLocation;
+        }
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(average), width, height, 0);// new LatLngBounds(southWest, northEast)
+        googleMap.animateCamera(cu);
+    }
+
+    private Point GetScreenSize() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    private double GetDistance(LatLng pos1, LatLng pos2) {
+        return Math.sqrt(Math.pow(pos1.latitude - pos2.latitude, 2) + Math.pow(pos1.longitude - pos2.longitude, 2));
+    }
+
+    private LatLngBounds GetBoundsByCenterLatLng(LatLng center) {
+        return new LatLngBounds
+                (new LatLng(center.latitude - maxDistance * 1.5, center.longitude - maxDistance * 1.5),
+                        new LatLng(center.latitude + maxDistance * 1.5, center.longitude + maxDistance * 1.5));
+
+
+    }
+
+    @Override
+    public void onMyLocationChange(Location location) {
+        if (location == null)
+            return;
+
+/*
+        if(myLocation == null) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.blue_dot_circle);
+            myLocation = AddMarker(((float)location.getLatitude()), (float)location.getLongitude(), getString(R.string.my_location), icon);
+        }
+*/
+        myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        if (GetDistance(myLocation, new LatLng(location.getLatitude(), location.getLongitude())) <= maxDistance)
+            return;
+        if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
+            return;
+        SetCamera();
+    }
+
+    @Override
+    public void OnGotMyLocationCallback(Location location) {
+        myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        OnReadyToUpdateCamera();
+    }
+
+    private Marker AddMarker(float latitude, float longtitude, String title, BitmapDescriptor icon) {
+        MarkerOptions newMarker = new MarkerOptions().position(new LatLng(latitude, longtitude)).title(title).draggable(false);
+        if (icon != null)
+            newMarker.icon(icon);
+        return googleMap.addMarker(newMarker);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = FCPublication.GetColumnNamesArray();
+        android.support.v4.content.CursorLoader cursorLoader
+                = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data.moveToFirst()){
+            ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
+            if(publications == null){
+                Log.e(MY_TAG, "error getting publications from sql");
+                return;
+            }
+
+            if(myMarkers == null)
+                myMarkers = new ArrayList<>();
+            for (FCPublication publication : publications){
+                myMarkers.add(AddMarker(publication.getLatitude().floatValue(),
+                                        publication.getLongitude().floatValue(),
+                                        publication.getTitle(), null));
+            }
+
+            if(isMapLoaded)
+                SetCamera();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
