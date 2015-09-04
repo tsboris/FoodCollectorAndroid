@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -62,6 +63,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 
@@ -628,6 +630,13 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 }
                 publication.setEndingDate(dateEnd);
 
+                if(TextUtils.isEmpty(publication.getPublisherUID()))
+                    publication.setPublisherUID(CommonUtil.GetIMEI(this));
+                publication.setTypeOfCollecting(
+                        chkCallToPublisher.isChecked()
+                                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
+                publication.setVersion(publication.getVersion() + 1);
+                publication.setIsOnAir(false);
 
                 Intent dataPublicationIntent = new Intent();
                 dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);

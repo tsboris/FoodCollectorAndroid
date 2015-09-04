@@ -183,29 +183,36 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 case REQUEST_METHOD_POST:
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
-                    //String str = "{\"active_device\":{\"last_location_longitude\":\"34.85003149\", \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":\"32.11102827\", \"is_ios\":\"false\", \"remote_noti?cation_token\":\"1234\"}}";
-                    //bytes = str.getBytes("UTF-8");
-                    //connection.setRequestProperty("Content-length", String.valueOf(bytes.length));
+/*
+                    String str = "{\"active_device\":{\"last_location_longitude\":34.85003149, \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":32.11102827, \"is_ios\":\"false\", \"remote_notification_token\":\"1234\"}}";
+                    Log.e(MY_TAG, str);
+                    bytes = str.getBytes("UTF-8");
+                    connection.setRequestProperty("Content-length", String.valueOf(bytes.length));
+                    OutputStream outputStream = connection.getOutputStream();
+                    outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
+                    outputStream.flush();
+                    outputStream.close();
+*/
                     break;
             }
-            connection.connect();
+            //connection.connect();
             if (writableObject != null) {
 
 
                 OutputStream outputStream = connection.getOutputStream();
-/*                Map<String, Object> regData = writableObject.GetJsonMapStringObject();
-                JSONObject jo = new JSONObject(regData);
-                OutputStreamWriter osw = new OutputStreamWriter(outputStream);
-                Log.wtf(MY_TAG, jo.toString());
-                outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
-                outputStream.flush();
-                outputStream.close();
-*/
+                //Map<String, Object> regData = writableObject.GetJsonMapStringObject();
+                //JSONObject jo = new JSONObject(regData);
+                //OutputStreamWriter osw = new OutputStreamWriter(outputStream);
+                //Log.wtf(MY_TAG, jo.toString());
+                //outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
+                //outputStream.flush();
+                //outputStream.close();
                 StringWriter sw = new StringWriter();
 
                 JsonWriter writer = new JsonWriter(sw);//new OutputStreamWriter(outputStream, "UTF-8"));
                 writableObject.WriteSelfToJSONWriter(writer);
                 String jsonS = sw.toString();
+                Log.i(MY_TAG, jsonS);
 
                 JsonWriter writerToStream = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 writableObject.WriteSelfToJSONWriter(writerToStream);
@@ -213,6 +220,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 writer.close();
                 //outputStream.flush();
                 outputStream.close();
+
 
 /*                //
 
