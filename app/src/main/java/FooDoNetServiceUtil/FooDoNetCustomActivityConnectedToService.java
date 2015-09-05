@@ -1,10 +1,7 @@
 package FooDoNetServiceUtil;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
@@ -16,23 +13,17 @@ import android.os.Messenger;
 import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
 
 import CommonUtilPackage.GetMyLocationAsync;
 import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import FooDoNetServerClasses.ConnectionDetector;
-import FooDoNetServerClasses.HttpServerConnectorAsync;
-import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
 import upp.foodonet.FooDoNetService;
 
 /**

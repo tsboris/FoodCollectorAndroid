@@ -46,9 +46,11 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int DELETE_REG_FOR_PUBLICATION = 42;
     private static final int GET_NEW_NEGATIVE_ID_CODE = 43;
     private static final int REGS_FOR_PUBLICATION_BY_PUB_ID = 44;
+    private static final int REGS_FOR_PUBLICATION_BY_PUB_NEG_ID = 45;
     private static final int PUBLICATION_REPORT = 50;
     private static final int PUBLICATION_REPORT_ID = 51;
     private static final int PUBLICATION_REPORTS_BY_ID = 52;
+    private static final int PUBLICATION_REPORTS_BY_NEG_ID = 53;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -92,10 +94,14 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_GET_NEW_NEGATIVE_ID);
     public static final Uri URI_GET_REGISTERED_BY_PUBLICATION_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_BY_ID);
+    public static final Uri URI_GET_REGISTERED_BY_PUBLICATION_NEG_ID
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_BY_ID + EXT_NEGATIVE_ID);
     public static final Uri URI_GET_ALL_REPORTS
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REPORT);
     public static final Uri URI_GET_ALL_REPORTS_BY_PUB_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REPORTS_BY_PUB_ID);
+    public static final Uri URI_GET_ALL_REPORTS_BY_PUB_NEG_ID
+            = Uri.parse(URI_GET_ALL_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
@@ -114,9 +120,12 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_DELETE_REG + "/#", DELETE_REG_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GET_NEW_NEGATIVE_ID, GET_NEW_NEGATIVE_ID_CODE);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_BY_ID + "/#", REGS_FOR_PUBLICATION_BY_PUB_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_BY_ID + EXT_NEGATIVE_ID + "/#", REGS_FOR_PUBLICATION_BY_PUB_NEG_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORT, PUBLICATION_REPORT);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORT + "/#", PUBLICATION_REPORT_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID, PUBLICATION_REPORTS_BY_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + "/#", PUBLICATION_REPORTS_BY_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID + "/#", PUBLICATION_REPORTS_BY_NEG_ID);
     }
 
     @Override
@@ -141,6 +150,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.setTables(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME);// + "," + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME
                 queryBuilder.appendWhere(FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + uri.getLastPathSegment());
                 break;
+            case PUBLICATION_ID_NEGATIVE:
+                queryBuilder.setTables(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME);
+                queryBuilder.appendWhere(FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=-" + uri.getLastPathSegment());
+                break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:
                 imei = CommonUtil.GetIMEI(this.getContext());
                 //Log.i(MY_TAG, FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(0));
@@ -161,6 +174,11 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.appendWhere(RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
                         + " = " + uri.getLastPathSegment());
                 break;
+            case REGS_FOR_PUBLICATION_BY_PUB_NEG_ID:
+                queryBuilder.setTables(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME);
+                queryBuilder.appendWhere(RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
+                        + " = -" + uri.getLastPathSegment());
+                break;
             case GET_NEW_NEGATIVE_ID_CODE:
                 return database.getReadableDatabase().rawQuery(FooDoNetSQLHelper.RAW_SELECT_NEW_NEGATIVE_ID, null);
             case PUBLICATION_REPORT:
@@ -170,6 +188,11 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.setTables(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME);
                 queryBuilder.appendWhere(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID
                         + " = " + uri.getLastPathSegment());
+                break;
+            case PUBLICATION_REPORTS_BY_NEG_ID:
+                queryBuilder.setTables(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME);
+                queryBuilder.appendWhere(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID
+                        + " = -" + uri.getLastPathSegment());
                 break;
 
             default:
@@ -296,6 +319,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         switch (action){
             case PUBLICATIONS:
             case PUBLICATION_ID:
+            case PUBLICATION_ID_NEGATIVE:
                 available = FCPublication.GetColumnNamesArray();
                 break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:
@@ -303,6 +327,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 available = FCPublication.GetColumnNamesForListArray();
                 break;
             case REGS_FOR_PUBLICATION:
+            case REGS_FOR_PUBLICATION_BY_PUB_ID:
+            case REGS_FOR_PUBLICATION_BY_PUB_NEG_ID:
                 available = RegisteredUserForPublication.GetColumnNamesArray();
                 break;
             case GET_NEW_NEGATIVE_ID_CODE:
@@ -311,6 +337,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PUBLICATION_REPORT:
             case PUBLICATION_REPORT_ID:
             case PUBLICATION_REPORTS_BY_ID:
+            case PUBLICATION_REPORTS_BY_NEG_ID:
                 available = PublicationReport.GetColumnNamesArray();
                 break;
             default:
@@ -323,7 +350,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
             HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
             // check if all columns which are requested are available
             if (!availableColumns.containsAll(requestedColumns)) {
-                throw new IllegalArgumentException("Unknown columns in projection");
+                throw new IllegalArgumentException("Unknown columns in projection - action " + action);
             }
         }
     }

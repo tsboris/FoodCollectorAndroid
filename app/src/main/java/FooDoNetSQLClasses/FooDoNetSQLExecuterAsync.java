@@ -6,13 +6,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.net.URL;
 import java.util.ArrayList;
 
 import DataModel.FCPublication;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 import upp.foodonet.FooDoNetSQLProvider;
 
 /**
@@ -30,6 +29,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
     ArrayList<RegisteredUserForPublication> regUsersFromDB;
     ArrayList<RegisteredUserForPublication> resultRegUsers;
     FCPublication newPublicationForSaving;
+    FCPublication publicationDetailsByID;
     IFooDoNetSQLCallback callbackHandler;
     ContentResolver contentResolver;
     InternalRequest incomingRequest;
@@ -77,7 +77,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 }
                 ArrayList<Integer> toRemoveFromDB = new ArrayList<Integer>();
                 for (FCPublication publicationFromDB : publicationsFromDB) {
-                    if (publicationFromDB.getUniqueId() == 0) {
+                    if (publicationFromDB.getUniqueId() <= 0) {
 
                     } else {
                         toRemoveFromDB.add(publicationFromDB.getUniqueId());
@@ -121,6 +121,44 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 Log.i(MY_TAG, "insert succeeded! id: " + newPublicationForSaving.getUniqueId()
                                 + "; new row url: " + newRowURLForLog );
                 break;
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                Uri getPubUri = params[0].PublicationID < 0
+                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
+                        : FooDoNetSQLProvider.CONTENT_URI;
+                long pubID = params[0].PublicationID < 0? params[0].PublicationID * -1: params[0].PublicationID;
+                Cursor cPub = contentResolver.query(Uri.parse(getPubUri + "/" + pubID),
+                        FCPublication.GetColumnNamesArray(), null, null,null);
+                ArrayList<FCPublication> pubs = FCPublication.GetArrayListOfPublicationsFromCursor(cPub, false);
+                cPub.close();
+                if(pubs == null || pubs.size() == 0){
+                    Log.e(MY_TAG, "can't get publication from sql by id: " + params[0].PublicationID);
+                    return null;
+                }
+                FCPublication resultPublication = pubs.get(0);
+
+                Uri getRegUri = params[0].PublicationID < 0
+                        ? FooDoNetSQLProvider.URI_GET_REGISTERED_BY_PUBLICATION_NEG_ID
+                        : FooDoNetSQLProvider.URI_GET_REGISTERED_BY_PUBLICATION_ID;
+                Cursor cRegs = contentResolver.query(Uri.parse(getRegUri + "/" + pubID),
+                                    RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
+                ArrayList<RegisteredUserForPublication> regsById
+                        = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cRegs);
+                cRegs.close();
+                if(regsById != null && regsById.size() > 0)
+                    resultPublication.setRegisteredForThisPublication(regsById);
+
+                Uri getRepUri = params[0].PublicationID < 0
+                        ? FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID
+                        : FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_NEG_ID;
+                        Cursor cReports = contentResolver.query(Uri.parse(getRepUri + "/" + pubID),
+                        PublicationReport.GetColumnNamesArray(), null, null, null);
+                ArrayList<PublicationReport> reports
+                        = PublicationReport.GetArrayListOfPublicationReportsFromCursor(cReports);
+                cReports.close();
+                if(reports != null && reports.size() > 0)
+                    resultPublication.setPublicationReports(reports);
+                publicationDetailsByID = resultPublication;
+                break;
         }
         return null;
     }
@@ -156,6 +194,11 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 break;
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, newPublicationForSaving));
+                break;
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                InternalRequest ir = new InternalRequest(incomingRequest.ActionCommand);
+                ir.publicationForDetails = publicationDetailsByID;
+                callbackHandler.OnSQLTaskComplete(ir);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

@@ -233,7 +233,7 @@ public class MapAndListActivity
         Point size = GetScreenSize();
         int width = size.x;
         int height = size.y;
-        if (myMarkers != null || myMarkers.size() == 0) {
+        if (myMarkers != null && myMarkers.size() != 0) {
             double latitude = 0;
             double longtitude = 0;
             int counter = 1;

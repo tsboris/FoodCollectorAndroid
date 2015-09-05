@@ -52,5 +52,6 @@
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
+    <string name="title_activity_publication_details">PublicationDetailsActivity</string>
 
 </resources>

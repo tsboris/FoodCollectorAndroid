@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import CommonUtilPackage.InternalRequest;
 
 /**
  * Created by Asher on 26.08.2015.
@@ -21,7 +26,9 @@ import DataModel.FCPublication;
 public class AllPublicationsTabFragment
         extends android.support.v4.app.Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        View.OnClickListener {
+        AdapterView.OnItemClickListener, IFooDoNetSQLCallback {
+
+    private static final String MY_TAG = "food_allPubs";
 
     private static final int ADD_TODO_ITEM_REQUEST = 0;
     //FCPublicationListAdapter mAdapter;
@@ -52,7 +59,7 @@ public class AllPublicationsTabFragment
         adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
                 to, 0);
         lv_my_publications.setAdapter(adapter);
-
+        lv_my_publications.setOnItemClickListener(this);
 /*
         adapter = new ListOfEventsAdapter(itemsList, context);
         lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);
@@ -85,17 +92,50 @@ public class AllPublicationsTabFragment
         adapter.swapCursor(null);
     }
 
+/*
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(context, AddNewFCPublicationActivity.class);
         startActivityForResult(intent, 0);
     }
 
+*/
     // NOT SURE IF THIS WILL BE USED - maybe there will be result after openin existing pub
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+/*
+        Intent intent = new Intent(context, PublicationDetailsActivity.class);
+        intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, )
+*/
+        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, context.getContentResolver());
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
+        ir.PublicationID = id;
+        sqlGetPubAsync.execute(ir);
+    }
+
+    private void GetPublicationFromListDetails(){
+
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                FCPublication result = request.publicationForDetails;
+                Intent intent = new Intent(context, PublicationDetailsActivity.class);
+                intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
+                startActivityForResult(intent, 1);
+                break;
+            default:
+                Log.e(MY_TAG, "can't get publication for details!");
+                break;
+        }
     }
 
     /*

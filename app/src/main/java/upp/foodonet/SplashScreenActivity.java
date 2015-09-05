@@ -8,23 +8,19 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.Preference;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.LogRecord;
 
 import DataModel.FCPublication;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 

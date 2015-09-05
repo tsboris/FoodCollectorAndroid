@@ -3,11 +3,8 @@ package upp.foodonet;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -21,7 +18,7 @@ import CommonUtilPackage.CommonUtil;
 import DataModel.UserRegisterData;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 
 public class FooDoNetInstanceIDListenerService extends IntentService implements IFooDoNetServerCallback {
 

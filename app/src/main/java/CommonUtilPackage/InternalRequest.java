@@ -1,4 +1,4 @@
-package FooDoNetServerClasses;
+package CommonUtilPackage;
 
 import android.util.Log;
 
@@ -28,6 +28,7 @@ public class InternalRequest {
     public static final int ACTION_SQL_SAVE_NEW_PUBLICATION = 6;
     public static final int ACTION_SQL_GET_NEW_NEGATIVE_ID = 7;
     public static final int ACTION_GET_PUBLICATION_REPORTS = 8;
+    public static final int ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID = 9;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -37,11 +38,13 @@ public class InternalRequest {
     public JSONObject jsonObject;
     public JSONArray jsonArray;
     public FCPublication publicationForSaving;
+    public FCPublication publicationForDetails;
     public ArrayList<FCPublication> publications;
     public ArrayList<RegisteredUserForPublication> registeredUsers;
     public ICanWriteSelfToJSONWriter canWriteSelfToJSONWriterObject;
     public int Status;
     public int newNegativeID;
+    public long PublicationID;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;
@@ -108,6 +111,10 @@ public class InternalRequest {
         ActionCommand = com;
         this.publications =  publications;
         registeredUsers = regUsers;
+    }
+
+    public InternalRequest(int com){
+        ActionCommand = com;
     }
 
 }

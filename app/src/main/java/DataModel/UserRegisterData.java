@@ -3,6 +3,8 @@ package DataModel;
 import android.util.JsonWriter;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -94,16 +96,15 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
     }
 
     public Map<String, Object> GetJsonMapStringObject() {
-        Map<String, Object> deviceData = new HashMap<String, Object>();
+        Map<String,Object> deviceData = new HashMap<String, Object>();
         deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, get_Imei());
         deviceData.put(USER_DATA_PUSH_TOKEN, "234");//get_Push_Token());
         deviceData.put(USER_DATA_IS_IOS, false);
         deviceData.put(USER_DATA_LATITUDE, get_Latitude());
         deviceData.put(USER_DATA_LONGITUDE, get_Longitude());
+        Map<String,Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("active_device" , deviceData);
 
-        Map<String, Object> dataToSend = new HashMap<String, Object>();
-
-        dataToSend.put("active_device", deviceData);
         return dataToSend;
     }
 

@@ -1,14 +1,8 @@
 package upp.foodonet;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -16,25 +10,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
-import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
-import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
@@ -134,9 +120,9 @@ public class EntranceActivity
         regUsers.add(u3);
         samplePub.setRegisteredForThisPublication(regUsers);
 
-        Intent intent = new Intent(this, MyPublicationDetailsActivity.class);
-        intent.putExtra(MyPublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
-        intent.putExtra(MyPublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, false);
+        Intent intent = new Intent(this, PublicationDetailsActivity.class);
+        intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
+        intent.putExtra(PublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, false);
 
         startActivity(intent);
     }

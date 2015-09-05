@@ -1,5 +1,7 @@
 package FooDoNetServerClasses;
 
+import CommonUtilPackage.InternalRequest;
+
 /**
  * Created by Asher on 23-Jul-15.
  */

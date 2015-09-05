@@ -20,14 +20,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
-public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
-    implements IDownloadImageCallBack
+public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
+        implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
@@ -36,6 +37,24 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
 
     private static final String MY_TAG = "food_PubDetails";
 
+    private FCPublication publication;
+
+    private TextView subtitleTextView;
+    private TextView interestedPersonsCountTextView;
+    private TextView postAddressTextView;
+    private TextView publicationDescriptionTextView;
+    private ListView interestedsListView;
+    private ArrayAdapter<String> interestedsAdapter;
+    private Button cancelPublicationButton;
+
+    Button btnCall, btnRishum, btnSms, btnNavigate;
+
+    private AlertDialog cancelPublicationDialog;
+
+    private ImageButton photoButton;
+    private Bitmap photoBmp;
+
+    private boolean isOwnPublication;
 
     //region Activity
     @Override
@@ -45,7 +64,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         try {
             Intent i = getIntent();
             this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
-            this.isOwnPublication = (Boolean)i.getSerializableExtra(IS_OWN_PUBLICATION_PARAM);
+            this.isOwnPublication = publication.getPublisherUID() == CommonUtil.GetIMEI(this);
         }
         catch (Exception ex) {
             Log.e(MY_TAG, "error deserializing passed parameters: " + ex.getMessage());
@@ -136,7 +155,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
             public void onClick(DialogInterface dialog, int which) {
 
                 dialog.dismiss();
-                MyPublicationDetailsActivity.this.finishWithCancelPublicationResult();
+                PublicationDetailsActivity.this.finishWithCancelPublicationResult();
             }
         });
 
@@ -276,24 +295,5 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         //TODO
     }
     //endregion
-
-    private FCPublication publication;
-
-    private TextView subtitleTextView;
-    private TextView interestedPersonsCountTextView;
-    private TextView postAddressTextView;
-    private TextView publicationDescriptionTextView;
-    private ListView interestedsListView;
-    private ArrayAdapter<String> interestedsAdapter;
-    private Button cancelPublicationButton;
-
-    Button btnCall, btnRishum, btnSms, btnNavigate;
-
-    private AlertDialog cancelPublicationDialog;
-
-    private ImageButton photoButton;
-    private Bitmap photoBmp;
-
-    private boolean isOwnPublication;
 
 }

@@ -8,13 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by Asher on 21.08.2015.
  */
-public class RegisteredUserForPublication {
+public class RegisteredUserForPublication implements Serializable {
 
     private static final String MY_TAG = "food_RegForPublication";
 

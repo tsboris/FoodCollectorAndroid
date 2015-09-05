@@ -10,17 +10,15 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -32,15 +30,13 @@ import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
 
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
-import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 
 /**
  * Created by Asher on 21-Jul-15.
@@ -181,7 +177,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     connection.setAllowUserInteraction(false);
                     break;
                 case REQUEST_METHOD_POST:
-                    connection.setDoInput(true);
+                    //connection.setDoInput(true);
                     connection.setDoOutput(true);
 /*
                     String str = "{\"active_device\":{\"last_location_longitude\":34.85003149, \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":32.11102827, \"is_ios\":\"false\", \"remote_notification_token\":\"1234\"}}";
@@ -198,8 +194,13 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //connection.connect();
             if (writableObject != null) {
 
+                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                JSONObject jo = new JSONObject(writableObject.GetJsonMapStringObject());
+                dos.write(jo.toString().getBytes("UTF-8"));
+                dos.flush();
+                dos.close();
 
-                OutputStream outputStream = connection.getOutputStream();
+/*                  OutputStream outputStream = connection.getOutputStream();
                 //Map<String, Object> regData = writableObject.GetJsonMapStringObject();
                 //JSONObject jo = new JSONObject(regData);
                 //OutputStreamWriter osw = new OutputStreamWriter(outputStream);
@@ -222,7 +223,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 outputStream.close();
 
 
-/*                //
+              //
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuffer sb = new StringBuffer();
@@ -235,7 +236,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
                 //*/
             }
-            Log.i(MY_TAG, "sending: " + connection.toString());
+            //Log.i(MY_TAG, "sending: " + connection.toString());
             int connectionResponse = connection.getResponseCode();
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
@@ -247,7 +248,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                             sb.append(line + "\n");
                         }
                         br.close();
-                        Log.i(MY_TAG, this.hashCode() + sb.toString());
+                        //Log.i(MY_TAG, this.hashCode() + sb.toString());
                         responseString = sb.toString();
                     }
             }

@@ -1,9 +1,6 @@
 package FooDoNetSQLClasses;
 
-import java.util.ArrayList;
-
-import DataModel.FCPublication;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 
 /**
  * Created by Asher on 24-Jul-15.

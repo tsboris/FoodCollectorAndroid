@@ -10,7 +10,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +19,7 @@ import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.IFooDoNetCustomServiceBinder;
 import FooDoNetServiceUtil.IFooDoNetServiceCallback;
 
@@ -125,7 +124,7 @@ public class FooDoNetService
     }
 
     private void DoNextTaskFromWorkPlan() {
-        //if(true)return;
+        if(true)return;
         if(!mustRun) return;
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]){

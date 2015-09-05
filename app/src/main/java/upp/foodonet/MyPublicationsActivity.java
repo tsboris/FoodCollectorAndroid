@@ -4,18 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,13 +27,13 @@ import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
-import FooDoNetServerClasses.InternalRequest;
+import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback {
+        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback, AdapterView.OnItemClickListener {
 
     private static final String MY_TAG = "food_myPubsList";
 
@@ -78,6 +76,7 @@ public class MyPublicationsActivity
         int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
         adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, from, to);
         lv_my_publications_list.setAdapter(adapter);
+        lv_my_publications_list.setOnItemClickListener(this);
 
     }
 
@@ -225,6 +224,7 @@ public class MyPublicationsActivity
                         publication.setUniqueId(
                                 negIdCursor.getInt(
                                         negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID)));
+                        if(publication.getUniqueId() > 0) publication.setUniqueId(-1);
                     }
                 }
 /*
@@ -242,6 +242,25 @@ public class MyPublicationsActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        RestartLoadingCursorForList(currentFilterID);
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
+                RestartLoadingCursorForList(currentFilterID);
+                break;
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                FCPublication result = request.publicationForDetails;
+                Intent intent = new Intent(this, PublicationDetailsActivity.class);
+                intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
+                startActivityForResult(intent, 1);
+                break;
+        }
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
+        ir.PublicationID = id;
+        sqlGetPubAsync.execute(ir);
     }
 }
