@@ -27,15 +27,39 @@ import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
-    implements IDownloadImageCallBack
+    implements IDownloadImageCallBack, View.OnClickListener
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
+
+    public static final String RESULT_PARAM = "userAction";
+    public static final String CANCEL_PUB = "cancelPublication";
+    public static final String NO_CHANGE = "NoChange";
 
     private static final int PHOTO_RADIUS = 200;
 
     private static final String MY_TAG = "MyPublicationDetailsActivity";
 
+    //region private member
+    private FCPublication publication;
+
+    private TextView subtitleTextView;
+    private TextView interestedPersonsCountTextView;
+    private TextView postAddressTextView;
+    private TextView publicationDescriptionTextView;
+    private ListView interestedsListView;
+    private ArrayAdapter<String> interestedsAdapter;
+    private Button cancelPublicationButton;
+
+    Button btnCall, btnRishum, btnSms, btnNavigate;
+
+    private AlertDialog cancelPublicationDialog;
+
+    private ImageButton photoButton;
+    private Bitmap photoBmp;
+
+    private boolean isOwnPublication;
+    //endregion
 
     //region Activity
     @Override
@@ -95,33 +119,32 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
         Drawable img_call = getResources().getDrawable( R.drawable.call_2x);
         img_call.setBounds(0, 0, 30, 30);
         btnCall.setCompoundDrawables(null, null, img_call, null);
+        btnCall.setOnClickListener(this);
 
         btnRishum = (Button)findViewById(R.id.btn_rishum);
         Drawable img_rishum = getResources().getDrawable( R.drawable.rishum_2x);
         img_rishum.setBounds(0, 0, 30, 30);
         btnRishum.setCompoundDrawables(null, null, img_rishum, null);
+        btnRishum.setOnClickListener(this);
 
         btnSms = (Button)findViewById(R.id.btn_sms);
         Drawable img_sms = getResources().getDrawable( R.drawable.sms_2x);
         img_sms.setBounds(0, 0, 30, 30);
         btnSms.setCompoundDrawables(null, null, img_sms, null);
+        btnSms.setOnClickListener(this);
 
         btnNavigate = (Button)findViewById(R.id.btn_navigate);
         Drawable img_navigate = getResources().getDrawable( R.drawable.navigate_2x);
         img_navigate.setBounds(0, 0, 30, 30);
         btnNavigate.setCompoundDrawables(null, null, img_navigate, null);
+        btnNavigate.setOnClickListener(this);
     }
 
 
     private void makeCancelButton() {
         cancelPublicationButton        = (Button) findViewById(R.id.btn_cancel_publication);
         cancelPublicationButton.setText(getString(R.string.cancel_publication));
-        cancelPublicationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelPublicationDialog.show();
-            }
-        });
+        cancelPublicationButton.setOnClickListener(this);
     }
 
     private void makeTheCancelDialog()
@@ -155,7 +178,7 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     {
         Intent intent= new Intent();
         setResult(RESULT_OK, intent);
-        intent.putExtra("userAction", "cancelPublication");
+        intent.putExtra(RESULT_PARAM, CANCEL_PUB);
         finish();
     }
 
@@ -221,15 +244,9 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     public void OnImageDownloaded(Bitmap result) {
         this.photoBmp = result;
         Bitmap roundBmp = RoundedImageView.getRoundedCroppedBitmap(photoBmp, PHOTO_RADIUS);
-        photoButton = (ImageButton)findViewById(R.id.photoButton);
+        photoButton = (ImageButton)findViewById(R.id.btn_photoButton);
         photoButton.setImageBitmap(roundBmp);
-        photoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),
-                        MY_TAG + " photo clicked!", Toast.LENGTH_LONG).show();
-            }
-        });
+        photoButton.setOnClickListener(this);
     }
 
     @Override
@@ -275,25 +292,34 @@ public class MyPublicationDetailsActivity extends FooDoNetCustomActivityConnecte
     public void OnInternetNotConnected() {
         //TODO
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_cancel_publication : cancelPublicationDialog.show();
+                break;
+            case R.id.btn_photoButton :
+                Toast.makeText(getApplicationContext(),
+                    MY_TAG + " photo clicked!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btn_call:
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " Button CALL clicked!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btn_rishum:
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " Button RISHUM clicked!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btn_sms:
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " Button SMS clicked!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.btn_navigate:
+                Toast.makeText(getApplicationContext(),
+                        MY_TAG + " Button NAVIGATE clicked!", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
     //endregion
-
-    private FCPublication publication;
-
-    private TextView subtitleTextView;
-    private TextView interestedPersonsCountTextView;
-    private TextView postAddressTextView;
-    private TextView publicationDescriptionTextView;
-    private ListView interestedsListView;
-    private ArrayAdapter<String> interestedsAdapter;
-    private Button cancelPublicationButton;
-
-    Button btnCall, btnRishum, btnSms, btnNavigate;
-
-    private AlertDialog cancelPublicationDialog;
-
-    private ImageButton photoButton;
-    private Bitmap photoBmp;
-
-    private boolean isOwnPublication;
 
 }
