@@ -17,7 +17,7 @@
         android:layout_height="wrap_content" />
 
     <ImageButton
-        android:id="@+id/photoButton"
+        android:id="@+id/btn_photoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/image_rounded_corner"/>
