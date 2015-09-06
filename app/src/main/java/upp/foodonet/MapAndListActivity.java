@@ -311,7 +311,8 @@ public class MapAndListActivity
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
-        myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        if(location != null)
+            myLocation = new LatLng(location.getLatitude(), location.getLongitude());
         OnReadyToUpdateCamera();
     }
 

@@ -240,7 +240,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     public void OnImageDownloaded(Bitmap result) {
         this.photoBmp = result;
         Bitmap roundBmp = RoundedImageView.getRoundedCroppedBitmap(photoBmp, PHOTO_RADIUS);
-        photoButton = (ImageButton)findViewById(R.id.photoButton);
+        photoButton = (ImageButton)findViewById(R.id.btn_photoButton);
         photoButton.setImageBitmap(roundBmp);
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
