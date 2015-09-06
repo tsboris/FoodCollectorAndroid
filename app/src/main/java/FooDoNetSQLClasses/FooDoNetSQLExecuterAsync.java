@@ -1,5 +1,6 @@
 package FooDoNetSQLClasses;
 
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;

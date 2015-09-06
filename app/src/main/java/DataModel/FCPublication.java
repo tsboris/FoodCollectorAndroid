@@ -490,6 +490,11 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return null;
     }
 
+    @Override
+    public org.json.simple.JSONObject GetJsonObjectForPost() {
+        return null;
+    }
+
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {
         if (list == null || list.size() == 0)
             return null;

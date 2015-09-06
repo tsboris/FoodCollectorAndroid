@@ -35,7 +35,9 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     FooDoNetService fooDoNetService;
     boolean isBoundedToService;
-    Messenger boundedService;
+    protected Messenger boundedService;
+    private static boolean isServiceRunning;
+    protected Intent serviceIntent;
 
     private final String MY_TAG = "food_abstract_fActivity";
 
@@ -44,18 +46,42 @@ public abstract class FooDoNetCustomActivityConnectedToService
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
+        boundedService = getIntent().getExtras().getParcelable("service");
     }
 
     @Override
     protected void onStart() {
-        Intent intent = new Intent(this, FooDoNetService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        if(!isServiceRunning){
+            serviceIntent = new Intent(this, FooDoNetService.class);
+            bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+            isServiceRunning = true;
+        }
+        if (boundedService != null) {
+            isBoundedToService = true;
+            Message m = Message.obtain(null, FooDoNetService.ACTION_START);
+            m.replyTo = callbackMessenger;
+            try {
+                boundedService.send(m);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        unbindService(mConnection);
+        if (boundedService != null) {
+            unbindService(mConnection);
+            isBoundedToService = false;
+            Message m = Message.obtain(null, FooDoNetService.ACTION_WORK_DONE);
+            m.replyTo = callbackMessenger;
+            try {
+                boundedService.send(m);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         super.onStop();
     }
 
@@ -116,9 +142,10 @@ public abstract class FooDoNetCustomActivityConnectedToService
     public abstract void OnInternetNotConnected();
 
     @Override
-    public void OnGotMyLocationCallback(Location location){ }
+    public void OnGotMyLocationCallback(Location location) {
+    }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    protected ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             boundedService = new Messenger(service);
             isBoundedToService = true;
@@ -145,7 +172,10 @@ public abstract class FooDoNetCustomActivityConnectedToService
                     OnNotifiedToFetchData();
                     break;
                 case GetMyLocationAsync.ACTION_GET_MY_LOCATION:
-                    OnGotMyLocationCallback((Location)msg.obj);
+                    OnGotMyLocationCallback((Location) msg.obj);
+                    break;
+                case FooDoNetService.ACTION_DESTROYED:
+                    isServiceRunning = false;
                     break;
                 default:
                     super.handleMessage(msg);
@@ -155,8 +185,8 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     final Messenger callbackMessenger = new Messenger(new IncomingHandler());
 
-    protected void StartGetMyLocation(){
-        LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+    protected void StartGetMyLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, callbackMessenger);
         locationAsync.execute();
     }

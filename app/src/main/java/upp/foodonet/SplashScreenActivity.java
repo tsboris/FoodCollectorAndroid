@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
@@ -50,6 +51,10 @@ public class SplashScreenActivity
         /*HttpServerConnectorAsync connecter = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
         connecter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS));*/
         //getSupportLoaderManager().initLoader(0, null, this);
+/*
+        Intent intent = new Intent(this, FooDoNetService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+*/
     }
 
 
@@ -222,6 +227,7 @@ public class SplashScreenActivity
         Intent intent = new Intent(this, EntranceActivity.class);
         //publicationsFromDB.addAll(publicationsFromServer);
         intent.putExtra("loaderResult", publicationsUpdatedList);
+        intent.putExtra("service", boundedService);
         this.startActivity(intent);
     }
 

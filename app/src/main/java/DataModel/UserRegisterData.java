@@ -96,16 +96,33 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
     }
 
     public Map<String, Object> GetJsonMapStringObject() {
-        Map<String,Object> deviceData = new HashMap<String, Object>();
-        deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, get_Imei());
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, "ash-test-1");//get_Imei());
         deviceData.put(USER_DATA_PUSH_TOKEN, "234");//get_Push_Token());
         deviceData.put(USER_DATA_IS_IOS, false);
         deviceData.put(USER_DATA_LATITUDE, get_Latitude());
         deviceData.put(USER_DATA_LONGITUDE, get_Longitude());
-        Map<String,Object> dataToSend = new HashMap<String, Object>();
-        dataToSend.put("active_device" , deviceData);
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("active_device", deviceData);
 
         return dataToSend;
     }
+
+    @Override
+    public org.json.simple.JSONObject GetJsonObjectForPost() {
+
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put("dev_uuid", "adsredfd3");
+        deviceData.put("remote_notification_token", "123456");
+        deviceData.put("last_location_latitude", get_Latitude());
+        deviceData.put("last_location_longitude", get_Longitude());
+        deviceData.put("is_ios", false);
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("active_device", deviceData);
+
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        return json;
+    }
+
 
 }

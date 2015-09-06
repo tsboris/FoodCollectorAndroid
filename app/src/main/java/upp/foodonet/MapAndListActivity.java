@@ -210,6 +210,7 @@ public class MapAndListActivity
         switch (v.getId()) {
             case R.id.tgl_btn_share_maplst:
                 Intent intent = new Intent(this, MyPublicationsActivity.class);
+                intent.putExtra("service", boundedService);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

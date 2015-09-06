@@ -2,6 +2,8 @@ package DataModel;
 
 import android.util.JsonWriter;
 
+import org.json.simple.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -10,4 +12,5 @@ import java.util.Map;
 public interface ICanWriteSelfToJSONWriter {
     void WriteSelfToJSONWriter(JsonWriter writer);
     Map<String, Object> GetJsonMapStringObject();
+    JSONObject GetJsonObjectForPost();
 }

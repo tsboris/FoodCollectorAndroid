@@ -146,6 +146,7 @@ public class MyPublicationsActivity
             //    break;
             case R.id.btn_take_mypubs:
                 Intent intent = new Intent(this, MapAndListActivity.class);
+                intent.putExtra("service", boundedService);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

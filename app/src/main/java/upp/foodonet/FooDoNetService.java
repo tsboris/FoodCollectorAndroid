@@ -30,6 +30,7 @@ public class FooDoNetService
 
     public final static int ACTION_START = 1;
     public final static int ACTION_WORK_DONE = 2;
+    public final static int ACTION_DESTROYED = 4;
 
     private final IBinder mBinder = new FooDoNetCustomServiceBinder();
 
@@ -50,7 +51,7 @@ public class FooDoNetService
     final int taskWaiter = 4;
 
     int currentIndexInWorkPlan;
-    int[] workPlan = new int[]{1,2,3,4};
+    int[] workPlan = new int[]{1, 2, 3, 4};
 
     private final String MY_TAG = "food_SchedulerService";
     private String serverBaseUrl;
@@ -76,6 +77,14 @@ public class FooDoNetService
     public void onDestroy() {
         Log.i(MY_TAG, "destroing service");
         mustRun = false;
+        if (callbackMessenger != null) {
+            Message m = Message.obtain(null, ACTION_DESTROYED, null);
+            try {
+                callbackMessenger.send(m);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
         super.onDestroy();
     }
 
@@ -94,8 +103,14 @@ public class FooDoNetService
             switch (msg.what) {
                 case ACTION_START:
                     callbackMessenger = msg.replyTo;
-                    //callbackHandler = msg.getTarget();
-                    StartScheduler();
+                    if (!isStarted) {
+                        StartScheduler();
+                        isStarted = true;
+                    }
+                    break;
+                case ACTION_WORK_DONE:
+                    if (callbackMessenger == msg.replyTo)
+                        callbackMessenger = null;
                     break;
                 default:
                     super.handleMessage(msg);
@@ -107,6 +122,7 @@ public class FooDoNetService
      * Target we publish for clients to send messages to IncomingHandler.
      */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
+
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(MY_TAG, "service binded");
@@ -124,14 +140,14 @@ public class FooDoNetService
     }
 
     private void DoNextTaskFromWorkPlan() {
-        if(true)return;
-        if(!mustRun) return;
+        //if(true)return;
+        if (!mustRun) return;
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
-        switch (workPlan[currentIndexInWorkPlan]){
+        switch (workPlan[currentIndexInWorkPlan]) {
             case taskServer:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
-                connecterToServer.execute( new InternalRequest[]{
+                connecterToServer.execute(new InternalRequest[]{
                         new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
                                 getResources().getString(R.string.server_get_publications_path)),
                         new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION,
@@ -141,20 +157,24 @@ public class FooDoNetService
                 break;
             case taskSQL:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                sqlExecuter = new FooDoNetSQLExecuterAsync( this, getContentResolver());//fetchedFromServer,
+                sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());//fetchedFromServer,
                 sqlExecuter.execute(
                         new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
+                sqlExecuter = null;
                 break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                //currentCallbackHandler.LoadUpdatedListOfPublications(loadedFromSQL);
+                if (callbackMessenger == null) {
+                    currentIndexInWorkPlan = getNextIndex(currentIndexInWorkPlan, workPlan);
+                    DoNextTaskFromWorkPlan();
+                    break;
+                }
                 Message m = Message.obtain(null, ACTION_WORK_DONE, loadedFromSQL);
                 try {
                     callbackMessenger.send(m);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                //callbackHandler.dispatchMessage(m);
                 currentIndexInWorkPlan = getNextIndex(currentIndexInWorkPlan, workPlan);
                 DoNextTaskFromWorkPlan();
                 return;
@@ -169,8 +189,8 @@ public class FooDoNetService
         currentIndexInWorkPlan = getNextIndex(currentIndexInWorkPlan, workPlan);
     }
 
-    private int getNextIndex(int current, int[] array){
-        return (current + 1 == array.length? 0: ++current);
+    private int getNextIndex(int current, int[] array) {
+        return (current + 1 == array.length ? 0 : ++current);
     }
 
     @Override
@@ -182,8 +202,8 @@ public class FooDoNetService
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        if(request.ActionCommand != InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER){
-            Log.e(MY_TAG,"Unexpected action code!!");
+        if (request.ActionCommand != InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER) {
+            Log.e(MY_TAG, "Unexpected action code!!");
             return;
         }
         Log.i(MY_TAG, "finished task sql");
@@ -203,17 +223,17 @@ public class FooDoNetService
         }
     }
 
-    public void StartScheduler(){//IFooDoNetServiceCallback callback) {
+    public void StartScheduler() {//IFooDoNetServiceCallback callback) {
         //currentCallbackHandler = callback;
         currentIndexInWorkPlan = 0;
         DoNextTaskFromWorkPlan();
         Log.i("food", "starting scheduler...");
     }
 
-    Handler finishedSleepingHandler = new Handler(){
+    Handler finishedSleepingHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
                     DoNextTaskFromWorkPlan();
                     break;
@@ -224,11 +244,11 @@ public class FooDoNetService
         }
     };
 
-    private class WaiterForScheduler extends AsyncTask<Integer, Void, Void>{
+    private class WaiterForScheduler extends AsyncTask<Integer, Void, Void> {
 
         Handler callbackHandler;
 
-        public WaiterForScheduler(Handler handler){
+        public WaiterForScheduler(Handler handler) {
             callbackHandler = handler;
         }
 
@@ -237,18 +257,18 @@ public class FooDoNetService
             if (params.length == 0 || params[0] <= 0)
                 throw new IllegalArgumentException("service scheduler got no time param");
             final int secsToSleep = params[0];
-                Log.i("food", "scheduler sleeps...");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            TimeUnit.SECONDS.sleep(secsToSleep);
-                            callbackHandler.sendEmptyMessage(0);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+            Log.i("food", "scheduler sleeps...");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TimeUnit.SECONDS.sleep(secsToSleep);
+                        callbackHandler.sendEmptyMessage(0);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }).start();
+                }
+            }).start();
             return null;
         }
 

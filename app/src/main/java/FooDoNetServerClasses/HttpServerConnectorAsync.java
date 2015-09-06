@@ -126,7 +126,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 //MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
-                Get(server_sub_path, (FCPublication)params[0].canWriteSelfToJSONWriterObject);
+                Get(server_sub_path, (FCPublication) params[0].canWriteSelfToJSONWriterObject);
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, false);
@@ -163,7 +163,6 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             URL url = new URL(post_url);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);
-            String s  = connection.getRequestMethod();
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(15000);
             connection.addRequestProperty("Content-Type", "application/json");
@@ -194,13 +193,18 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //connection.connect();
             if (writableObject != null) {
 
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(writableObject.GetJsonObjectForPost().toString());
+                wr.flush();
+                wr.close();
+/*                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
                 JSONObject jo = new JSONObject(writableObject.GetJsonMapStringObject());
+                Log.i(MY_TAG, jo.toString());
                 dos.write(jo.toString().getBytes("UTF-8"));
                 dos.flush();
                 dos.close();
 
-/*                  OutputStream outputStream = connection.getOutputStream();
+                 OutputStream outputStream = connection.getOutputStream();
                 //Map<String, Object> regData = writableObject.GetJsonMapStringObject();
                 //JSONObject jo = new JSONObject(regData);
                 //OutputStreamWriter osw = new OutputStreamWriter(outputStream);
@@ -238,6 +242,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             }
             //Log.i(MY_TAG, "sending: " + connection.toString());
             int connectionResponse = connection.getResponseCode();
+
+
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
                     if (isForResult) {
@@ -252,6 +258,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         responseString = sb.toString();
                     }
             }
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {

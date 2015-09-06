@@ -172,4 +172,9 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
     public Map<String, Object> GetJsonMapStringObject() {
         return null;
     }
+
+    @Override
+    public org.json.simple.JSONObject GetJsonObjectForPost() {
+        return null;
+    }
 }
