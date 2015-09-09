@@ -89,16 +89,6 @@ public class MyPublicationsActivity
     }
 
     @Override
-    public void OnNotifiedToFetchData() {
-
-    }
-
-    @Override
-    public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
-
-    }
-
-    @Override
     public void OnGooglePlayServicesCheckError() {
 
     }
