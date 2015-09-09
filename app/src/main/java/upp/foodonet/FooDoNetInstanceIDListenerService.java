@@ -19,6 +19,7 @@ import DataModel.UserRegisterData;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 public class FooDoNetInstanceIDListenerService extends IntentService implements IFooDoNetServerCallback {
 
@@ -26,18 +27,12 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
 
     private static final String ACTION_REGISTER_TO_GCM = "1";
 
-    private static IFooDoNetServerCallback parentForCallback;
-
-    private static final String REGISTRATION_FIELD_DEVICE_ID = "dev_uuid";
-    private static final String REGISTRATION_FIELD_PUSH_TOKEN = "remote_notification_token";
-    private static final String REGISTRATION_FIELD_IS_IOS = "is_ios";
-    private static final String REGISTRATION_FIELD_LATITUDE = "last_location_latitude";
-    private static final String REGISTRATION_FIELD_LONGITUDE = "";
+    //private static IFooDoNetServerCallback parentForCallback;
 
     public static void StartRegisterToGCM(Context context) {
         Intent intent = new Intent(context, FooDoNetInstanceIDListenerService.class);
         intent.setAction(ACTION_REGISTER_TO_GCM);
-        parentForCallback = (IFooDoNetServerCallback)context;
+        //parentForCallback = (IFooDoNetServerCallback)context;
         context.startService(intent);
     }
 
@@ -103,6 +98,23 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-        parentForCallback.OnServerRespondedCallback(response);
+        //parentForCallback.OnServerRespondedCallback(response);
+        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+        switch (response.Status){
+            case InternalRequest.STATUS_OK:
+                Log.i(MY_TAG, "got server callback registration ok");
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
+                break;
+            case InternalRequest.STATUS_FAIL:
+                Log.i(MY_TAG, "got server callback registration fail");
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
+                break;
+            default:
+                Log.i(MY_TAG, "unexpected callback status from server!");
+                return;
+        }
+        sendBroadcast(intent);
     }
 }

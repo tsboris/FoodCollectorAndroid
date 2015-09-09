@@ -23,18 +23,21 @@ import DataModel.FCPublication;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 
 public class SplashScreenActivity
-        extends FooDoNetCustomActivityConnectedToService
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        IFooDoNetServerCallback {
+        extends FooDoNetCustomActivityConnectedToService  {
     private int min_splash_screen_duration;
     ArrayList<FCPublication> publicationsFromDB, publicationsFromServer, publicationsUpdatedList;
-    boolean flagWaitTaskFinished, flagSQLLoaderFinished;
+    boolean flagWaitTaskFinished, registerTaskFinished;
 
     private final String PREFERENCES_KEY_BOOL_IF_REGISTERED = "ifRegistered";
     private final String MY_TAG = "food_splashscreen";
+
+    private boolean AllLoaded() {
+        return registerTaskFinished && flagWaitTaskFinished;
+    }
 
 
     @Override
@@ -44,17 +47,9 @@ public class SplashScreenActivity
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
         RegisterIfNotRegisteredYet();
+        startService(new Intent(this, FooDoNetService.class));
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
-
-        flagSQLLoaderFinished = true;
-        /*HttpServerConnectorAsync connecter = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
-        connecter.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS));*/
-        //getSupportLoaderManager().initLoader(0, null, this);
-/*
-        Intent intent = new Intent(this, FooDoNetService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-*/
     }
 
 
@@ -80,6 +75,7 @@ public class SplashScreenActivity
         return super.onOptionsItemSelected(item);
     }
 
+/*
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = FCPublication.GetColumnNamesArray();
@@ -107,7 +103,9 @@ public class SplashScreenActivity
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+*/
 
+/*
     @Override
     public void OnNotifiedToFetchData() {
         Log.i("food", "mainAct callback called");
@@ -117,6 +115,7 @@ public class SplashScreenActivity
     public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
         Log.i("food", "LoadUpdatedListOfPublications mainActivity");
     }
+*/
 
     @Override
     public void OnGooglePlayServicesCheckError() {
@@ -126,33 +125,6 @@ public class SplashScreenActivity
     @Override
     public void OnInternetNotConnected() {
 
-    }
-
-    @Override
-    public void OnServerRespondedCallback(InternalRequest response) {
-        if (response == null) {
-            Log.e(MY_TAG, "server connection task called back with null response");
-            return;
-        }
-        switch (response.Status) {
-            case InternalRequest.STATUS_FAIL:
-                Log.e(MY_TAG, "server callback status failed");
-                return;
-            case InternalRequest.STATUS_OK:
-/*
-                switch (response.ActionCommand){
-                    case InternalRequest.ACTION_POST_REGISTER:
-                        SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, true);
-                        editor.commit();
-                        break;
-                    default:
-                        Log.e(MY_TAG, "Unexpected callback to splashscreen from server connecter. Action: " + response.ActionCommand);
-                        return;
-
-                }*/
-        }
     }
 
     private void ContinueAfterRegister() {
@@ -212,41 +184,50 @@ public class SplashScreenActivity
                     }
                 }
             }).start();
-            //Thread.sleep(1000 * params[0].x, 0);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+/*
             if (AllLoaded())
                 StartNextActivity();
+*/
         }
     }
 
     private void StartNextActivity() {
         Intent intent = new Intent(this, EntranceActivity.class);
-        //publicationsFromDB.addAll(publicationsFromServer);
-        intent.putExtra("loaderResult", publicationsUpdatedList);
-        intent.putExtra("service", boundedService);
         this.startActivity(intent);
     }
 
     private void RegisterIfNotRegisteredYet() {
         SharedPreferences preference = getPreferences(Context.MODE_PRIVATE);
         if (preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
-            OnServerRespondedCallback(new InternalRequest(InternalRequest.ACTION_POST_REGISTER, true));
+            registerTaskFinished = true;
+            if(AllLoaded())
+                StartNextActivity();
             return;
         } else {
             FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
         }
 
-        //TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        //String imei = tm.getDeviceId();
-
     }
 
+    @Override
+    public void onBroadcastReceived(Intent intent) {
+        int regResult = 0;
+        regResult = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, 0);
+        switch (regResult){
+            case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
+                SharedPreferences sp = getPreferences(MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, true);
+                registerTaskFinished = true;
+                if(AllLoaded())
+                    StartNextActivity();
+                break;
 
-    private boolean AllLoaded() {
-        return flagSQLLoaderFinished && flagWaitTaskFinished;
+        }
     }
 }

@@ -3,6 +3,7 @@ package FooDoNetServiceUtil;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
@@ -31,26 +32,35 @@ import upp.foodonet.FooDoNetService;
  */
 public abstract class FooDoNetCustomActivityConnectedToService
         extends FragmentActivity
-        implements IFooDoNetServiceCallback, IGotMyLocationCallback {
+        implements IBroadcastReceiverCallback {
+        //implements IFooDoNetServiceCallback, IGotMyLocationCallback {
 
-    FooDoNetService fooDoNetService;
-    boolean isBoundedToService;
-    protected Messenger boundedService;
-    private static boolean isServiceRunning;
-    protected Intent serviceIntent;
+    //FooDoNetService fooDoNetService;
+    //boolean isBoundedToService;
+    //protected Messenger boundedService;
+    //private static boolean isServiceRunning;
+    //protected Intent serviceIntent;
+
+    ServicesBroadcastReceiver servicesBroadcastReceiver;
 
     private final String MY_TAG = "food_abstract_fActivity";
 
-    public IFooDoNetServiceCallback serviceCallback = this;
+    //public IFooDoNetServiceCallback serviceCallback = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        boundedService = getIntent().getExtras().getParcelable("service");
+        //boundedService = getIntent().getExtras().getParcelable("service");
     }
 
     @Override
     protected void onStart() {
+        if(servicesBroadcastReceiver == null){
+            servicesBroadcastReceiver = new ServicesBroadcastReceiver(this);
+            IntentFilter filter = new IntentFilter(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+            registerReceiver(servicesBroadcastReceiver, filter);
+        }
+/*
         if(!isServiceRunning){
             serviceIntent = new Intent(this, FooDoNetService.class);
             bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
@@ -66,23 +76,23 @@ public abstract class FooDoNetCustomActivityConnectedToService
                 e.printStackTrace();
             }
         }
+*/
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        if (boundedService != null) {
-            unbindService(mConnection);
-            isBoundedToService = false;
-            Message m = Message.obtain(null, FooDoNetService.ACTION_WORK_DONE);
-            m.replyTo = callbackMessenger;
-            try {
-                boundedService.send(m);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
         super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        if(servicesBroadcastReceiver != null){
+            unregisterReceiver(servicesBroadcastReceiver);
+            servicesBroadcastReceiver = null;
+        }
+
+        super.onPause();
     }
 
     @Override
@@ -131,20 +141,26 @@ public abstract class FooDoNetCustomActivityConnectedToService
         return cd.isConnectingToInternet();
     }
 
+/*
     @Override
     public abstract void OnNotifiedToFetchData();
 
     @Override
     public abstract void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList);
+*/
+
+    @Override
+    public void onBroadcastReceived(Intent intent) {
+
+    }
 
     public abstract void OnGooglePlayServicesCheckError();
 
     public abstract void OnInternetNotConnected();
 
-    @Override
-    public void OnGotMyLocationCallback(Location location) {
-    }
+    public void OnGotMyLocationCallback(Location location) { }
 
+/*
     protected ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             boundedService = new Messenger(service);
@@ -164,18 +180,13 @@ public abstract class FooDoNetCustomActivityConnectedToService
         }
     };
 
+*/
     class IncomingHandler extends android.os.Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case FooDoNetService.ACTION_WORK_DONE:
-                    OnNotifiedToFetchData();
-                    break;
                 case GetMyLocationAsync.ACTION_GET_MY_LOCATION:
                     OnGotMyLocationCallback((Location) msg.obj);
-                    break;
-                case FooDoNetService.ACTION_DESTROYED:
-                    isServiceRunning = false;
                     break;
                 default:
                     super.handleMessage(msg);
@@ -184,6 +195,8 @@ public abstract class FooDoNetCustomActivityConnectedToService
     }
 
     final Messenger callbackMessenger = new Messenger(new IncomingHandler());
+
+
 
     protected void StartGetMyLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);

@@ -275,6 +275,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     //endregion
 
     //region FooDoNetCustomActivityConnectedToService implementation
+/*
     @Override
     public void OnNotifiedToFetchData() {
         //TODO
@@ -284,6 +285,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
         //TODO
     }
+*/
 
     @Override
     public void OnGooglePlayServicesCheckError() {

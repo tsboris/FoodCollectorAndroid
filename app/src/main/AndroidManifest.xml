@@ -155,6 +155,11 @@
             android:name=".PublicationDetailsActivity"
             android:label="@string/title_activity_publication_details" >
         </activity>
+
+        <service
+            android:name=".ReloadDataIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

@@ -149,15 +149,19 @@ public class EntranceActivity
         return super.onOptionsItemSelected(item);
     }
 
+/*
     @Override
     public void OnNotifiedToFetchData() {
 
     }
+*/
 
+/*
     @Override
     public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
 
     }
+*/
 
     @Override
     public void OnGooglePlayServicesCheckError() {
@@ -174,12 +178,12 @@ public class EntranceActivity
         switch (v.getId()){
             case R.id.btn_pick_welcomeScreen:
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);
-                mapListIntent.putExtra("service", boundedService);
+                //mapListIntent.putExtra("service", boundedService);
                 startActivity(mapListIntent);
                 break;
             case R.id.btn_share_welcomeScreen:
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
-                myPubsIntent.putExtra("service", boundedService);
+                //myPubsIntent.putExtra("service", boundedService);
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:

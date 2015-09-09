@@ -112,7 +112,7 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
     public org.json.simple.JSONObject GetJsonObjectForPost() {
 
         Map<String, Object> deviceData = new HashMap<String, Object>();
-        deviceData.put("dev_uuid", "adsredfd3");
+        deviceData.put("dev_uuid", get_Imei());
         deviceData.put("remote_notification_token", "123456");
         deviceData.put("last_location_latitude", get_Latitude());
         deviceData.put("last_location_longitude", get_Longitude());
