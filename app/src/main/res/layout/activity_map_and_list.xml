@@ -111,16 +111,31 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/list_slidermenu"
+    <LinearLayout android:id="@+id/ll_sideMenuPanel"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/list_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:textSize="30sp"
+            android:textColor="@color/list_background"
+            android:background="@color/basic_blue"
+            android:text="@string/welcome_string" />
+
+
+    <ListView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
         android:divider="@color/list_divider"
         android:dividerHeight="1dp"
-        android:listSelector="@drawable/list_selector" />
+        android:listSelector="@drawable/list_selector" /><!-- android:id="@+id/list_slidermenu" -->
+    </LinearLayout>
     <!-- class="com.example.asher.mytestapplication.MarkerPopupFragment" -->
 
 </android.support.v4.widget.DrawerLayout>
