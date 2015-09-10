@@ -141,19 +141,6 @@ public class AllPublicationsTabFragment
                 break;
         }
     }
-    /*String Distance(double lng,double lat){
-        Location myLocation = new Location("point a");
-        myLocation.getLatitude();
-        myLocation.getLongitude();
-
-        Location desLocation = new Location("point b");
-        desLocation.setLatitude(lat);
-        desLocation.setLongitude(lng);
-
-        String distance = String.valueOf(myLocation.distanceTo(desLocation));
-        return distance;
-    }*/
-
     /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
