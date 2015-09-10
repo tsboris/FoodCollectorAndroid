@@ -3,6 +3,7 @@ package upp.foodonet;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -52,8 +53,11 @@ public class AllPublicationsTabFragment
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
-        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
-        int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY,
+                FCPublication.PUBLICATION_ADDRESS_KEY
+                /*,Distance(Double.parseDouble(FCPublication.PUBLICATION_LONGITUDE_KEY),Double.parseDouble(FCPublication.PUBLICATION_LATITUDE_KEY))*/
+               /* ,FCPublication.PUBLICATION_PHOTO_URL*/};
+        int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
 
         getLoaderManager().initLoader(0, null, this);
         adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
@@ -137,6 +141,18 @@ public class AllPublicationsTabFragment
                 break;
         }
     }
+    /*String Distance(double lng,double lat){
+        Location myLocation = new Location("point a");
+        myLocation.getLatitude();
+        myLocation.getLongitude();
+
+        Location desLocation = new Location("point b");
+        desLocation.setLatitude(lat);
+        desLocation.setLongitude(lng);
+
+        String distance = String.valueOf(myLocation.distanceTo(desLocation));
+        return distance;
+    }*/
 
     /*
     @Override

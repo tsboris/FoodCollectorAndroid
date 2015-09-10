@@ -54,7 +54,7 @@ public class MyPublicationsActivity
         navigate_share.setBounds(0, 0, 60, 60);
         navigate_take.setBounds(0, 0, 60, 60);
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
-        btn_navigate_share.setCompoundDrawablePadding(10);
+      //  btn_navigate_share.setCompoundDrawablePadding(10);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
     }
 

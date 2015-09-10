@@ -43,9 +43,11 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/main_Pager"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <android.support.v4.view.PagerTabStrip
+                android:background="@color/basic_blue"
                 android:id="@+id/pager_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,19 +76,36 @@
             android:paddingRight="20dp"
             android:orientation="horizontal">
 
-            <ToggleButton android:id="@+id/tgl_btn_take_maplst"
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/pickup_btn"
+                android:id="@+id/btn_navigate_take"
+                android:textSize="10sp"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/share_btn"
+                android:textSize="10sp"
+                android:id="@+id/btn_navigate_share"
+                android:layout_weight="1" />
+            <!-- <ToggleButton
+                android:id="@+id/tgl_btn_take_maplst"
                 android:textOn="@string/pickup"
                 android:textOff="@string/pickup"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="60dp" />
 
-            <ToggleButton android:id="@+id/tgl_btn_share_maplst"
+            <ToggleButton
+                android:id="@+id/tgl_btn_share_maplst"
                 android:textOn="@string/publish"
                 android:textOff="@string/publish"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="60dp" />
+                android:layout_height="60dp" />-->
 
         </LinearLayout>
 

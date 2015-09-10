@@ -3,13 +3,13 @@ package upp.foodonet;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -17,9 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -63,8 +63,7 @@ public class MapAndListActivity
     ActionBarDrawerToggle mDrawerToggle;
     //MyPublicationsTabFragment myPublicationsTabFragment;
 
-    ToggleButton tgl_btn_navigate_share;
-    ToggleButton tgl_btn_navigate_take;
+    Button btn_navigate_share,btn_navigate_take;
 
 
     @Override
@@ -72,9 +71,16 @@ public class MapAndListActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_and_list);
 
-        tgl_btn_navigate_share = (ToggleButton) findViewById(R.id.tgl_btn_share_maplst);
-        tgl_btn_navigate_take = (ToggleButton) findViewById(R.id.tgl_btn_take_maplst);
-        tgl_btn_navigate_share.setOnClickListener(this);
+        btn_navigate_share = (Button) findViewById(R.id.btn_navigate_share);
+        btn_navigate_take = (Button) findViewById(R.id.btn_navigate_take);
+        btn_navigate_share.setOnClickListener(this);
+
+        Drawable navigate_share = getResources().getDrawable( R.drawable.donate_v62x_60x60 );
+        Drawable navigate_take = getResources().getDrawable( R.drawable.collect_v6_60x60);
+        navigate_share.setBounds(0, 0, 60, 60);
+        navigate_take.setBounds(0, 0, 60, 60);
+        btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
+        btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         /*drawerList = (ListView)findViewById(R.id.list_slidermenu);
@@ -93,10 +99,10 @@ public class MapAndListActivity
     @Override
     protected void onStart() {
         super.onStart();
-        tgl_btn_navigate_share.setChecked(false);
-        tgl_btn_navigate_share.setEnabled(true);
-        tgl_btn_navigate_take.setChecked(true);
-        tgl_btn_navigate_take.setEnabled(false);
+      //  btn_navigate_share.setChecked(false);
+        btn_navigate_share.setEnabled(true);
+     //   btn_navigate_take.setChecked(true);
+        btn_navigate_take.setEnabled(false);
     }
 
     @Override
@@ -210,7 +216,7 @@ public class MapAndListActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tgl_btn_share_maplst:
+            case R.id.btn_navigate_share:
                 Intent intent = new Intent(this, MyPublicationsActivity.class);
                 //intent.putExtra("service", boundedService);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

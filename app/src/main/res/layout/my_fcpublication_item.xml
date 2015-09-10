@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/tv_title_myPub_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        >
-    </TextView>
+    android:layout_height="100dp"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv_subtitle_myPub_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        >
-    </TextView>
-
-
-<!--
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/nameView" />
--->
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/foodonet_logo_200_200"
+        android:id="@+id/img_main__myPub_item" />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_title_myPub_item"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                >
+            </TextView>
+
+        <TextView
+            android:id="@+id/tv_subtitle_myPub_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            >
+        </TextView>
+         <TextView
+        android:id="@+id/tv_distance_myPub_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        >
+    </TextView>
+
+    </LinearLayout>
 </LinearLayout>
