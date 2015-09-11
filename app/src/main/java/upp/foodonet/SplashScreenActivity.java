@@ -47,7 +47,6 @@ public class SplashScreenActivity
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
         RegisterIfNotRegisteredYet();
-        startService(new Intent(this, FooDoNetService.class));
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.execute(p);
     }
@@ -177,8 +176,6 @@ public class SplashScreenActivity
                 public void run() {
                     try {
                         TimeUnit.SECONDS.sleep(secondsToSleep);
-                        flagWaitTaskFinished = true;
-                        splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -189,14 +186,16 @@ public class SplashScreenActivity
 
         @Override
         protected void onPostExecute(Void aVoid) {
-/*
-            if (AllLoaded())
-                StartNextActivity();
-*/
+            flagWaitTaskFinished = true;
+            splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
         }
     }
 
     private void StartNextActivity() {
+        // if register succeed or already registered
+        // start scheduler service
+        startService(new Intent(this, FooDoNetService.class));
+        // and start next activity
         Intent intent = new Intent(this, EntranceActivity.class);
         this.startActivity(intent);
     }
@@ -223,6 +222,7 @@ public class SplashScreenActivity
                 SharedPreferences sp = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, true);
+                editor.commit();
                 registerTaskFinished = true;
                 if(AllLoaded())
                     StartNextActivity();

@@ -1,5 +1,7 @@
 package FooDoNetServerClasses;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.JsonWriter;
 import android.util.Log;
@@ -37,6 +39,7 @@ import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 /**
  * Created by Asher on 21-Jul-15.
@@ -51,6 +54,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
 
+    private Context context;
     private String responseString;
     private JSONArray responseJSONArray;
     private JSONObject responseJSONObject;
@@ -62,6 +66,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener) {
         this.baseUrl = baseUrl;
         this.callbackListener = callbackListener;
+    }
+
+    public void setContextForBroadcasting(Context context){
+        this.context = context;
     }
 
     @Override
@@ -148,7 +156,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");
-                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
+                context.sendBroadcast(intent);
                 break;
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 Log.i(MY_TAG, "successfully posted new publication to server");

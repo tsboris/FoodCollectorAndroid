@@ -1,28 +1,44 @@
 package upp.foodonet;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
-
+import android.widget.SimpleCursorAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
-        extends FooDoNetCustomActivityConnectedToService implements View.OnClickListener  {
-    
+        extends FooDoNetCustomActivityConnectedToService
+        implements View.OnClickListener, IFooDoNetSQLCallback, LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final String MY_TAG = "food_myPubs";
+
+    private int currentFilterID;
+    ListView lv_my_publications_list;
+    Cursor cursor_my_publications;
+    SimpleCursorAdapter adapter;
+
     SearchView src_all_pub_listView;
     Button btn_add_new_publication ,btn_navigate_share ,btn_navigate_take,btn_active_pub,btn_not_active_pub,btn_ending_pub;
     Animation animZoomIn;
@@ -56,6 +72,13 @@ public class MyPublicationsActivity
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
       //  btn_navigate_share.setCompoundDrawablePadding(10);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
+
+        lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
+        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
+        int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+        adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, from, to);
+        lv_my_publications_list.setAdapter(adapter);
+
     }
 
     @Override
@@ -64,6 +87,7 @@ public class MyPublicationsActivity
         // btn_navigate_take.setChecked(false);
         btn_navigate_take.setEnabled(true);
         btn_navigate_share.setEnabled(false);
+        StartLoadingCursorForList(0);
     }
 
     @Override
@@ -132,5 +156,72 @@ public class MyPublicationsActivity
                 btn_not_active_pub.startAnimation(animZoomIn);
                 break;
         }
+    }
+
+    private void StartLoadingCursorForList(int filterTypeID) {
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    private void RestartLoadingCursorForList(int filterTypeID) {
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = FCPublication.GetColumnNamesForListArray();
+        android.support.v4.content.CursorLoader cursorLoader
+                = new android.support.v4.content.CursorLoader(this,
+                FooDoNetSQLProvider.URI_GET_MY_PUBS_FOR_LIST_ID_DESC,
+                projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case AddNewFCPublicationActivity.RESULT_OK:
+                FCPublication publication
+                        = (FCPublication) data.getExtras().get(AddNewFCPublicationActivity.PUBLICATION_KEY);
+                if (publication == null) {
+                    Log.i(MY_TAG, "got no pub from AddNew");
+                    return;
+                }
+                if (publication.getUniqueId() == 0) {
+                    int newNegativeID = 0;
+                    Cursor negIdCursor = getContentResolver()
+                            .query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
+                                    new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
+                    if (negIdCursor.moveToFirst()) {
+                        publication.setUniqueId(
+                                negIdCursor.getInt(
+                                        negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID)));
+                    }
+                }
+/*
+                getContentResolver().insert(FooDoNetSQLProvider.CONTENT_URI,
+                        publication.GetContentValuesRow());
+*/
+                FooDoNetSQLExecuterAsync saveExecuter
+                        = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                saveExecuter.execute(
+                        new InternalRequest(
+                                InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, publication));
+                break;
+        }
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        RestartLoadingCursorForList(currentFilterID);
     }
 }

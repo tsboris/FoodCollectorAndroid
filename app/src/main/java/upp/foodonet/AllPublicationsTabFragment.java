@@ -64,11 +64,6 @@ public class AllPublicationsTabFragment
                 to, 0);
         lv_my_publications.setAdapter(adapter);
         lv_my_publications.setOnItemClickListener(this);
-/*
-        adapter = new ListOfEventsAdapter(itemsList, context);
-        lv_events_list = (ListView)view.findViewById(R.id.lv_list_of_events);
-        lv_events_list.setAdapter(adapter);
-*/
         return view;
     }
 

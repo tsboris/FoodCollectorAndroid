@@ -7,5 +7,5 @@
 
 
     <integer name="min_splash_screen_time">3</integer>
-    <integer name="fetch_data_scheduler_repeat_time">50</integer>
+    <integer name="fetch_data_scheduler_repeat_time">600</integer>
 </resources>

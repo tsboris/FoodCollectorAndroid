@@ -85,6 +85,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         UserRegisterData userData = new UserRegisterData(imei, token, location.getLatitude(), location.getLongitude());
 
         HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+        connector.setContextForBroadcasting(this);
         connector.execute(
                 new InternalRequest(InternalRequest.ACTION_POST_REGISTER,
                         getResources().getString(R.string.register_new_device), userData));

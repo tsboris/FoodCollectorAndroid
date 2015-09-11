@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,6 +40,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String PUBLICATION_PHOTO_URL = "photo_url";
     public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
     public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
+
+    public static final String PUBLICATION_JSON_ITEM_KEY = "publication";
 
     public static final String PUBLICATION_NUMBER_OF_REGISTERED = "num_of_regs";
     public static final String PUBLICATION_NEW_NEGATIVE_ID = "new_neg_id";
@@ -492,7 +495,28 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
 
     @Override
     public org.json.simple.JSONObject GetJsonObjectForPost() {
-        return null;
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
+        deviceData.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
+        deviceData.put(PUBLICATION_TITLE_KEY, getTitle());
+        deviceData.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
+        deviceData.put(PUBLICATION_VERSION_KEY, getVersion());
+        deviceData.put(PUBLICATION_ADDRESS_KEY, getAddress());
+        deviceData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting());
+        deviceData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
+        deviceData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
+        deviceData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
+        deviceData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
+        deviceData.put(PUBLICATION_CONTACT_INFO_KEY, getContactInfo());
+        deviceData.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
+        deviceData.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
+        deviceData.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put(PUBLICATION_JSON_ITEM_KEY, deviceData);
+
+
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        return json;
     }
 
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {
