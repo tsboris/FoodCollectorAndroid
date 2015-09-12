@@ -40,7 +40,6 @@ public class FooDoNetService
 
     public FooDoNetService() {
         mustRun = true;
-        secondsToWait = 30;//getResources().getInteger(R.integer.fetch_data_scheduler_repeat_time);
 
     }
 
@@ -57,6 +56,7 @@ public class FooDoNetService
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        secondsToWait = getResources().getInteger(R.integer.fetch_data_scheduler_repeat_time);
         StartScheduler();
         return START_STICKY;
     }

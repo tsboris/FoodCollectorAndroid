@@ -119,6 +119,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 }
                 Uri newRowURLForLog
                         = contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, newPublicationForSaving.GetContentValuesRow());
+                newPublicationForSaving.setUniqueId(Integer.parseInt(newRowURLForLog.getLastPathSegment()));
                 Log.i(MY_TAG, "insert succeeded! id: " + newPublicationForSaving.getUniqueId()
                                 + "; new row url: " + newRowURLForLog );
                 break;
@@ -160,6 +161,29 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     resultPublication.setPublicationReports(reports);
                 publicationDetailsByID = resultPublication;
                 break;
+            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
+                Uri getUpdateUri = params[0].publicationForSaving.getUniqueId() < 0
+                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
+                        : FooDoNetSQLProvider.CONTENT_URI;
+                int tmpIdToDelete = params[0].publicationForSaving.getUniqueId();
+                long pubIdToUpdate = params[0].publicationForSaving.getUniqueId() < 0
+                        ? params[0].publicationForSaving.getUniqueId() * -1
+                        : params[0].publicationForSaving.getUniqueId();
+                FCPublication publication = params[0].publicationForSaving;
+                publication.setUniqueId(publication.getNewIdFromServer());
+                publication.setVersion(publication.getVersionFromServer());
+                int rowsUpdated = contentResolver.update(Uri.parse(getUpdateUri + "/" + pubIdToUpdate), publication.GetContentValuesRow(), null, null);
+                if(rowsUpdated > 0)
+                    Log.i(MY_TAG, "successfully updated new id and version");
+                rowsUpdated = 0;
+
+                Uri deleteUri = tmpIdToDelete < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
+                int idToDelete = tmpIdToDelete < 0 ? tmpIdToDelete * -1 : tmpIdToDelete;
+                rowsUpdated = contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);
+                if(rowsUpdated > 0)
+                    Log.i(MY_TAG, "successfully deleted rows: " + rowsUpdated);
+                //throw new UnsupportedOperationException("yet implemented updating id");
+                break;
         }
         return null;
     }
@@ -188,18 +212,26 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        InternalRequest ir;
         switch (incomingRequest.ActionCommand) {
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
             case InternalRequest.ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC:
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, resultPublications));
                 break;
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
-                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, newPublicationForSaving));
+                ir = new InternalRequest(incomingRequest.ActionCommand, newPublicationForSaving);
+                ir.Status = InternalRequest.STATUS_OK;
+                callbackHandler.OnSQLTaskComplete(ir);
                 break;
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
-                InternalRequest ir = new InternalRequest(incomingRequest.ActionCommand);
+                ir = new InternalRequest(incomingRequest.ActionCommand);
                 ir.publicationForDetails = publicationDetailsByID;
                 callbackHandler.OnSQLTaskComplete(ir);
+                break;
+            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
+                InternalRequest response = new InternalRequest(incomingRequest.ActionCommand);
+                response.Status = InternalRequest.STATUS_OK;
+                callbackHandler.OnSQLTaskComplete(response);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

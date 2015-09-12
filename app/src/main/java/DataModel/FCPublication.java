@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,6 +99,16 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         this.uniqueId = uniqueId;
     }
 
+    private int newIdFromServer;
+
+    public void setNewIdFromServer(int id){
+        this.newIdFromServer = id;
+    }
+
+    public int getNewIdFromServer(){
+        return newIdFromServer;
+    }
+
     private String publisherUID;
 
     public void setPublisherUID(String publisherUID) {
@@ -115,6 +128,12 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public void setVersion(int version) {
         this.version = version;
     }
+
+    private int versionFromServer;
+
+    public int getVersionFromServer(){ return versionFromServer; }
+
+    public void setVersionFromServer(int ver){ versionFromServer = ver; }
 
     private String title;
 
@@ -439,6 +458,19 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return publication;
     }
 
+    public static AbstractMap.SimpleEntry<Integer,Integer> ParseServerResponseToNewPublication(JSONObject jo){
+        if(jo == null) return null;
+        int idValue, versionValue;
+        try {
+            idValue = jo.getInt(PUBLICATION_UNIQUE_ID_KEY_JSON);
+            versionValue = jo.getInt(PUBLICATION_VERSION_KEY);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return new AbstractMap.SimpleEntry<Integer, Integer>(idValue, versionValue);
+    }
+
     public JSONObject GetJSONObject() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -495,28 +527,30 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
 
     @Override
     public org.json.simple.JSONObject GetJsonObjectForPost() {
-        Map<String, Object> deviceData = new HashMap<String, Object>();
-        deviceData.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
-        deviceData.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
-        deviceData.put(PUBLICATION_TITLE_KEY, getTitle());
-        deviceData.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
-        deviceData.put(PUBLICATION_VERSION_KEY, getVersion());
-        deviceData.put(PUBLICATION_ADDRESS_KEY, getAddress());
-        deviceData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting());
-        deviceData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
-        deviceData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
-        deviceData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
-        deviceData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
-        deviceData.put(PUBLICATION_CONTACT_INFO_KEY, getContactInfo());
-        deviceData.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
-        deviceData.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
-        deviceData.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
+        Map<String, Object> publicationData = new HashMap<String, Object>();
+        publicationData.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
+        publicationData.put(PUBLICATION_TITLE_KEY, getTitle());
+        publicationData.put(PUBLICATION_SUBTITLE_KEY, TextUtils.isEmpty(getSubtitle())? "test subtitle": getSubtitle());
+        publicationData.put(PUBLICATION_ADDRESS_KEY, getAddress());
+        publicationData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
+        publicationData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
+        publicationData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
+        publicationData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
+        publicationData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting() + 1);
+        publicationData.put(PUBLICATION_CONTACT_INFO_KEY, TextUtils.isEmpty(getContactInfo())? "0500000":getContactInfo());
+        publicationData.put(PUBLICATION_PHOTO_URL, "");//getPhotoUrl());
+        publicationData.put(PUBLICATION_IS_ON_AIR_KEY, true);//getIsOnAir());
+        //publicationData.put(PUBLICATION_UNIQUE_ID_KEY, 0);
+        //publicationData.put(PUBLICATION_VERSION_KEY, getVersion());
+        //publicationData.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
+
+
         Map<String, Object> dataToSend = new HashMap<String, Object>();
-        dataToSend.put(PUBLICATION_JSON_ITEM_KEY, deviceData);
-
-
-        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        dataToSend.put(PUBLICATION_JSON_ITEM_KEY, publicationData);
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+        json.putAll(dataToSend);
         return json;
+
     }
 
     public static FCPublication GetPublicationFromArrayListByID(ArrayList<FCPublication> list, int id) {
@@ -537,266 +571,6 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
             list.remove(lookingFor);
         return list;
     }
-/*
 
-    PUBLICATION_UNIQUE_ID_KEY,
-    PUBLICATION_VERSION_KEY,
-    PUBLICATION_TITLE_KEY,
-    PUBLICATION_SUBTITLE_KEY,
-    PUBLICATION_ADDRESS_KEY,
-    PUBLICATION_TYPE_OF_COLLECTION_KEY,
-    PUBLICATION_LATITUDE_KEY,
-    PUBLICATION_LONGITUDE_KEY,
-    PUBLICATION_STARTING_DATE_KEY,
-    PUBLICATION_ENDING_DATE_KEY,
-    PUBLICATION_CONTACT_INFO_KEY,
-    PUBLICATION_PHOTO_URL,
-    PUBLICATION_COUNT_OF_REGISTER_USERS_KEY
-*/
-
-    //
-//    public var  distanceFromUserLocation:Double {
-//        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-//        return location.distanceFromLocation(FCModel.sharedInstance.userLocation)
-//    }
-//    var reportsForPublication = [FCOnSpotPublicationReport]()
-//
-//    // True if the current user registered for this publication
-//    var didRegisterForCurrentPublication:Bool = false {
-//        didSet{
-//            if didRegisterForCurrentPublication {
-//                FCUserNotificationHandler.sharedInstance.removeLocationNotification(self)
-//                FCUserNotificationHandler.sharedInstance.registerLocalNotification(self)
-//            }
-//            else if !didRegisterForCurrentPublication{
-//                FCUserNotificationHandler.sharedInstance.removeLocationNotification(self)
-//            }
-//        }
-//    }
-//
-//    //publication's registrations array holds only instances with a register message.
-//    //when an unrigister push notification arrives the unregistered publication is taken out
-//
-//    var registrationsForPublication = [FCRegistrationForPublication]()
-//
-//    //the count of registered devices. is set in initial data download.
-//    var countOfRegisteredUsers = 0
-
-
-/*
-    @Override
-    public String toString() {
-        return "id: " + getUniqueId() + " title: " + getTitle() + ";";
-    }
-*/
 }
 
-
-//package DataModel;
-//
-//import java.util.Date;
-//
-///**
-// * Created by artyomshapet on 6/29/15.
-// */
-//public class FCPublication {
-//
-//    public static final String PUBLICATION_UNIQUE_ID_KEY = "id";
-//    public static final String PUBLICATION_VERSION_KEY = "version";
-//    public static final String PUBLICATION_TITLE_KEY = "title";
-//    public static final String PUBLICATION_SUBTITLE_KEY = "subtitle";
-//    public static final String PUBLICATION_ADDRESS_KEY = "address";
-//    public static final String PUBLICATION_TYPE_OF_COLLECTION_KEY = "type_of_collecting";
-//    public static final String PUBLICATION_LATITUDE_KEY = "latitude";
-//    public static final String PUBLICATION_LONGITUDE_KEY = "longitude";
-//    public static final String PUBLICATION_STARTING_DATE_KEY = "starting_date";
-//    public static final String PUBLICATION_ENDING_DATE_KEY = "ending_date";
-//    public static final String PUBLICATION_CONTACT_INFO_KEY = "contact_info";
-//    public static final String PUBLICATION_PHOTO_URL = "photo_url";
-//    public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
-//
-//    public static final String DID_REGISTER_FOR_CURRENT_PUBLICATION = "did_Register_for_current_publication";
-//    public static final String DID_MODIFY_COORDS = "did_modify_coords";
-//    public static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
-//    public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
-//
-//    private int uniqueId;
-//
-//    public int getUniqueId() {
-//        return uniqueId;
-//    }
-//
-//    public void setUniqueId(int uniqueId) {
-//        this.uniqueId = uniqueId;
-//    }
-//
-//    private int version;
-//
-//    public int getVersion() {
-//        return version;
-//    }
-//
-//    public void setVersion(int version) {
-//        this.version = version;
-//    }
-//
-//    private String title;
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-//
-//    private String subtitle;// make it nullable
-//
-//    public String getSubtitle() {
-//        return subtitle;
-//    }
-//
-//    public void setSubtitle(String subtitle) {
-//        this.subtitle = subtitle;
-//    }
-//
-//    public String getAddress() {
-//        return address;
-//    }
-//
-//    public void setAddress(String address) {
-//        this.address = address;
-//    }
-//
-//    private String address;
-//
-//    public enum FCTypeOfCollecting {
-//        FreePickUp,//1
-//        ContactPublisher//2
-//    }
-//
-//    public FCTypeOfCollecting typeOfCollecting;
-//
-//    private Double latitude;
-//
-//    public Double getLatitude() {
-//        return latitude;
-//    }
-//
-//    public void setLatitude(Double latitude) {
-//        this.latitude = latitude;
-//    }
-//
-//    private Double longitude;
-//
-//    public Double getLongitude() {
-//        return longitude;
-//    }
-//
-//    public void setLongitude(Double longitude) {
-//        this.longitude = longitude;
-//    }
-//
-//    private Date startingDate;
-//
-//    public Date getStartingDate() {
-//        return startingDate;
-//    }
-//
-//    public void setStartingDate(Date startingDate) {
-//        this.startingDate = startingDate;
-//    }
-//
-//    private Date endingDate;
-//
-//    public Date getEndingDate() {
-//        return endingDate;
-//    }
-//
-//    public void setEndingDate(Date endingDate) {
-//        this.endingDate = endingDate;
-//    }
-//
-//    private String contactInfo; // make it nullable
-//
-//    public String getContactInfo() {
-//        return contactInfo;
-//    }
-//
-//    public void setContactInfo(String contactInfo) {
-//        this.contactInfo = contactInfo;
-//    }
-//
-//    private Boolean isOnAir;
-//
-//    public Boolean getIsOnAir() {
-//        return isOnAir;
-//    }
-//
-//    public void setIsOnAir(Boolean isOnAir) {
-//        this.isOnAir = isOnAir;
-//    }
-//
-//    private Boolean didModifyCoords;
-//
-//    public Boolean getDidModifyCoords() {
-//        return didModifyCoords;
-//    }
-//
-//    public void setDidModifyCoords(Boolean didModifyCoords) {
-//        this.didModifyCoords = didModifyCoords;
-//    }
-//
-//
-//    private String photoUrl;
-//
-//    public String getPhotoUrl() {
-//        return photoUrl;
-//    }
-//
-//    public void setPhotoUrl(String photoUrl) {
-//        this.photoUrl = photoUrl;
-//    }
-//
-//    private Double distanceFromUserLocation;
-//
-//    public Double getDistanceFromUserLocation() {
-//        return distanceFromUserLocation;
-//    }
-//
-//
-//    private int countOfRegisteredUsers = 0;
-//
-//    public int getCountOfRegisteredUsers() {
-//        return countOfRegisteredUsers;
-//    }
-//
-//    //
-////    public var  distanceFromUserLocation:Double {
-////        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-////        return location.distanceFromLocation(FCModel.sharedInstance.userLocation)
-////    }
-////    var reportsForPublication = [FCOnSpotPublicationReport]()
-////
-////    // True if the current user registered for this publication
-////    var didRegisterForCurrentPublication:Bool = false {
-////        didSet{
-////            if didRegisterForCurrentPublication {
-////                FCUserNotificationHandler.sharedInstance.removeLocationNotification(self)
-////                FCUserNotificationHandler.sharedInstance.registerLocalNotification(self)
-////            }
-////            else if !didRegisterForCurrentPublication{
-////                FCUserNotificationHandler.sharedInstance.removeLocationNotification(self)
-////            }
-////        }
-////    }
-////
-////    //publication's registrations array holds only instances with a register message.
-////    //when an unrigister push notification arrives the unregistered publication is taken out
-////
-////    var registrationsForPublication = [FCRegistrationForPublication]()
-////
-////    //the count of registered devices. is set in initial data download.
-////    var countOfRegisteredUsers = 0
-//
-//}

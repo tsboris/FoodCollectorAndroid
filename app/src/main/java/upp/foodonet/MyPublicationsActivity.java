@@ -2,8 +2,10 @@ package upp.foodonet;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,13 +26,16 @@ import android.support.v4.content.Loader;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, IFooDoNetSQLCallback, LoaderManager.LoaderCallbacks<Cursor> {
+        implements View.OnClickListener, IFooDoNetSQLCallback, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
 
     private static final String MY_TAG = "food_myPubs";
 
@@ -74,11 +79,12 @@ public class MyPublicationsActivity
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
 
         lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
-        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_NUMBER_OF_REGISTERED};
+        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_UNIQUE_ID_KEY};
         int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
         adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, from, to);
         lv_my_publications_list.setAdapter(adapter);
 
+        currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
     }
 
     @Override
@@ -87,7 +93,7 @@ public class MyPublicationsActivity
         // btn_navigate_take.setChecked(false);
         btn_navigate_take.setEnabled(true);
         btn_navigate_share.setEnabled(false);
-        StartLoadingCursorForList(0);
+        StartLoadingCursorForList(currentFilterID);
     }
 
     @Override
@@ -129,41 +135,41 @@ public class MyPublicationsActivity
                 Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, 1);
                 break;
-            //case R.id.tgl_btn_share_mypubs:
-            //    break;
             case R.id.btn_take_mypubs:
                 Intent intent = new Intent(this, MapAndListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
             case R.id.btn_publication_ending:
                 btn_not_active_pub.setAnimation(null);
                 btn_active_pub.setAnimation(null);
                 btn_ending_pub.startAnimation(animZoomIn);
-
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
+                RestartLoadingCursorForList(currentFilterID);
                 break;
             case R.id.btn_publication_active:
                 btn_not_active_pub.setAnimation(null);
                 btn_ending_pub.setAnimation(null);
                 btn_active_pub.startAnimation(animZoomIn);
-
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC;
+                RestartLoadingCursorForList(currentFilterID);
                 break;
             case R.id.btn_publication_notActive:
                 btn_active_pub.setAnimation(null);
                 btn_ending_pub.setAnimation(null);
                 btn_not_active_pub.startAnimation(animZoomIn);
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC;
+                RestartLoadingCursorForList(currentFilterID);
                 break;
         }
     }
 
     private void StartLoadingCursorForList(int filterTypeID) {
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(filterTypeID, null, this);
     }
 
     private void RestartLoadingCursorForList(int filterTypeID) {
-        getSupportLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(filterTypeID, null, this);
     }
 
     @Override
@@ -171,7 +177,7 @@ public class MyPublicationsActivity
         String[] projection = FCPublication.GetColumnNamesForListArray();
         android.support.v4.content.CursorLoader cursorLoader
                 = new android.support.v4.content.CursorLoader(this,
-                FooDoNetSQLProvider.URI_GET_MY_PUBS_FOR_LIST_ID_DESC,
+                Uri.parse(FooDoNetSQLProvider.URI_GET_PUBS_FOR_LIST_BY_FILTER_ID + "/" + id),
                 projection, null, null, null);
         return cursorLoader;
     }
@@ -202,15 +208,12 @@ public class MyPublicationsActivity
                             .query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
                                     new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
                     if (negIdCursor.moveToFirst()) {
-                        publication.setUniqueId(
-                                negIdCursor.getInt(
-                                        negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID)));
+                        newNegativeID = negIdCursor.getInt(
+                                negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
+                        newNegativeID = newNegativeID >= 0 ? -1 : newNegativeID;
+                        publication.setUniqueId(newNegativeID);
                     }
                 }
-/*
-                getContentResolver().insert(FooDoNetSQLProvider.CONTENT_URI,
-                        publication.GetContentValuesRow());
-*/
                 FooDoNetSQLExecuterAsync saveExecuter
                         = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 saveExecuter.execute(
@@ -222,6 +225,45 @@ public class MyPublicationsActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        RestartLoadingCursorForList(currentFilterID);
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
+                if(request.Status == InternalRequest.STATUS_FAIL){
+                    Log.i(MY_TAG, "cant save new pub in sql");
+                    return;
+                }
+                Log.i(MY_TAG, "new pub successfully saved in db, sending to server");
+                RestartLoadingCursorForList(currentFilterID);
+                HttpServerConnectorAsync connector
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+                InternalRequest ir
+                        = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION,
+                        getResources().getString(R.string.server_add_new_publication_path),
+                        request.publicationForSaving);
+                ir.publicationForSaving = request.publicationForSaving;
+                connector.execute(ir);
+                break;
+            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
+                if(request.Status == InternalRequest.STATUS_FAIL){
+                    Log.i(MY_TAG, "cant update new pub's id in sql");
+                    return;
+                }
+                RestartLoadingCursorForList(currentFilterID);
+                break;
+        }
+
+
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        switch (response.ActionCommand){
+            case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                Log.i(MY_TAG, "succeeded saving pub to server, new id: "
+                                + response.publicationForSaving.getNewIdFromServer());
+                FooDoNetSQLExecuterAsync executerAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                executerAsync.execute(new InternalRequest(
+                        InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER,
+                        response.publicationForSaving));
+        }
     }
 }

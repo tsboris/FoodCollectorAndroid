@@ -15,6 +15,14 @@
     <string name="call_to_publisher_string">האם ליצור איתך קשר לפני הגעה?</string>
     <string name="add_pic_string">רוצה להוסיף תמונה?</string>
     <string name="publish_string">פרסם</string>
+    <string name="enter_description_name_string">תיאור שם</string>
+    <string name="choose_date_string">תאריך</string>
+    <string name="choose_time_string">שעה</string>
+    <string name="enter_name_string">הוסף שם</string>
+    <string name="free_pickup_string">איסוף חופשי</string>
+    <string name="side_menu_activity_center_title">מרכז פעילות</string>
+    <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
+    <string name="side_menu_my_active_pubs_part">שיתופים פעילים שלי</string>
 
     <string name="title_activity_entrance">EntranceActivity</string>
     <string name="welcome_string">ברוכים הבאים</string>
@@ -22,6 +30,7 @@
     <string name="pickup">לאסוף מזון</string>
     <string name="ask_food">לבקש מזון</string>
     <string name="title_my_publications">השיתופים שלי</string>
+    <string name="title_all_publications">שיתופים של אחרים</string>
     <string name="share_btn">שיתוף</string>
     <string name="pickup_btn">איסוף</string>
     <string name="publication_ending">מסתיים</string>
@@ -45,7 +54,7 @@
 
     <!-- Server strings -->
     <string name="server_base_url">https://prv-fd-server.herokuapp.com</string>
-    <string name="server_add_new_publication_path">/publications/new</string>
+    <string name="server_add_new_publication_path">/publications.json</string>
     <string name="server_get_publications_path">/publications</string>
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>

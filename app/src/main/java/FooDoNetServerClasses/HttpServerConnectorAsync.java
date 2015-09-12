@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 
 import CommonUtilPackage.InternalRequest;
@@ -60,6 +61,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private JSONObject responseJSONObject;
     private InternalRequest internalResponse;
     private ArrayList<FCPublication> resultPublications;
+    private FCPublication publicationForSaving;
 
     private int Action_Command_ID;
 
@@ -134,37 +136,29 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 return "";
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 //MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
-                Get(server_sub_path, (FCPublication) params[0].canWriteSelfToJSONWriterObject);
+                //Get(server_sub_path, (FCPublication) params[0].canWriteSelfToJSONWriterObject);
+                if(params[0].publicationForSaving == null){
+                    Log.e(MY_TAG, "got null pubForSaving!");
+                    return "";
+                }
+                publicationForSaving = params[0].publicationForSaving;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                try {
+                    AbstractMap.SimpleEntry<Integer,Integer> responsePair = FCPublication.ParseServerResponseToNewPublication(new JSONObject(responseString));
+                    if(responsePair != null){
+                        publicationForSaving.setNewIdFromServer(responsePair.getKey());
+                        publicationForSaving.setVersionFromServer(responsePair.getValue());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return "";
             case InternalRequest.ACTION_POST_REGISTER:
+                publicationForSaving = params[0].publicationForSaving;
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, false);
                 return "";
             default:
                 return "";
-        }
-    }
-
-
-    @Override
-    protected void onPostExecute(String s) {
-        //super.onPostExecute(s);
-        switch (Action_Command_ID) {
-            case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                Log.i(MY_TAG, "data loaded from http, calling callback");
-                callbackListener.OnServerRespondedCallback(
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
-                break;
-            case InternalRequest.ACTION_POST_REGISTER:
-                Log.i(MY_TAG, "successfully registered user on server");
-                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
-                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
-                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
-                context.sendBroadcast(intent);
-                break;
-            case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Log.i(MY_TAG, "successfully posted new publication to server");
-                callbackListener.OnServerRespondedCallback(internalResponse);
         }
     }
 
@@ -175,8 +169,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             URL url = new URL(post_url);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);
-            connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(30000);
+            connection.setConnectTimeout(30000);
             connection.addRequestProperty("Content-Type", "application/json");
             connection.addRequestProperty("Accept", "application/json");
             connection.setUseCaches(false);
@@ -206,7 +200,17 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             if (writableObject != null) {
 
                 DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(writableObject.GetJsonObjectForPost().toString());
+                String s = writableObject.GetJsonObjectForPost().toString();
+                String out = null;
+                try {
+                    out = new String(writableObject.GetJsonObjectForPost().toString().getBytes("UTF-8"), "ISO-8859-1");
+                } catch (java.io.UnsupportedEncodingException e) {
+
+                }
+
+                wr.writeBytes(out);
+
+                //wr.writeBytes(writableObject.GetJsonObjectForPost().toString());
                 wr.flush();
                 wr.close();
 /*                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -289,6 +293,35 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
+
+    @Override
+    protected void onPostExecute(String s) {
+        //super.onPostExecute(s);
+        switch (Action_Command_ID) {
+            case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
+                Log.i(MY_TAG, "data loaded from http, calling callback");
+                callbackListener.OnServerRespondedCallback(
+                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
+                break;
+            case InternalRequest.ACTION_POST_REGISTER:
+                Log.i(MY_TAG, "successfully registered user on server");
+                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
+                context.sendBroadcast(intent);
+                break;
+            case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                Log.i(MY_TAG, "successfully posted new publication to server");
+                callbackListener.OnServerRespondedCallback(
+                        new InternalRequest(Action_Command_ID, publicationForSaving));
+                break;
+        }
+    }
+
+
+
+/*
     private InternalRequest Get(String server_sub_path, FCPublication publication) {
         String get_publications_url = baseUrl + "/" + server_sub_path;
         Log.i(MY_TAG, "Get: " + get_publications_url);
@@ -339,6 +372,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             return HttpGet.METHOD_NAME;
         }
     }
+*/
 /*
 
     private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){

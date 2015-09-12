@@ -3,12 +3,24 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="top_panel_height">56dp</dimen>
+    <dimen name="side_menu_panel_width">280dp</dimen>
+    <dimen name="side_menu_text_size">17sp</dimen>
+
     <color name="white">#FFFFFF</color>
 
 
     <integer name="min_splash_screen_time">2</integer>
     <integer name="fetch_data_scheduler_repeat_time">600</integer>
 
+    <!-- colors -->
+    
+    <color name="side_menu_item_background">#555555</color>
+    <color name="side_menu_title_background">#2A2A2A</color>
+    <color name="side_menu_partition_background">#444444</color>
+    
+    <!--========-->
+    
     <!-- from Test Application -->
     <color name="white_a50">#ff00ff00</color>
     <color name="list_background">#FFFFFF</color>

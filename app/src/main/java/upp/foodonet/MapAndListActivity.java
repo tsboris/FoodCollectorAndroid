@@ -1,6 +1,7 @@
 package upp.foodonet;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.Button;
@@ -50,21 +52,31 @@ public class MapAndListActivity
 
     private static final String MY_TAG = "food_mapAndList";
 
+    //region Variables
+
     GoogleMap googleMap;
     boolean isMapLoaded;
     double maxDistance;
     LatLng average, myLocation;
     ArrayList<Marker> myMarkers;
 
-
+    LinearLayout ll_sideMenu;
     DrawerLayout drawerLayout;
+    ActionBarDrawerToggle mDrawerToggle;
+
     ViewPager mainPager;
     MainViewPagerAdapter mainPagerAdapter;
-    ActionBarDrawerToggle mDrawerToggle;
-    //MyPublicationsTabFragment myPublicationsTabFragment;
+    private final int PAGE_MAP = 0;
+    private final int PAGE_LIST = 1;
 
-    Button btn_navigate_share,btn_navigate_take;
+    Button btn_navigate_share, btn_navigate_take;
+    Button btn_show_M, btn_show_L;
 
+    int currentPageIndex;
+
+    //endregion
+
+    //region Overrides of activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,21 +86,47 @@ public class MapAndListActivity
         btn_navigate_share = (Button) findViewById(R.id.btn_navigate_share);
         btn_navigate_take = (Button) findViewById(R.id.btn_navigate_take);
         btn_navigate_share.setOnClickListener(this);
+        btn_show_L = (Button) findViewById(R.id.btn_show_list_allPubs);
+        btn_show_L.setOnClickListener(this);
+        btn_show_M = (Button) findViewById(R.id.btn_show_map_allPubs);
+        btn_show_M.setOnClickListener(this);
 
-        Drawable navigate_share = getResources().getDrawable( R.drawable.donate_v62x_60x60 );
-        Drawable navigate_take = getResources().getDrawable( R.drawable.collect_v6_60x60);
+        Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);
+        Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);
         navigate_share.setBounds(0, 0, 60, 60);
         navigate_take.setBounds(0, 0, 60, 60);
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
 
+        //region Sidemenu drawer methods
+        ll_sideMenu = (LinearLayout) findViewById(R.id.ll_sideMenuPanel);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.drawable.foodonet_logo_200_200, //nav menu toggle icon
+                R.string.app_name, // nav drawer open - description for accessibility
+                R.string.app_name // nav drawer close - description for accessibility
+        ) {
+            public void onDrawerClosed(View view) {
+                //getActionBar().setTitle("Title 1");
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                //getActionBar().setTitle("Title 2");
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        //endregion
+
         /*drawerList = (ListView)findViewById(R.id.list_slidermenu);
         drawerList.setOnItemClickListener(this);*/
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         mainPager = (ViewPager) findViewById(R.id.main_Pager);
         mainPagerAdapter = new MainViewPagerAdapter(this, fm);
         mainPagerAdapter.SetMapFragment(this);
+        currentPageIndex = mainPager.getCurrentItem();
         Log.i(MY_TAG, "onCreate sets map");
         //mainPagerAdapter.SetListFragment(eventArrayList, this);
         mainPager.setAdapter(mainPagerAdapter);
@@ -97,11 +135,24 @@ public class MapAndListActivity
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-      //  btn_navigate_share.setChecked(false);
+        //  btn_navigate_share.setChecked(false);
         btn_navigate_share.setEnabled(true);
-     //   btn_navigate_take.setChecked(true);
+        //   btn_navigate_take.setChecked(true);
         btn_navigate_take.setEnabled(false);
     }
 
@@ -127,19 +178,9 @@ public class MapAndListActivity
         return super.onOptionsItemSelected(item);
     }
 
-/*
-    @Override
-    public void OnNotifiedToFetchData() {
-        Toast.makeText(this, MY_TAG + " OnNotifiedToFetchData()", Toast.LENGTH_LONG);
-        Log.i(MY_TAG, "OnNotifiedToFetchData()");
-        getSupportLoaderManager().restartLoader(0, null, this);
-    }
+    //endregion
 
-    @Override
-    public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
-
-    }
-*/
+    //region Overrides of FooDoNetCustomActivityConnectedToService
 
     @Override
     public void OnGooglePlayServicesCheckError() {
@@ -151,40 +192,60 @@ public class MapAndListActivity
 
     }
 
+    //endregion
+
+    //region Click / ItemClick listener
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     }
 
     @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_navigate_share:
+                Intent intent = new Intent(this, MyPublicationsActivity.class);
+                //intent.putExtra("service", boundedService);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case R.id.btn_show_list_allPubs:
+                if (currentPageIndex == PAGE_MAP) {
+                    mainPager.setCurrentItem(1);
+                }
+                break;
+            case R.id.btn_show_map_allPubs:
+                if (currentPageIndex == PAGE_MAP) {
+                    drawerLayout.openDrawer(ll_sideMenu);
+                }
+                if (currentPageIndex == PAGE_LIST) {
+                    mainPager.setCurrentItem(0);
+                }
+                //case R.id.tgl_btn_take_maplst:
+                //   break;
+        }
+    }
+
+    //endregion
+
+    //region Map and location methods
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         if (this.googleMap != null)
             Toast.makeText(this, "Map loaded!", Toast.LENGTH_SHORT);
-        else{
+        else {
             isMapLoaded = true;
             myMarkers = new ArrayList<>();
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.drawable.foodonet_logo_200_200, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility
-                R.string.app_name // nav drawer close - description for accessibility
-        ) {
-            public void onDrawerClosed(View view) {
-                //getActionBar().setTitle("Title 1");
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
 
-            public void onDrawerOpened(View drawerView) {
-                //getActionBar().setTitle("Title 2");
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
         drawerLayout.setDrawerListener(mDrawerToggle);
 
         getSupportLoaderManager().initLoader(0, null, this);
@@ -198,13 +259,50 @@ public class MapAndListActivity
     }
 
     @Override
+    public void onMyLocationChange(Location location) {
+        if (location == null)
+            return;
+
+/*
+        if(myLocation == null) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.blue_dot_circle);
+            myLocation = AddMarker(((float)location.getLatitude()), (float)location.getLongitude(), getString(R.string.my_location), icon);
+        }
+*/
+        myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        if (GetDistance(myLocation, new LatLng(location.getLatitude(), location.getLongitude())) <= maxDistance)
+            return;
+        if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
+            return;
+        SetCamera();
+    }
+
+    @Override
+    public void OnGotMyLocationCallback(Location location) {
+        if (location != null)
+            myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        OnReadyToUpdateCamera();
+    }
+
+    private Marker AddMarker(float latitude, float longtitude, String title, BitmapDescriptor icon) {
+        MarkerOptions newMarker = new MarkerOptions().position(new LatLng(latitude, longtitude)).title(title).draggable(false);
+        if (icon != null)
+            newMarker.icon(icon);
+        return googleMap.addMarker(newMarker);
+    }
+
+    //endregion
+
+    //region PageViewer methods
+
+    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
     @Override
     public void onPageSelected(int position) {
-
+        currentPageIndex = position;
     }
 
     @Override
@@ -212,22 +310,9 @@ public class MapAndListActivity
 
     }
 
+    //endregion
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_navigate_share:
-                Intent intent = new Intent(this, MyPublicationsActivity.class);
-                //intent.putExtra("service", boundedService);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                break;
-            //case R.id.tgl_btn_take_maplst:
-            //   break;
-        }
-    }
+    //region My methods
 
     private void SetCamera() {
         if (myLocation == null) {
@@ -238,7 +323,7 @@ public class MapAndListActivity
         }
     }
 
-    private void OnReadyToUpdateCamera(){
+    private void OnReadyToUpdateCamera() {
         Point size = GetScreenSize();
         int width = size.x;
         int height = size.y;
@@ -299,38 +384,9 @@ public class MapAndListActivity
 
     }
 
-    @Override
-    public void onMyLocationChange(Location location) {
-        if (location == null)
-            return;
+    //endregion
 
-/*
-        if(myLocation == null) {
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.blue_dot_circle);
-            myLocation = AddMarker(((float)location.getLatitude()), (float)location.getLongitude(), getString(R.string.my_location), icon);
-        }
-*/
-        myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        if (GetDistance(myLocation, new LatLng(location.getLatitude(), location.getLongitude())) <= maxDistance)
-            return;
-        if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
-            return;
-        SetCamera();
-    }
-
-    @Override
-    public void OnGotMyLocationCallback(Location location) {
-        if(location != null)
-            myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        OnReadyToUpdateCamera();
-    }
-
-    private Marker AddMarker(float latitude, float longtitude, String title, BitmapDescriptor icon) {
-        MarkerOptions newMarker = new MarkerOptions().position(new LatLng(latitude, longtitude)).title(title).draggable(false);
-        if (icon != null)
-            newMarker.icon(icon);
-        return googleMap.addMarker(newMarker);
-    }
+    //region SQL Loader methods
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -342,22 +398,22 @@ public class MapAndListActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data.moveToFirst()){
+        if (data.moveToFirst()) {
             ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
-            if(publications == null){
+            if (publications == null) {
                 Log.e(MY_TAG, "error getting publications from sql");
                 return;
             }
 
-            if(myMarkers == null)
+            if (myMarkers == null)
                 myMarkers = new ArrayList<>();
-            for (FCPublication publication : publications){
+            for (FCPublication publication : publications) {
                 myMarkers.add(AddMarker(publication.getLatitude().floatValue(),
-                                        publication.getLongitude().floatValue(),
-                                        publication.getTitle(), null));
+                        publication.getLongitude().floatValue(),
+                        publication.getTitle(), null));
             }
 
-            if(isMapLoaded)
+            if (isMapLoaded)
                 SetCamera();
         }
     }
@@ -366,4 +422,6 @@ public class MapAndListActivity
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    //endregion
 }

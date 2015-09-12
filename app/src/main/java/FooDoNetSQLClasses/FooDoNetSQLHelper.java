@@ -18,8 +18,17 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
     public static final int FC_DATABASE_VERSION = 6;
 
-    public static final int FILTER_ID_LIST_ALL_BY_ID = 0;
-    public static final int FILTER_ID_LIST_MY_BY_ID = 1;
+    public static final int FILTER_ID_LIST_ALL_BY_ENDING_SOON = 0;
+    public static final int FILTER_ID_LIST_ALL_BY_DISTANCE = 1;
+    public static final int FILTER_ID_LIST_ALL_BY_NEWEST = 2;
+
+    public static final int FILTER_ID_LIST_MY_BY_ENDING_SOON = 10;
+    public static final int FILTER_ID_LIST_MY_ACTIVE_ID_DESC = 11;
+    public static final int FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC = 12;
+
+    public static final int FILTER_ID_SIDEMENU_MY_ACTIVE = 20;
+    public static final int FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED = 21;
+
 
     public FooDoNetSQLHelper(Context context) {
         super(context, FC_DATABASE_NAME, null, FC_DATABASE_VERSION);
@@ -41,14 +50,39 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params){
         switch (filterID){
-            case FILTER_ID_LIST_ALL_BY_ID:
+            case FILTER_ID_LIST_ALL_BY_ENDING_SOON:
+                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0])
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+            case FILTER_ID_LIST_ALL_BY_NEWEST:
                 return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0])
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
-            case FILTER_ID_LIST_MY_BY_ID:
+            case FILTER_ID_LIST_ALL_BY_DISTANCE:
+                // not implemented yet
+                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0])
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+            case FILTER_ID_LIST_MY_BY_ENDING_SOON:
                 return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0])
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+            case FILTER_ID_LIST_MY_ACTIVE_ID_DESC:
+            case FILTER_ID_SIDEMENU_MY_ACTIVE:
+                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0])
+                        + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
+            case FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC:
+                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0])
+                        + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 0 "
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
+            case FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
+                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                        + " WHERE REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = " + params[0]
+                        + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
             default:
                 Log.e(MY_TAG, "unexpected filter id = " + filterID);
                 return "";
@@ -115,6 +149,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " - 1 AS " + FCPublication.PUBLICATION_NEW_NEGATIVE_ID
             + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
             + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " LIMIT 1";
+
 
 
 }

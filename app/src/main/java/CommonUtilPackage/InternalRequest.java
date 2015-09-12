@@ -29,6 +29,7 @@ public class InternalRequest {
     public static final int ACTION_SQL_GET_NEW_NEGATIVE_ID = 7;
     public static final int ACTION_GET_PUBLICATION_REPORTS = 8;
     public static final int ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID = 9;
+    public static final int ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER = 10;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -67,9 +68,11 @@ public class InternalRequest {
         ActionCommand = com;
         switch (ActionCommand){
             case ACTION_SQL_SAVE_NEW_PUBLICATION:
+            case ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
                 publicationForSaving = newPublication;
                 break;
             case ACTION_POST_NEW_PUBLICATION:
+                publicationForSaving = newPublication;
                 canWriteSelfToJSONWriterObject = newPublication;
                 break;
             default:
