@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.Button;
@@ -36,7 +38,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import Adapters.MainViewPagerAdapter;
+import Adapters.SideMenuCursorAdapter;
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -74,6 +78,10 @@ public class MapAndListActivity
 
     int currentPageIndex;
 
+    ListView lv_side_menu_reg;
+    ListView lv_side_menu_my;
+    SideMenuCursorAdapter adapter_my;
+    SideMenuCursorAdapter adapter_reg;
     //endregion
 
     //region Overrides of activity
@@ -118,6 +126,18 @@ public class MapAndListActivity
                 invalidateOptionsMenu();
             }
         };
+
+        lv_side_menu_my = (ListView)findViewById(R.id.lv_side_menu_my);
+        lv_side_menu_reg = (ListView)findViewById(R.id.lv_side_menu_reg);
+        adapter_my = new SideMenuCursorAdapter(this, null, 0);
+        adapter_reg = new SideMenuCursorAdapter(this, null, 0);
+        lv_side_menu_my.setAdapter(adapter_my);
+        lv_side_menu_reg.setAdapter(adapter_reg);
+        lv_side_menu_my.setOnItemClickListener(this);
+        lv_side_menu_reg.setOnItemClickListener(this);
+        StartLoadingSideMenuMy();
+        StartLoadingSideMenuReg();
+
         //endregion
 
         /*drawerList = (ListView)findViewById(R.id.list_slidermenu);
@@ -248,7 +268,8 @@ public class MapAndListActivity
 
         drawerLayout.setDrawerListener(mDrawerToggle);
 
-        getSupportLoaderManager().initLoader(0, null, this);
+        StartLoadingForMarkers();
+        //getSupportLoaderManager().initLoader(0, null, this);
 
         SetCamera();
     }
@@ -388,39 +409,106 @@ public class MapAndListActivity
 
     //region SQL Loader methods
 
+    private void StartLoadingSideMenuMy(){
+        getSupportLoaderManager().initLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE, null, this);
+    }
+    private void RestartLoadingSideMenuMy(){
+        getSupportLoaderManager().restartLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE, null, this);
+    }
+
+    private void StartLoadingSideMenuReg(){
+        getSupportLoaderManager().initLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED, null, this);
+    }
+    private void RestartLoadingSideMenuReg(){
+        getSupportLoaderManager().restartLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED, null, this);
+    }
+
+    private void StartLoadingForMarkers(){
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
+    private void RestartLoadingForMarkers(){
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = FCPublication.GetColumnNamesArray();
-        android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI, projection, null, null, null);
+        android.support.v4.content.CursorLoader cursorLoader = null;
+        String[] projection;
+        switch (id){
+            case 0:
+                projection = FCPublication.GetColumnNamesArray();
+                cursorLoader = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI,
+                                                                                projection, null, null, null);
+                break;
+            case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
+            case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE:
+                projection = FCPublication.GetColumnNamesForListArray();
+                cursorLoader = new android.support.v4.content.CursorLoader(this,
+                        Uri.parse(FooDoNetSQLProvider.URI_GET_PUBS_FOR_LIST_BY_FILTER_ID + "/" + id),
+                        projection, null, null, null);
+                break;
+            default:
+                Log.e(MY_TAG, "mapActivity - unexpected filter sent to loader");
+                break;
+        }
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data.moveToFirst()) {
-            ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
-            if (publications == null) {
-                Log.e(MY_TAG, "error getting publications from sql");
-                return;
-            }
+        switch (loader.getId()){
+            case 0:
+                if (data.moveToFirst()) {
+                    ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
+                    if (publications == null) {
+                        Log.e(MY_TAG, "error getting publications from sql");
+                        return;
+                    }
 
-            if (myMarkers == null)
-                myMarkers = new ArrayList<>();
-            for (FCPublication publication : publications) {
-                myMarkers.add(AddMarker(publication.getLatitude().floatValue(),
-                        publication.getLongitude().floatValue(),
-                        publication.getTitle(), null));
-            }
+                    if (myMarkers == null)
+                        myMarkers = new ArrayList<>();
+                    else {
+                        for(Marker m : myMarkers)
+                            m.remove();
+                        myMarkers.clear();
+                    }
+                    for (FCPublication publication : publications) {
+                        myMarkers.add(AddMarker(publication.getLatitude().floatValue(),
+                                publication.getLongitude().floatValue(),
+                                publication.getTitle(), null));
+                    }
 
-            if (isMapLoaded)
-                SetCamera();
+                    if (isMapLoaded)
+                        SetCamera();
+                }
+                break;
+            case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE:
+                adapter_my.swapCursor(data);
+                break;
+            case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
+                adapter_reg.swapCursor(data);
+                break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    //endregion
+
+    //region Callback
+
+    @Override
+    public void onBroadcastReceived(Intent intent) {
+        super.onBroadcastReceived(intent);
+        if(isMapLoaded){
+            RestartLoadingForMarkers();
+        }
+        RestartLoadingSideMenuMy();
+        RestartLoadingSideMenuReg();
     }
 
     //endregion

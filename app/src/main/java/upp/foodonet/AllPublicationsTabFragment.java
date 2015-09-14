@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import Adapters.PublicationsListCursorAdapter;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
@@ -34,7 +35,8 @@ public class AllPublicationsTabFragment
     private static final int ADD_TODO_ITEM_REQUEST = 0;
     //FCPublicationListAdapter mAdapter;
     private Context context;
-    SimpleCursorAdapter adapter;
+    //SimpleCursorAdapter adapter;
+    PublicationsListCursorAdapter adapter;
 
     ListView lv_my_publications;
     //Button btn_new_publication;
@@ -53,15 +55,14 @@ public class AllPublicationsTabFragment
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
-        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY,
-                FCPublication.PUBLICATION_ADDRESS_KEY
+        //String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY,
+                //FCPublication.PUBLICATION_ADDRESS_KEY
                 /*,Distance(Double.parseDouble(FCPublication.PUBLICATION_LONGITUDE_KEY),Double.parseDouble(FCPublication.PUBLICATION_LATITUDE_KEY))*/
-               /* ,FCPublication.PUBLICATION_PHOTO_URL*/};
-        int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
+               /* ,FCPublication.PUBLICATION_PHOTO_URL*///};
+        //int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
 
         getLoaderManager().initLoader(0, null, this);
-        adapter = new SimpleCursorAdapter(context, R.layout.my_fcpublication_item, null, from,
-                to, 0);
+        adapter = new PublicationsListCursorAdapter(context, null, 0);
         lv_my_publications.setAdapter(adapter);
         lv_my_publications.setOnItemClickListener(this);
         return view;

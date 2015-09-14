@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import android.widget.SimpleCursorAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+
+import Adapters.PublicationsListCursorAdapter;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -42,7 +44,8 @@ public class MyPublicationsActivity
     private int currentFilterID;
     ListView lv_my_publications_list;
     Cursor cursor_my_publications;
-    SimpleCursorAdapter adapter;
+    //SimpleCursorAdapter adapter;
+    PublicationsListCursorAdapter adapter;
 
     SearchView src_all_pub_listView;
     Button btn_add_new_publication ,btn_navigate_share ,btn_navigate_take,btn_active_pub,btn_not_active_pub,btn_ending_pub;
@@ -79,9 +82,9 @@ public class MyPublicationsActivity
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
 
         lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
-        String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_UNIQUE_ID_KEY};
-        int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
-        adapter = new SimpleCursorAdapter(this, R.layout.my_fcpublication_item, null, from, to);
+        //String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_UNIQUE_ID_KEY};
+        //int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+        adapter = new PublicationsListCursorAdapter(this, null, 0);
         lv_my_publications_list.setAdapter(adapter);
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;

@@ -152,35 +152,61 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_sideMenuPanel"
+    <LinearLayout android:id="@+id/ll_sideMenuPanel"
         android:layout_width="@dimen/side_menu_panel_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
         android:background="@color/side_menu_item_background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="start">
+        <!---->
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/top_panel_height"
-            android:background="@color/side_menu_title_background"
-            android:text="@string/side_menu_activity_center_title"
-            android:textAlignment="center"
-            android:textColor="@color/list_background"
-            android:textSize="@dimen/side_menu_text_size" />
+            android:layout_height="@dimen/side_menu_item_height"
+            android:background="@color/side_menu_title_background">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/side_menu_activity_center_title"
+                android:textAlignment="center"
+                android:textColor="@color/list_background"
+                android:textSize="@dimen/side_menu_text_size"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+        
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/top_panel_height"
-            android:background="@color/side_menu_partition_background"
-            android:text="@string/side_menu_going_to_take_part"
-            android:textAlignment="center"
-            android:textColor="@color/list_background"
-            android:textSize="@dimen/side_menu_text_size" />
+            android:layout_height="@dimen/side_menu_item_height"
+            android:background="@color/side_menu_partition_background">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:src="@drawable/side_menu_collect_icon"/>
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:text="@string/side_menu_going_to_take_part"
+                android:textAlignment="center"
+                android:textColor="@color/list_background"
+                android:textSize="@dimen/side_menu_text_size" />
+            
+        </RelativeLayout>
 
 
-        <ListView
 
+        <ListView android:id="@+id/lv_side_menu_reg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
@@ -188,17 +214,33 @@
             android:dividerHeight="1dp"
             android:listSelector="@drawable/list_selector" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/top_panel_height"
-            android:background="@color/side_menu_partition_background"
-            android:text="@string/side_menu_my_active_pubs_part"
-            android:textAlignment="center"
-            android:textColor="@color/list_background"
-            android:textSize="@dimen/side_menu_text_size" />
+            android:layout_height="@dimen/side_menu_item_height"
+            android:background="@color/side_menu_partition_background">
 
-        <ListView
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:src="@drawable/side_menu_donate_icon"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:text="@string/side_menu_my_active_pubs_part"
+                android:textAlignment="center"
+                android:textColor="@color/list_background"
+                android:textSize="@dimen/side_menu_text_size" />
+
+        </RelativeLayout>
+
+        <ListView android:id="@+id/lv_side_menu_my"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
@@ -208,6 +250,7 @@
 
         <!-- android:id="@+id/list_slidermenu" -->
     </LinearLayout>
+
     <!-- class="com.example.asher.mytestapplication.MarkerPopupFragment" -->
 
 </android.support.v4.widget.DrawerLayout>

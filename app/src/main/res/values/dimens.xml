@@ -6,9 +6,14 @@
     <dimen name="top_panel_height">56dp</dimen>
     <dimen name="side_menu_panel_width">280dp</dimen>
     <dimen name="side_menu_text_size">17sp</dimen>
+    <dimen name="side_menu_item_icon_margin_right">24dp</dimen>
+    <dimen name="side_menu_item_title_margin_right">96dp</dimen>
+    <dimen name="side_menu_item_score_margin_left">24dp</dimen>
+    <dimen name="side_menu_item_height">70dp</dimen>
+    <dimen name="side_menu_item_score_circle_size">40dp</dimen>
 
     <color name="white">#FFFFFF</color>
-
+    <color name="side_menu_score_circle_red">#B80000</color>
 
     <integer name="min_splash_screen_time">2</integer>
     <integer name="fetch_data_scheduler_repeat_time">600</integer>
