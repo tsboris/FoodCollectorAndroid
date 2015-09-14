@@ -37,7 +37,8 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, IFooDoNetSQLCallback, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
+        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+        //, IFooDoNetSQLCallback, IFooDoNetServerCallback {
 
     private static final String MY_TAG = "food_myPubs";
 
@@ -88,6 +89,7 @@ public class MyPublicationsActivity
         lv_my_publications_list.setAdapter(adapter);
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
+        onClick(btn_active_pub);
     }
 
     @Override
@@ -205,68 +207,15 @@ public class MyPublicationsActivity
                     Log.i(MY_TAG, "got no pub from AddNew");
                     return;
                 }
-                if (publication.getUniqueId() == 0) {
-                    int newNegativeID = 0;
-                    Cursor negIdCursor = getContentResolver()
-                            .query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
-                                    new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
-                    if (negIdCursor.moveToFirst()) {
-                        newNegativeID = negIdCursor.getInt(
-                                negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
-                        newNegativeID = newNegativeID >= 0 ? -1 : newNegativeID;
-                        publication.setUniqueId(newNegativeID);
-                    }
-                }
-                FooDoNetSQLExecuterAsync saveExecuter
-                        = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-                saveExecuter.execute(
-                        new InternalRequest(
-                                InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, publication));
+                //=============>
+                SaveNewPublicationIntentService.StartSaveNewPublication(getApplicationContext(), publication);
                 break;
         }
     }
 
     @Override
-    public void OnSQLTaskComplete(InternalRequest request) {
-        switch (request.ActionCommand){
-            case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
-                if(request.Status == InternalRequest.STATUS_FAIL){
-                    Log.i(MY_TAG, "cant save new pub in sql");
-                    return;
-                }
-                Log.i(MY_TAG, "new pub successfully saved in db, sending to server");
-                RestartLoadingCursorForList(currentFilterID);
-                HttpServerConnectorAsync connector
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
-                InternalRequest ir
-                        = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION,
-                        getResources().getString(R.string.server_add_new_publication_path),
-                        request.publicationForSaving);
-                ir.publicationForSaving = request.publicationForSaving;
-                connector.execute(ir);
-                break;
-            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
-                if(request.Status == InternalRequest.STATUS_FAIL){
-                    Log.i(MY_TAG, "cant update new pub's id in sql");
-                    return;
-                }
-                RestartLoadingCursorForList(currentFilterID);
-                break;
-        }
-
-
-    }
-
-    @Override
-    public void OnServerRespondedCallback(InternalRequest response) {
-        switch (response.ActionCommand){
-            case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Log.i(MY_TAG, "succeeded saving pub to server, new id: "
-                                + response.publicationForSaving.getNewIdFromServer());
-                FooDoNetSQLExecuterAsync executerAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-                executerAsync.execute(new InternalRequest(
-                        InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER,
-                        response.publicationForSaving));
-        }
+    public void onBroadcastReceived(Intent intent) {
+        super.onBroadcastReceived(intent);
+        RestartLoadingCursorForList(currentFilterID);
     }
 }

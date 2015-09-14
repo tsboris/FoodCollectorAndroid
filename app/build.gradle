@@ -37,4 +37,8 @@ dependencies {
     compile 'com.android.support:support-v13:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile files('libs/json-simple-1.1.1.jar')
+    compile files ('libs/aws-android-sdk-core-2.2.5.jar')
+    compile files ('libs/aws-android-sdk-cognito-2.2.5.jar')
+    compile files ('libs/aws-android-sdk-s3-2.2.5.jar')
+
 }

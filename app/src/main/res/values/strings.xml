@@ -63,4 +63,7 @@
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
 
+    <!-- Amazon base url for pictures -->
+    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
+
 </resources>

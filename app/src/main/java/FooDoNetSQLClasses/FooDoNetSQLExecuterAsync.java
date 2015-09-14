@@ -2,12 +2,15 @@ package FooDoNetSQLClasses;
 
 import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.PublicationReport;
@@ -30,11 +33,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
     ArrayList<RegisteredUserForPublication> regUsersFromDB;
     ArrayList<RegisteredUserForPublication> resultRegUsers;
     FCPublication newPublicationForSaving;
+    FCPublication publicationAfterUpdate;
     FCPublication publicationDetailsByID;
     IFooDoNetSQLCallback callbackHandler;
     ContentResolver contentResolver;
     InternalRequest incomingRequest;
     int newNegativeID;
+    Map<Integer, Integer> needToLoadPicturesFor;
 
     public FooDoNetSQLExecuterAsync(IFooDoNetSQLCallback callback, ContentResolver content) {
         //ArrayList<FCPublication> fromServer removed from parameters
@@ -52,6 +57,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
                 publicationsFromServer = params[0].publications;
                 regUsersFromServer = params[0].registeredUsers;
+                needToLoadPicturesFor = new HashMap<>();
                 if (publicationsFromServer == null || publicationsFromServer.size() == 0
                         || contentResolver == null || callbackHandler == null)
                     return null;
@@ -68,10 +74,12 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     FCPublication pubFromDB = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
                     if (pubFromDB == null) {
                         InsertPublicationToDB(contentResolver, publicationFromServer);
+                        needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
                     } else {
                         if (pubFromDB.getVersion() < publicationFromServer.getVersion()) {
                             DeletePublicationFromDB(contentResolver, pubFromDB);
                             InsertPublicationToDB(contentResolver, publicationFromServer);
+                            needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
                         }
                         publicationsFromDB.remove(pubFromDB);
                     }
@@ -176,13 +184,23 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 if(rowsUpdated > 0)
                     Log.i(MY_TAG, "successfully updated new id and version");
                 rowsUpdated = 0;
-
+                publicationAfterUpdate = publication;
+/*  No need to delete - update works fine
                 Uri deleteUri = tmpIdToDelete < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
                 int idToDelete = tmpIdToDelete < 0 ? tmpIdToDelete * -1 : tmpIdToDelete;
                 rowsUpdated = contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);
                 if(rowsUpdated > 0)
                     Log.i(MY_TAG, "successfully deleted rows: " + rowsUpdated);
+*/
                 //throw new UnsupportedOperationException("yet implemented updating id");
+                break;
+            case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
+                Map<Integer, byte[]> imgToPub = params[0].publicationImageMap;
+                ContentValues cv = new ContentValues();
+                for(int pubId: imgToPub.keySet()){
+                    cv.put(String.valueOf(pubId), imgToPub.get(pubId));
+                }
+                int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null,null);
                 break;
         }
         return null;
@@ -215,6 +233,10 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
         InternalRequest ir;
         switch (incomingRequest.ActionCommand) {
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
+                InternalRequest respond = new InternalRequest(incomingRequest.ActionCommand, resultPublications);
+                respond.listOfPubsToFetchImageFor = needToLoadPicturesFor;
+                callbackHandler.OnSQLTaskComplete(respond);
+                break;
             case InternalRequest.ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC:
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, resultPublications));
                 break;
@@ -231,7 +253,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
             case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
                 InternalRequest response = new InternalRequest(incomingRequest.ActionCommand);
                 response.Status = InternalRequest.STATUS_OK;
+                response.publicationForSaving = publicationAfterUpdate;
                 callbackHandler.OnSQLTaskComplete(response);
+                break;
+            case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
+                InternalRequest statusResponse = new InternalRequest(incomingRequest.ActionCommand);
+                statusResponse.Status = InternalRequest.STATUS_OK;
+                callbackHandler.OnSQLTaskComplete(statusResponse);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

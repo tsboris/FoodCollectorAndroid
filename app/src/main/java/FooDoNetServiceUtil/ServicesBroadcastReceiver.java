@@ -22,6 +22,8 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     public static final int ACTION_CODE_REGISTRATION_FAIL = 2;
     public static final int ACTION_CODE_RELOAD_DATA_SUCCESS = 11;
     public static final int ACTION_CODE_RELOAD_DATA_FAIL = 12;
+    public static final int ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS = 21;
+    public static final int ACTION_CODE_SAVE_NEW_PUB_COMPLETE = 22;
 
     public ServicesBroadcastReceiver(IBroadcastReceiverCallback callback){
         callbackListener = callback;
