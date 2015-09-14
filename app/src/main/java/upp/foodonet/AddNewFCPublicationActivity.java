@@ -229,6 +229,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
             if (requestCode == REQUEST_CAMERA)
             {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                publication.setImageByteArrayFromBitmap(thumbnail);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
                 File destination = new File(Environment.getExternalStorageDirectory(),
@@ -257,10 +258,10 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 cursor.moveToFirst();
                 String selectedImagePath = cursor.getString(column_index);
                 publication.setPhotoUrl(selectedImagePath);
-                Bitmap bm;
+                Bitmap bm = CommonUtil.decodeScaledBitmapFromSdCard(selectedImagePath, 200, 200);
+/*
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(selectedImagePath, options);
                 final int REQUIRED_SIZE = 200;
                 int scale = 1;
                 while (options.outWidth / scale / 2 >= REQUIRED_SIZE
@@ -269,6 +270,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 options.inSampleSize = scale;
                 options.inJustDecodeBounds = false;
                 bm = BitmapFactory.decodeFile(selectedImagePath, options);
+*/
+                publication.setImageByteArrayFromBitmap(bm);
                 mAddPicImageView.setImageBitmap(bm);
             }
         }
@@ -310,7 +313,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
             double longitude = getLongitudeFromAddress(address);
             double latitude = getLatitudeFromAddress(address);
 
-            publication.setAddress(address);
+            publication.setAddress(atv_address.getText().toString());
             publication.setLongitude(longitude);
             publication.setLatitude(latitude);
 
@@ -644,11 +647,11 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
 
                 if(TextUtils.isEmpty(publication.getPublisherUID()))
                     publication.setPublisherUID(CommonUtil.GetIMEI(this));
-                publication.setTypeOfCollecting(
-                        chkCallToPublisher.isChecked()
-                                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
+                publication.setTypeOfCollecting( FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
+                //        chkCallToPublisher.isChecked()
+                //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
                 publication.setVersion(publication.getVersion() + 1);
-                publication.setIsOnAir(false);
+                publication.setIsOnAir(true);
 
                 Intent dataPublicationIntent = new Intent();
                 dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
