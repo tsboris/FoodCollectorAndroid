@@ -12,6 +12,8 @@
     <string name="no_date_set_string">0000–00–00</string>
     <string name="no_time_set_string">00:00:00</string>
     <string name="end_string">ועד-</string>
+    <string name="add_phoneNumber_string">מספר טלפון ליצירת קשר</string>
+    <string name="another_details_string">רוצה לתת פרטים נוספים?</string>
     <string name="call_to_publisher_string">האם ליצור איתך קשר לפני הגעה?</string>
     <string name="add_pic_string">רוצה להוסיף תמונה?</string>
     <string name="publish_string">פרסם</string>

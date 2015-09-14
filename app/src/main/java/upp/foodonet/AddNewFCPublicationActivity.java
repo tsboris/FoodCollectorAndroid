@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
@@ -35,6 +36,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -116,10 +118,9 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private static CheckBox chkCallToPublisher;
 
     private ImageView mAddPicImageView;
-    private ImageView mChoosenPicImageView;
     private Uri imageURI;
 
-    private static Button submitButton;
+    private static ImageButton submitButton,menuBtn,cameraBtn;
 
     private Date mDate;
 
@@ -140,7 +141,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         }
 
         mTitleText = (EditText) findViewById(R.id.et_title_new_publication);
-
+        mTitleText.setInputType(InputType.TYPE_CLASS_NUMBER);
         // Auto complete
         mGoogleApiClient = new GoogleApiClient.Builder(AddNewFCPublicationActivity.this)
                 .addApi(Places.GEO_DATA_API)
@@ -165,6 +166,9 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
         startDatePickerButton.setOnClickListener(this);
 
+        menuBtn = (ImageButton)findViewById(R.id.btn_menu_add_pub);
+        menuBtn.setOnClickListener(this);
+
         startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
         startTimePickerButton.setOnClickListener(this);
 
@@ -177,15 +181,16 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         // Set the default date and time
         setDefaultDateTime();
 
-        chkCallToPublisher = (CheckBox) findViewById(R.id.chkCallToPublisher);
-        chkCallToPublisher.setOnClickListener(this);
+        //chkCallToPublisher = (CheckBox) findViewById(R.id.chkCallToPublisher);
+        //chkCallToPublisher.setOnClickListener(this);
 
         mAddPicImageView = (ImageView)findViewById(R.id.imgAddPicture);
         mAddPicImageView.setOnClickListener(this);
 
-        mChoosenPicImageView = (ImageView)findViewById(R.id.imgView);
+        cameraBtn = (ImageButton)findViewById(R.id.btn_camera_add_pub);
+        cameraBtn.setOnClickListener(this);
 
-        submitButton = (Button) findViewById(R.id.publishButton);
+        submitButton = (ImageButton) findViewById(R.id.publishButton);
         submitButton.setOnClickListener(this);
     }
 
@@ -240,7 +245,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                mChoosenPicImageView.setImageBitmap(thumbnail);
+                mAddPicImageView.setImageBitmap(thumbnail);
             }
             else if (requestCode == SELECT_FILE)
             {
@@ -264,7 +269,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
                 options.inSampleSize = scale;
                 options.inJustDecodeBounds = false;
                 bm = BitmapFactory.decodeFile(selectedImagePath, options);
-                mChoosenPicImageView.setImageBitmap(bm);
+                mAddPicImageView.setImageBitmap(bm);
             }
         }
         if (resultCode == RESULT_CANCELED) {
@@ -576,12 +581,19 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
             case R.id.end_time_picker_button:
                 showEndTimePickerDialog();
                 break;
-            case R.id.chkCallToPublisher:
+            case R.id.btn_camera_add_pub:
+                selectImage();
+                break;
+      /*      case R.id.btn_menu_add_pub:
+                if (currentPageIndex == PAGE_MAP) {
+                    drawerLayout.openDrawer(ll_sideMenu);
+                }*/
+         /*   case R.id.chkCallToPublisher:
                 if(chkCallToPublisher.isChecked())
                     publication.setTypeOfCollecting(FCTypeOfCollecting.ContactPublisher);
                 else
                     publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);
-                break;
+                break;*/
             case R.id.imgAddPicture:
                 selectImage();
 
