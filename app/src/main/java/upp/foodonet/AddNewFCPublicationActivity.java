@@ -120,7 +120,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private ImageView mAddPicImageView;
     private Uri imageURI;
 
-    private static ImageButton submitButton,menuBtn,cameraBtn;
+    private static ImageButton submitButton,cameraBtn;
 
     private Date mDate;
 
@@ -141,7 +141,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         }
 
         mTitleText = (EditText) findViewById(R.id.et_title_new_publication);
-        mTitleText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         // Auto complete
         mGoogleApiClient = new GoogleApiClient.Builder(AddNewFCPublicationActivity.this)
                 .addApi(Places.GEO_DATA_API)
@@ -154,7 +154,8 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         //mNameTextView = (TextView) findViewById(R.id.name1);
         mAddressTextView = (TextView) findViewById(R.id.address);
         //mIdTextView = (TextView) findViewById(R.id.place_id);
-        //mPhoneTextView = (TextView) findViewById(R.id.phone);
+        mPhoneTextView = (TextView) findViewById(R.id.add_phoneNumber);
+        mPhoneTextView.setInputType(InputType.TYPE_CLASS_NUMBER);
         //mWebTextView = (TextView) findViewById(R.id.web);
         //mAttTextView = (TextView) findViewById(R.id.att);
         atv_address.setOnItemClickListener(mAutocompleteClickListener);
@@ -166,8 +167,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
         startDatePickerButton.setOnClickListener(this);
 
-        menuBtn = (ImageButton)findViewById(R.id.btn_menu_add_pub);
-        menuBtn.setOnClickListener(this);
+
 
         startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
         startTimePickerButton.setOnClickListener(this);
