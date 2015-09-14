@@ -147,17 +147,19 @@
             android:label="@string/title_activity_my_publications" >
         </activity>
         <activity
-            android:name=".MyPublicationDetailsActivity"
-            android:label="@string/title_activity_my_publication_details"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".PublicationDetailsActivity"
             android:label="@string/title_activity_publication_details" >
         </activity>
 
         <service
             android:name=".ReloadDataIntentService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+        <service
+            android:name=".SaveNewPublicationIntentService"
             android:exported="false" >
         </service>
     </application>

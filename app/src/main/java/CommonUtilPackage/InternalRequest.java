@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
@@ -30,6 +31,7 @@ public class InternalRequest {
     public static final int ACTION_GET_PUBLICATION_REPORTS = 8;
     public static final int ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID = 9;
     public static final int ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER = 10;
+    public static final int ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS = 11;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -46,6 +48,8 @@ public class InternalRequest {
     public int Status;
     public int newNegativeID;
     public long PublicationID;
+    public Map<Integer, Integer> listOfPubsToFetchImageFor;
+    public Map<Integer, byte[]> publicationImageMap;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;

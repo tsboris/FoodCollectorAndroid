@@ -3,23 +3,27 @@ package upp.foodonet;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 public class ReloadDataIntentService
         extends IntentService
-        implements IFooDoNetServerCallback, IFooDoNetSQLCallback {
+        implements IFooDoNetServerCallback, IFooDoNetSQLCallback, IDownloadImageCallBack {
 
     private final static String MY_TAG = "food_reloadIntService";
 
@@ -27,15 +31,17 @@ public class ReloadDataIntentService
 
     final int taskServer = 1;
     final int taskSQL = 2;
-    final int taskActivity = 3;
+    final int taskImages = 3;
+    final int taskActivity = 4;
 
     int currentIndexInWorkPlan;
-    int[] workPlan = new int[]{taskServer, taskSQL, taskActivity};
+    int[] workPlan = new int[]{taskServer, taskSQL, taskImages, taskActivity};
 
     public int secondsToWait;
     private String serverBaseUrl;
 
     ArrayList<FCPublication> loadedFromSQL, fetchedFromServer;
+    Map<Integer, Integer> needToLoadImages;
 
     HttpServerConnectorAsync connecterToServer;
     FooDoNetSQLExecuterAsync sqlExecuter;
@@ -81,13 +87,12 @@ public class ReloadDataIntentService
             case taskServer:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
-                connecterToServer.execute(new InternalRequest[]{
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
-                                getResources().getString(R.string.server_get_publications_path)),
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION,
-                                getResources().getString(R.string.server_get_registered_for_publications)),
-                        new InternalRequest(InternalRequest.ACTION_GET_PUBLICATION_REPORTS,
-                                getResources().getString(R.string.server_get_publication_report))});
+                connecterToServer.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
+                                            getResources().getString(R.string.server_get_publications_path)),
+                                          new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION,
+                                            getResources().getString(R.string.server_get_registered_for_publications)),
+                                          new InternalRequest(InternalRequest.ACTION_GET_PUBLICATION_REPORTS,
+                                            getResources().getString(R.string.server_get_publication_report)));
                 break;
             case taskSQL:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
@@ -95,6 +100,10 @@ public class ReloadDataIntentService
                 sqlExecuter.execute(
                         new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
                 sqlExecuter = null;
+                break;
+            case taskImages:
+                DownloadImageTask imageTask = new DownloadImageTask(this, getResources().getString(R.string.amazon_base_url_for_images));
+                imageTask.execute(needToLoadImages);
                 break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
@@ -123,12 +132,32 @@ public class ReloadDataIntentService
     }
 
     public void OnSQLTaskComplete(InternalRequest request) {
-        if (request.ActionCommand != InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER) {
-            Log.e(MY_TAG, "Unexpected action code!!");
-            return;
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
+                Log.i(MY_TAG, "finished task sql");
+                loadedFromSQL = request.publications;
+                if(request.listOfPubsToFetchImageFor == null || request.listOfPubsToFetchImageFor.size() == 0){
+                    moveIndexToNextTaskFromPlan();
+                } else {
+                    needToLoadImages = request.listOfPubsToFetchImageFor;
+                 }
+                DoNextTaskFromWorkPlan();
+                break;
+            case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
+                DoNextTaskFromWorkPlan();
+                break;
+            default:
+                Log.e(MY_TAG, "Unexpected action code!!");
+                return;
         }
-        Log.i(MY_TAG, "finished task sql");
-        loadedFromSQL = request.publications;
-        DoNextTaskFromWorkPlan();
+    }
+
+    @Override
+    public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
+        Log.i(MY_TAG, "downloaded images");
+        FooDoNetSQLExecuterAsync sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS);
+        ir.publicationImageMap = imagesMap;
+        sqlExecuter.execute(ir);
     }
 }

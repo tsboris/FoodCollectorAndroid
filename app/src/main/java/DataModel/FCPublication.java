@@ -3,6 +3,7 @@ package DataModel;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.JsonWriter;
@@ -13,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -26,6 +28,8 @@ import java.util.Map;
  * Created by artyomshapet on 6/29/15.
  */
 public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
+
+    private static final String MY_TAG = "food_fcPublication";
 
     public static final String PUBLICATION_UNIQUE_ID_KEY = "_id";
     public static final String PUBLICATION_PUBLISHER_UUID_KEY = "active_device_dev_uuid";
@@ -43,6 +47,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String PUBLICATION_PHOTO_URL = "photo_url";
     public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
     public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
+
+    public static final String PUBLICATION_IMAGE_BYTEARRAY_KEY = "image_bytes";
 
     public static final String PUBLICATION_JSON_ITEM_KEY = "publication";
 
@@ -353,18 +359,21 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                         PUBLICATION_PHOTO_URL,
                         PUBLICATION_COUNT_OF_REGISTER_USERS_KEY,
                         PUBLICATION_IS_ON_AIR_KEY,
+                        PUBLICATION_IMAGE_BYTEARRAY_KEY
                 };
     }
 
     public static String[] GetColumnNamesForListArray() {
         return new String[]{
                 PUBLICATION_UNIQUE_ID_KEY,
+                PUBLICATION_VERSION_KEY,
                 PUBLICATION_TITLE_KEY,
                 PUBLICATION_LATITUDE_KEY,
                 PUBLICATION_LONGITUDE_KEY,
                 PUBLICATION_ADDRESS_KEY,
                 PUBLICATION_PHOTO_URL,
-                PUBLICATION_NUMBER_OF_REGISTERED
+                PUBLICATION_NUMBER_OF_REGISTERED,
+                PUBLICATION_IMAGE_BYTEARRAY_KEY
         };
     }
 
@@ -385,6 +394,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         cv.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
         cv.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
         cv.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
+        cv.put(PUBLICATION_IMAGE_BYTEARRAY_KEY, getImageByteArray());
         return cv;
     }
 
@@ -411,6 +421,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 publication.setEndingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_ENDING_DATE_KEY)));
                 publication.setContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_CONTACT_INFO_KEY)));
                 publication.setIsOnAir(cursor.getInt(cursor.getColumnIndex(PUBLICATION_IS_ON_AIR_KEY)) == 1);
+                publication.setImageByteArray(cursor.getBlob(cursor.getColumnIndex(PUBLICATION_IMAGE_BYTEARRAY_KEY)));
                 result.add(publication);
             } while (cursor.moveToNext());
         }
@@ -422,7 +433,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         ArrayList<FCPublication> result = new ArrayList<FCPublication>();
         for (int i = 0; i < ja.length(); i++) {
             try {
-                Log.i("mytag", ja.getJSONObject(i).toString());
+                //Log.i(MY_TAG, ja.getJSONObject(i).toString());
                 result.add(ParseSinglePublicationFromJSON(ja.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -452,7 +463,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
             publication.setIsOnAir(jo.getBoolean(PUBLICATION_IS_ON_AIR_KEY));
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("mytag", e.getMessage());
+            Log.e(MY_TAG, e.getMessage());
             return null;
         }
         return publication;
@@ -572,5 +583,30 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return list;
     }
 
+
+    //region images
+
+    private byte[] ImageByteArray;
+
+    public void setImageByteArray(byte[] bytes){
+        ImageByteArray = bytes;
+    }
+
+    public byte[] getImageByteArray(){
+        return ImageByteArray;
+    }
+
+    public void setImageByteArrayFromBitmap(Bitmap bitmap){
+        setImageByteArray(BitmapToBytes(bitmap));
+    }
+
+    private byte[] BitmapToBytes(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
+    //endregion
 }
 

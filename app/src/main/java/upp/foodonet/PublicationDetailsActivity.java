@@ -28,7 +28,7 @@ import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
-        implements IDownloadImageCallBack
+        //implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
@@ -233,9 +233,10 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
             }
         }); */
 
-        new DownloadImageTask(this).execute(photoUrlString);
+        //new DownloadImageTask(this).execute(photoUrlString);
     }
 
+/*
     @Override
     public void OnImageDownloaded(Bitmap result) {
         this.photoBmp = result;
@@ -250,6 +251,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
             }
         });
     }
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

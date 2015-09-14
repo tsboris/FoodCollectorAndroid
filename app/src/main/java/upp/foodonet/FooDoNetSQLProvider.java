@@ -52,6 +52,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int PUBLICATION_REPORT_ID = 51;
     private static final int PUBLICATION_REPORTS_BY_ID = 52;
     private static final int PUBLICATION_REPORTS_BY_NEG_ID = 53;
+    private static final int UPDATE_IMAGES_FOR_PUBLICATIONS = 60;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -77,6 +78,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_PUBLICATION_REPORT = "/PublicationReport";
 
     private static final String EXT_PUBLICATION_REPORTS_BY_PUB_ID = "/PublicationReportsByPubID";
+
+    private static final String EXT_UPDATE_PUBLICATION_IMAGES = "/UpdateImages";
 
     public static final String BASE_STRING_FOR_URI = "content://" + AUTHORITY + "/" + BASE_PATH;
 
@@ -111,6 +114,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
     public static final Uri URI_GET_ALL_REPORTS_BY_PUB_NEG_ID
             = Uri.parse(URI_GET_ALL_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID);
 
+    public static final Uri URI_UPDATE_IMAGES
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_UPDATE_PUBLICATION_IMAGES);
+
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/publication";
@@ -135,6 +141,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID, PUBLICATION_REPORTS_BY_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + "/#", PUBLICATION_REPORTS_BY_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID + "/#", PUBLICATION_REPORTS_BY_NEG_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_UPDATE_PUBLICATION_IMAGES, UPDATE_IMAGES_FOR_PUBLICATIONS);
     }
 
     @Override
@@ -326,6 +333,15 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 rowsUpdated = db.update(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
                         values, FCPublication.PUBLICATION_UNIQUE_ID_KEY + "= -" + idToUpdate, null);
                 break;
+            case UPDATE_IMAGES_FOR_PUBLICATIONS:
+                for(String pubIdString : values.keySet()){
+                    int pubId = Integer.parseInt(pubIdString);
+                    ContentValues cv = new ContentValues();
+                    cv.put(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY, values.getAsByteArray(pubIdString));
+                    rowsUpdated += db.update(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
+                            cv, FCPublication.PUBLICATION_UNIQUE_ID_KEY + " = " + pubIdString, null);
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
@@ -339,6 +355,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PUBLICATIONS:
             case PUBLICATION_ID:
             case PUBLICATION_ID_NEGATIVE:
+            case UPDATE_IMAGES_FOR_PUBLICATIONS:
                 available = FCPublication.GetColumnNamesArray();
                 break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:
