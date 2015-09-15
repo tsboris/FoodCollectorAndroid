@@ -25,7 +25,7 @@
     <string name="side_menu_activity_center_title">מרכז פעילות</string>
     <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
     <string name="side_menu_my_active_pubs_part">שיתופים פעילים שלי</string>
-
+    <string name="publication_details_title">פרטי שיתוף</string>
     <string name="title_activity_entrance">EntranceActivity</string>
     <string name="welcome_string">ברוכים הבאים</string>
     <string name="publish">לשתף מזון</string>

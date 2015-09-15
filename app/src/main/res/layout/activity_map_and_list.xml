@@ -9,38 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--
-                <android.support.v4.app.FragmentTabHost
-                    android:id="@android:id/tabhost"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" >
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical" >
-
-                        <TabWidget
-                            android:id="@android:id/tabs"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"/>
-
-                        <FrameLayout
-                            android:id="@android:id/tabcontent"
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-                    </LinearLayout>
-
-                </android.support.v4.app.FragmentTabHost>
-
-                <FrameLayout
-                    android:id="@+id/map_fragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                -->
-
         <android.support.v4.view.ViewPager
             android:id="@+id/main_Pager"
             android:layout_width="match_parent"
@@ -69,36 +37,32 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20sp" />
-        <!-- android:layout_alignBottom="@+id/btn_add_new_myPubsLst" -->
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_show_list_allPubs"
-            android:layout_width="@dimen/top_panel_height"
-            android:layout_height="@dimen/top_panel_height"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginRight="14dp"
             android:background="@color/basic_blue"
-            android:text="="
+            android:src="@drawable/menu_header_button"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="27sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_show_map_allPubs"
             android:layout_width="@dimen/top_panel_height"
             android:layout_height="@dimen/top_panel_height"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
             android:background="@color/basic_blue"
-            android:text="M"
+            android:src="@drawable/location_header_btn"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="27sp" />
-
-        <!-- class="com.google.android.gms.maps.SupportMapFragment"-->
-
 
         <FrameLayout
             android:id="@+id/popup_fragment"
@@ -132,21 +96,6 @@
                 android:layout_weight="1"
                 android:text="@string/share_btn"
                 android:textSize="10sp" />
-            <!-- <ToggleButton
-                android:id="@+id/tgl_btn_take_maplst"
-                android:textOn="@string/pickup"
-                android:textOff="@string/pickup"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="60dp" />
-
-            <ToggleButton
-                android:id="@+id/tgl_btn_share_maplst"
-                android:textOn="@string/publish"
-                android:textOff="@string/publish"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="60dp" />-->
 
         </LinearLayout>
 

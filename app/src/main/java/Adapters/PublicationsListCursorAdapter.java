@@ -95,6 +95,21 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
             publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
+        // tmp switch, todo implement - need spec
+        switch (cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)) % 3){
+            case 0:
+                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_few));
+                break;
+            case 1:
+                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_half));
+                break;
+            case 2:
+            default:
+                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_whole));
+                break;
+        }
+
+
         String title = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_TITLE_KEY));
         publicationTitle.setText(title);
         String address = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_ADDRESS_KEY));

@@ -1,5 +1,7 @@
 package CommonUtilPackage;
 
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -8,6 +10,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 /**
  * Created by Asher on 04.09.2015.
@@ -18,12 +22,14 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
     Messenger handler;
     Location location;
     LocationManager locationManager;
+    boolean gotLocation;
+    Context context;
 
     private static final String MY_TAG = "food_myLocationAsync";
 
-    public GetMyLocationAsync(LocationManager lManager, Messenger h){
+    public GetMyLocationAsync(LocationManager lManager, Context context){
         locationManager = lManager;
-        handler = h;
+        this.context = context;
     }
 
     @Override
@@ -34,16 +40,19 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
             Log.e(MY_TAG, "could not get location!");
             return null;
         }
+        gotLocation = true;
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Message m = Message.obtain(null, ACTION_GET_MY_LOCATION, location);
-        try {
-            handler.send(m);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+        if(gotLocation){
+            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS);
+            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY, location);
         }
+        else
+            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
+        context.sendBroadcast(intent);
     }
 }

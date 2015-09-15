@@ -33,7 +33,7 @@ import upp.foodonet.FooDoNetService;
 public abstract class FooDoNetCustomActivityConnectedToService
         extends FragmentActivity
         implements IBroadcastReceiverCallback {
-        //implements IFooDoNetServiceCallback, IGotMyLocationCallback {
+    //implements IFooDoNetServiceCallback, IGotMyLocationCallback {
 
     //FooDoNetService fooDoNetService;
     //boolean isBoundedToService;
@@ -55,7 +55,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     @Override
     protected void onStart() {
-        if(servicesBroadcastReceiver == null){
+        if (servicesBroadcastReceiver == null) {
             servicesBroadcastReceiver = new ServicesBroadcastReceiver(this);
             IntentFilter filter = new IntentFilter(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
             registerReceiver(servicesBroadcastReceiver, filter);
@@ -87,7 +87,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     @Override
     protected void onPause() {
-        if(servicesBroadcastReceiver != null){
+        if (servicesBroadcastReceiver != null) {
             unregisterReceiver(servicesBroadcastReceiver);
             servicesBroadcastReceiver = null;
         }
@@ -151,36 +151,43 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     @Override
     public void onBroadcastReceived(Intent intent) {
-
+        int actionCode = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, -1);
+        switch (actionCode) {
+            case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
+                Location location = (Location)intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
+                OnGotMyLocationCallback(location);
+                break;
+        }
     }
 
     public abstract void OnGooglePlayServicesCheckError();
 
     public abstract void OnInternetNotConnected();
 
-    public void OnGotMyLocationCallback(Location location) { }
+    public void OnGotMyLocationCallback(Location location) {
+    }
 
-/*
-    protected ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            boundedService = new Messenger(service);
-            isBoundedToService = true;
-            Message m = Message.obtain(null, FooDoNetService.ACTION_START);
-            m.replyTo = callbackMessenger;
-            try {
-                boundedService.send(m);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+    /*
+        protected ServiceConnection mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                boundedService = new Messenger(service);
+                isBoundedToService = true;
+                Message m = Message.obtain(null, FooDoNetService.ACTION_START);
+                m.replyTo = callbackMessenger;
+                try {
+                    boundedService.send(m);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        public void onServiceDisconnected(ComponentName className) {
-            boundedService = null;
-            isBoundedToService = false;
-        }
-    };
+            public void onServiceDisconnected(ComponentName className) {
+                boundedService = null;
+                isBoundedToService = false;
+            }
+        };
 
-*/
+    */
     class IncomingHandler extends android.os.Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -197,10 +204,9 @@ public abstract class FooDoNetCustomActivityConnectedToService
     final Messenger callbackMessenger = new Messenger(new IncomingHandler());
 
 
-
     protected void StartGetMyLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, callbackMessenger);
+        GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, this);
         locationAsync.execute();
     }
 

@@ -17,6 +17,7 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     private IBroadcastReceiverCallback callbackListener;
 
     public static final String BROADCAST_REC_EXTRA_ACTION_KEY = "action_extra_key";
+    public static final String BROADCAST_REC_EXTRA_LOCATION_KEY = "action_extra_location";
 
     public static final int ACTION_CODE_REGISTRATION_SUCCESS = 1;
     public static final int ACTION_CODE_REGISTRATION_FAIL = 2;
@@ -24,6 +25,8 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     public static final int ACTION_CODE_RELOAD_DATA_FAIL = 12;
     public static final int ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS = 21;
     public static final int ACTION_CODE_SAVE_NEW_PUB_COMPLETE = 22;
+    public static final int ACTION_CODE_GET_LOCATION_SUCCESS = 31;
+    public static final int ACTION_CODE_GET_LOCATION_FAIL = 32;
 
     public ServicesBroadcastReceiver(IBroadcastReceiverCallback callback){
         callbackListener = callback;

@@ -48,14 +48,16 @@
         android:layout_marginBottom="@dimen/pub_list_item_image_top_bottom_margin"
         android:src="@drawable/foodonet_logo_200_200" />
 
+    <!-- todo: fix icon size -->
     <ImageView
         android:id="@+id/iv_pub_list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_vertical"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
         android:src="@drawable/trash_35_35"/>
 
     <TextView

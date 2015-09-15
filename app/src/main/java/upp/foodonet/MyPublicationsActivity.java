@@ -28,6 +28,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import Adapters.PublicationsListCursorAdapter;
+import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -236,6 +237,8 @@ public class MyPublicationsActivity
         switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
+                String myIMEI = CommonUtil.GetIMEI(this);
+                result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
                 Intent intent = new Intent(getApplicationContext(), PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);

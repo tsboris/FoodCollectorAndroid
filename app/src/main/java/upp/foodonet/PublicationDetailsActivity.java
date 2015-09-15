@@ -5,40 +5,53 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
+import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.GetMyLocationAsync;
 import DataModel.FCPublication;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
+import UIUtil.RoundedImageView;
 
-public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService
+public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService implements View.OnClickListener, PopupMenu.OnMenuItemClickListener
         //implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
-
-    private static final int PHOTO_RADIUS = 200;
-
     private static final String MY_TAG = "food_PubDetails";
-
     private FCPublication publication;
 
+    //old:
+/*
+    private static final int PHOTO_RADIUS = 200;
     private TextView subtitleTextView;
     private TextView interestedPersonsCountTextView;
     private TextView postAddressTextView;
@@ -46,21 +59,47 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     private ListView interestedsListView;
     private ArrayAdapter<String> interestedsAdapter;
     private Button cancelPublicationButton;
-
+    ImageButton btn_Menu;
     Button btnCall, btnRishum, btnSms, btnNavigate;
+    private ImageButton photoButton;
+*/
 
     private AlertDialog cancelPublicationDialog;
-
-    private ImageButton photoButton;
     private Bitmap photoBmp;
-
     private boolean isOwnPublication;
+
+    //new:
+    ImageButton btn_menu;
+    TextView tv_title;
+    RoundedImageView riv_image;
+    ImageView iv_num_of_reged;
+    TextView tv_num_of_reged;
+    TextView tv_address;
+    TextView tv_distance;
+    ImageButton btn_facebook_my;
+    ImageButton btn_facebook_others;
+    ImageButton btn_twitter_my;
+    ImageButton btn_twitter_others;
+    ImageButton btn_call;
+    ImageButton btn_sms;
+    TextView tv_subtitle;
+    ListView lv_reports;
+
+    LinearLayout ll_button_panel_my;
+    LinearLayout ll_button_panel_others;
+
+    PublicationDetailsReportsAdapter adapter;
+
+
 
     //region Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_foreign_publication_details);
+
+/* todo: implement detecting own/other's pub
         try {
             Intent i = getIntent();
             this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
@@ -77,7 +116,47 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         else{
             setContentView(R.layout.activity_foreign_publication_details);
         }
+*/
+        Intent i = getIntent();
+        this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
+        if(publication == null){
+            Log.e(MY_TAG, "no publication found in extras!");
+            finish();
+        }
 
+        btn_menu = (ImageButton)findViewById(R.id.btn_menu_pub_details);
+        tv_title = (TextView)findViewById(R.id.tv_title_pub_details);
+        riv_image = (RoundedImageView) findViewById(R.id.riv_image_pub_details);
+        iv_num_of_reged = (ImageView) findViewById(R.id.iv_user_reg_icon_pub_details);
+        tv_num_of_reged = (TextView) findViewById(R.id.tv_num_of_reged_pub_details);
+        tv_address = (TextView) findViewById(R.id.tv_address_pub_details);
+        tv_distance = (TextView) findViewById(R.id.tv_distance_pub_details);
+        btn_facebook_my = (ImageButton)findViewById(R.id.btn_facebook_my_pub_details);
+        btn_facebook_others = (ImageButton)findViewById(R.id.btn_facebook_others_pub_details);
+        btn_twitter_my = (ImageButton)findViewById(R.id.btn_tweet_my_pub_details);
+        btn_twitter_others = (ImageButton)findViewById(R.id.btn_tweet_others_pub_details);
+        btn_call = (ImageButton)findViewById(R.id.btn_call_owner_pub_details);
+        btn_sms = (ImageButton)findViewById(R.id.btn_message_owner_pub_details);
+        tv_subtitle = (TextView)findViewById(R.id.tv_subtitle_pub_details);
+        lv_reports = (ListView)findViewById(R.id.lv_list_of_reports_pub_details);
+        ll_button_panel_my = (LinearLayout)findViewById(R.id.ll_my_pub_dets_buttons_panel);
+        ll_button_panel_others = (LinearLayout)findViewById(R.id.ll_others_pub_dets_buttons_panel);
+
+        btn_menu.setOnClickListener(this);
+        tv_title.setText(publication.getTitle());
+        tv_subtitle.setText("no subtitle support for now");//publication.getSubtitle());
+        tv_address.setText(publication.getAddress());
+        SetImage();
+        if(publication.getRegisteredForThisPublication() != null)
+            tv_num_of_reged.setText(String.valueOf(publication.getRegisteredForThisPublication().size()));
+        else
+            tv_num_of_reged.setText("0");
+        SetRegedUserIcon();
+        CalculateDistanceAndSetText();
+        ChooseButtonPanel();
+        SetReportsList();
+
+/* old alex's code
         if (publication.getTitle() != null) {
             this.setTitle(publication.getTitle());
             subtitleTextView = (TextView) findViewById(R.id.tv_subtitle);
@@ -90,7 +169,12 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         postAddressTextView.setText(publication.getAddress());
         publicationDescriptionTextView.setText(publication.getSubtitle());
 
-        LoadPhoto(this.publication.getPhotoUrl());
+        btn_Menu = (ImageButton) findViewById(R.id.btn_menu_pub_details);
+        btn_Menu.setOnClickListener(this);
+        //btn_Menu.setOnClickListener(this);
+        //registerForContextMenu(btn_Menu);
+
+        //LoadPhoto(this.publication.getPhotoUrl());
 
         if (!isOwnPublication)
         {
@@ -105,9 +189,88 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
 
             makeCancelButton();
         }
+*/
+
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+/*
+        switch (v.getId()){
+            case R.id.btn_menu_pub_details:
+                menu.add(0, 1, 0, "Red");
+                menu.add(0, 2, 0, "Green");
+                menu.add(0, 3, 0, "Blue");
+                break;
+        }
+*/
+    }
+
+    //region new: My methods
+
+    private void CalculateDistanceAndSetText(){
+        //todo:
+        // 1. set default text "calculating.."
+        // 2. call get last position async
+        // 3. update text of tv_distance
+        if(publication.getLatitude() == 0 && publication.getLongitude() == 0){
+            tv_distance.setText("no coordinades in publication");
+            return;
+        }
+        tv_distance.setText("calculating...");
+        GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager)getSystemService(LOCATION_SERVICE), this);
+        getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void SetRegedUserIcon(){
+        //todo:
+        // check if this icon can change according to data
+        // implement or set here or in xml it's constant drawable
+        iv_num_of_reged.setImageDrawable(getResources().getDrawable(R.drawable.icon_whole));
+    }
+
+    private void ChooseButtonPanel(){
+        if (publication.isOwnPublication){
+            ll_button_panel_my.setVisibility(View.VISIBLE);
+            ll_button_panel_others.setVisibility(View.GONE);
+            btn_facebook_my.setOnClickListener(this);
+            btn_twitter_my.setOnClickListener(this);
+            //todo: menu
+        } else {
+            ll_button_panel_my.setVisibility(View.GONE);
+            ll_button_panel_others.setVisibility(View.VISIBLE);
+            btn_facebook_others.setOnClickListener(this);
+            btn_twitter_others.setOnClickListener(this);
+            btn_call.setOnClickListener(this);
+            btn_sms.setOnClickListener(this);
+            //todo: menu
+        }
+    }
+
+    private void SetImage(){
+        if(publication.getImageByteArray() != null && publication.getImageByteArray().length > 0){
+            int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
+            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(publication.getImageByteArray(), imageSize, imageSize);
+            Drawable image = new BitmapDrawable(bImage);//BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
+            riv_image.setImageDrawable(image);
+            riv_image.setOnClickListener(this);
+        } else {
+            riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+        }
+    }
+
+    private void SetReportsList(){
+        adapter = new PublicationDetailsReportsAdapter(this,
+                R.layout.pub_details_report_item, publication.getPublicationReports());
+        lv_reports.setAdapter(adapter);
+    }
+
+    //endregion
+
+
     //region methods making parts of activity (to call in OnCreate)
+/*
     private void makeBlueButtons()
     {
         btnCall = (Button)findViewById(R.id.btn_call);
@@ -142,6 +305,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
             }
         });
     }
+*/
 
     private void makeTheCancelDialog()
     {
@@ -178,6 +342,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         finish();
     }
 
+/*
     private void makeInterestedsList() {
         interestedPersonsCountTextView = (TextView) findViewById(R.id.interested_persons_count);
         interestedPersonsCountTextView.setText(getString(R.string.going_to_collect) + "  "
@@ -193,6 +358,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
                 interestedPersonsInfoList);
         interestedsListView.setAdapter(interestedsAdapter);
     }
+*/
 
     private ArrayList<String> mapRegisteredPersonsToStringArray(ArrayList<RegisteredUserForPublication> arg)
     {
@@ -277,17 +443,6 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     //endregion
 
     //region FooDoNetCustomActivityConnectedToService implementation
-/*
-    @Override
-    public void OnNotifiedToFetchData() {
-        //TODO
-    }
-
-    @Override
-    public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
-        //TODO
-    }
-*/
 
     @Override
     public void OnGooglePlayServicesCheckError() {
@@ -298,6 +453,71 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     public void OnInternetNotConnected() {
         //TODO
     }
+
+    @Override
+    public void onBroadcastReceived(Intent intent) {
+        super.onBroadcastReceived(intent);
+        int actionCode = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, -1);
+        switch (actionCode){
+            case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
+                Location location = (Location)intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
+                if(location != null){
+                    double distance = CommonUtil.GetKilometersBetweenLatLongs(
+                            new LatLng(location.getLatitude(), location.getLongitude()),
+                            new LatLng(publication.getLatitude(), publication.getLongitude()));
+                    tv_distance.setText("distance: " + distance);
+                }
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
+                tv_distance.setText("can't get distance");
+                break;
+        }
+    }
+
     //endregion
 
+    //region Click
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_menu_pub_details:
+                //todo: implement menu switch depending on isOwn
+                PopupMenu popup = new PopupMenu(getBaseContext(), v);
+                popup.getMenuInflater().inflate(R.menu.pub_details_popup_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(this);
+                popup.show();
+                break;
+            case R.id.btn_facebook_my_pub_details:
+                //todo
+                break;
+            case R.id.btn_facebook_others_pub_details:
+                //todo
+                break;
+            case R.id.btn_tweet_my_pub_details:
+                //todo
+                break;
+            case R.id.btn_tweet_others_pub_details:
+                //todo
+                break;
+            case R.id.btn_call_owner_pub_details:
+                //todo
+                break;
+            case R.id.btn_message_owner_pub_details:
+                //todo
+                break;
+            case R.id.riv_image_pub_details:
+                //todo
+                break;
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
+        // todo: implement menu
+        return true;
+    }
+
+    //endregion
 }
+

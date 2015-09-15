@@ -125,6 +125,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return publisherUID;
     }
 
+    public boolean isOwnPublication;
+
     private int version;
 
     public int getVersion() {

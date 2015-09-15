@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -74,7 +75,7 @@ public class MapAndListActivity
     private final int PAGE_LIST = 1;
 
     Button btn_navigate_share, btn_navigate_take;
-    Button btn_show_M, btn_show_L;
+    ImageButton btn_show_M, btn_show_L;
 
     int currentPageIndex;
 
@@ -94,9 +95,9 @@ public class MapAndListActivity
         btn_navigate_share = (Button) findViewById(R.id.btn_navigate_share);
         btn_navigate_take = (Button) findViewById(R.id.btn_navigate_take);
         btn_navigate_share.setOnClickListener(this);
-        btn_show_L = (Button) findViewById(R.id.btn_show_list_allPubs);
+        btn_show_L = (ImageButton) findViewById(R.id.btn_show_list_allPubs);
         btn_show_L.setOnClickListener(this);
-        btn_show_M = (Button) findViewById(R.id.btn_show_map_allPubs);
+        btn_show_M = (ImageButton) findViewById(R.id.btn_show_map_allPubs);
         btn_show_M.setOnClickListener(this);
 
         Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);

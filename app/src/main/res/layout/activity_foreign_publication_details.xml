@@ -1,48 +1,250 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     tools:context="upp.foodonet.MyPublicationDetailsActivity">
 
-    <TextView android:id="@+id/tv_subtitle" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="32sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_panel_height">
 
-    <TextView android:id="@+id/interested_persons_count" android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView android:id="@+id/post_address" android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView android:id="@+id/publication_description" android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@color/basic_blue"
+            android:gravity="center"
+            android:text="@string/publication_details_title"
+            android:textColor="@color/white"
+            android:textSize="27sp" />
 
-    <ImageButton
-        android:id="@+id/btn_photoButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/image_rounded_corner"/>
+        <ImageButton
+            android:id="@+id/btn_menu_pub_details"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/basic_blue"
+            android:src="@drawable/menu_header_button"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="27sp" />
 
-    <Button android:id="@+id/btn_call"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button android:id="@+id/btn_sms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button android:id="@+id/btn_rishum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button android:id="@+id/btn_navigate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <TextView
-        android:text="@string/participants_report"
+        android:id="@+id/tv_title_pub_details"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pub_details_pub_title_height"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pub_details_pub_props_panel_height"
+        android:orientation="horizontal"
+        android:layoutDirection="rtl">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/iv_user_reg_icon_pub_details"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/trash_35_35" />
+
+                <TextView
+                    android:id="@+id/tv_num_of_reged_pub_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:text="9"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="on the way" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_address_pub_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_distance_pub_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <UIUtil.RoundedImageView
+                android:id="@+id/riv_image_pub_details"
+                android:layout_width="@dimen/pub_details_image_size"
+                android:layout_height="@dimen/pub_details_image_size"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_others_pub_dets_buttons_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pub_details_btns_panel_height"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_facebook_others_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_facebook_btn" />
+
+        <ImageButton
+            android:id="@+id/btn_tweet_others_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_twitter_btn" />
+
+        <ImageButton
+            android:id="@+id/btn_message_owner_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_sms_btn" />
+
+        <ImageButton
+            android:id="@+id/btn_call_owner_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_call_btn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_my_pub_dets_buttons_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pub_details_btns_panel_height"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_facebook_my_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_facebook_btn" />
+
+        <ImageButton
+            android:id="@+id/btn_tweet_my_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_details_twitter_btn" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pub_details_btns_panel_height">
+
+        <TextView
+            android:id="@+id/tv_subtitle_pub_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="on the way" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lv_list_of_reports_pub_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ListView android:id="@+id/lst_interested_persons_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!--
+        <TextView android:id="@+id/tv_subtitle" android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"/>
+
+        <TextView android:id="@+id/interested_persons_count" android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView android:id="@+id/post_address" android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView android:id="@+id/publication_description" android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/btn_photoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/image_rounded_corner"/>
+
+        <Button android:id="@+id/btn_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button android:id="@+id/btn_sms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button android:id="@+id/btn_rishum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button android:id="@+id/btn_navigate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/participants_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView android:id="@+id/lst_interested_persons_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    -->
 
 </LinearLayout>

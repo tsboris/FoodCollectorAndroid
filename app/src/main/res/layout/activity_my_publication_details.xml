@@ -1,10 +1,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context="upp.foodonet.MyPublicationDetailsActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_panel_height">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/publication_details_title"
+            android:gravity="center"
+            android:background="@color/basic_blue"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="27sp" />
+
+    </RelativeLayout>
+
+
 
     <TextView android:id="@+id/tv_subtitle" android:layout_width="match_parent"
         android:layout_height="wrap_content"

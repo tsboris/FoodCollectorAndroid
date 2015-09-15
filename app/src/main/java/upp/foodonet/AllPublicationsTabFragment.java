@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import Adapters.PublicationsListCursorAdapter;
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
@@ -129,6 +130,8 @@ public class AllPublicationsTabFragment
         switch (request.ActionCommand){
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
+                String myIMEI = CommonUtil.GetIMEI(context);
+                result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
                 Intent intent = new Intent(context, PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
