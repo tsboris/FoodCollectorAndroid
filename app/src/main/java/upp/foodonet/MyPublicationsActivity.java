@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,12 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+
 import android.widget.SimpleCursorAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -37,8 +40,8 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class MyPublicationsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
-        //, IFooDoNetSQLCallback, IFooDoNetServerCallback {
+        implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, IFooDoNetSQLCallback {
+    //, IFooDoNetSQLCallback, IFooDoNetServerCallback {
 
     private static final String MY_TAG = "food_myPubs";
 
@@ -49,7 +52,7 @@ public class MyPublicationsActivity
     PublicationsListCursorAdapter adapter;
 
     SearchView src_all_pub_listView;
-    Button btn_add_new_publication ,btn_navigate_share ,btn_navigate_take,btn_active_pub,btn_not_active_pub,btn_ending_pub;
+    Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     Animation animZoomIn;
 /*    ToggleButton tgl_btn_navigate_share;
       ToggleButton tgl_btn_navigate_take;*/
@@ -59,27 +62,27 @@ public class MyPublicationsActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_publications);
 
-        src_all_pub_listView = (SearchView)findViewById(R.id.searchView1);
-        btn_ending_pub = (Button)findViewById(R.id.btn_publication_ending);
+        src_all_pub_listView = (SearchView) findViewById(R.id.searchView1);
+        btn_ending_pub = (Button) findViewById(R.id.btn_publication_ending);
         btn_ending_pub.setOnClickListener(this);
-        btn_not_active_pub = (Button)findViewById(R.id.btn_publication_notActive);
+        btn_not_active_pub = (Button) findViewById(R.id.btn_publication_notActive);
         btn_not_active_pub.setOnClickListener(this);
-        btn_active_pub = (Button)findViewById(R.id.btn_publication_active);
+        btn_active_pub = (Button) findViewById(R.id.btn_publication_active);
         btn_active_pub.setOnClickListener(this);
-        btn_add_new_publication = (Button)findViewById(R.id.btn_add_new_myPubsLst);
+        btn_add_new_publication = (Button) findViewById(R.id.btn_add_new_myPubsLst);
         btn_add_new_publication.setOnClickListener(this);
-        btn_navigate_share = (Button)findViewById(R.id.btn_share_mypubs);
-        btn_navigate_take = (Button)findViewById(R.id.btn_take_mypubs);
+        btn_navigate_share = (Button) findViewById(R.id.btn_share_mypubs);
+        btn_navigate_take = (Button) findViewById(R.id.btn_take_mypubs);
         //tgl_btn_navigate_share.setOnClickListener(this);
         btn_navigate_take.setOnClickListener(this);
-        animZoomIn = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in);
+        animZoomIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
 
-        Drawable navigate_share = getResources().getDrawable( R.drawable.donate_v62x_60x60 );
-        Drawable navigate_take = getResources().getDrawable( R.drawable.collect_v6_60x60);
+        Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);
+        Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);
         navigate_share.setBounds(0, 0, 60, 60);
         navigate_take.setBounds(0, 0, 60, 60);
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
-      //  btn_navigate_share.setCompoundDrawablePadding(10);
+        //  btn_navigate_share.setCompoundDrawablePadding(10);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);
 
         lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
@@ -87,6 +90,7 @@ public class MyPublicationsActivity
         //int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
         adapter = new PublicationsListCursorAdapter(this, null, 0);
         lv_my_publications_list.setAdapter(adapter);
+        lv_my_publications_list.setOnItemClickListener(this);
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
         onClick(btn_active_pub);
@@ -135,7 +139,7 @@ public class MyPublicationsActivity
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_add_new_myPubsLst:
                 Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, 1);
@@ -217,5 +221,25 @@ public class MyPublicationsActivity
     public void onBroadcastReceived(Intent intent) {
         super.onBroadcastReceived(intent);
         RestartLoadingCursorForList(currentFilterID);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
+        ir.PublicationID = id;
+        sqlGetPubAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        switch (request.ActionCommand) {
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                FCPublication result = request.publicationForDetails;
+                Intent intent = new Intent(getApplicationContext(), PublicationDetailsActivity.class);
+                intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
+                startActivityForResult(intent, 1);
+                break;
+        }
     }
 }
