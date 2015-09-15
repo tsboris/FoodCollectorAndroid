@@ -3,6 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/side_menu_item_height">
 
+    <UIUtil.RoundedImageView android:id="@+id/riv_side_menu_pub_icon"
+        android:layout_width="@dimen/side_menu_item_icon_size"
+        android:layout_height="@dimen/side_menu_item_icon_size"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+        android:src="@drawable/default_publication_icon_side_menu"/>
+
+
+
+<!--
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,6 +21,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
         android:src="@drawable/default_publication_icon_side_menu"/>
+-->
 
     <TextView android:id="@+id/tv_side_menu_item_title"
         android:layout_width="wrap_content"

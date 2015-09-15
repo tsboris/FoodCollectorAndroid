@@ -1,4 +1,4 @@
-package upp.foodonet;
+package UIUtil;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,7 +16,7 @@ import android.widget.ImageView;
 /**
  * Created by artyomshapet on 7/29/15.
  */
-public class RoundedImageView extends ImageView{
+public class RoundedImageView extends ImageView {
 
     public RoundedImageView(Context ctx, AttributeSet attrs) {
         super(ctx, attrs);

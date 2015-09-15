@@ -26,6 +26,7 @@ import java.net.URL;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
+import UIUtil.RoundedImageView;
 import upp.foodonet.R;
 
 /**
@@ -59,7 +60,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // images must be dinamically set to appropriate
-        ImageView publicationImage = (ImageView)view.findViewById(R.id.iv_pub_list_item_img);
+        RoundedImageView publicationImage = (RoundedImageView)view.findViewById(R.id.iv_pub_list_item_img);
         ImageView publicationIcon = (ImageView)view.findViewById(R.id.iv_pub_list_item_icon);
 
         TextView publicationTitle = (TextView)view.findViewById(R.id.tv_pub_list_item_title);

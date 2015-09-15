@@ -2,6 +2,9 @@ package Adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.view.LayoutInflater;
@@ -10,7 +13,9 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
+import UIUtil.RoundedImageView;
 import upp.foodonet.R;
 
 /**
@@ -39,6 +44,9 @@ public class SideMenuCursorAdapter extends CursorAdapter {
         // Find fields to populate in inflated template
         TextView tv_title = (TextView) view.findViewById(R.id.tv_side_menu_item_title);
         TextView tv_score = (TextView) view.findViewById(R.id.tv_side_menu_item_score);
+
+        RoundedImageView riv_image = (RoundedImageView) view.findViewById(R.id.riv_side_menu_pub_icon);
+
         // Extract properties from cursor
         String title = cursor.getString(cursor.getColumnIndexOrThrow(FCPublication.PUBLICATION_TITLE_KEY));
         int score = cursor.getInt(cursor.getColumnIndexOrThrow(FCPublication.PUBLICATION_NUMBER_OF_REGISTERED));
@@ -48,6 +56,16 @@ public class SideMenuCursorAdapter extends CursorAdapter {
 
         //this can be used to programmaticaly change score background
         View score_sircle = (View) view.findViewById(R.id.v_oval_score_background);
+
+        byte[] imageBytes = cursor.getBlob(cursor.getColumnIndex(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY));
+        if(imageBytes != null && imageBytes.length > 0){
+            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 42, 42);
+            Drawable image = new BitmapDrawable(bImage);//BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
+            riv_image.setImageDrawable(image);
+        } else {
+            riv_image.setImageDrawable(context.getResources().getDrawable(R.drawable.default_publication_icon_side_menu));
+        }
+
 /*
         OvalShape ovalShape = new OvalShape();
         float size = context.getResources().getDimension(R.dimen.side_menu_item_score_circle_size);
