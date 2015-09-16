@@ -3,6 +3,7 @@ package upp.foodonet;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -209,7 +210,7 @@ public class EntranceActivity
                         = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
                 InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication);
                 ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
-                postNewPubTask.execute(ir);
+                postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
 
 
                 break;
@@ -243,7 +244,7 @@ public class EntranceActivity
                 = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, request.publicationForSaving);
         ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
-        postNewPubTask.execute(ir);
+        postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
     }
 
     @Override

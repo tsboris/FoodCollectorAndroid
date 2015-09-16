@@ -97,8 +97,8 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
 
     public Map<String, Object> GetJsonMapStringObject() {
         Map<String, Object> deviceData = new HashMap<String, Object>();
-        deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, "ash-test-1");//get_Imei());
-        deviceData.put(USER_DATA_PUSH_TOKEN, "234");//get_Push_Token());
+        deviceData.put(USER_DATA_DEV_UUID_FIELD_NAME, get_Imei());
+        deviceData.put(USER_DATA_PUSH_TOKEN, get_Push_Token());
         deviceData.put(USER_DATA_IS_IOS, false);
         deviceData.put(USER_DATA_LATITUDE, get_Latitude());
         deviceData.put(USER_DATA_LONGITUDE, get_Longitude());
@@ -113,7 +113,7 @@ public class UserRegisterData implements Serializable, ICanWriteSelfToJSONWriter
 
         Map<String, Object> deviceData = new HashMap<String, Object>();
         deviceData.put("dev_uuid", get_Imei());
-        deviceData.put("remote_notification_token", "123456");
+        deviceData.put("remote_notification_token", get_Push_Token());
         deviceData.put("last_location_latitude", get_Latitude());
         deviceData.put("last_location_longitude", get_Longitude());
         deviceData.put("is_ios", false);

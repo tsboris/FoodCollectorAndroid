@@ -65,6 +65,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     private int Action_Command_ID;
 
+    private boolean isSuccess = false;
+
     public HttpServerConnectorAsync(String baseUrl, IFooDoNetServerCallback callbackListener) {
         this.baseUrl = baseUrl;
         this.callbackListener = callbackListener;
@@ -262,6 +264,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
+                    isSuccess = true;
                     if (isForResult) {
                         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         StringBuilder sb = new StringBuilder();
@@ -273,6 +276,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         //Log.i(MY_TAG, this.hashCode() + sb.toString());
                         responseString = sb.toString();
                     }
+                    break;
+                default:
+                    isSuccess = false;
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -308,7 +315,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
-                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
+                        isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS
+                        : ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
                 context.sendBroadcast(intent);
                 break;
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:

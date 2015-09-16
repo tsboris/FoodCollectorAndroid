@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -80,7 +81,7 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
         }
         FooDoNetSQLExecuterAsync saveExecuter
                 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-        saveExecuter.execute(
+        saveExecuter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 new InternalRequest(
                         InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, publication));
     }
@@ -102,7 +103,7 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
                         getResources().getString(R.string.server_add_new_publication_path),
                         request.publicationForSaving);
                 ir.publicationForSaving = request.publicationForSaving;
-                connector.execute(ir);
+                connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
                 break;
             case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
                 if(request.Status == InternalRequest.STATUS_FAIL){
@@ -128,7 +129,7 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
                 Log.i(MY_TAG, "succeeded saving pub to server, new id: "
                         + response.publicationForSaving.getNewIdFromServer());
                 FooDoNetSQLExecuterAsync executerAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-                executerAsync.execute(new InternalRequest(
+                executerAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new InternalRequest(
                         InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER,
                         response.publicationForSaving));
         }

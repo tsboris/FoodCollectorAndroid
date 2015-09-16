@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,7 @@ public class SplashScreenActivity
         Point p = new Point(min_splash_screen_duration, 0);
         RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
-        ssh.execute(p);
+        ssh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, p);
     }
 
 
@@ -176,6 +177,8 @@ public class SplashScreenActivity
                 public void run() {
                     try {
                         TimeUnit.SECONDS.sleep(secondsToSleep);
+                        flagWaitTaskFinished = true;
+                        splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -186,8 +189,6 @@ public class SplashScreenActivity
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            flagWaitTaskFinished = true;
-            splashScreenHoldWaitCompeleteHandler.sendEmptyMessage(0);
         }
     }
 
@@ -218,6 +219,8 @@ public class SplashScreenActivity
         int regResult = 0;
         regResult = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, 0);
         switch (regResult){
+            case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL:
+                Toast.makeText(this, "problem registering device!", Toast.LENGTH_LONG);
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
                 SharedPreferences sp = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
@@ -227,7 +230,9 @@ public class SplashScreenActivity
                 if(AllLoaded())
                     StartNextActivity();
                 break;
-
+/*
+                break;
+*/
         }
     }
 }

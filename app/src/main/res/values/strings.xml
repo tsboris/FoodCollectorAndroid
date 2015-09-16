@@ -38,6 +38,7 @@
     <string name="publication_ending">מסתיים</string>
     <string name="publication_active">פעיל</string>
     <string name="publication_not_active">לא פעיל</string>
+    <string name="leave_report_pub_details">דווח</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>

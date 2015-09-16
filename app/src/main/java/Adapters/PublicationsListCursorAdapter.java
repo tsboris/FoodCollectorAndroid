@@ -44,7 +44,8 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         super(context, c, flags);
         this.context = context;
         UpdateCurrentLocation(32.11102827f, 34.85003149f);
-        amazonBaseAddress = context.getResources().getString(R.string.amazon_base_url_for_images);
+        if(context!=null)
+            amazonBaseAddress = context.getResources().getString(R.string.amazon_base_url_for_images);
     }
 
     public void UpdateCurrentLocation(float lat, float lon){

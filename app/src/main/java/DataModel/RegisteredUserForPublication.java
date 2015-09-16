@@ -109,7 +109,7 @@ public class RegisteredUserForPublication implements Serializable {
         ArrayList<RegisteredUserForPublication> result = new ArrayList<RegisteredUserForPublication>();
         for (int i = 0; i < ja.length(); i++) {
             try {
-                Log.i(MY_TAG, ja.getJSONObject(i).toString());
+                //Log.i(MY_TAG, ja.getJSONObject(i).toString());
                 result.add(ParseSingleRegisteredForPublicationFromJSON(ja.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -161,11 +162,28 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         return cv;
     }
 
-
-
     @Override
     public void WriteSelfToJSONWriter(JsonWriter writer) {
+/*        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put("dev_uuid", get_Imei());
+        deviceData.put("remote_notification_token", get_Push_Token());
+        deviceData.put("last_location_latitude", get_Latitude());
+        deviceData.put("last_location_longitude", get_Longitude());
+        deviceData.put("is_ios", false);
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("active_device", deviceData);
 
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        return json;
+
+    { “publication_report” :
+        { “date_of_report”: 1442298146.63941,
+            “publication_id” : 324,
+            “active_device_dev_uuid”: “DD42331F-3E58-43E2-979C-6A0AC0E5A5C0”,
+            “report” : 3,
+            “publication_version” : 1}
+    }
+*/
     }
 
     @Override

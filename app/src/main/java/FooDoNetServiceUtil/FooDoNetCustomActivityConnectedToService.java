@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -207,7 +208,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
     protected void StartGetMyLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, this);
-        locationAsync.execute();
+        locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 }

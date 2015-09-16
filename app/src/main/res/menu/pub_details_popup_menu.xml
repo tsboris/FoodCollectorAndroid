@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action1"
         android:title="action1"
+        android:background="@color/basic_blue"
         />
 
     <item
         android:id="@+id/action2"
         android:title="action2"
+        android:background="@color/basic_blue"
         />
 
     <item
         android:id="@+id/action3"
         android:title="action3"
+        android:background="@color/basic_blue"
         />
 
 </menu>

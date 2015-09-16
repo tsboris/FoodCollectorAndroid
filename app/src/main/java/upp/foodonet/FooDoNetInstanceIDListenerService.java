@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -70,23 +71,30 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         Log.w(MY_TAG, "Got imei: " + imei);
 
         LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        Location location = null;
+        double lat, lon;
         if (locationManager == null)
         {
             Log.e(MY_TAG, "could not get location!");
             return;
+        } else {
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null)
         {
             Log.e(MY_TAG, "could not get location!");
-            return;
+            lat = 0;
+            lon = 0;
+        } else {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
         }
 
-        UserRegisterData userData = new UserRegisterData(imei, token, location.getLatitude(), location.getLongitude());
+        UserRegisterData userData = new UserRegisterData(imei, token, lat, lon);
 
         HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
         connector.setContextForBroadcasting(this);
-        connector.execute(
+        connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 new InternalRequest(InternalRequest.ACTION_POST_REGISTER,
                         getResources().getString(R.string.register_new_device), userData));
     }

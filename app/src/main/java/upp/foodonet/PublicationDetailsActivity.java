@@ -5,12 +5,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -70,6 +74,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
 
     //new:
     ImageButton btn_menu;
+    Button btn_leave_report;
     TextView tv_title;
     RoundedImageView riv_image;
     ImageView iv_num_of_reged;
@@ -77,11 +82,13 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     TextView tv_address;
     TextView tv_distance;
     ImageButton btn_facebook_my;
-    ImageButton btn_facebook_others;
     ImageButton btn_twitter_my;
-    ImageButton btn_twitter_others;
-    ImageButton btn_call;
-    ImageButton btn_sms;
+    ImageButton btn_call_owner;
+    ImageButton btn_sms_owner;
+    ImageButton btn_call_reg;
+    ImageButton btn_sms_reg;
+    ImageButton btn_navigate;
+    ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
 
@@ -90,7 +97,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
 
     PublicationDetailsReportsAdapter adapter;
 
-
+    PopupMenu popup;
 
     //region Activity
     @Override
@@ -125,6 +132,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         }
 
         btn_menu = (ImageButton)findViewById(R.id.btn_menu_pub_details);
+        btn_leave_report = (Button)findViewById(R.id.btn_leave_report_pub_details);
         tv_title = (TextView)findViewById(R.id.tv_title_pub_details);
         riv_image = (RoundedImageView) findViewById(R.id.riv_image_pub_details);
         iv_num_of_reged = (ImageView) findViewById(R.id.iv_user_reg_icon_pub_details);
@@ -132,17 +140,18 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         tv_address = (TextView) findViewById(R.id.tv_address_pub_details);
         tv_distance = (TextView) findViewById(R.id.tv_distance_pub_details);
         btn_facebook_my = (ImageButton)findViewById(R.id.btn_facebook_my_pub_details);
-        btn_facebook_others = (ImageButton)findViewById(R.id.btn_facebook_others_pub_details);
         btn_twitter_my = (ImageButton)findViewById(R.id.btn_tweet_my_pub_details);
-        btn_twitter_others = (ImageButton)findViewById(R.id.btn_tweet_others_pub_details);
-        btn_call = (ImageButton)findViewById(R.id.btn_call_owner_pub_details);
-        btn_sms = (ImageButton)findViewById(R.id.btn_message_owner_pub_details);
+        btn_call_owner = (ImageButton)findViewById(R.id.btn_call_owner_pub_details);
+        btn_sms_owner = (ImageButton)findViewById(R.id.btn_message_owner_pub_details);
+        btn_call_reg = (ImageButton)findViewById(R.id.btn_call_reged_pub_details);
+        btn_sms_reg = (ImageButton)findViewById(R.id.btn_message_reged_pub_details);
+        btn_reg_unreg = (ImageButton)findViewById(R.id.btn_register_unregister_pub_details);
+        btn_navigate = (ImageButton)findViewById(R.id.btn_navigate_pub_details);
         tv_subtitle = (TextView)findViewById(R.id.tv_subtitle_pub_details);
         lv_reports = (ListView)findViewById(R.id.lv_list_of_reports_pub_details);
         ll_button_panel_my = (LinearLayout)findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout)findViewById(R.id.ll_others_pub_dets_buttons_panel);
 
-        btn_menu.setOnClickListener(this);
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText("no subtitle support for now");//publication.getSubtitle());
         tv_address.setText(publication.getAddress());
@@ -236,15 +245,20 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
             ll_button_panel_others.setVisibility(View.GONE);
             btn_facebook_my.setOnClickListener(this);
             btn_twitter_my.setOnClickListener(this);
-            //todo: menu
+            btn_call_reg.setOnClickListener(this);
+            btn_sms_reg.setOnClickListener(this);
+            btn_leave_report.setVisibility(View.GONE);
+            btn_menu.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            btn_menu.setOnClickListener(this);
         } else {
             ll_button_panel_my.setVisibility(View.GONE);
             ll_button_panel_others.setVisibility(View.VISIBLE);
-            btn_facebook_others.setOnClickListener(this);
-            btn_twitter_others.setOnClickListener(this);
-            btn_call.setOnClickListener(this);
-            btn_sms.setOnClickListener(this);
-            //todo: menu
+            btn_reg_unreg.setOnClickListener(this);
+            btn_navigate.setOnClickListener(this);
+            btn_call_owner.setOnClickListener(this);
+            btn_sms_owner.setOnClickListener(this);
+            btn_menu.setVisibility(View.GONE);
+            btn_leave_report.setOnClickListener(this);
         }
     }
 
@@ -482,21 +496,44 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         switch (v.getId()){
             case R.id.btn_menu_pub_details:
                 //todo: implement menu switch depending on isOwn
-                PopupMenu popup = new PopupMenu(getBaseContext(), v);
+                if(popup != null){
+                    popup.dismiss();
+                    popup = null;
+                }
+                popup = new PopupMenu(this, v);
                 popup.getMenuInflater().inflate(R.menu.pub_details_popup_menu, popup.getMenu());
+                //TODO: implement
+                MenuItem itemEdit = popup.getMenu().getItem(0);
+                SpannableString stringEdit = new SpannableString("Edit");
+                stringEdit.setSpan(new ForegroundColorSpan(Color.RED), 0, stringEdit.length(), 0);
+                itemEdit.setTitle(stringEdit);
+
+                MenuItem itemDelete = popup.getMenu().getItem(1);
+                SpannableString stringDelete = new SpannableString("Delete");
+                stringDelete.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringDelete.length(), 0);
+                itemDelete.setTitle(stringDelete);
+
+                MenuItem itemDeactivate = popup.getMenu().getItem(2);
+                SpannableString stringDeactivate = new SpannableString("Deactivate");
+                stringDeactivate.setSpan(new ForegroundColorSpan(Color.YELLOW), 0, stringDeactivate.length(), 0);
+                itemDeactivate.setTitle(stringDeactivate);
+
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
+                break;
+            case R.id.btn_leave_report_pub_details:
+                //todo
                 break;
             case R.id.btn_facebook_my_pub_details:
                 //todo
                 break;
-            case R.id.btn_facebook_others_pub_details:
+            case R.id.btn_navigate_pub_details:
                 //todo
                 break;
             case R.id.btn_tweet_my_pub_details:
                 //todo
                 break;
-            case R.id.btn_tweet_others_pub_details:
+            case R.id.btn_register_unregister_pub_details:
                 //todo
                 break;
             case R.id.btn_call_owner_pub_details:

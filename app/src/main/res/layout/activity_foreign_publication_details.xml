@@ -35,6 +35,20 @@
             android:textColor="@color/white"
             android:textSize="27sp" />
 
+        <Button
+            android:id="@+id/btn_leave_report_pub_details"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/basic_blue"
+            android:text="@string/leave_report_pub_details"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="17sp"/>
+
     </RelativeLayout>
 
     <TextView
@@ -126,20 +140,18 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/btn_facebook_others_pub_details"
+            android:id="@+id/btn_register_unregister_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_facebook_btn" />
+            android:src="@drawable/rishum_pub_det_btn" />
 
         <ImageButton
-            android:id="@+id/btn_tweet_others_pub_details"
+            android:id="@+id/btn_navigate_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_twitter_btn" />
+            android:src="@drawable/navigate_pub_det_btn" />
 
         <ImageButton
             android:id="@+id/btn_message_owner_pub_details"
@@ -147,15 +159,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_sms_btn" />
+            android:src="@drawable/pub_det_sms" />
 
         <ImageButton
             android:id="@+id/btn_call_owner_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_call_btn" />
+            android:src="@drawable/pub_det_call" />
     </LinearLayout>
 
     <LinearLayout
@@ -179,6 +190,22 @@
             android:layout_weight="1"
             android:background="@color/basic_blue"
             android:src="@drawable/pub_details_twitter_btn" />
+
+        <ImageButton
+            android:id="@+id/btn_message_reged_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/basic_blue"
+            android:src="@drawable/pub_det_sms" />
+
+        <ImageButton
+            android:id="@+id/btn_call_reged_pub_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/pub_det_call" />
+
     </LinearLayout>
 
     <RelativeLayout
