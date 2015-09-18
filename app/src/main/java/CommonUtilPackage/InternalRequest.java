@@ -10,6 +10,7 @@ import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.ICanWriteSelfToJSONWriter;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import DataModel.UserRegisterData;
 
@@ -32,6 +33,12 @@ public class InternalRequest {
     public static final int ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID = 9;
     public static final int ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER = 10;
     public static final int ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS = 11;
+    public static final int ACTION_POST_REGISTER_TO_PUBLICATION = 12;
+    public static final int ACTION_POST_UNREGISTER_FROM_PUBLICATION = 13;
+    public static final int ACTION_POST_DELETE_PUBLICATION = 14;
+    public static final int ACTION_REPORT_FOR_PUBLICATION = 15;
+    public static final int ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB = 16;
+    public static final int ACTION_SQL_UNREGISTER_MYSELF_FROM_PUB = 17;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -50,6 +57,8 @@ public class InternalRequest {
     public long PublicationID;
     public Map<Integer, Integer> listOfPubsToFetchImageFor;
     public Map<Integer, byte[]> publicationImageMap;
+    public RegisteredUserForPublication myRegisterToPublication;
+    public PublicationReport publicationReport;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;

@@ -258,7 +258,7 @@ public class MapAndListActivity
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         if (this.googleMap != null)
-            Toast.makeText(this, "Map loaded!", Toast.LENGTH_SHORT);
+            Toast.makeText(getBaseContext(), "Map loaded!", Toast.LENGTH_SHORT);
         else {
             isMapLoaded = true;
             myMarkers = new ArrayList<>();

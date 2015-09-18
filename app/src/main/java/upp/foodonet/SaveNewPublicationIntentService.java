@@ -97,7 +97,7 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
                 Log.i(MY_TAG, "new pub successfully saved in db, sending to server");
                 NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS);
                 HttpServerConnectorAsync connector
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
                 InternalRequest ir
                         = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION,
                         getResources().getString(R.string.server_add_new_publication_path),

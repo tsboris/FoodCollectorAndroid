@@ -48,6 +48,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int GET_NEW_NEGATIVE_ID_CODE = 43;
     private static final int REGS_FOR_PUBLICATION_BY_PUB_ID = 44;
     private static final int REGS_FOR_PUBLICATION_BY_PUB_NEG_ID = 45;
+    private static final int REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID = 46;
     private static final int PUBLICATION_REPORT = 50;
     private static final int PUBLICATION_REPORT_ID = 51;
     private static final int PUBLICATION_REPORTS_BY_ID = 52;
@@ -74,6 +75,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_DELETE_REG = "/DeleteRegisteredForPublication";
 
     private static final String EXT_REGS_FOR_PUBLICATION_BY_ID = "/RegisteredByPublicationID";
+
+    private static final String EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID = "/RegForPubNewNegID";
 
     private static final String EXT_PUBLICATION_REPORT = "/PublicationReport";
 
@@ -107,6 +110,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_BY_ID);
     public static final Uri URI_GET_REGISTERED_BY_PUBLICATION_NEG_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_BY_ID + EXT_NEGATIVE_ID);
+    public static final Uri URI_GET_REG_FOR_PUB_NEW_NEG_ID
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID);
     public static final Uri URI_GET_ALL_REPORTS
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REPORT);
     public static final Uri URI_GET_ALL_REPORTS_BY_PUB_ID
@@ -142,6 +147,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + "/#", PUBLICATION_REPORTS_BY_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID + "/#", PUBLICATION_REPORTS_BY_NEG_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_UPDATE_PUBLICATION_IMAGES, UPDATE_IMAGES_FOR_PUBLICATIONS);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID, REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID);
     }
 
     @Override
@@ -215,7 +221,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 queryBuilder.appendWhere(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID
                         + " = -" + uri.getLastPathSegment());
                 break;
-
+            case REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID:
+                return database.getReadableDatabase()
+                        .rawQuery(FooDoNetSQLHelper.RAW_SELECT_NEW_NEGATIVE_ID_REGISTRATION_FOR_PUBLICATION, null);
             default:
                 throw new IllegalArgumentException("Unknown URI: " +  uri);
         }
@@ -370,6 +378,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 break;
             case GET_NEW_NEGATIVE_ID_CODE:
                 available = new String[] {FCPublication.PUBLICATION_NEW_NEGATIVE_ID};
+                break;
+            case REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID:
+                available = new String[] {RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID};
                 break;
             case PUBLICATION_REPORT:
             case PUBLICATION_REPORT_ID:

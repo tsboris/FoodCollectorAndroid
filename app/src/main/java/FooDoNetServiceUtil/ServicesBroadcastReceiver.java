@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class ServicesBroadcastReceiver extends BroadcastReceiver {
 
-    public static final String MY_TAG = "food_broadcastRec";
+    private static final String MY_TAG = "food_broadcastRec";
 
     public static final String BROADCAST_REC_INTENT_FILTER = "upp.foodonet.broadcast.receiver.common";
 
@@ -27,6 +27,12 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     public static final int ACTION_CODE_SAVE_NEW_PUB_COMPLETE = 22;
     public static final int ACTION_CODE_GET_LOCATION_SUCCESS = 31;
     public static final int ACTION_CODE_GET_LOCATION_FAIL = 32;
+    public static final int ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS = 41;
+    public static final int ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL = 42;
+    public static final int ACTION_CODE_UNREGISTER_FROM_PUBLICATION_SUCCESS = 43;
+    public static final int ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL = 44;
+    public static final int ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION = 45;
+
 
     public ServicesBroadcastReceiver(IBroadcastReceiverCallback callback){
         callbackListener = callback;

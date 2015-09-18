@@ -61,17 +61,21 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 if (publicationsFromServer == null || publicationsFromServer.size() == 0
                         || contentResolver == null || callbackHandler == null)
                     return null;
-                Cursor cursor = contentResolver.query(FooDoNetSQLProvider.CONTENT_URI, FCPublication.GetColumnNamesArray(), null, null, null);
+                Cursor cursor = contentResolver.query(FooDoNetSQLProvider.CONTENT_URI,
+                        FCPublication.GetColumnNamesArray(), null, null, null);
                 publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(cursor, false);
                 cursor.close();
                 cursor = null;
-                cursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_REGS, RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
-                ArrayList<RegisteredUserForPublication> regs = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cursor);
+                cursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_REGS,
+                        RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
+                ArrayList<RegisteredUserForPublication> regs
+                        = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cursor);
                 cursor.close();
                 resultPublications = new ArrayList<FCPublication>();
                 for (FCPublication publicationFromServer : publicationsFromServer) {
                     resultPublications.add(publicationFromServer);
-                    FCPublication pubFromDB = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
+                    FCPublication pubFromDB
+                            = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
                     if (pubFromDB == null) {
                         InsertPublicationToDB(contentResolver, publicationFromServer);
                         needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
@@ -80,6 +84,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                             DeletePublicationFromDB(contentResolver, pubFromDB);
                             InsertPublicationToDB(contentResolver, publicationFromServer);
                             needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
+                        } else {
+                            UpdateRegsAndReports(contentResolver, publicationFromServer);
                         }
                         publicationsFromDB.remove(pubFromDB);
                     }
@@ -105,19 +111,19 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 publicationsForListCursor.close();
                 break;
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
-                if(params[0].publicationForSaving == null){
+                if (params[0].publicationForSaving == null) {
                     Log.e(MY_TAG, "got null publication for saving");
                     return null;
                 }
                 newPublicationForSaving = params[0].publicationForSaving;
-                if(params[0].publicationForSaving.getUniqueId() == 0){
+                if (params[0].publicationForSaving.getUniqueId() == 0) {
                     Cursor newNegativeIDCursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
-                            new String[] { FCPublication.PUBLICATION_NEW_NEGATIVE_ID }, null, null, null);
-                    if(newNegativeIDCursor.moveToFirst()){
+                            new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
+                    if (newNegativeIDCursor.moveToFirst()) {
                         newNegativeID
                                 = newNegativeIDCursor.getInt(
-                                        newNegativeIDCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
-                        if(newNegativeID>0)
+                                newNegativeIDCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
+                        if (newNegativeID > 0)
                             newNegativeID = 0;
                         newPublicationForSaving.setUniqueId(newNegativeID);
                     } else {
@@ -129,18 +135,18 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         = contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, newPublicationForSaving.GetContentValuesRow());
                 newPublicationForSaving.setUniqueId(Integer.parseInt(newRowURLForLog.getLastPathSegment()));
                 Log.i(MY_TAG, "insert succeeded! id: " + newPublicationForSaving.getUniqueId()
-                                + "; new row url: " + newRowURLForLog );
+                        + "; new row url: " + newRowURLForLog);
                 break;
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 Uri getPubUri = params[0].PublicationID < 0
                         ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
                         : FooDoNetSQLProvider.CONTENT_URI;
-                long pubID = params[0].PublicationID < 0? params[0].PublicationID * -1: params[0].PublicationID;
+                long pubID = params[0].PublicationID < 0 ? params[0].PublicationID * -1 : params[0].PublicationID;
                 Cursor cPub = contentResolver.query(Uri.parse(getPubUri + "/" + pubID),
-                        FCPublication.GetColumnNamesArray(), null, null,null);
+                        FCPublication.GetColumnNamesArray(), null, null, null);
                 ArrayList<FCPublication> pubs = FCPublication.GetArrayListOfPublicationsFromCursor(cPub, false);
                 cPub.close();
-                if(pubs == null || pubs.size() == 0){
+                if (pubs == null || pubs.size() == 0) {
                     Log.e(MY_TAG, "can't get publication from sql by id: " + params[0].PublicationID);
                     return null;
                 }
@@ -150,22 +156,22 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         ? FooDoNetSQLProvider.URI_GET_REGISTERED_BY_PUBLICATION_NEG_ID
                         : FooDoNetSQLProvider.URI_GET_REGISTERED_BY_PUBLICATION_ID;
                 Cursor cRegs = contentResolver.query(Uri.parse(getRegUri + "/" + pubID),
-                                    RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
+                        RegisteredUserForPublication.GetColumnNamesArray(), null, null, null);
                 ArrayList<RegisteredUserForPublication> regsById
                         = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(cRegs);
                 cRegs.close();
-                if(regsById != null && regsById.size() > 0)
+                if (regsById != null && regsById.size() > 0)
                     resultPublication.setRegisteredForThisPublication(regsById);
 
                 Uri getRepUri = params[0].PublicationID < 0
                         ? FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID
                         : FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_NEG_ID;
-                        Cursor cReports = contentResolver.query(Uri.parse(getRepUri + "/" + pubID),
+                Cursor cReports = contentResolver.query(Uri.parse(getRepUri + "/" + pubID),
                         PublicationReport.GetColumnNamesArray(), null, null, null);
                 ArrayList<PublicationReport> reports
                         = PublicationReport.GetArrayListOfPublicationReportsFromCursor(cReports);
                 cReports.close();
-                if(reports != null && reports.size() > 0)
+                if (reports != null && reports.size() > 0)
                     resultPublication.setPublicationReports(reports);
                 publicationDetailsByID = resultPublication;
                 break;
@@ -181,7 +187,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 publication.setUniqueId(publication.getNewIdFromServer());
                 publication.setVersion(publication.getVersionFromServer());
                 int rowsUpdated = contentResolver.update(Uri.parse(getUpdateUri + "/" + pubIdToUpdate), publication.GetContentValuesRow(), null, null);
-                if(rowsUpdated > 0)
+                if (rowsUpdated > 0)
                     Log.i(MY_TAG, "successfully updated new id and version");
                 rowsUpdated = 0;
                 publicationAfterUpdate = publication;
@@ -197,35 +203,73 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
             case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
                 Map<Integer, byte[]> imgToPub = params[0].publicationImageMap;
                 ContentValues cv = new ContentValues();
-                for(int pubId: imgToPub.keySet()){
+                for (int pubId : imgToPub.keySet()) {
                     cv.put(String.valueOf(pubId), imgToPub.get(pubId));
                 }
-                int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null,null);
+                int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null, null);
+                break;
+            case InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB:
+                if(params[0].myRegisterToPublication == null){
+                    Log.e(MY_TAG, "no data in myRegisterToPublication");
+                    break;
+                }
+                RegisteredUserForPublication myRegistrationToPublication = params[0].myRegisterToPublication;
+                int newNegativeID = 0;
+                Cursor negIdCursor = contentResolver
+                        .query(FooDoNetSQLProvider.URI_GET_REG_FOR_PUB_NEW_NEG_ID,
+                                new String[]{RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID},
+                                    null, null, null);
+                if (negIdCursor.moveToFirst()) {
+                    newNegativeID = negIdCursor.getInt(
+                            negIdCursor.getColumnIndex(RegisteredUserForPublication
+                                    .REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID));
+                    newNegativeID = newNegativeID >= 0 ? -1 : newNegativeID;
+                    myRegistrationToPublication.setId(newNegativeID);
+                } else {
+                    Log.e(MY_TAG, "got no cursor for new pub reg new neg id");
+                    return null;
+                }
+                contentResolver.insert(
+                        FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION,
+                            myRegistrationToPublication.GetContentValuesRow());
                 break;
         }
         return null;
     }
 
-    private void InsertPublicationToDB(ContentResolver contentResolver, FCPublication publication){
+    private void InsertPublicationToDB(ContentResolver contentResolver, FCPublication publication) {
         contentResolver.insert(FooDoNetSQLProvider.CONTENT_URI, publication.GetContentValuesRow());
-        for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+        for (RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
             contentResolver.insert(FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION, reg.GetContentValuesRow());
-        for(PublicationReport pr : publication.getPublicationReports()){
+        for (PublicationReport pr : publication.getPublicationReports()) {
             contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, pr.GetContentValuesRow());
         }
     }
 
-    private void DeletePublicationFromDB(ContentResolver contentResolver, FCPublication publication){
-        for(RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+    private void DeletePublicationFromDB(ContentResolver contentResolver, FCPublication publication) {
+        for (RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
             contentResolver.delete(
                     Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_FOR_PUBLICATION + "/" + reg.getId()), null, null);
-        for(PublicationReport pr : publication.getPublicationReports())
+        for (PublicationReport pr : publication.getPublicationReports())
             contentResolver.delete(
                     Uri.parse(FooDoNetSQLProvider.URI_GET_ALL_REPORTS + "/" + pr.getId()), null, null);
-        Uri deleteUri = publication.getUniqueId() < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
+        Uri deleteUri = publication.getUniqueId() < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE : FooDoNetSQLProvider.CONTENT_URI;
         int idToDelete = publication.getUniqueId() < 0 ? publication.getUniqueId() * -1 : publication.getUniqueId();
         contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);
+    }
 
+    private void UpdateRegsAndReports(ContentResolver contentResolver, FCPublication publication) {
+        for (RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+            contentResolver.delete(
+                    Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_FOR_PUBLICATION + "/" + reg.getId()), null, null);
+        for (PublicationReport pr : publication.getPublicationReports())
+            contentResolver.delete(
+                    Uri.parse(FooDoNetSQLProvider.URI_GET_ALL_REPORTS + "/" + pr.getId()), null, null);
+        for (RegisteredUserForPublication reg : publication.getRegisteredForThisPublication())
+            contentResolver.insert(FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION, reg.GetContentValuesRow());
+        for (PublicationReport pr : publication.getPublicationReports()) {
+            contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, pr.GetContentValuesRow());
+        }
     }
 
     @Override
@@ -260,6 +304,9 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 InternalRequest statusResponse = new InternalRequest(incomingRequest.ActionCommand);
                 statusResponse.Status = InternalRequest.STATUS_OK;
                 callbackHandler.OnSQLTaskComplete(statusResponse);
+                break;
+            case InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB:
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

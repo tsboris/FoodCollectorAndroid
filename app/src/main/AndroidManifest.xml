@@ -149,7 +149,7 @@
         </activity>
         <activity
             android:name=".PublicationDetailsActivity"
-            android:label="@string/title_activity_publication_details">
+            android:label="@string/title_activity_publication_details" >
         </activity>
 
         <service
@@ -161,6 +161,10 @@
             android:enabled="true" />
         <service
             android:name=".SaveNewPublicationIntentService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name=".RegisterUnregisterReportService"
             android:exported="false" >
         </service>
     </application>

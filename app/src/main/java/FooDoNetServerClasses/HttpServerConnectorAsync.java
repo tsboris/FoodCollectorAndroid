@@ -54,14 +54,15 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
-
     private Context context;
+
     private String responseString;
     private JSONArray responseJSONArray;
     private JSONObject responseJSONObject;
     private InternalRequest internalResponse;
     private ArrayList<FCPublication> resultPublications;
     private FCPublication publicationForSaving;
+    private RegisteredUserForPublication registrationToPublicationToPost;
 
     private int Action_Command_ID;
 
@@ -72,8 +73,30 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         this.callbackListener = callbackListener;
     }
 
-    public void setContextForBroadcasting(Context context){
+    public HttpServerConnectorAsync(String baseUrl, Context context) {
+        this.baseUrl = baseUrl;
         this.context = context;
+    }
+
+    public void setContextForBroadcasting(Context context) {
+        this.context = context;
+    }
+
+    public void executeSync(InternalRequest... params) {
+        switch (params[0].ActionCommand) {
+            case InternalRequest.ACTION_POST_REGISTER:
+                break;
+            case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
+                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                doInBackground(params);
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS
+                                : ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL);
+                context.sendBroadcast(intent);
+                break;
+            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
+                break;
+        }
     }
 
     @Override
@@ -83,6 +106,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         Action_Command_ID = params[0].ActionCommand;
         String server_sub_path = params[0].ServerSubPath;
         switch (Action_Command_ID) {
+            //region case get all pubs
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
                 ArrayList<FCPublication> publications = new ArrayList<>();
@@ -133,21 +157,20 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     resultPublications.addAll(publications);
                 }
                 return "";
-            case InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION:
-
-                return "";
+            //endregion
+            //region case post new publication
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 //MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
                 //Get(server_sub_path, (FCPublication) params[0].canWriteSelfToJSONWriterObject);
-                if(params[0].publicationForSaving == null){
+                if (params[0].publicationForSaving == null) {
                     Log.e(MY_TAG, "got null pubForSaving!");
                     return "";
                 }
                 publicationForSaving = params[0].publicationForSaving;
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
                 try {
-                    AbstractMap.SimpleEntry<Integer,Integer> responsePair = FCPublication.ParseServerResponseToNewPublication(new JSONObject(responseString));
-                    if(responsePair != null){
+                    AbstractMap.SimpleEntry<Integer, Integer> responsePair = FCPublication.ParseServerResponseToNewPublication(new JSONObject(responseString));
+                    if (responsePair != null) {
                         publicationForSaving.setNewIdFromServer(responsePair.getKey());
                         publicationForSaving.setVersionFromServer(responsePair.getValue());
                     }
@@ -155,10 +178,28 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     e.printStackTrace();
                 }
                 return "";
+            //endregion
+            //region case register user to system
             case InternalRequest.ACTION_POST_REGISTER:
                 publicationForSaving = params[0].publicationForSaving;
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, false);
                 return "";
+            //endregion
+            //region case register to publication
+            case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
+                registrationToPublicationToPost = params[0].myRegisterToPublication;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registrationToPublicationToPost, false);
+                return "";
+            //endregion
+            //region case unregister from publication
+            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
+                return "";
+            //endregion
+            //region case report for publication
+            case InternalRequest.ACTION_REPORT_FOR_PUBLICATION:
+                return "";
+            //endregion
+
             default:
                 return "";
         }
@@ -316,13 +357,17 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS
-                        : ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
+                                : ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
                 context.sendBroadcast(intent);
                 break;
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 Log.i(MY_TAG, "successfully posted new publication to server");
                 callbackListener.OnServerRespondedCallback(
                         new InternalRequest(Action_Command_ID, publicationForSaving));
+                break;
+            case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
+                Log.i(MY_TAG, "register to pub: " + (isSuccess? "ok":"fail"));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 break;
         }
     }

@@ -86,7 +86,7 @@ public class ReloadDataIntentService
         switch (workPlan[currentIndexInWorkPlan]) {
             case taskServer:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, this);
+                connecterToServer = new HttpServerConnectorAsync(serverBaseUrl, (IFooDoNetServerCallback)this);
                 connecterToServer.execute(new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS,
                                             getResources().getString(R.string.server_get_publications_path)),
                                           new InternalRequest(InternalRequest.ACTION_GET_ALL_REGISTERED_FOR_PUBLICATION,

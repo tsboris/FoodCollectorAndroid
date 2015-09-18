@@ -132,6 +132,12 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
             + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " LIMIT 1";
 
+    public static final String RAW_SELECT_NEW_NEGATIVE_ID_REGISTRATION_FOR_PUBLICATION
+            = "SELECT " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID
+            + " - 1 AS " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID
+            + " FROM " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME
+            + " ORDER BY " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + " LIMIT 1";
+
 
 /*
     public static final String RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC

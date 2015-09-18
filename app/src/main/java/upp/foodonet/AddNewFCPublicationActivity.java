@@ -65,6 +65,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import Adapters.PlaceArrayAdapter;
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
@@ -382,7 +383,7 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         Log.e(MY_TAG, "Google Places API connection failed with error code: "
                 + connectionResult.getErrorCode());
 
-        Toast.makeText(this,
+        Toast.makeText(getBaseContext(),
                 "Google Places API connection failed with error code:" +
                         connectionResult.getErrorCode(),
                 Toast.LENGTH_LONG).show();

@@ -4,15 +4,19 @@ package upp.foodonet;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -33,6 +37,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
@@ -45,7 +50,9 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
 
-public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedToService implements View.OnClickListener, PopupMenu.OnMenuItemClickListener
+public class PublicationDetailsActivity
+        extends FooDoNetCustomActivityConnectedToService
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>
         //implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
@@ -71,6 +78,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     private AlertDialog cancelPublicationDialog;
     private Bitmap photoBmp;
     private boolean isOwnPublication;
+    private boolean isRegisteredForCurrentPublication = false;
 
     //new:
     ImageButton btn_menu;
@@ -126,40 +134,44 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
 */
         Intent i = getIntent();
         this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
-        if(publication == null){
+        if (publication == null) {
             Log.e(MY_TAG, "no publication found in extras!");
             finish();
         }
+        isRegisteredForCurrentPublication = checkIfRegisteredForThisPublication();
 
-        btn_menu = (ImageButton)findViewById(R.id.btn_menu_pub_details);
-        btn_leave_report = (Button)findViewById(R.id.btn_leave_report_pub_details);
-        tv_title = (TextView)findViewById(R.id.tv_title_pub_details);
+        btn_menu = (ImageButton) findViewById(R.id.btn_menu_pub_details);
+        btn_leave_report = (Button) findViewById(R.id.btn_leave_report_pub_details);
+        tv_title = (TextView) findViewById(R.id.tv_title_pub_details);
         riv_image = (RoundedImageView) findViewById(R.id.riv_image_pub_details);
         iv_num_of_reged = (ImageView) findViewById(R.id.iv_user_reg_icon_pub_details);
         tv_num_of_reged = (TextView) findViewById(R.id.tv_num_of_reged_pub_details);
         tv_address = (TextView) findViewById(R.id.tv_address_pub_details);
         tv_distance = (TextView) findViewById(R.id.tv_distance_pub_details);
-        btn_facebook_my = (ImageButton)findViewById(R.id.btn_facebook_my_pub_details);
-        btn_twitter_my = (ImageButton)findViewById(R.id.btn_tweet_my_pub_details);
-        btn_call_owner = (ImageButton)findViewById(R.id.btn_call_owner_pub_details);
-        btn_sms_owner = (ImageButton)findViewById(R.id.btn_message_owner_pub_details);
-        btn_call_reg = (ImageButton)findViewById(R.id.btn_call_reged_pub_details);
-        btn_sms_reg = (ImageButton)findViewById(R.id.btn_message_reged_pub_details);
-        btn_reg_unreg = (ImageButton)findViewById(R.id.btn_register_unregister_pub_details);
-        btn_navigate = (ImageButton)findViewById(R.id.btn_navigate_pub_details);
-        tv_subtitle = (TextView)findViewById(R.id.tv_subtitle_pub_details);
-        lv_reports = (ListView)findViewById(R.id.lv_list_of_reports_pub_details);
-        ll_button_panel_my = (LinearLayout)findViewById(R.id.ll_my_pub_dets_buttons_panel);
-        ll_button_panel_others = (LinearLayout)findViewById(R.id.ll_others_pub_dets_buttons_panel);
+        btn_facebook_my = (ImageButton) findViewById(R.id.btn_facebook_my_pub_details);
+        btn_twitter_my = (ImageButton) findViewById(R.id.btn_tweet_my_pub_details);
+        btn_call_owner = (ImageButton) findViewById(R.id.btn_call_owner_pub_details);
+        btn_sms_owner = (ImageButton) findViewById(R.id.btn_message_owner_pub_details);
+        btn_call_reg = (ImageButton) findViewById(R.id.btn_call_reged_pub_details);
+        btn_sms_reg = (ImageButton) findViewById(R.id.btn_message_reged_pub_details);
+        btn_reg_unreg = (ImageButton) findViewById(R.id.btn_register_unregister_pub_details);
+        btn_navigate = (ImageButton) findViewById(R.id.btn_navigate_pub_details);
+        tv_subtitle = (TextView) findViewById(R.id.tv_subtitle_pub_details);
+        lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
+        ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
+        ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
 
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText("no subtitle support for now");//publication.getSubtitle());
         tv_address.setText(publication.getAddress());
         SetImage();
+/* replaced by loader
         if(publication.getRegisteredForThisPublication() != null)
             tv_num_of_reged.setText(String.valueOf(publication.getRegisteredForThisPublication().size()));
         else
             tv_num_of_reged.setText("0");
+*/
+        StartNumOfRegedLoader();
         SetRegedUserIcon();
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
@@ -218,29 +230,29 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
 
     //region new: My methods
 
-    private void CalculateDistanceAndSetText(){
+    private void CalculateDistanceAndSetText() {
         //todo:
         // 1. set default text "calculating.."
         // 2. call get last position async
         // 3. update text of tv_distance
-        if(publication.getLatitude() == 0 && publication.getLongitude() == 0){
+        if (publication.getLatitude() == 0 && publication.getLongitude() == 0) {
             tv_distance.setText("no coordinades in publication");
             return;
         }
         tv_distance.setText("calculating...");
-        GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager)getSystemService(LOCATION_SERVICE), this);
+        GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
         getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void SetRegedUserIcon(){
+    private void SetRegedUserIcon() {
         //todo:
         // check if this icon can change according to data
         // implement or set here or in xml it's constant drawable
         iv_num_of_reged.setImageDrawable(getResources().getDrawable(R.drawable.icon_whole));
     }
 
-    private void ChooseButtonPanel(){
-        if (publication.isOwnPublication){
+    private void ChooseButtonPanel() {
+        if (publication.isOwnPublication) {
             ll_button_panel_my.setVisibility(View.VISIBLE);
             ll_button_panel_others.setVisibility(View.GONE);
             btn_facebook_my.setOnClickListener(this);
@@ -253,6 +265,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         } else {
             ll_button_panel_my.setVisibility(View.GONE);
             ll_button_panel_others.setVisibility(View.VISIBLE);
+            SetupRegisterUnregisterButton();
             btn_reg_unreg.setOnClickListener(this);
             btn_navigate.setOnClickListener(this);
             btn_call_owner.setOnClickListener(this);
@@ -262,8 +275,28 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         }
     }
 
-    private void SetImage(){
-        if(publication.getImageByteArray() != null && publication.getImageByteArray().length > 0){
+    private void SetupRegisterUnregisterButton() {
+        Drawable image = getResources()
+                .getDrawable((isRegisteredForCurrentPublication
+                                ? R.drawable.cancel_rishum_pub_det_btn
+                                : R.drawable.rishum_pub_det_btn));
+        btn_reg_unreg.setImageDrawable(image);
+    }
+
+    private boolean checkIfRegisteredForThisPublication() {
+        if (publication == null || publication.getRegisteredForThisPublication() == null
+                || publication.getRegisteredForThisPublication().size() == 0)
+            return false;
+        String imei = CommonUtil.GetIMEI(this);
+        for (RegisteredUserForPublication reg : publication.getRegisteredForThisPublication()) {
+            if (reg.getDevice_registered_uuid().compareTo(imei) == 0)
+                return true;
+        }
+        return false;
+    }
+
+    private void SetImage() {
+        if (publication.getImageByteArray() != null && publication.getImageByteArray().length > 0) {
             int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
             Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(publication.getImageByteArray(), imageSize, imageSize);
             Drawable image = new BitmapDrawable(bImage);//BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
@@ -274,7 +307,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         }
     }
 
-    private void SetReportsList(){
+    private void SetReportsList() {
         adapter = new PublicationDetailsReportsAdapter(this,
                 R.layout.pub_details_report_item, publication.getPublicationReports());
         lv_reports.setAdapter(adapter);
@@ -321,8 +354,7 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     }
 */
 
-    private void makeTheCancelDialog()
-    {
+    private void makeTheCancelDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(R.string.cancel_publication);
@@ -348,9 +380,8 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         cancelPublicationDialog = builder.create();
     }
 
-    private void finishWithCancelPublicationResult()
-    {
-        Intent intent= new Intent();
+    private void finishWithCancelPublicationResult() {
+        Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         intent.putExtra("userAction", "cancelPublication");
         finish();
@@ -374,19 +405,17 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     }
 */
 
-    private ArrayList<String> mapRegisteredPersonsToStringArray(ArrayList<RegisteredUserForPublication> arg)
-    {
+    private ArrayList<String> mapRegisteredPersonsToStringArray(ArrayList<RegisteredUserForPublication> arg) {
         ArrayList<String> l = new ArrayList<String>();
-        for (RegisteredUserForPublication u: arg) {
-            l.add( Integer.toString( u.getId()) );
+        for (RegisteredUserForPublication u : arg) {
+            l.add(Integer.toString(u.getId()));
         }
         return l;
     }
     //endregion
 
-    private void LoadPhoto(String photoUrlString)
-    {
-        if (photoUrlString==null || photoUrlString.isEmpty()){
+    private void LoadPhoto(String photoUrlString) {
+        if (photoUrlString == null || photoUrlString.isEmpty()) {
             Log.i(MY_TAG, "photo url was null or empty");
             return;
         }
@@ -472,10 +501,10 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     public void onBroadcastReceived(Intent intent) {
         super.onBroadcastReceived(intent);
         int actionCode = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, -1);
-        switch (actionCode){
+        switch (actionCode) {
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
-                Location location = (Location)intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
-                if(location != null){
+                Location location = (Location) intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
+                if (location != null) {
                     double distance = CommonUtil.GetKilometersBetweenLatLongs(
                             new LatLng(location.getLatitude(), location.getLongitude()),
                             new LatLng(publication.getLatitude(), publication.getLongitude()));
@@ -485,6 +514,22 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
                 tv_distance.setText("can't get distance");
                 break;
+            case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS:
+                Log.i(MY_TAG, "successfully registered to publication " + publication.getUniqueId());
+                Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.pub_det_uimessage_successfully_registered_to_pub), Toast.LENGTH_LONG);
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL:
+                Log.i(MY_TAG, "failed to register to publication");
+                Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG);
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION:
+                Log.i(MY_TAG, "successfully added myself to regs! refreshing number");
+                isRegisteredForCurrentPublication = true;
+                SetupRegisterUnregisterButton();
+                RestartNumOfRegedLoader();
+                break;
         }
     }
 
@@ -493,10 +538,10 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
     //region Click
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_menu_pub_details:
                 //todo: implement menu switch depending on isOwn
-                if(popup != null){
+                if (popup != null) {
                     popup.dismiss();
                     popup = null;
                 }
@@ -534,7 +579,17 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
                 //todo
                 break;
             case R.id.btn_register_unregister_pub_details:
-                //todo
+                if (isRegisteredForCurrentPublication) {
+
+                } else {
+                    RegisteredUserForPublication newRegistrationForPub
+                            = new RegisteredUserForPublication();
+                    newRegistrationForPub.setDate_registered(new Date());
+                    newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
+                    newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                    newRegistrationForPub.setPublication_version(publication.getVersion());
+                    RegisterUnregisterReportService.startActionRegisterToPub(this, newRegistrationForPub);
+                }
                 break;
             case R.id.btn_call_owner_pub_details:
                 //todo
@@ -553,6 +608,44 @@ public class PublicationDetailsActivity extends FooDoNetCustomActivityConnectedT
         Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
         // todo: implement menu
         return true;
+    }
+
+    //endregion
+
+    //region Loader
+
+    private static final int LOADER_ID_NUM_OF_REGED = 0;
+
+    private void StartNumOfRegedLoader() {
+        getSupportLoaderManager().initLoader(LOADER_ID_NUM_OF_REGED, null, this);
+    }
+
+    private void RestartNumOfRegedLoader() {
+        getSupportLoaderManager().restartLoader(LOADER_ID_NUM_OF_REGED, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = RegisteredUserForPublication.GetColumnNamesArray();
+        android.support.v4.content.CursorLoader cursorLoader
+                = new android.support.v4.content.CursorLoader(this,
+                Uri.parse(FooDoNetSQLProvider.URI_GET_REGISTERED_BY_PUBLICATION_ID + "/" + publication.getUniqueId()),
+                projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        ArrayList<RegisteredUserForPublication> regs
+                = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(data);
+        if (regs != null && tv_num_of_reged != null) {
+            tv_num_of_reged.setText(String.valueOf(regs.size()));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     //endregion

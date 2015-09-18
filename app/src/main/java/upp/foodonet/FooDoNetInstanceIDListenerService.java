@@ -3,6 +3,7 @@ package upp.foodonet;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -62,6 +63,10 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         try {
             token = instanceID.getToken(getString(R.string.notifications_server_id),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            SharedPreferences sp = getSharedPreferences(getResources().getString(R.string.shared_preferences_token), MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(getResources().getString(R.string.shared_preferences_token_key), token);
+            editor.commit();
             Log.w(MY_TAG, "Got token: " + token);
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +97,8 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
 
         UserRegisterData userData = new UserRegisterData(imei, token, lat, lon);
 
-        HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+        HttpServerConnectorAsync connector
+                = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
         connector.setContextForBroadcasting(this);
         connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 new InternalRequest(InternalRequest.ACTION_POST_REGISTER,

@@ -51,6 +51,8 @@
     <string name="going_to_collect">persons are going to collect</string>
     <string name="cancel_publication">cancel publication</string>
     <string name="cancel_publication_question">Really cancel this publication?</string>
+    <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
+    <string name="pub_det_uimessage_failed_register_to_pub">Failed to register to publication</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -61,10 +63,16 @@
     <string name="server_get_publications_path">/publications</string>
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
+    <string name="server_post_register_to_publication">/publications/{0}/registered_user_for_publications.json</string>
+    <string name="server_post_unregister_from_publication">/publications/{0}/registered_user_for_publications/5</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
+
+    <!-- Shared Preferences keys -->
+    <string name="shared_preferences_token">sp_token</string>
+    <string name="shared_preferences_token_key">token_key</string>
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>

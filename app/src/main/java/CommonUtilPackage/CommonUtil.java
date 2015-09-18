@@ -1,6 +1,7 @@
 package CommonUtilPackage;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.telephony.TelephonyManager;
@@ -85,6 +86,13 @@ public class CommonUtil {
         }
 
         return inSampleSize;
+    }
+
+    public static String GetTokenFromSharedPreferences(Context context, int tokenRepositoryID, int tokenKeyID){
+        String token = "";
+        SharedPreferences sp = context.getSharedPreferences(context.getResources().getString(tokenRepositoryID), Context.MODE_PRIVATE);
+        token = sp.getString(context.getResources().getString(tokenKeyID), "");
+        return token;
     }
 
 

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -207,7 +208,7 @@ public class EntranceActivity
                 //saveNewTask.execute(new InternalRequest(InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, newPublication));
 
                 HttpServerConnectorAsync postNewPubTask
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
                 InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication);
                 ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
                 postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
@@ -236,6 +237,8 @@ public class EntranceActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
+        Toast.makeText(getBaseContext(), "this code should not be reached", Toast.LENGTH_LONG);
+/*
         if(request.publicationForSaving == null){
             Log.e(MY_TAG, "got null request.publicationForSaving");
             return;
@@ -245,6 +248,7 @@ public class EntranceActivity
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, request.publicationForSaving);
         ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
         postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+*/
     }
 
     @Override

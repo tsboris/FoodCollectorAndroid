@@ -2,6 +2,7 @@ package DataModel;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,11 +12,15 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import CommonUtilPackage.CommonUtil;
 
 /**
  * Created by Asher on 21.08.2015.
  */
-public class RegisteredUserForPublication implements Serializable {
+public class RegisteredUserForPublication implements Serializable, ICanWriteSelfToJSONWriter {
 
     private static final String MY_TAG = "food_RegForPublication";
 
@@ -25,6 +30,8 @@ public class RegisteredUserForPublication implements Serializable {
     public static final String REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_VERSION = "publication_version";
     public static final String REGISTERED_FOR_PUBLICATION_KEY_DATE = "date_of_registration";
     public static final String REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID = "active_device_dev_uuid";
+
+    public static final String REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID = "neg_id";
 
     private int id;
     public int getId(){
@@ -136,4 +143,27 @@ public class RegisteredUserForPublication implements Serializable {
     }
 
 
+    @Override
+    public void WriteSelfToJSONWriter(JsonWriter writer) {
+
+    }
+
+    @Override
+    public Map<String, Object> GetJsonMapStringObject() {
+        return null;
+    }
+
+    @Override
+    public org.json.simple.JSONObject GetJsonObjectForPost() {
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put("publication_id", getPublication_id());
+        deviceData.put("date_of_registration", getDate_registered_unix_time());
+        deviceData.put("active_device_dev_uuid", getDevice_registered_uuid());
+        deviceData.put("publication_version", getPublication_version());
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("registered_user_for_publication", deviceData);
+
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        return json;
+    }
 }

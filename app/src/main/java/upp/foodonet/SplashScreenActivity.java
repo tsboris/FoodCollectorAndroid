@@ -220,7 +220,7 @@ public class SplashScreenActivity
         regResult = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, 0);
         switch (regResult){
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL:
-                Toast.makeText(this, "problem registering device!", Toast.LENGTH_LONG);
+                Toast.makeText(getBaseContext(), "problem registering device!", Toast.LENGTH_LONG);
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
                 SharedPreferences sp = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
