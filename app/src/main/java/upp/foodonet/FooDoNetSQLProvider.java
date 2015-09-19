@@ -49,6 +49,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int REGS_FOR_PUBLICATION_BY_PUB_ID = 44;
     private static final int REGS_FOR_PUBLICATION_BY_PUB_NEG_ID = 45;
     private static final int REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID = 46;
+    private static final int REGS_FOR_PUBLICATION_REMOVE_MYSELF = 47;
     private static final int PUBLICATION_REPORT = 50;
     private static final int PUBLICATION_REPORT_ID = 51;
     private static final int PUBLICATION_REPORTS_BY_ID = 52;
@@ -77,6 +78,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_REGS_FOR_PUBLICATION_BY_ID = "/RegisteredByPublicationID";
 
     private static final String EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID = "/RegForPubNewNegID";
+
+    private static final String EXT_REGS_FOR_PUBLICATION_REMOVE_MYSELF = "/UnregMyselfFromPub";
 
     private static final String EXT_PUBLICATION_REPORT = "/PublicationReport";
 
@@ -112,6 +115,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_BY_ID + EXT_NEGATIVE_ID);
     public static final Uri URI_GET_REG_FOR_PUB_NEW_NEG_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID);
+    public static final Uri URI_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_REGS_FOR_PUBLICATION_REMOVE_MYSELF);
     public static final Uri URI_GET_ALL_REPORTS
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REPORT);
     public static final Uri URI_GET_ALL_REPORTS_BY_PUB_ID
@@ -148,6 +153,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID + "/#", PUBLICATION_REPORTS_BY_NEG_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_UPDATE_PUBLICATION_IMAGES, UPDATE_IMAGES_FOR_PUBLICATIONS);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID, REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_REMOVE_MYSELF, REGS_FOR_PUBLICATION_REMOVE_MYSELF);
     }
 
     @Override
@@ -374,6 +380,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case REGS_FOR_PUBLICATION:
             case REGS_FOR_PUBLICATION_BY_PUB_ID:
             case REGS_FOR_PUBLICATION_BY_PUB_NEG_ID:
+            case REGS_FOR_PUBLICATION_REMOVE_MYSELF:
                 available = RegisteredUserForPublication.GetColumnNamesArray();
                 break;
             case GET_NEW_NEGATIVE_ID_CODE:

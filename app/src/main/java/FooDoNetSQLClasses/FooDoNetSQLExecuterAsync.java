@@ -233,6 +233,14 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION,
                             myRegistrationToPublication.GetContentValuesRow());
                 break;
+            case InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB:
+                if(params[0].myRegisterToPublication == null){
+                    Log.e(MY_TAG, "no data in myRegisterToPublication");
+                    break;
+                }
+                RegisteredUserForPublication myRegistrationToCancel = params[0].myRegisterToPublication;
+
+                break;
         }
         return null;
     }

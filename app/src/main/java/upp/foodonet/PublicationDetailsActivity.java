@@ -579,15 +579,15 @@ public class PublicationDetailsActivity
                 //todo
                 break;
             case R.id.btn_register_unregister_pub_details:
+                RegisteredUserForPublication newRegistrationForPub
+                        = new RegisteredUserForPublication();
+                newRegistrationForPub.setDate_registered(new Date());
+                newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
+                newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                newRegistrationForPub.setPublication_version(publication.getVersion());
                 if (isRegisteredForCurrentPublication) {
-
+                    RegisterUnregisterReportService.startActionUnRegisterFromPub(this, newRegistrationForPub);
                 } else {
-                    RegisteredUserForPublication newRegistrationForPub
-                            = new RegisteredUserForPublication();
-                    newRegistrationForPub.setDate_registered(new Date());
-                    newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
-                    newRegistrationForPub.setPublication_id(publication.getUniqueId());
-                    newRegistrationForPub.setPublication_version(publication.getVersion());
                     RegisterUnregisterReportService.startActionRegisterToPub(this, newRegistrationForPub);
                 }
                 break;

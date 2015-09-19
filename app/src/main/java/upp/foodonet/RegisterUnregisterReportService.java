@@ -79,6 +79,14 @@ public class RegisterUnregisterReportService
                     handleActionRegisterToPublication(myRegistrationToPublication);
                     break;
                 case ACTION_REPORT_TO_PUBLICATION:
+                    myRegistrationToPublication
+                            = (RegisteredUserForPublication) intent.getSerializableExtra(EXTRA_PARAM_REG_TO_PUB_DATA);
+                    if(myRegistrationToPublication == null){
+                        Log.e(MY_TAG, "no registeredUserForPublication found in extras");
+                        ReportFail(action);
+                        return;
+                    }
+                    handleActionUnregisterFromPublication(myRegistrationToPublication);
                     break;
                 case ACTION_UNREGISTER_FROM_PUBLICATION:
                     break;
@@ -115,14 +123,19 @@ public class RegisterUnregisterReportService
 
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    private void handleActionUnregisterFromPublication(RegisteredUserForPublication rufp){
+        if(true) return;
+        String subPath = getResources().getString(R.string.server_post_unregister_from_publication);
+        subPath = subPath.replace("{0}", String.valueOf(rufp.getPublication_id()));
+        HttpServerConnectorAsync connector
+                = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
+        InternalRequest ir
+                = new InternalRequest(InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION, subPath);
+        ir.canWriteSelfToJSONWriterObject = rufp;
+        ir.myRegisterToPublication = rufp;
+        connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
     }
+
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
@@ -139,6 +152,19 @@ public class RegisterUnregisterReportService
                 InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB);
                 ir.myRegisterToPublication = myRegistrationToPublication;
                 sqlExecutor.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+                break;
+            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
+                if(response.Status != InternalRequest.STATUS_OK){
+                    Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                    intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                            ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL);
+                    sendBroadcast(intent);
+                    return;
+                }
+                FooDoNetSQLExecuterAsync sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                InternalRequest irUnreg = new InternalRequest(InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB);
+                irUnreg.myRegisterToPublication = myRegistrationToPublication;
+                sqlExecuter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, irUnreg);
                 break;
             default:
                 Log.e(MY_TAG, "unexpected callback received from server");

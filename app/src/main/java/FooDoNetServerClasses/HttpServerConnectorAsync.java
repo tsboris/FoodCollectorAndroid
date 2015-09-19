@@ -193,6 +193,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //endregion
             //region case unregister from publication
             case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
+                registrationToPublicationToPost = params[0].myRegisterToPublication;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registrationToPublicationToPost, false);
                 return "";
             //endregion
             //region case report for publication
@@ -366,6 +368,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         new InternalRequest(Action_Command_ID, publicationForSaving));
                 break;
             case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
+            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
                 Log.i(MY_TAG, "register to pub: " + (isSuccess? "ok":"fail"));
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 break;

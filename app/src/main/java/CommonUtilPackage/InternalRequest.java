@@ -38,7 +38,7 @@ public class InternalRequest {
     public static final int ACTION_POST_DELETE_PUBLICATION = 14;
     public static final int ACTION_REPORT_FOR_PUBLICATION = 15;
     public static final int ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB = 16;
-    public static final int ACTION_SQL_UNREGISTER_MYSELF_FROM_PUB = 17;
+    public static final int ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB = 17;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
