@@ -789,11 +789,13 @@ public class PublicationDetailsActivity
     private static final int LOADER_ID_NUM_OF_REGED = 0;
 
     private void StartNumOfRegedLoader() {
-        getSupportLoaderManager().initLoader(LOADER_ID_NUM_OF_REGED, null, this);
+        if(publication.getUniqueId() > 0)
+            getSupportLoaderManager().initLoader(LOADER_ID_NUM_OF_REGED, null, this);
     }
 
     private void RestartNumOfRegedLoader() {
-        getSupportLoaderManager().restartLoader(LOADER_ID_NUM_OF_REGED, null, this);
+        if(publication.getUniqueId() > 0)
+            getSupportLoaderManager().restartLoader(LOADER_ID_NUM_OF_REGED, null, this);
     }
 
     @Override
@@ -808,6 +810,7 @@ public class PublicationDetailsActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data == null) return;
         ArrayList<RegisteredUserForPublication> regs
                 = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(data);
         if (regs != null && tv_num_of_reged != null) {
@@ -817,7 +820,6 @@ public class PublicationDetailsActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     //endregion

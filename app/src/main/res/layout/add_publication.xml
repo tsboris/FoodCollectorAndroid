@@ -76,69 +76,41 @@
         android:layout_alignParentStart="true"
         android:visibility="gone"/>
 
-    <!--<Button-->
-        <!--android:id="@+id/start_date_picker_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:text="@string/no_date_set_string"-->
-        <!--android:layout_below="@+id/actv_address_new_publication"-->
-        <!--android:layout_alignLeft="@+id/end_date_picker_button"-->
-        <!--android:layout_alignStart="@+id/end_date_picker_button" />-->
+    <Button
+        android:id="@+id/end_date_picker_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/no_date_set_string"
+        android:layout_below="@+id/start_date_picker_button"
+        android:layout_toLeftOf="@+id/startTitle"
+        android:layout_toStartOf="@+id/startTitle" />
 
-    <!---->
-    <!--<Button-->
-        <!--android:id="@+id/end_date_picker_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:text="@string/no_date_set_string"-->
-        <!--android:layout_below="@+id/start_date_picker_button"-->
-        <!--android:layout_toLeftOf="@+id/startTitle"-->
-        <!--android:layout_toStartOf="@+id/startTitle" />-->
-
-
-    <!--<Button-->
-        <!--android:id="@+id/start_time_picker_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:text="@string/no_time_set_string"-->
-        <!--android:layout_below="@+id/actv_address_new_publication"-->
-        <!--android:layout_toLeftOf="@+id/end_date_picker_button"-->
-        <!--android:layout_toStartOf="@+id/end_date_picker_button" />-->
-
-    <!--<Button-->
-        <!--android:id="@+id/end_time_picker_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="48dp"-->
-        <!--android:text="@string/no_time_set_string"-->
-        <!--android:layout_below="@+id/start_date_picker_button"-->
-        <!--android:layout_alignLeft="@+id/start_time_picker_button"-->
-        <!--android:layout_alignStart="@+id/start_time_picker_button" />-->
-
-    <EditText android:id="@+id/etStartDateTime"
-        android:hint="date and time"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:layout_alignParentLeft="true"
+    <Button
+        android:id="@+id/start_date_picker_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/no_date_set_string"
         android:layout_below="@+id/actv_address_new_publication"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:onClick="etStartDateTime_click"
-        />
+        android:layout_alignLeft="@+id/end_date_picker_button"
+        android:layout_alignStart="@+id/end_date_picker_button" />
 
-    <EditText android:id="@+id/etEndDateTime"
-        android:hint="date and time"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/etStartDateTime"
-        android:onClick="etStartDateTime_click"
-        />
+    <Button
+        android:id="@+id/start_time_picker_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/no_time_set_string"
+        android:layout_below="@+id/actv_address_new_publication"
+        android:layout_toLeftOf="@+id/end_date_picker_button"
+        android:layout_toStartOf="@+id/end_date_picker_button" />
 
-
+    <Button
+        android:id="@+id/end_time_picker_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/no_time_set_string"
+        android:layout_below="@+id/start_date_picker_button"
+        android:layout_alignLeft="@+id/start_time_picker_button"
+        android:layout_alignStart="@+id/start_time_picker_button" />
     <TextView
         android:id="@+id/startTitle"
         android:layout_width="165dp"
@@ -148,9 +120,7 @@
         android:text="@string/start_string"
         android:layout_below="@+id/actv_address_new_publication"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/endTitle"
@@ -159,10 +129,9 @@
         android:textSize="17dp"
         android:paddingRight="11dp"
         android:text="@string/end_string"
-        android:layout_below="@+id/startTitle"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_below="@+id/start_date_picker_button"
+        android:layout_alignRight="@+id/publishButton"
+        android:layout_alignEnd="@+id/publishButton" />
 
     <EditText
         android:id="@+id/add_phoneNumber"
@@ -170,7 +139,7 @@
         android:layout_height="48dp"
         android:hint="@string/add_phoneNumber_string"
         android:ems="10"
-        android:layout_below="@+id/endTitle"
+        android:layout_below="@+id/end_date_picker_button"
         android:layout_alignRight="@+id/endTitle"
         android:layout_alignEnd="@+id/endTitle" />
 

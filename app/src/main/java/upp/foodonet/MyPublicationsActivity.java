@@ -238,7 +238,8 @@ public class MyPublicationsActivity
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
                 String myIMEI = CommonUtil.GetIMEI(this);
-                result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
+                if(result.getPublisherUID() != null)
+                    result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
                 Intent intent = new Intent(getApplicationContext(), PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
