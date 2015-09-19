@@ -1,12 +1,14 @@
 package Adapters;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -68,5 +70,9 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
         if(position == 1)
             return "Events";
         return "";
+    }
+
+    public void NotifyListOnLocationChange(Location location){
+        allPublicationsTabFragment.OnGotMyLocationCallback(location);
     }
 }

@@ -624,18 +624,8 @@ public class PublicationDetailsActivity
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
                 Location location = (Location) intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
                 if (location != null) {
-                    double distance = CommonUtil.GetKilometersBetweenLatLongs(
-                            new LatLng(location.getLatitude(), location.getLongitude()),
-                            new LatLng(publication.getLatitude(), publication.getLongitude()));
-                    if(distance > 1){
-                        distance = Math.round(distance);
-                        tv_distance.setText(String.valueOf(((int) distance)) 
-                                + " " + getResources().getString(R.string.pub_det_km_from_you));
-                    } else {
-                        distance = Math.round(distance * 1000);
-                        tv_distance.setText(String.valueOf(((int) distance)) 
-                                + " " + getResources().getString(R.string.pub_det_metr_from_you));
-                    }
+                    tv_distance.setText(CommonUtil.GetDistanceString(new LatLng(location.getLatitude(), location.getLongitude()),
+                            new LatLng(publication.getLatitude(), publication.getLongitude()), this));
                 }
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:

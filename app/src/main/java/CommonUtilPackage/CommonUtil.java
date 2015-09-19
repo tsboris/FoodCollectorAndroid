@@ -9,6 +9,8 @@ import android.telephony.TelephonyManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import upp.foodonet.R;
+
 /**
  * Created by Asher on 01.09.2015.
  */
@@ -112,5 +114,22 @@ public class CommonUtil {
         return token;
     }
 
+    public static String GetDistanceString(LatLng point1, LatLng point2, Context context){
+        if(point1 == null || point2 == null){
+            return context.getResources().getString(R.string.pub_det_cant_get_distance);
+        }
+        if(context == null)
+            throw new NullPointerException("got null context");
+        double distance = CommonUtil.GetKilometersBetweenLatLongs(point1, point2);
+        if(distance > 1){
+            distance = Math.round(distance);
+            return String.valueOf(((int) distance))
+                    + " " + context.getResources().getString(R.string.pub_det_km_from_you);
+        } else {
+            distance = Math.round(distance * 1000);
+            return String.valueOf(((int) distance))
+                    + " " + context.getResources().getString(R.string.pub_det_metr_from_you);
+        }
+    }
 
 }

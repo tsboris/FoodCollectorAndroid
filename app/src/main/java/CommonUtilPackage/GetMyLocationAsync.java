@@ -24,12 +24,17 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
     LocationManager locationManager;
     boolean gotLocation;
     Context context;
+    IGotMyLocationCallback callback;
 
     private static final String MY_TAG = "food_myLocationAsync";
 
     public GetMyLocationAsync(LocationManager lManager, Context context){
         locationManager = lManager;
         this.context = context;
+    }
+
+    public void setGotLocationCallback(IGotMyLocationCallback gotLocationCallback){
+        callback = gotLocationCallback;
     }
 
     @Override
@@ -54,5 +59,7 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
         else
             intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
         context.sendBroadcast(intent);
+        if(callback != null)
+            callback.OnGotMyLocationCallback(location);
     }
 }

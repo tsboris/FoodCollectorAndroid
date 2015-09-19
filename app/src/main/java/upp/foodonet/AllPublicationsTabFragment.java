@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,8 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import Adapters.PublicationsListCursorAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.GetMyLocationAsync;
+import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
@@ -30,7 +35,7 @@ import CommonUtilPackage.InternalRequest;
 public class AllPublicationsTabFragment
         extends android.support.v4.app.Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        AdapterView.OnItemClickListener, IFooDoNetSQLCallback {
+        AdapterView.OnItemClickListener, IFooDoNetSQLCallback, IGotMyLocationCallback {
 
     private static final String MY_TAG = "food_allPubs";
 
@@ -62,11 +67,11 @@ public class AllPublicationsTabFragment
                 /*,Distance(Double.parseDouble(FCPublication.PUBLICATION_LONGITUDE_KEY),Double.parseDouble(FCPublication.PUBLICATION_LATITUDE_KEY))*/
                /* ,FCPublication.PUBLICATION_PHOTO_URL*///};
         //int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
+        GetMyLocationAsync locationAsync
+                = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+        locationAsync.setGotLocationCallback(this);
+        locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        getLoaderManager().initLoader(0, null, this);
-        adapter = new PublicationsListCursorAdapter(context, null, 0);
-        lv_my_publications.setAdapter(adapter);
-        lv_my_publications.setOnItemClickListener(this);
         return view;
     }
 
@@ -74,6 +79,16 @@ public class AllPublicationsTabFragment
         this.context = context;
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -140,6 +155,16 @@ public class AllPublicationsTabFragment
                 Log.e(MY_TAG, "can't get publication for details!");
                 break;
         }
+    }
+
+    @Override
+    public void OnGotMyLocationCallback(Location location) {
+        adapter = new PublicationsListCursorAdapter(context, null, 0,
+                new LatLng(location.getLatitude(), location.getLongitude()));
+        lv_my_publications.setAdapter(adapter);
+        lv_my_publications.setOnItemClickListener(this);
+        getLoaderManager().initLoader(0, null, this);
+
     }
     /*
     @Override

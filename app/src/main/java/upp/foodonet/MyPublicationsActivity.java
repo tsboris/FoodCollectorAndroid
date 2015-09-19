@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -27,8 +29,11 @@ import android.widget.SimpleCursorAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import Adapters.PublicationsListCursorAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.GetMyLocationAsync;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -37,6 +42,7 @@ import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
+import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 
 public class MyPublicationsActivity
@@ -55,6 +61,7 @@ public class MyPublicationsActivity
     SearchView src_all_pub_listView;
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     Animation animZoomIn;
+
 /*    ToggleButton tgl_btn_navigate_share;
       ToggleButton tgl_btn_navigate_take;*/
 
@@ -89,13 +96,10 @@ public class MyPublicationsActivity
         lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
         //String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_UNIQUE_ID_KEY};
         //int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
-        adapter = new PublicationsListCursorAdapter(this, null, 0);
-        lv_my_publications_list.setAdapter(adapter);
-        lv_my_publications_list.setOnItemClickListener(this);
-
-        currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
-        onClick(btn_active_pub);
+        GetMyLocationAsync locationAsync = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
+        locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+
 
     @Override
     protected void onStart() {
@@ -221,7 +225,24 @@ public class MyPublicationsActivity
     @Override
     public void onBroadcastReceived(Intent intent) {
         super.onBroadcastReceived(intent);
-        RestartLoadingCursorForList(currentFilterID);
+        int actionCode = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, -1);
+        switch (actionCode) {
+            case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
+                Location location = (Location) intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
+                if (location == null) {
+                    Log.e(MY_TAG, "got null location extra from broadcast");
+                    return;
+                }
+                adapter = new PublicationsListCursorAdapter(this, null, 0, new LatLng(location.getLatitude(), location.getLongitude()));
+                lv_my_publications_list.setAdapter(adapter);
+                lv_my_publications_list.setOnItemClickListener(this);
+                onClick(btn_active_pub);
+                break;
+            default:
+                if(adapter != null)
+                    RestartLoadingCursorForList(currentFilterID);
+                break;
+        }
     }
 
     @Override
@@ -238,7 +259,7 @@ public class MyPublicationsActivity
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
                 String myIMEI = CommonUtil.GetIMEI(this);
-                if(result.getPublisherUID() != null)
+                if (result.getPublisherUID() != null)
                     result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
                 Intent intent = new Intent(getApplicationContext(), PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
@@ -246,4 +267,6 @@ public class MyPublicationsActivity
                 break;
         }
     }
+
+
 }

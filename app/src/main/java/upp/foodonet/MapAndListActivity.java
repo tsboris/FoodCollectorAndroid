@@ -160,7 +160,6 @@ public class MapAndListActivity
         //mainPagerAdapter.SetListFragment(eventArrayList, this);
         mainPager.setAdapter(mainPagerAdapter);
         mainPager.addOnPageChangeListener(this);
-
     }
 
     @Override
@@ -306,6 +305,8 @@ public class MapAndListActivity
         if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
             return;
         SetCamera();
+        if(mainPagerAdapter != null)
+            mainPagerAdapter.NotifyListOnLocationChange(location);
     }
 
     @Override
