@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -69,10 +71,11 @@ import Adapters.PlaceArrayAdapter;
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
+import UIUtil.DateTimePicker;
 
 
 public class AddNewFCPublicationActivity extends FragmentActivity
-implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,View.OnClickListener {
+implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,View.OnClickListener, DateTimePicker.DateWatcher {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
@@ -115,6 +118,9 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     private static Button startTimePickerButton;
     private static Button endDatePickerButton;
     private static Button endTimePickerButton;
+
+    private EditText etStartDate;
+    private EditText etEndDate;
 
     private static CheckBox chkCallToPublisher;
 
@@ -165,22 +171,25 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         atv_address.setAdapter(mPlaceArrayAdapter);
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
-        startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
-        startDatePickerButton.setOnClickListener(this);
+//        startDatePickerButton = (Button) findViewById(R.id.start_date_picker_button);
+//        startDatePickerButton.setOnClickListener(this);
+//
+//
+//
+//        startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
+//        startTimePickerButton.setOnClickListener(this);
+//
+//        endDatePickerButton = (Button) findViewById(R.id.end_date_picker_button);
+//        endDatePickerButton.setOnClickListener(this);
+//
+//        endTimePickerButton = (Button) findViewById(R.id.end_time_picker_button);
+//        endTimePickerButton.setOnClickListener(this);
 
-
-
-        startTimePickerButton = (Button) findViewById(R.id.start_time_picker_button);
-        startTimePickerButton.setOnClickListener(this);
-
-        endDatePickerButton = (Button) findViewById(R.id.end_date_picker_button);
-        endDatePickerButton.setOnClickListener(this);
-
-        endTimePickerButton = (Button) findViewById(R.id.end_time_picker_button);
-        endTimePickerButton.setOnClickListener(this);
+        etStartDate = (EditText) findViewById(R.id.etStartDateTime);
+        etEndDate = (EditText) findViewById(R.id.etEndDateTime);
 
         // Set the default date and time
-        setDefaultDateTime();
+//        setDefaultDateTime();
 
         //chkCallToPublisher = (CheckBox) findViewById(R.id.chkCallToPublisher);
         //chkCallToPublisher.setOnClickListener(this);
@@ -429,6 +438,59 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void etStartDateTime_click(View view){
+        // Create the dialog
+        final Dialog mDateTimeDialog = new Dialog(this);
+        // Inflate the root layout
+        final RelativeLayout mDateTimeDialogView = (RelativeLayout) getLayoutInflater().inflate(R.layout.date_time_dialog, null);
+        // Grab widget instance
+        final DateTimePicker mDateTimePicker = (DateTimePicker) mDateTimeDialogView.findViewById(R.id.DateTimePicker);
+        mDateTimePicker.setDateChangedListener(this);
+
+        // Update demo TextViews when the "OK" button is clicked
+        ((Button) mDateTimeDialogView.findViewById(R.id.SetDateTime)).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                mDateTimePicker.clearFocus();
+                // TODO Auto-generated method stub
+                String result_string = String.valueOf(mDateTimePicker.getDay()) + "/" + mDateTimePicker.getMonth() + "/" + String.valueOf(mDateTimePicker.getYear())
+                        + "  " + String.valueOf(mDateTimePicker.getHour()) + ":" + String.valueOf(mDateTimePicker.getMinute());
+//				if(mDateTimePicker.getHour() > 12) result_string = result_string + "PM";
+//				else result_string = result_string + "AM";
+                etStartDate.setText(result_string);
+                mDateTimeDialog.dismiss();
+            }
+        });
+
+        // Cancel the dialog when the "Cancel" button is clicked
+        ((Button) mDateTimeDialogView.findViewById(R.id.CancelDialog)).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDateTimeDialog.cancel();
+            }
+        });
+
+        // Reset Date and Time pickers when the "Reset" button is clicked
+
+        ((Button) mDateTimeDialogView.findViewById(R.id.ResetDateTime)).setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDateTimePicker.reset();
+            }
+        });
+
+        // Setup TimePicker
+        // No title on the dialog window
+        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // Set the dialog content view
+        mDateTimeDialog.setContentView(mDateTimeDialogView);
+        // Display the dialog
+        mDateTimeDialog.show();
+    }
+
     private void setDefaultDateTime() {
 
         // Default is current time + 7 days
@@ -487,6 +549,13 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
 
         timeStartString = hour + ":" + min;// + ":00";
         timeEndString = hour + ":" + min;
+    }
+
+    @Override
+    public void onDateChanged(Calendar c) {
+        Log.e("",
+                "" + c.get(Calendar.MONTH) + " " + c.get(Calendar.DAY_OF_MONTH)
+                        + " " + c.get(Calendar.YEAR));
     }
 
     // DialogFragment used to pick a ToDoItem deadline date
@@ -573,18 +642,18 @@ implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.Connectio
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.start_date_picker_button:
-                showStartDatePickerDialog();
-                break;
-            case R.id.start_time_picker_button:
-                showStartTimePickerDialog();
-                break;
-            case R.id.end_date_picker_button:
-                showEndDatePickerDialog();
-                break;
-            case R.id.end_time_picker_button:
-                showEndTimePickerDialog();
-                break;
+//            case R.id.start_date_picker_button:
+//                showStartDatePickerDialog();
+//                break;
+//            case R.id.start_time_picker_button:
+//                showStartTimePickerDialog();
+//                break;
+//            case R.id.end_date_picker_button:
+//                showEndDatePickerDialog();
+//                break;
+//            case R.id.end_time_picker_button:
+//                showEndTimePickerDialog();
+//                break;
             case R.id.btn_camera_add_pub:
                 selectImage();
                 break;
