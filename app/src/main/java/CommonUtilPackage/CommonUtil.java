@@ -2,6 +2,7 @@ package CommonUtilPackage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.telephony.TelephonyManager;
@@ -51,7 +52,7 @@ public class CommonUtil {
     }
 
     public static Bitmap decodeScaledBitmapFromByteArray(byte[] bytes,
-                                                      int reqWidth, int reqHeight) {
+                                                           int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -64,6 +65,22 @@ public class CommonUtil {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+    }
+
+    public static Bitmap decodeScaledBitmapFromDrawableResource(Resources resources, int drawableID,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(resources, drawableID, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(resources, drawableID, options);
     }
 
     public static int calculateInSampleSize(

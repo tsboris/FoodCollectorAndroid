@@ -79,6 +79,8 @@ public class RegisterUnregisterReportService
                     handleActionRegisterToPublication(myRegistrationToPublication);
                     break;
                 case ACTION_REPORT_TO_PUBLICATION:
+                    break;
+                case ACTION_UNREGISTER_FROM_PUBLICATION:
                     myRegistrationToPublication
                             = (RegisteredUserForPublication) intent.getSerializableExtra(EXTRA_PARAM_REG_TO_PUB_DATA);
                     if(myRegistrationToPublication == null){
@@ -87,8 +89,6 @@ public class RegisterUnregisterReportService
                         return;
                     }
                     handleActionUnregisterFromPublication(myRegistrationToPublication);
-                    break;
-                case ACTION_UNREGISTER_FROM_PUBLICATION:
                     break;
             }
         }
@@ -106,10 +106,6 @@ public class RegisterUnregisterReportService
         sendBroadcast(intentResponse);
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
     private void handleActionRegisterToPublication(RegisteredUserForPublication rufp) {
         String subPath = getResources().getString(R.string.server_post_register_to_publication);
         subPath = subPath.replace("{0}", String.valueOf(rufp.getPublication_id()));
@@ -124,7 +120,7 @@ public class RegisterUnregisterReportService
     }
 
     private void handleActionUnregisterFromPublication(RegisteredUserForPublication rufp){
-        if(true) return;
+        //if(true) return;
         String subPath = getResources().getString(R.string.server_post_unregister_from_publication);
         subPath = subPath.replace("{0}", String.valueOf(rufp.getPublication_id()));
         HttpServerConnectorAsync connector
@@ -174,14 +170,26 @@ public class RegisterUnregisterReportService
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        switch (request.Status){
-            case InternalRequest.STATUS_OK:
-                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
-                        ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION);
-                sendBroadcast(intent);
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB:
+                switch (request.Status){
+                    case InternalRequest.STATUS_OK:
+                        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                        intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                                ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION);
+                        sendBroadcast(intent);
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            default:
+            case InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB:
+                if(request.Status == InternalRequest.STATUS_OK){
+                    Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                    intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                            ServicesBroadcastReceiver.ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION);
+                    sendBroadcast(intent);
+                }
                 break;
         }
     }

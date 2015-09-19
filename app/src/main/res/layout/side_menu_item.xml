@@ -35,7 +35,7 @@
     <View android:id="@+id/v_oval_score_background"
         android:layout_width="@dimen/side_menu_item_score_circle_size"
         android:layout_height="@dimen/side_menu_item_score_circle_size"
-        android:background="@drawable/side_menu_score_circle"
+        android:background="@drawable/side_menu_score_circle_dark"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="15dp"/>
 

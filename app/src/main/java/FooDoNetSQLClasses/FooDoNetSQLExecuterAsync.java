@@ -239,7 +239,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     break;
                 }
                 RegisteredUserForPublication myRegistrationToCancel = params[0].myRegisterToPublication;
-
+                String removeWhereString =
+                        " " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + " = "
+                                + String.valueOf(myRegistrationToCancel.getId()) + " AND "
+                                + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = "
+                                + myRegistrationToCancel.getDevice_registered_uuid();
+                contentResolver.delete(FooDoNetSQLProvider.URI_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION,
+                        removeWhereString, null);
                 break;
         }
         return null;
@@ -314,6 +320,9 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 callbackHandler.OnSQLTaskComplete(statusResponse);
                 break;
             case InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB:
+                callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
+                break;
+            case InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB:
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
                 break;
 /*  not needed

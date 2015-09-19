@@ -33,11 +33,12 @@
             android:src="@drawable/menu_header_button"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="27sp"
+            android:scaleType="fitCenter"/>
 
         <Button
             android:id="@+id/btn_leave_report_pub_details"
-            android:layout_width="30dp"
+            android:layout_width="40dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
@@ -55,7 +56,9 @@
         android:id="@+id/tv_title_pub_details"
         android:layout_width="match_parent"
         android:layout_height="@dimen/pub_details_pub_title_height"
-        android:gravity="center" />
+        android:gravity="center"
+        android:textSize="30dp"
+        android:textStyle="bold"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,23 +83,26 @@
                     android:layout_height="25dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_marginRight="22dp"
                     android:src="@drawable/trash_35_35" />
 
                 <TextView
                     android:id="@+id/tv_num_of_reged_pub_details"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:layout_centerHorizontal="true"
+                    android:layout_height="30dp"
+                    android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
+                    android:layout_marginRight="5dp"
                     android:layout_alignParentBottom="true"
-                    android:text="9"
                     android:textSize="25dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:text="on the way" />
+                    android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/pub_det_on_the_way_to_take"
+                    android:textSize="14dp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -107,12 +113,26 @@
                 <TextView
                     android:id="@+id/tv_address_pub_details"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="8dp"
+                    android:textSize="14dp"/>
 
                 <TextView
                     android:id="@+id/tv_distance_pub_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/tv_address_pub_details"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="8dp"
+                    android:textSize="14dp"
+                    android:textStyle="italic"
+                    android:singleLine="true"
+                    android:fontFamily="Arial"
+                    android:gravity="right"/>
             </RelativeLayout>
 
         </LinearLayout>
@@ -144,29 +164,41 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/rishum_pub_det_btn" />
+            android:src="@drawable/rishum_pub_det_btn"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_navigate_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/navigate_pub_det_btn" />
+            android:src="@drawable/navigate_pub_det_btn"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_message_owner_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_det_sms" />
+            android:src="@drawable/pub_det_sms"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_call_owner_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/pub_det_call" />
+            android:src="@drawable/pub_det_call"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -180,37 +212,50 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_facebook_btn" />
+            android:src="@drawable/pub_det_facebook"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_tweet_my_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_details_twitter_btn" />
+            android:src="@drawable/pub_det_twitter"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_message_reged_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/basic_blue"
-            android:src="@drawable/pub_det_sms" />
+            android:src="@drawable/pub_det_sms"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_call_reged_pub_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/pub_det_call" />
-
+            android:src="@drawable/pub_det_call"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+<!---->
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pub_details_btns_panel_height">
+        android:layout_height="@dimen/pub_details_btns_panel_height"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="32dp">
 
         <TextView
             android:id="@+id/tv_subtitle_pub_details"
@@ -224,14 +269,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="on the way" />
+            android:text="@string/pub_det_reports_for_pub" />
 
     </RelativeLayout>
 
     <ListView
         android:id="@+id/lv_list_of_reports_pub_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"/>
 
     <!--
         <TextView android:id="@+id/tv_subtitle" android:layout_width="match_parent"

@@ -167,7 +167,7 @@ public class PublicationDetailsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_foreign_publication_details);
+        setContentView(R.layout.activity_publication_details);
 
 /* todo: implement detecting own/other's pub
         try {
@@ -217,7 +217,7 @@ public class PublicationDetailsActivity
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
 
         tv_title.setText(publication.getTitle());
-        tv_subtitle.setText("no subtitle support for now");//publication.getSubtitle());
+        tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
         tv_address.setText(publication.getAddress());
         SetImage();
 /* replaced by loader
@@ -310,10 +310,10 @@ public class PublicationDetailsActivity
         // 2. call get last position async
         // 3. update text of tv_distance
         if (publication.getLatitude() == 0 && publication.getLongitude() == 0) {
-            tv_distance.setText("no coordinades in publication");
+            tv_distance.setText(getResources().getString(R.string.pub_det_cant_get_distance));
             return;
         }
-        tv_distance.setText("calculating...");
+        tv_distance.setText(getResources().getString(R.string.pub_det_calculating_distance));
         GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
         getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -627,7 +627,15 @@ public class PublicationDetailsActivity
                     double distance = CommonUtil.GetKilometersBetweenLatLongs(
                             new LatLng(location.getLatitude(), location.getLongitude()),
                             new LatLng(publication.getLatitude(), publication.getLongitude()));
-                    tv_distance.setText("distance: " + distance);
+                    if(distance > 1){
+                        distance = Math.round(distance);
+                        tv_distance.setText(String.valueOf(((int) distance)) 
+                                + " " + getResources().getString(R.string.pub_det_km_from_you));
+                    } else {
+                        distance = Math.round(distance * 1000);
+                        tv_distance.setText(String.valueOf(((int) distance)) 
+                                + " " + getResources().getString(R.string.pub_det_metr_from_you));
+                    }
                 }
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
@@ -646,6 +654,12 @@ public class PublicationDetailsActivity
             case ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION:
                 Log.i(MY_TAG, "successfully added myself to regs! refreshing number");
                 isRegisteredForCurrentPublication = true;
+                SetupRegisterUnregisterButton();
+                RestartNumOfRegedLoader();
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION:
+                Log.i(MY_TAG, "successfully removed myself from regs! refreshing number");
+                isRegisteredForCurrentPublication = false;
                 SetupRegisterUnregisterButton();
                 RestartNumOfRegedLoader();
                 break;

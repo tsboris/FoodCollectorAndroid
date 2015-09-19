@@ -3,10 +3,12 @@ package upp.foodonet;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -31,17 +33,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Adapters.MainViewPagerAdapter;
 import Adapters.SideMenuCursorAdapter;
+import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -53,7 +61,7 @@ public class MapAndListActivity
         AdapterView.OnItemClickListener,
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback {
 
     private static final String MY_TAG = "food_mapAndList";
 
@@ -63,7 +71,7 @@ public class MapAndListActivity
     boolean isMapLoaded;
     double maxDistance;
     LatLng average, myLocation;
-    ArrayList<Marker> myMarkers;
+    HashMap<Marker, Integer> myMarkers;
 
     LinearLayout ll_sideMenu;
     DrawerLayout drawerLayout;
@@ -219,7 +227,7 @@ public class MapAndListActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        OnPublicationSelected(id);
     }
 
     @Override
@@ -261,7 +269,7 @@ public class MapAndListActivity
             Toast.makeText(getBaseContext(), "Map loaded!", Toast.LENGTH_SHORT);
         else {
             isMapLoaded = true;
-            myMarkers = new ArrayList<>();
+            myMarkers = new HashMap<>();
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
@@ -277,6 +285,7 @@ public class MapAndListActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        OnPublicationSelected(myMarkers.get(marker));
         return false;
     }
 
@@ -336,6 +345,13 @@ public class MapAndListActivity
 
     //region My methods
 
+    private void OnPublicationSelected(long publicationID){
+        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
+        ir.PublicationID = publicationID;
+        sqlGetPubAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+    }
+
     private void SetCamera() {
         if (myLocation == null) {
             maxDistance = 0.009 * 40;
@@ -362,7 +378,7 @@ public class MapAndListActivity
                 counter++;
             }
 
-            for (Marker m : myMarkers) {
+            for ( Marker m : myMarkers.keySet()) {
                 latitude += m.getPosition().latitude;
                 longtitude += m.getPosition().longitude;
                 counter++;
@@ -375,7 +391,7 @@ public class MapAndListActivity
             if (myLocation != null)
                 maxDistance = GetDistance(average, myLocation);
 
-            for (Marker m : myMarkers) {
+            for (Marker m : myMarkers.keySet()) {
                 if (GetDistance(average, m.getPosition()) > maxDistance)
                     maxDistance = GetDistance(average, m.getPosition());
             }
@@ -468,16 +484,36 @@ public class MapAndListActivity
                     }
 
                     if (myMarkers == null)
-                        myMarkers = new ArrayList<>();
+                        myMarkers = new HashMap<>();
                     else {
-                        for(Marker m : myMarkers)
+                        for(Marker m : myMarkers.keySet())
                             m.remove();
                         myMarkers.clear();
                     }
                     for (FCPublication publication : publications) {
-                        myMarkers.add(AddMarker(publication.getLatitude().floatValue(),
+                        Bitmap markerIcon;
+
+                        BitmapDescriptor icon = null;
+                        switch (publication.getUniqueId() % 3){
+                            case 0:
+                                markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
+                                        getResources(), R.drawable.map_marker_few, 13, 13);
+                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                break;
+                            case 1:
+                                markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
+                                        getResources(), R.drawable.map_marker_half, 13, 13);
+                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                break;
+                            case 2:
+                                markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
+                                        getResources(), R.drawable.map_marker_whole, 13, 13);
+                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                break;
+                        }
+                        myMarkers.put(AddMarker(publication.getLatitude().floatValue(),
                                 publication.getLongitude().floatValue(),
-                                publication.getTitle(), null));
+                                publication.getTitle(), icon), publication.getUniqueId());
                     }
 
                     if (isMapLoaded)
@@ -510,6 +546,28 @@ public class MapAndListActivity
         }
         RestartLoadingSideMenuMy();
         RestartLoadingSideMenuReg();
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
+                lv_side_menu_reg.clearChoices();
+                lv_side_menu_my.clearChoices();
+                lv_side_menu_reg.requestLayout();
+                lv_side_menu_my.requestLayout();
+                FCPublication result = request.publicationForDetails;
+                String myIMEI = CommonUtil.GetIMEI(this);
+                result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
+                Intent intent = new Intent(this, PublicationDetailsActivity.class);
+                intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
+                startActivityForResult(intent, 1);
+                break;
+            default:
+                Log.e(MY_TAG, "can't get publication for details!");
+                break;
+        }
+
     }
 
     //endregion

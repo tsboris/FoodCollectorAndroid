@@ -313,6 +313,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
                             PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID + "=" + id + selection, null);
                 }
                 break;
+            case REGS_FOR_PUBLICATION_REMOVE_MYSELF:
+                rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
+                        selection, null);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

@@ -50,19 +50,22 @@
             android:src="@drawable/menu_header_button"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="27sp"
+            android:scaleType="fitCenter"/>
 
         <ImageButton
             android:id="@+id/btn_show_map_allPubs"
-            android:layout_width="@dimen/top_panel_height"
-            android:layout_height="@dimen/top_panel_height"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="14dp"
             android:background="@color/basic_blue"
             android:src="@drawable/location_header_btn"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="27sp"
+            android:scaleType="fitCenter"/>
 
         <FrameLayout
             android:id="@+id/popup_fragment"
@@ -76,10 +79,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+<!--
             android:layout_marginBottom="20dp"
-            android:orientation="horizontal"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingRight="20dp"
+-->
 
             <Button
                 android:id="@+id/btn_navigate_take"
@@ -158,10 +163,11 @@
         <ListView android:id="@+id/lv_side_menu_reg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:choiceMode="singleChoice"
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@drawable/list_selector" />
+            android:listSelector="@drawable/list_selector"
+            android:choiceMode="none"/>
+        <!--android:choiceMode="singleChoice"-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -192,10 +198,12 @@
         <ListView android:id="@+id/lv_side_menu_my"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:choiceMode="singleChoice"
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@drawable/list_selector" />
+            android:listSelector="@drawable/list_selector"
+            android:choiceMode="none"/>
+        <!--android:choiceMode="singleChoice"-->
+
 
         <!-- android:id="@+id/list_slidermenu" -->
     </LinearLayout>

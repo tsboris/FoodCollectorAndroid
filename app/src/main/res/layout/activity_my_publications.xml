@@ -83,6 +83,7 @@
     <ListView android:id="@+id/lv_my_publications_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/top_panel_height"
         android:layout_below="@+id/searchView1"></ListView>
 
     <!--    <ListView android:id="@+id/lst_my_publications_list"
@@ -93,9 +94,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+<!--
         android:layout_alignBottom="@+id/lv_my_publications_list"
         android:layout_alignLeft="@+id/lv_my_publications_list"
-        android:layout_alignStart="@+id/lv_my_publications_list">
+        android:layout_alignStart="@+id/lv_my_publications_list"
+-->
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
