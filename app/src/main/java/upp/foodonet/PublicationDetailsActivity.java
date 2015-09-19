@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -34,10 +35,23 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
@@ -58,6 +72,10 @@ public class PublicationDetailsActivity
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
+
+    public static final int POST_FACEBOOK = 64206;
+    private static final String PERMISSION = "publish_actions";
+
     private FCPublication publication;
 
     //old:
@@ -106,6 +124,43 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
+
+    // For Facebook
+    private boolean canPresentShareDialogWithPhotos;
+    private CallbackManager callbackManager;
+    private LoginManager loginManager;
+    private ShareDialog shareDialog;
+    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
+        @Override
+        public void onCancel() {
+            Log.d("Facebook", "Canceled");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d("Facebook", String.format("Error: %s", error.toString()));
+            String message = error.getMessage();
+            showResult(message);
+        }
+
+        @Override
+        public void onSuccess(Sharer.Result result) {
+            Log.d("Facebook", "Success!");
+            if (result.getPostId() != null) {
+                //String id = result.getPostId();
+                String message = getString(R.string.successfully_posted_post);
+                showResult(message);
+            }
+        }
+
+        private void showResult(String message) {
+            Toast.makeText(PublicationDetailsActivity.this,
+                    message,
+                    Toast.LENGTH_LONG).show();
+        }
+    };
+
+    Bitmap bImage;
 
     //region Activity
     @Override
@@ -228,6 +283,25 @@ public class PublicationDetailsActivity
 */
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(MY_TAG, "Entered onActivityResult()");
+
+        FCPublication pub = new FCPublication();
+        if (resultCode == RESULT_OK) {
+            if(requestCode == POST_FACEBOOK)
+            {
+                super.onActivityResult(requestCode, resultCode, data);
+                callbackManager.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        if (resultCode == RESULT_CANCELED) {
+
+        }
+    }
+
+
     //region new: My methods
 
     private void CalculateDistanceAndSetText() {
@@ -298,11 +372,12 @@ public class PublicationDetailsActivity
     private void SetImage() {
         if (publication.getImageByteArray() != null && publication.getImageByteArray().length > 0) {
             int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
-            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(publication.getImageByteArray(), imageSize, imageSize);
+            bImage = CommonUtil.decodeScaledBitmapFromByteArray(publication.getImageByteArray(), imageSize, imageSize);
             Drawable image = new BitmapDrawable(bImage);//BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
+            bImage = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
     }
@@ -315,6 +390,50 @@ public class PublicationDetailsActivity
 
     //endregion
 
+    //region Facebook method
+
+    private void sharePhotoToFacebook(){
+        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
+        if(bImage != null) {
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(bImage)
+                    //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
+                    .build();
+
+
+
+            SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+
+            // Share with dialog
+            if (canPresentShareDialogWithPhotos)
+                shareDialog.show(sharePhotoContent);
+
+//            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+//                    .setContentTitle("Hello Facebook")
+//                    .setContentDescription("יש לי " + tv_title.getText() + ". מי בא לקחת?")
+//                    .setContentUrl(Uri.parse("https://www.facebook.com/foodonet"))
+//                    .build();
+
+            // Share without dialog
+//            if (hasPublishPermission())
+//                ShareApi.share(content, shareCallback);
+
+
+//            if (canPresentShareDialogWithPhotos) {
+//                shareDialog.show(content);
+//            } else if (hasPublishPermission()) {
+//                ShareApi.share(content, shareCallback);
+//            }
+        }
+    }
+
+    private boolean hasPublishPermission() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null && accessToken.getPermissions().contains(PERMISSION);
+    }
+    // endregion
 
     //region methods making parts of activity (to call in OnCreate)
 /*
@@ -570,7 +689,46 @@ public class PublicationDetailsActivity
                 //todo
                 break;
             case R.id.btn_facebook_my_pub_details:
-                //todo
+                FacebookSdk.sdkInitialize(getApplicationContext());
+
+                callbackManager = CallbackManager.Factory.create();
+
+                List<String> permissionNeeds = Arrays.asList(PERMISSION);
+
+                //this loginManager helps you eliminate adding a LoginButton to your UI
+                loginManager = LoginManager.getInstance();
+
+                loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
+
+                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
+                {
+                    @Override
+                    public void onSuccess(LoginResult loginResult)
+                    {
+                        sharePhotoToFacebook();
+
+                    }
+
+                    @Override
+                    public void onCancel()
+                    {
+                        System.out.println("onCancel");
+                    }
+
+                    @Override
+                    public void onError (FacebookException exception)
+                    {
+                        System.out.println("onError");
+                    }
+                });
+
+                shareDialog = new ShareDialog(this);
+                shareDialog.registerCallback(
+                        callbackManager,
+                        shareCallback);
+
+                canPresentShareDialogWithPhotos = ShareDialog.canShow(SharePhotoContent.class);
+
                 break;
             case R.id.btn_navigate_pub_details:
                 //todo
