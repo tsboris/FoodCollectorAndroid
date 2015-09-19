@@ -69,6 +69,8 @@
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
+    <string name="facebook_app_id">451780775026519</string>
+    <string name="successfully_posted_post">Successfully posted to Facebook</string>
 
     <!-- Shared Preferences keys -->
     <string name="shared_preferences_token">sp_token</string>
@@ -76,5 +78,6 @@
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
+
 
 </resources>
