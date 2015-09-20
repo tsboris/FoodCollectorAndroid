@@ -314,8 +314,9 @@ public class PublicationDetailsActivity
             return;
         }
         tv_distance.setText(getResources().getString(R.string.pub_det_calculating_distance));
-        GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
-        getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
+        //getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        StartGetMyLocation();
     }
 
     private void SetRegedUserIcon() {

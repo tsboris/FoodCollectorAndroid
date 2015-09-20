@@ -45,6 +45,9 @@
     <string name="title_activity_all_publications">AllPublicationsActivity</string>
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
+    <string name="start_date_time_picker_dialog_title">תבחר תאריך ושעה מ:</string>
+    <string name="end_date_time_picker_dialog_title">תבחר תאריך ושעה עד:</string>
+
     <!-- my publication details -->
     <string name="pub_det_on_the_way_to_take">בדרך לאסוף</string>
     <string name="pub_det_km_from_you">"ק''מ ממקומך"</string>

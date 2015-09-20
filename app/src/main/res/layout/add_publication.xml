@@ -18,7 +18,8 @@
         android:scaleType="fitCenter"
         android:layout_marginRight="13dp"
         android:layout_marginTop="13dp"
-        android:layout_alignRight="@+id/startTitle" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"/>
 
     <ImageButton
         android:id="@+id/btn_menu_add_pub"
@@ -32,8 +33,7 @@
         android:layout_marginLeft="13dp"
         android:layout_marginTop="13dp"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/address"
-        android:layout_toEndOf="@+id/address" />
+        android:layout_alignParentLeft="true"/>
 
     <ImageView
         android:id="@+id/imgAddPicture"
@@ -52,9 +52,8 @@
         android:hint="@string/enter_title_string"
         android:inputType="textShortMessage"
         android:layout_below="@+id/imgAddPicture"
-        android:layout_alignRight="@+id/publishButton"
-        android:layout_alignEnd="@+id/publishButton">
-
+        android:layout_marginRight="13dp"
+        android:layout_marginLeft="13dp">
         <requestFocus />
     </EditText>
 
@@ -65,9 +64,10 @@
         android:ems="10"
         android:hint="@string/address_string"
         android:layout_below="@+id/et_title_new_publication"
-        android:layout_alignRight="@+id/publishButton"
-        android:layout_alignEnd="@+id/publishButton" />
+        android:layout_marginRight="13dp"
+        android:layout_marginLeft="13dp"/>
 
+<!--
     <TextView
         android:id="@+id/address"
         android:layout_width="wrap_content"
@@ -75,7 +75,31 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:visibility="gone"/>
+-->
 
+    <Button
+        android:id="@+id/btn_start_date_time_add_pub"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/top_panel_height"
+        android:text="@string/no_time_set_string"
+        android:layout_below="@+id/actv_address_new_publication"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/transparent"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/btn_end_date_time_add_pub"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/top_panel_height"
+        android:text="@string/no_time_set_string"
+        android:layout_below="@+id/btn_start_date_time_add_pub"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/transparent"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"/>
+
+<!--
     <Button
         android:id="@+id/end_date_picker_button"
         android:layout_width="wrap_content"
@@ -94,44 +118,34 @@
         android:layout_alignLeft="@+id/end_date_picker_button"
         android:layout_alignStart="@+id/end_date_picker_button" />
 
-    <Button
-        android:id="@+id/start_time_picker_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/no_time_set_string"
-        android:layout_below="@+id/actv_address_new_publication"
-        android:layout_toLeftOf="@+id/end_date_picker_button"
-        android:layout_toStartOf="@+id/end_date_picker_button" />
-
-    <Button
-        android:id="@+id/end_time_picker_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/no_time_set_string"
-        android:layout_below="@+id/start_date_picker_button"
-        android:layout_alignLeft="@+id/start_time_picker_button"
-        android:layout_alignStart="@+id/start_time_picker_button" />
+-->
     <TextView
-        android:id="@+id/startTitle"
+        android:id="@+id/tv_set_date_start_add_pub"
         android:layout_width="165dp"
-        android:layout_height="wrap_content"
-        android:textSize="17dp"
+        android:layout_height="@dimen/top_panel_height"
+        android:textSize="20dp"
         android:paddingRight="11dp"
         android:text="@string/start_string"
         android:layout_below="@+id/actv_address_new_publication"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical|right"/>
 
     <TextView
-        android:id="@+id/endTitle"
+        android:id="@+id/tv_set_date_end_add_pub"
         android:layout_width="165dp"
-        android:layout_height="wrap_content"
-        android:textSize="17dp"
+        android:layout_height="@dimen/top_panel_height"
+        android:textSize="20dp"
         android:paddingRight="11dp"
         android:text="@string/end_string"
-        android:layout_below="@+id/start_date_picker_button"
+        android:layout_below="@+id/tv_set_date_start_add_pub"
         android:layout_alignRight="@+id/publishButton"
-        android:layout_alignEnd="@+id/publishButton" />
+        android:layout_alignEnd="@+id/publishButton"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical|right"/>
 
     <EditText
         android:id="@+id/add_phoneNumber"
@@ -139,9 +153,7 @@
         android:layout_height="48dp"
         android:hint="@string/add_phoneNumber_string"
         android:ems="10"
-        android:layout_below="@+id/end_date_picker_button"
-        android:layout_alignRight="@+id/endTitle"
-        android:layout_alignEnd="@+id/endTitle" />
+        android:layout_below="@+id/btn_end_date_time_add_pub" />
 
     <EditText
         android:id="@+id/another_details"
@@ -149,9 +161,7 @@
         android:layout_height="48dp"
         android:hint="@string/another_details_string"
         android:ems="10"
-        android:layout_below="@+id/add_phoneNumber"
-        android:layout_alignRight="@+id/endTitle"
-        android:layout_alignEnd="@+id/endTitle" />
+        android:layout_below="@+id/add_phoneNumber"/>
 
     <ImageButton
         android:layout_width="45dp"

@@ -96,8 +96,11 @@ public class MyPublicationsActivity
         lv_my_publications_list = (ListView) findViewById(R.id.lv_my_publications_list);
         //String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY, FCPublication.PUBLICATION_UNIQUE_ID_KEY};
         //int[] to = new int[]{R.id.tv_title_myPub_item, R.id.tv_subtitle_myPub_item};
+/*
         GetMyLocationAsync locationAsync = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+*/
+        StartGetMyLocation();
     }
 
 
@@ -198,12 +201,14 @@ public class MyPublicationsActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
+        if(data != null && adapter != null)
+            adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        if(adapter != null)
+            adapter.swapCursor(null);
     }
 
     @Override

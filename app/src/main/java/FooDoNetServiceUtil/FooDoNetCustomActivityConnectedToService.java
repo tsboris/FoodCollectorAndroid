@@ -189,6 +189,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
         };
 
     */
+/*
     class IncomingHandler extends android.os.Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -201,8 +202,9 @@ public abstract class FooDoNetCustomActivityConnectedToService
             }
         }
     }
+*/
 
-    final Messenger callbackMessenger = new Messenger(new IncomingHandler());
+   // final Messenger callbackMessenger = new Messenger(new IncomingHandler());
 
 
     protected void StartGetMyLocation() {

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
@@ -110,7 +111,9 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
                     Log.i(MY_TAG, "cant update new pub's id in sql");
                     return;
                 }
-                UploadImageToAmazon(request.publicationForSaving);
+                if(request.publicationForSaving.getPhotoUrl() != null
+                    && !TextUtils.isEmpty(request.publicationForSaving.getPhotoUrl()))
+                    UploadImageToAmazon(request.publicationForSaving);
                 //NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
                 break;
         }
