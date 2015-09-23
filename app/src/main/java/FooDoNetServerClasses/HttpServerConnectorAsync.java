@@ -33,6 +33,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.List;
 
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
@@ -51,6 +52,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     private static final String REQUEST_METHOD_POST = "POST";
     private static final String REQUEST_METHOD_GET = "GET";
+    private static final String REQUEST_METHOD_DELETE = "DELETE";
 
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
@@ -63,6 +65,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private ArrayList<FCPublication> resultPublications;
     private FCPublication publicationForSaving;
     private RegisteredUserForPublication registrationToPublicationToPost;
+    private PublicationReport publicationReport;
 
     private int Action_Command_ID;
 
@@ -131,6 +134,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     } finally {
                         responseString = "";
                     }
+
+/*
                     MakeServerRequest(REQUEST_METHOD_GET,
                             params[2].ServerSubPath.replace("{0}",
                                     String.valueOf(pub.getUniqueId())), null, true);
@@ -141,16 +146,38 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+*/
+
                     if (regedUsers.size() > 0) {
                         pub.setRegisteredForThisPublication(regedUsers);
                     }
+/*
                     if (pubReports.size() > 0) {
                         pub.setPublicationReports(pubReports);
                     }
+*/
                     regedUsers.clear();
-                    pubReports.clear();
+                    //pubReports.clear();
                     responseString = "";
                 }
+
+                //todo: this is tmp implementation - problem is request about reports contains
+                //todo: publication id, but always returns full list of them
+                MakeServerRequest(REQUEST_METHOD_GET,
+                        params[2].ServerSubPath.replace("{0}",
+                                String.valueOf(0)), null, true);
+                try {
+                    pubReports = PublicationReport.
+                            GetArrayListOfPublicationReportsFromJSON(
+                                    new JSONArray(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (pubReports.size() > 0) {
+                    publications = tmpConnectReportsToPublications(publications, pubReports);
+                }
+
+
                 if (publications.size() > 0) {
                     if (resultPublications == null)
                         resultPublications = new ArrayList<>();
@@ -194,11 +221,13 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region case unregister from publication
             case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
                 registrationToPublicationToPost = params[0].myRegisterToPublication;
-                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registrationToPublicationToPost, false);
+                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, registrationToPublicationToPost, false);
                 return "";
             //endregion
             //region case report for publication
-            case InternalRequest.ACTION_REPORT_FOR_PUBLICATION:
+            case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
+                publicationReport = params[0].publicationReport;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, publicationReport, false);
                 return "";
             //endregion
 
@@ -215,7 +244,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);
             connection.setReadTimeout(30000);
-            connection.setConnectTimeout(30000);
+            connection.setConnectTimeout(15000);
             connection.addRequestProperty("Content-Type", "application/json");
             connection.addRequestProperty("Accept", "application/json");
             connection.setUseCaches(false);
@@ -227,6 +256,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     connection.setAllowUserInteraction(false);
                     break;
                 case REQUEST_METHOD_POST:
+                case REQUEST_METHOD_DELETE:
                     //connection.setDoInput(true);
                     connection.setDoOutput(true);
 /*
@@ -368,14 +398,35 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         new InternalRequest(Action_Command_ID, publicationForSaving));
                 break;
             case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
-            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
                 Log.i(MY_TAG, "register to pub: " + (isSuccess? "ok":"fail"));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
+                break;
+            case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
+                Log.i(MY_TAG, "unregister from pub: " + (isSuccess? "ok":"fail"));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
+                break;
+            case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
+                Log.i(MY_TAG, "report for publication: " + (isSuccess? "ok":"fail"));
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 break;
         }
     }
 
-
+    private ArrayList<FCPublication> tmpConnectReportsToPublications(ArrayList<FCPublication> publications, ArrayList<PublicationReport> reports){
+        //ArrayList<Integer> validReports = new ArrayList<>();
+        for(PublicationReport report : reports){
+            int pubId = report.getPublication_id();
+            int pubVersion = report.getPublication_version();
+            FCPublication pub = FCPublication.GetPublicationFromArrayListByID(publications, pubId);
+            if(pub == null) continue;
+            if(pub.getVersion() == pubVersion){
+                if(pub.getPublicationReports() == null)
+                    pub.setPublicationReports(new ArrayList<PublicationReport>());
+                pub.getPublicationReports().add(report);
+            }
+        }
+        return publications;
+    }
 
 /*
     private InternalRequest Get(String server_sub_path, FCPublication publication) {

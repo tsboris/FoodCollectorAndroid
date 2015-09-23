@@ -57,7 +57,6 @@ public class AllPublicationsTabFragment
 */
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_all_publications_activity, container, false);
-
         lv_my_publications = (ListView) view.findViewById(R.id.lv_all_active_publications);
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
@@ -159,13 +158,14 @@ public class AllPublicationsTabFragment
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
-        adapter = new PublicationsListCursorAdapter(context, null, 0,
-                new LatLng(location.getLatitude(), location.getLongitude()));
+        LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
+        adapter = new PublicationsListCursorAdapter(context, null, 0, locationData);
         lv_my_publications.setAdapter(adapter);
         lv_my_publications.setOnItemClickListener(this);
         getLoaderManager().initLoader(0, null, this);
 
     }
+
     /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {

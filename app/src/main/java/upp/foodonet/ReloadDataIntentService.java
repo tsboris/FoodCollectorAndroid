@@ -81,7 +81,7 @@ public class ReloadDataIntentService
     }
 
     private void DoNextTaskFromWorkPlan() {
-        //if(true)return;
+        if(true)return; //todo: this temporary turns of scheduler
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]) {
             case taskServer:
@@ -155,9 +155,10 @@ public class ReloadDataIntentService
     @Override
     public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
         Log.i(MY_TAG, "downloaded images");
-        FooDoNetSQLExecuterAsync sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS);
-        ir.publicationImageMap = imagesMap;
-        sqlExecuter.execute(ir);
+        DoNextTaskFromWorkPlan();
+//        FooDoNetSQLExecuterAsync sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+//        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS);
+//        ir.publicationImageMap = imagesMap;
+//        sqlExecuter.execute(ir);
     }
 }

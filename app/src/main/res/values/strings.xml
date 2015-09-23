@@ -63,6 +63,11 @@
     <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
     <string name="pub_det_uimessage_failed_register_to_pub">Failed to register to publication</string>
 
+    <!-- Report dialog -->
+    <string name="report_dialog_whole_btn_text">נשאר עוד</string>
+    <string name="report_dialog_half_btn_text">לקחתי הכול</string>
+    <string name="report_dialog_few_btn_text">לא מצאתי כלום</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -74,6 +79,7 @@
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
     <string name="server_post_register_to_publication">/publications/{0}/registered_user_for_publications.json</string>
     <string name="server_post_unregister_from_publication">/publications/{0}/registered_user_for_publications/5</string>
+    <string name="server_post_report_to_publication">/publications/{0}/publication_reports.json</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>

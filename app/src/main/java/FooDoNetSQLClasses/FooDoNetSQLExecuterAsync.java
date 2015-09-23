@@ -6,8 +6,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,15 +79,30 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     FCPublication pubFromDB
                             = FCPublication.GetPublicationFromArrayListByID(publicationsFromDB, publicationFromServer.getUniqueId());
                     if (pubFromDB == null) {
+                        //todo: logics of pub.setIfTriedToGetPictureBefore can be improved
+                        //todo: by updating this field only after call to amazon
+                        publicationFromServer.setIfTriedToGetPictureBefore(true);
                         InsertPublicationToDB(contentResolver, publicationFromServer);
                         needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
                     } else {
                         if (pubFromDB.getVersion() < publicationFromServer.getVersion()) {
                             DeletePublicationFromDB(contentResolver, pubFromDB);
+                            publicationFromServer.setIfTriedToGetPictureBefore(true);
                             InsertPublicationToDB(contentResolver, publicationFromServer);
                             needToLoadPicturesFor.put(publicationFromServer.getUniqueId(), publicationFromServer.getVersion());
                         } else {
                             UpdateRegsAndReports(contentResolver, publicationFromServer);
+                            //if(pubFromDB.getImageByteArray() == null || pubFromDB.getImageByteArray().length == 0)
+                            /*File f = new File(Environment.getExternalStorageDirectory(),
+                                    pubFromDB.getUniqueId() + "." + pubFromDB.getVersion() + ".jpg");
+                            if(!f.exists())
+                                needToLoadPicturesFor.put(pubFromDB.getUniqueId(), pubFromDB.getVersion());*/
+                            if(!pubFromDB.getIfTriedToGetPictureBefore()){
+                                needToLoadPicturesFor.put(pubFromDB.getUniqueId(), pubFromDB.getVersion());
+                                DeletePublicationFromDB(contentResolver, pubFromDB);
+                                pubFromDB.setIfTriedToGetPictureBefore(true);
+                                InsertPublicationToDB(contentResolver, pubFromDB);
+                            }
                         }
                         publicationsFromDB.remove(pubFromDB);
                     }
@@ -119,7 +136,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 if (params[0].publicationForSaving.getUniqueId() == 0) {
                     Cursor newNegativeIDCursor = contentResolver.query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
                             new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
-                    if (newNegativeIDCursor.moveToFirst()) {
+                    if (newNegativeIDCursor != null && newNegativeIDCursor.moveToFirst()) {
                         newNegativeID
                                 = newNegativeIDCursor.getInt(
                                 newNegativeIDCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
@@ -219,7 +236,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         .query(FooDoNetSQLProvider.URI_GET_REG_FOR_PUB_NEW_NEG_ID,
                                 new String[]{RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID},
                                     null, null, null);
-                if (negIdCursor.moveToFirst()) {
+                if (negIdCursor != null && negIdCursor.moveToFirst()) {
                     newNegativeID = negIdCursor.getInt(
                             negIdCursor.getColumnIndex(RegisteredUserForPublication
                                     .REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID));

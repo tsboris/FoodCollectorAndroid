@@ -5,9 +5,18 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 
+import com.amazonaws.util.IOUtils;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import upp.foodonet.R;
 
@@ -130,6 +139,22 @@ public class CommonUtil {
             return String.valueOf(((int) distance))
                     + " " + context.getResources().getString(R.string.pub_det_metr_from_you);
         }
+    }
+
+    public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, int width, int heigth){
+        File photo = new File(Environment.getExternalStorageDirectory(), fileName);
+        if(!photo.exists()) return null;
+        try {
+            FileInputStream fis = new FileInputStream(photo.getPath());
+            byte[] imageBytes = IOUtils.toByteArray(fis);
+            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, width, heigth);
+            return new BitmapDrawable(bImage);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -48,7 +48,9 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String PUBLICATION_COUNT_OF_REGISTER_USERS_KEY = "pulbicationCountOfRegisteredUsersKey";
     public static final String PUBLICATION_IS_ON_AIR_KEY = "is_on_air";
 
-    public static final String PUBLICATION_IMAGE_BYTEARRAY_KEY = "image_bytes";
+    public static final String PUBLICATION_TRIED_TO_LOAD_IMAGE = "tried_load_image";
+
+    //public static final String PUBLICATION_IMAGE_BYTEARRAY_KEY = "image_bytes";
 
     public static final String PUBLICATION_JSON_ITEM_KEY = "publication";
 
@@ -60,7 +62,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
 
     public FCPublication() {
-        countOfRegisteredUsers = 0;
+        setCountOfRegisteredUsers(0);
+        setIfTriedToGetPictureBefore(false);
     }
 
     public FCPublication(int id, String publisherUID, String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, String photoUrl, boolean isOnAir) {
@@ -315,6 +318,14 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         countOfRegisteredUsers = value;
     }
 
+    private boolean ifTriedToGetPictureBefore;
+
+    public boolean getIfTriedToGetPictureBefore() { return ifTriedToGetPictureBefore; }
+
+    public void setIfTriedToGetPictureBefore(boolean value) { ifTriedToGetPictureBefore = value; }
+
+    public void setIfTriedToGetPictureBefore(int value) { ifTriedToGetPictureBefore = value != 0; }
+
     private ArrayList<RegisteredUserForPublication> registeredForThisPublication;
 
     public void setRegisteredForThisPublication(ArrayList<RegisteredUserForPublication> regedUsers){
@@ -361,7 +372,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                         PUBLICATION_PHOTO_URL,
                         PUBLICATION_COUNT_OF_REGISTER_USERS_KEY,
                         PUBLICATION_IS_ON_AIR_KEY,
-                        PUBLICATION_IMAGE_BYTEARRAY_KEY
+                        PUBLICATION_TRIED_TO_LOAD_IMAGE
+                        //PUBLICATION_IMAGE_BYTEARRAY_KEY
                 };
     }
 
@@ -373,9 +385,9 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 PUBLICATION_LATITUDE_KEY,
                 PUBLICATION_LONGITUDE_KEY,
                 PUBLICATION_ADDRESS_KEY,
-                PUBLICATION_PHOTO_URL,
-                PUBLICATION_NUMBER_OF_REGISTERED,
-                PUBLICATION_IMAGE_BYTEARRAY_KEY
+                //PUBLICATION_PHOTO_URL,
+                PUBLICATION_NUMBER_OF_REGISTERED//,
+                //PUBLICATION_IMAGE_BYTEARRAY_KEY
         };
     }
 
@@ -396,14 +408,14 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         cv.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
         cv.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
         cv.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
-        cv.put(PUBLICATION_IMAGE_BYTEARRAY_KEY, getImageByteArray());
+        cv.put(PUBLICATION_TRIED_TO_LOAD_IMAGE, getIfTriedToGetPictureBefore());
+        //cv.put(PUBLICATION_IMAGE_BYTEARRAY_KEY, getImageByteArray());
         return cv;
     }
 
     public static ArrayList<FCPublication> GetArrayListOfPublicationsFromCursor(Cursor cursor, boolean isForList) {
         ArrayList<FCPublication> result = new ArrayList<FCPublication>();
-
-        if (cursor.moveToFirst()) {
+        if(cursor != null && cursor.moveToFirst()) {
             do {
                 FCPublication publication = new FCPublication();
                 publication.setUniqueId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_UNIQUE_ID_KEY)));
@@ -411,19 +423,20 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 publication.setAddress(cursor.getString(cursor.getColumnIndex(PUBLICATION_ADDRESS_KEY)));
                 publication.setLatitude(cursor.getDouble(cursor.getColumnIndex(PUBLICATION_LATITUDE_KEY)));
                 publication.setLongitude(cursor.getDouble(cursor.getColumnIndex(PUBLICATION_LONGITUDE_KEY)));
-                publication.setPhotoUrl(cursor.getString(cursor.getColumnIndex(PUBLICATION_PHOTO_URL)));
                 if(isForList){
                     publication.setNumberOfRegistered(cursor.getInt(cursor.getColumnIndex(PUBLICATION_NUMBER_OF_REGISTERED)));
-                } else
+                } else {
+                    publication.setPhotoUrl(cursor.getString(cursor.getColumnIndex(PUBLICATION_PHOTO_URL)));
                     publication.setVersion(cursor.getInt(cursor.getColumnIndex(PUBLICATION_VERSION_KEY)));
-                publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID_KEY)));
-                publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
-                publication.setTypeOfCollecting(cursor.getInt(cursor.getColumnIndex(PUBLICATION_TYPE_OF_COLLECTION_KEY)));
-                publication.setStartingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_STARTING_DATE_KEY)));
-                publication.setEndingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_ENDING_DATE_KEY)));
-                publication.setContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_CONTACT_INFO_KEY)));
-                publication.setIsOnAir(cursor.getInt(cursor.getColumnIndex(PUBLICATION_IS_ON_AIR_KEY)) == 1);
-                publication.setImageByteArray(cursor.getBlob(cursor.getColumnIndex(PUBLICATION_IMAGE_BYTEARRAY_KEY)));
+                    publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID_KEY)));
+                    publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
+                    publication.setTypeOfCollecting(cursor.getInt(cursor.getColumnIndex(PUBLICATION_TYPE_OF_COLLECTION_KEY)));
+                    publication.setStartingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_STARTING_DATE_KEY)));
+                    publication.setEndingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_ENDING_DATE_KEY)));
+                    publication.setContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_CONTACT_INFO_KEY)));
+                    publication.setIsOnAir(cursor.getInt(cursor.getColumnIndex(PUBLICATION_IS_ON_AIR_KEY)) == 1);
+                    publication.setIfTriedToGetPictureBefore(cursor.getInt(cursor.getColumnIndex(PUBLICATION_TRIED_TO_LOAD_IMAGE)));
+                }
                 result.add(publication);
             } while (cursor.moveToNext());
         }

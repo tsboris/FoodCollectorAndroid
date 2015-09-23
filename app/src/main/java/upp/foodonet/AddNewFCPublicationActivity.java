@@ -199,25 +199,27 @@ public class AddNewFCPublicationActivity extends FragmentActivity
             case R.id.btn_start_date_time_add_pub:
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(startDate);
-                int hours = calendar.get(Calendar.HOUR);
-                int minutes = calendar.get(Calendar.MINUTE);
-                int day = calendar.get(Calendar.DATE);
-                int month = calendar.get(Calendar.MONTH);
-                int year = calendar.get(Calendar.YEAR);
-                btn_date_start.setText(hours + ":" + minutes + " " + day + "/" + month + "/" + year);
+                btn_date_start.setText(GetDateTimeStringFromCalendar(calendar));
                 break;
             case R.id.btn_end_date_time_add_pub:
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTime(endDate);
-                int hours1 = calendar1.get(Calendar.HOUR);
-                int minutes1 = calendar1.get(Calendar.MINUTE);
-                int day1 = calendar1.get(Calendar.DATE);
-                int month1 = calendar1.get(Calendar.MONTH);
-                int year1 = calendar1.get(Calendar.YEAR);
-                btn_date_end.setText(hours1 + ":" + minutes1 + " " + day1 + "/" + month1 + "/" + year1);
+                btn_date_end.setText(GetDateTimeStringFromCalendar(calendar1));
                 break;
         }
     }
+
+    private String GetDateTimeStringFromCalendar(Calendar calendar){
+        if(calendar == null)
+            return "";
+        String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
+        String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
+        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
+        String years = String.valueOf(calendar.get(Calendar.YEAR));
+        return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    }
+
 
     private void selectImage() {
         final CharSequence[] items = { "Take Photo", "Choose from Library", "Cancel" };
@@ -279,6 +281,8 @@ public class AddNewFCPublicationActivity extends FragmentActivity
                 String[] projection = { MediaStore.MediaColumns.DATA };
                 Cursor cursor = managedQuery(selectedImageUri, projection, null, null,
                         null);
+                if(cursor == null)
+                    throw new NullPointerException("can't get picture cursor, critical error");
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                 cursor.moveToFirst();
                 String selectedImagePath = cursor.getString(column_index);
@@ -582,8 +586,11 @@ public class AddNewFCPublicationActivity extends FragmentActivity
             public void onClick(View v) {
                 Calendar resCalendar = Calendar.getInstance();
                 resCalendar.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
-                resCalendar.add(Calendar.HOUR, tp.getCurrentHour());
-                resCalendar.add(Calendar.MINUTE, tp.getCurrentMinute());
+                int h = tp.getCurrentHour();
+                int h1 = resCalendar.get(Calendar.HOUR);
+                int h2 = resCalendar.get(Calendar.HOUR_OF_DAY);
+                resCalendar.set(Calendar.HOUR, tp.getCurrentHour());
+                resCalendar.set(Calendar.MINUTE, tp.getCurrentMinute());
                 switch (id){
                     case R.id.btn_start_date_time_add_pub:
                         startDate = resCalendar.getTime();
@@ -598,23 +605,6 @@ public class AddNewFCPublicationActivity extends FragmentActivity
         });
         dtpDialog.show();
     }
-
-/*
-    private void showStartTimePickerDialog() {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), START_TIME_PICKER_KEY);
-    }
-
-    private void showEndDatePickerDialog() {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), END_DATE_PICKER_KEY);
-    }
-
-    private void showEndTimePickerDialog() {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), END_TIME_PICKER_KEY);
-    }
-*/
 
     @Override
     public void onClick(View view) {
@@ -638,54 +628,12 @@ public class AddNewFCPublicationActivity extends FragmentActivity
                 break;*/
             case R.id.imgAddPicture:
                 selectImage();
-
-//                Intent intent = new Intent();
-//                intent.setType("image/*");
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivityForResult(Intent.createChooser(intent,"Select image for publication"), 1);
-
-
-//                Bitmap bmp = BitmapFactory.decodeFile(miFoto);
-//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
-//                InputStream in = new ByteArrayInputStream(bos.toByteArray());
-//                ContentBody foto = new InputStreamBody(in, "image/jpeg", "filename");
                 break;
             case R.id.publishButton:
                 Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
-
-                // TODO - gather ToDoItem data
-
-//                // Title
-//                String titleString = mTitleText.getText().toString();
-//
-//                // Date
-//                String fullDate = dateString + " " + timeString;
-
                 String title = mTitleText.getText().toString();
                 publication.setTitle(title);
-
-/*
-                String dtStart = startDatePickerButton.getText().toString() + " " + startTimePickerButton.getText().toString() + ":00";
-                Date dateStart = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                try {
-                    dateStart = format.parse(dtStart);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-*/
                 publication.setStartingDate(startDate);
-
-/*
-                String dtEnd = endDatePickerButton.getText().toString() + " " + endTimePickerButton.getText().toString() + ":00";
-                Date dateEnd = new Date();
-                try {
-                    dateEnd = format.parse(dtEnd);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-*/
                 publication.setEndingDate(endDate);
 
                 if(TextUtils.isEmpty(publication.getPublisherUID()))
@@ -695,7 +643,7 @@ public class AddNewFCPublicationActivity extends FragmentActivity
                 //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
                 publication.setVersion(publication.getVersion() + 1);
                 publication.setIsOnAir(true);
-
+                publication.setIfTriedToGetPictureBefore(true);
                 Intent dataPublicationIntent = new Intent();
                 dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
                 // return data Intent and finish

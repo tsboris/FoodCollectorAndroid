@@ -24,11 +24,11 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
 
     public static final String PUBLICATION_REPORT_FIELD_KEY_ID = "_id";
     public static final String PUBLICATION_REPORT_FIELD_KEY_ID_SERVER = "id";
-    public static final String PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID = "publication_unique_id";
+    public static final String PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID = "publication_id";
     public static final String PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION = "publication_version";
     public static final String PUBLICATION_REPORT_FIELD_KEY_REPORT = "report";
     public static final String PUBLICATION_REPORT_FIELD_KEY_DATE = "date_of_report";
-    public static final String PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID = "reporting_device_uuid";
+    public static final String PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID = "active_device_dev_uuid";
 
     public PublicationReport(int id, int pub_id, int pub_version, String report, Date date, String dev_UID){
         setId(id);
@@ -104,7 +104,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
     public static ArrayList<PublicationReport> GetArrayListOfPublicationReportsFromCursor(Cursor cursor) {
         ArrayList<PublicationReport> result = new ArrayList<PublicationReport>();
 
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 PublicationReport pr = new PublicationReport();
                 pr.setId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_ID)));
@@ -124,7 +124,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         ArrayList<PublicationReport> result = new ArrayList<PublicationReport>();
         for (int i = 0; i < ja.length(); i++) {
             try {
-                Log.i(MY_TAG, ja.getJSONObject(i).toString());
+                //Log.i(MY_TAG, ja.getJSONObject(i).toString());
                 result.add(ParseSinglePublicationReportFromJSON(ja.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -193,6 +193,16 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
 
     @Override
     public org.json.simple.JSONObject GetJsonObjectForPost() {
-        return null;
+        Map<String, Object> deviceData = new HashMap<String, Object>();
+        deviceData.put("date_of_report", getDate_reported_unix_time());
+        deviceData.put("publication_id", getPublication_id());
+        deviceData.put("active_device_dev_uuid", getDevice_uuid());
+        deviceData.put("report", getReport());
+        deviceData.put("publication_version", getPublication_version());
+        Map<String, Object> dataToSend = new HashMap<String, Object>();
+        dataToSend.put("publication_report", deviceData);
+
+        org.json.simple.JSONObject json = new org.json.simple.JSONObject(dataToSend);
+        return json;
     }
 }

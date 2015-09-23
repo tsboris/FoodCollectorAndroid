@@ -97,7 +97,7 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
     public static ArrayList<RegisteredUserForPublication> GetArrayListOfRegisteredForPublicationsFromCursor(Cursor cursor) {
         ArrayList<RegisteredUserForPublication> result = new ArrayList<RegisteredUserForPublication>();
 
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 RegisteredUserForPublication rufp = new RegisteredUserForPublication();
                 rufp.setId(cursor.getInt(cursor.getColumnIndex(REGISTERED_FOR_PUBLICATION_KEY_ID)));

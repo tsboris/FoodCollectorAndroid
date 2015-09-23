@@ -44,28 +44,28 @@
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="14dp"
             android:layout_marginRight="14dp"
+            android:layout_marginTop="14dp"
             android:background="@color/basic_blue"
+            android:scaleType="fitCenter"
             android:src="@drawable/menu_header_button"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp"
-            android:scaleType="fitCenter"/>
+            android:textSize="27sp" />
 
         <ImageButton
             android:id="@+id/btn_show_map_allPubs"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="14dp"
             android:layout_marginLeft="14dp"
+            android:layout_marginTop="14dp"
             android:background="@color/basic_blue"
+            android:scaleType="fitCenter"
             android:src="@drawable/location_header_btn"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp"
-            android:scaleType="fitCenter"/>
+            android:textSize="27sp" />
 
         <FrameLayout
             android:id="@+id/popup_fragment"
@@ -80,11 +80,11 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal">
-<!--
-            android:layout_marginBottom="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
--->
+            <!--
+                        android:layout_marginBottom="20dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+            -->
 
             <Button
                 android:id="@+id/btn_navigate_take"
@@ -106,12 +106,13 @@
 
     </RelativeLayout>
 
-    <LinearLayout android:id="@+id/ll_sideMenuPanel"
+    <LinearLayout
+        android:id="@+id/ll_sideMenuPanel"
         android:layout_width="@dimen/side_menu_panel_width"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
         android:background="@color/side_menu_item_background"
-        android:orientation="vertical"
-        android:layout_gravity="start">
+        android:orientation="vertical">
         <!---->
 
         <RelativeLayout
@@ -122,16 +123,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:text="@string/side_menu_activity_center_title"
                 android:textAlignment="center"
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </RelativeLayout>
-        
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/side_menu_item_height"
@@ -143,8 +144,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
-                android:src="@drawable/side_menu_collect_icon"/>
-            
+                android:src="@drawable/side_menu_collect_icon" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -155,18 +156,30 @@
                 android:textAlignment="center"
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
-            
+
+            <Button
+                android:id="@+id/btn_collapse_expand_ll_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="A"
+                android:textSize="20sp" />
+            <!--
+            -->
+
         </RelativeLayout>
 
 
-
-        <ListView android:id="@+id/lv_side_menu_reg"
+        <ListView
+            android:id="@+id/lv_side_menu_reg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:choiceMode="none"
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@drawable/list_selector"
-            android:choiceMode="none"/>
+            android:listSelector="@drawable/list_selector" />
         <!--android:choiceMode="singleChoice"-->
 
         <RelativeLayout
@@ -180,7 +193,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
-                android:src="@drawable/side_menu_donate_icon"/>
+                android:src="@drawable/side_menu_donate_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -193,15 +206,26 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
+            <Button
+                android:id="@+id/btn_collapse_expand_ll_my"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="B"
+                android:textSize="20sp" />
+
         </RelativeLayout>
 
-        <ListView android:id="@+id/lv_side_menu_my"
+        <ListView
+            android:id="@+id/lv_side_menu_my"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:choiceMode="none"
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@drawable/list_selector"
-            android:choiceMode="none"/>
+            android:listSelector="@drawable/list_selector" />
         <!--android:choiceMode="singleChoice"-->
 
 

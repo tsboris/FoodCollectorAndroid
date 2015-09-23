@@ -161,22 +161,37 @@ public class MyPublicationsActivity
                 btn_not_active_pub.setAnimation(null);
                 btn_active_pub.setAnimation(null);
                 btn_ending_pub.startAnimation(animZoomIn);
-                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
-                RestartLoadingCursorForList(currentFilterID);
+                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON)
+                    RestartLoadingCursorForList();
+                else {
+                    adapter.swapCursor(null);
+                    currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON;
+                    StartLoadingCursorForList(currentFilterID);
+                }
                 break;
             case R.id.btn_publication_active:
                 btn_not_active_pub.setAnimation(null);
                 btn_ending_pub.setAnimation(null);
                 btn_active_pub.startAnimation(animZoomIn);
-                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC;
-                RestartLoadingCursorForList(currentFilterID);
+                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC)
+                    RestartLoadingCursorForList();
+                else {
+                    adapter.swapCursor(null);
+                    currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC;
+                    StartLoadingCursorForList(currentFilterID);
+                }
                 break;
             case R.id.btn_publication_notActive:
                 btn_active_pub.setAnimation(null);
                 btn_ending_pub.setAnimation(null);
                 btn_not_active_pub.startAnimation(animZoomIn);
-                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC;
-                RestartLoadingCursorForList(currentFilterID);
+                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC)
+                    RestartLoadingCursorForList();
+                else {
+                    adapter.swapCursor(null);
+                    currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC;
+                    StartLoadingCursorForList(currentFilterID);
+                }
                 break;
         }
     }
@@ -185,8 +200,10 @@ public class MyPublicationsActivity
         getSupportLoaderManager().initLoader(filterTypeID, null, this);
     }
 
-    private void RestartLoadingCursorForList(int filterTypeID) {
-        getSupportLoaderManager().restartLoader(filterTypeID, null, this);
+    private void RestartLoadingCursorForList(){//int filterTypeID) {
+        getSupportLoaderManager().restartLoader(currentFilterID, null, this);
+//        onLoaderReset(null);
+//        StartLoadingCursorForList(filterTypeID);
     }
 
     @Override
@@ -201,8 +218,10 @@ public class MyPublicationsActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data != null && adapter != null)
+        if(data != null && adapter != null){
             adapter.swapCursor(data);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -243,9 +262,15 @@ public class MyPublicationsActivity
                 lv_my_publications_list.setOnItemClickListener(this);
                 onClick(btn_active_pub);
                 break;
+            case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
+                adapter = new PublicationsListCursorAdapter(this, null, 0, null);
+                lv_my_publications_list.setAdapter(adapter);
+                lv_my_publications_list.setOnItemClickListener(this);
+                onClick(btn_active_pub);
+                break;
             default:
                 if(adapter != null)
-                    RestartLoadingCursorForList(currentFilterID);
+                    RestartLoadingCursorForList();
                 break;
         }
     }

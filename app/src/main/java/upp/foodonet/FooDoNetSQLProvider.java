@@ -352,6 +352,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
                         values, FCPublication.PUBLICATION_UNIQUE_ID_KEY + "= -" + idToUpdate, null);
                 break;
             case UPDATE_IMAGES_FOR_PUBLICATIONS:
+/*
                 for(String pubIdString : values.keySet()){
                     int pubId = Integer.parseInt(pubIdString);
                     ContentValues cv = new ContentValues();
@@ -359,6 +360,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
                     rowsUpdated += db.update(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
                             cv, FCPublication.PUBLICATION_UNIQUE_ID_KEY + " = " + pubIdString, null);
                 }
+*/
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);

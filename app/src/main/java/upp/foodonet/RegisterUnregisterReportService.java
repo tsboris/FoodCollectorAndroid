@@ -37,6 +37,7 @@ public class RegisterUnregisterReportService
     private static final String EXTRA_PARAM_REPORT_TO_PUB_DATA = "extra.report.to.pub";
 
     RegisteredUserForPublication myRegistrationToPublication;
+    PublicationReport myReportToPublication;
 
     public static void startActionRegisterToPub(Context context, RegisteredUserForPublication registrationData) {
         Intent intent = new Intent(context, RegisterUnregisterReportService.class);
@@ -78,8 +79,6 @@ public class RegisterUnregisterReportService
                     }
                     handleActionRegisterToPublication(myRegistrationToPublication);
                     break;
-                case ACTION_REPORT_TO_PUBLICATION:
-                    break;
                 case ACTION_UNREGISTER_FROM_PUBLICATION:
                     myRegistrationToPublication
                             = (RegisteredUserForPublication) intent.getSerializableExtra(EXTRA_PARAM_REG_TO_PUB_DATA);
@@ -90,6 +89,16 @@ public class RegisterUnregisterReportService
                     }
                     handleActionUnregisterFromPublication(myRegistrationToPublication);
                     break;
+                case ACTION_REPORT_TO_PUBLICATION:
+                    myReportToPublication
+                            = (PublicationReport) intent.getSerializableExtra(EXTRA_PARAM_REPORT_TO_PUB_DATA);
+                    if(myReportToPublication == null){
+                        Log.e(MY_TAG, "no report found in extras");
+                        ReportFail(action);
+                        return;
+                    }
+                    handleActionReportToPublication(myReportToPublication);
+                    break;
             }
         }
     }
@@ -98,9 +107,12 @@ public class RegisterUnregisterReportService
         Intent intentResponse = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
         switch (action){
             case ACTION_REGISTER_TO_PUBLICATION:
-                Log.e(MY_TAG, "no registeredUserForPublication found in extras");
                 intentResponse.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL);
+                break;
+            case ACTION_REPORT_TO_PUBLICATION:
+                intentResponse.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REPORT_TO_PUBLICATION_FAIL);
                 break;
         }
         sendBroadcast(intentResponse);
@@ -132,6 +144,17 @@ public class RegisterUnregisterReportService
         connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
     }
 
+    private void handleActionReportToPublication(PublicationReport report){
+        String subPath = getString(R.string.server_post_report_to_publication);
+        subPath = subPath.replace("{0}", String.valueOf(report.getPublication_id()));
+        HttpServerConnectorAsync connector
+                = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
+        InternalRequest ir
+                = new InternalRequest(InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION, subPath);
+        ir.publicationReport = report;
+        ir.canWriteSelfToJSONWriterObject = report;
+        connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+    }
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
@@ -161,6 +184,10 @@ public class RegisterUnregisterReportService
                 InternalRequest irUnreg = new InternalRequest(InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB);
                 irUnreg.myRegisterToPublication = myRegistrationToPublication;
                 sqlExecuter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, irUnreg);
+                break;
+            case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
+                InternalRequest ire = response;
+                int com = ire.ActionCommand;
                 break;
             default:
                 Log.e(MY_TAG, "unexpected callback received from server");

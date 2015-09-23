@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +17,14 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.util.IOUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.HttpStatus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -69,33 +74,41 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // images must be dinamically set to appropriate
-        RoundedImageView publicationImage = (RoundedImageView)view.findViewById(R.id.iv_pub_list_item_img);
+        final RoundedImageView publicationImage = (RoundedImageView)view.findViewById(R.id.iv_pub_list_item_img);
         ImageView publicationIcon = (ImageView)view.findViewById(R.id.iv_pub_list_item_icon);
 
         TextView publicationTitle = (TextView)view.findViewById(R.id.tv_pub_list_item_title);
         TextView publicationAddress = (TextView)view.findViewById(R.id.tv_pub_list_item_address);
         TextView publicationDistance = (TextView)view.findViewById(R.id.tv_pub_list_item_distance);
 
-/*        String imageAmazonAddress
-                = amazonBaseAddress + "/"
-                + String.valueOf(cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)))
-                + "." + String.valueOf(cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY)))
-                + ".jpg";
-        //Log.i(MY_TAG, "loading image from " + imageAmazonAddress);
+        publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+        final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
+        final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
+        Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg", 100, 100);
+        if(imageDrawable != null)
+            publicationImage.setImageDrawable(imageDrawable);
+/*        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        try {
-            Bitmap publicationImageDrawable = bitmap_from_url(imageAmazonAddress);
-            publicationImage.setImageBitmap(publicationImageDrawable);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NetworkOnMainThreadException e){
-            Log.e(MY_TAG, "no image found for pub" + cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_TITLE_KEY)));
-        }
-        if(publicationImage != null)
-            drawableManager.fetchDrawableOnThread(imageAmazonAddress, publicationImage);
-        */
+                File photo = new File(Environment.getExternalStorageDirectory(), id + "." + version + ".jpg");
+                if(!photo.exists()) return;
+                try {
+                    FileInputStream fis = new FileInputStream(photo.getPath());
+                    byte[] imageBytes = IOUtils.toByteArray(fis);
+                    Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 100, 100);
+                    Drawable image = new BitmapDrawable(bImage);
+                    publicationImage.setImageDrawable(image);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
+            }
+        }).start();*/
+
+/*
         byte[] imageBytes = cursor.getBlob(cursor.getColumnIndex(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY));
         if(imageBytes != null && imageBytes.length > 0){
             Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 100, 100);
@@ -104,6 +117,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         } else {
             publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
+*/
 
         // tmp switch, todo implement - need spec
         switch (cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)) % 3){
@@ -132,6 +146,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         } else {
             publicationDistance.setText(context.getResources().getString(R.string.pub_det_cant_get_distance));
         }
+
     }
 
 /*

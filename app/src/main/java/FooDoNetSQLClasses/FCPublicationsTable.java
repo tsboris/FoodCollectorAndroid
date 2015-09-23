@@ -45,8 +45,8 @@ public class FCPublicationsTable {
         sb.append(" int not null, ");
         sb.append(FCPublication.PUBLICATION_IS_ON_AIR_KEY);
         sb.append(" int not null, ");
-        sb.append(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY);
-        sb.append(" blob null);");
+        sb.append(FCPublication.PUBLICATION_TRIED_TO_LOAD_IMAGE);
+        sb.append(" int not null);");
         return sb.toString();
     }
 

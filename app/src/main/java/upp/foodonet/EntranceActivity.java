@@ -102,33 +102,6 @@ public class EntranceActivity
 
     }
 
-    private void startMyPublicationDetailsActivity()
-    {
-        FCPublication samplePub = new FCPublication();
-        samplePub.setTitle("pomodori");
-        samplePub.setSubtitle("pomodori in boxes a 3 kg");
-        samplePub.setPhotoUrl("http://static.adzerk.net/Advertisers/90bd75b000054d73ad21a6f72a11fc14.jpg");
-        samplePub.setAddress("Ramat Gan, HaRoeh 257");
-
-        ArrayList<RegisteredUserForPublication> regUsers = new ArrayList<RegisteredUserForPublication>();
-        RegisteredUserForPublication u1 = new RegisteredUserForPublication();
-        u1.setId(11111);
-        regUsers.add(u1);
-        RegisteredUserForPublication u2 = new RegisteredUserForPublication();
-        u2.setId(2222);
-        regUsers.add(u2);
-        RegisteredUserForPublication u3 = new RegisteredUserForPublication();
-        u1.setId(3333);
-        regUsers.add(u3);
-        samplePub.setRegisteredForThisPublication(regUsers);
-
-        Intent intent = new Intent(this, PublicationDetailsActivity.class);
-        intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, samplePub);
-        intent.putExtra(PublicationDetailsActivity.IS_OWN_PUBLICATION_PARAM, false);
-
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

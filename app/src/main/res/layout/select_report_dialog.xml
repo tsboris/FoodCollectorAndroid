@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button android:id="@+id/btn_whole_report_dialog"
+        android:layout_width="200dp"
+        android:layout_height="@dimen/top_panel_height"
+        android:text="@string/report_dialog_whole_btn_text"/>
+
+    <Button android:id="@+id/btn_half_report_dialog"
+        android:layout_width="200dp"
+        android:layout_height="@dimen/top_panel_height"
+        android:text="@string/report_dialog_half_btn_text"/>
+
+    <Button android:id="@+id/btn_few_report_dialog"
+        android:layout_width="200dp"
+        android:layout_height="@dimen/top_panel_height"
+        android:text="@string/report_dialog_few_btn_text"/>
+
+</LinearLayout>

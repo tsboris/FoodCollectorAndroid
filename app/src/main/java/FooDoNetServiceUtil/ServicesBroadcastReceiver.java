@@ -33,6 +33,8 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     public static final int ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL = 44;
     public static final int ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION = 45;
     public static final int ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION = 46;
+    public static final int ACTION_CODE_REPORT_TO_PUBLICATION_SUCCESS = 51;
+    public static final int ACTION_CODE_REPORT_TO_PUBLICATION_FAIL = 52;
 
 
     public ServicesBroadcastReceiver(IBroadcastReceiverCallback callback){

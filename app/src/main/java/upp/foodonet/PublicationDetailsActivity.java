@@ -2,6 +2,7 @@ package upp.foodonet;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,14 +26,17 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -50,16 +54,21 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.GetMyLocationAsync;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServerClasses.DownloadImageTask;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IDownloadImageCallBack;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
@@ -67,7 +76,6 @@ import UIUtil.RoundedImageView;
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
         implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>
-        //implements IDownloadImageCallBack
 {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
@@ -125,41 +133,6 @@ public class PublicationDetailsActivity
 
     PopupMenu popup;
 
-    // For Facebook
-    private boolean canPresentShareDialogWithPhotos;
-    private CallbackManager callbackManager;
-    private LoginManager loginManager;
-    private ShareDialog shareDialog;
-    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
-        @Override
-        public void onCancel() {
-            Log.d("Facebook", "Canceled");
-        }
-
-        @Override
-        public void onError(FacebookException error) {
-            Log.d("Facebook", String.format("Error: %s", error.toString()));
-            String message = error.getMessage();
-            showResult(message);
-        }
-
-        @Override
-        public void onSuccess(Sharer.Result result) {
-            Log.d("Facebook", "Success!");
-            if (result.getPostId() != null) {
-                //String id = result.getPostId();
-                String message = getString(R.string.successfully_posted_post);
-                showResult(message);
-            }
-        }
-
-        private void showResult(String message) {
-            Toast.makeText(PublicationDetailsActivity.this,
-                    message,
-                    Toast.LENGTH_LONG).show();
-        }
-    };
-
     Bitmap bImage;
 
     //region Activity
@@ -169,24 +142,6 @@ public class PublicationDetailsActivity
 
         setContentView(R.layout.activity_publication_details);
 
-/* todo: implement detecting own/other's pub
-        try {
-            Intent i = getIntent();
-            this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
-            this.isOwnPublication = publication.getPublisherUID() == CommonUtil.GetIMEI(this);
-        }
-        catch (Exception ex) {
-            Log.e(MY_TAG, "error deserializing passed parameters: " + ex.getMessage());
-            return;
-        }
-
-        if (this.isOwnPublication){
-            setContentView(R.layout.activity_my_publication_details);
-        }
-        else{
-            setContentView(R.layout.activity_foreign_publication_details);
-        }
-*/
         Intent i = getIntent();
         this.publication = (FCPublication) i.getSerializableExtra(PUBLICATION_PARAM);
         if (publication == null) {
@@ -231,42 +186,6 @@ public class PublicationDetailsActivity
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
         SetReportsList();
-
-/* old alex's code
-        if (publication.getTitle() != null) {
-            this.setTitle(publication.getTitle());
-            subtitleTextView = (TextView) findViewById(R.id.tv_subtitle);
-            subtitleTextView.setText(publication.getTitle());
-        }
-
-        postAddressTextView =            (TextView) findViewById(R.id.post_address);
-        publicationDescriptionTextView = (TextView) findViewById(R.id.publication_description);
-
-        postAddressTextView.setText(publication.getAddress());
-        publicationDescriptionTextView.setText(publication.getSubtitle());
-
-        btn_Menu = (ImageButton) findViewById(R.id.btn_menu_pub_details);
-        btn_Menu.setOnClickListener(this);
-        //btn_Menu.setOnClickListener(this);
-        //registerForContextMenu(btn_Menu);
-
-        //LoadPhoto(this.publication.getPhotoUrl());
-
-        if (!isOwnPublication)
-        {
-            makeBlueButtons();
-        }
-
-        makeInterestedsList();
-
-        if (isOwnPublication)
-        {
-            makeTheCancelDialog();
-
-            makeCancelButton();
-        }
-*/
-
     }
 
     @Override
@@ -290,8 +209,7 @@ public class PublicationDetailsActivity
 
         FCPublication pub = new FCPublication();
         if (resultCode == RESULT_OK) {
-            if(requestCode == POST_FACEBOOK)
-            {
+            if (requestCode == POST_FACEBOOK) {
                 super.onActivityResult(requestCode, resultCode, data);
                 callbackManager.onActivityResult(requestCode, resultCode, data);
             }
@@ -301,6 +219,11 @@ public class PublicationDetailsActivity
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        finish();
+    }
 
     //region new: My methods
 
@@ -346,6 +269,7 @@ public class PublicationDetailsActivity
             btn_call_owner.setOnClickListener(this);
             btn_sms_owner.setOnClickListener(this);
             btn_menu.setVisibility(View.GONE);
+            //todo: visibility/functions of this button depend if user registered to this publication
             btn_leave_report.setOnClickListener(this);
         }
     }
@@ -353,8 +277,8 @@ public class PublicationDetailsActivity
     private void SetupRegisterUnregisterButton() {
         Drawable image = getResources()
                 .getDrawable((isRegisteredForCurrentPublication
-                                ? R.drawable.cancel_rishum_pub_det_btn
-                                : R.drawable.rishum_pub_det_btn));
+                        ? R.drawable.cancel_rishum_pub_det_btn
+                        : R.drawable.rishum_pub_det_btn));
         btn_reg_unreg.setImageDrawable(image);
     }
 
@@ -371,6 +295,18 @@ public class PublicationDetailsActivity
     }
 
     private void SetImage() {
+        int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
+        Drawable image = CommonUtil.GetBitmapDrawableFromFile(
+                publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
+        if (image != null) {
+            riv_image.setImageDrawable(image);
+            riv_image.setOnClickListener(this);
+        } else {
+            bImage = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
+            riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+        }
+
+/*
         if (publication.getImageByteArray() != null && publication.getImageByteArray().length > 0) {
             int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
             bImage = CommonUtil.decodeScaledBitmapFromByteArray(publication.getImageByteArray(), imageSize, imageSize);
@@ -381,6 +317,7 @@ public class PublicationDetailsActivity
             bImage = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
+*/
     }
 
     private void SetReportsList() {
@@ -393,14 +330,13 @@ public class PublicationDetailsActivity
 
     //region Facebook method
 
-    private void sharePhotoToFacebook(){
+    private void sharePhotoToFacebook() {
         //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
-        if(bImage != null) {
+        if (bImage != null) {
             SharePhoto photo = new SharePhoto.Builder()
                     .setBitmap(bImage)
-                    //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
+                            //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
                     .build();
-
 
 
             SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
@@ -691,7 +627,7 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
-                //todo
+                ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
                 FacebookSdk.sdkInitialize(getApplicationContext());
@@ -705,24 +641,20 @@ public class PublicationDetailsActivity
 
                 loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
 
-                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
-                {
+                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginResult loginResult)
-                    {
+                    public void onSuccess(LoginResult loginResult) {
                         sharePhotoToFacebook();
 
                     }
 
                     @Override
-                    public void onCancel()
-                    {
+                    public void onCancel() {
                         System.out.println("onCancel");
                     }
 
                     @Override
-                    public void onError (FacebookException exception)
-                    {
+                    public void onError(FacebookException exception) {
                         System.out.println("onError");
                     }
                 });
@@ -780,12 +712,12 @@ public class PublicationDetailsActivity
     private static final int LOADER_ID_NUM_OF_REGED = 0;
 
     private void StartNumOfRegedLoader() {
-        if(publication.getUniqueId() > 0)
+        if (publication.getUniqueId() > 0)
             getSupportLoaderManager().initLoader(LOADER_ID_NUM_OF_REGED, null, this);
     }
 
     private void RestartNumOfRegedLoader() {
-        if(publication.getUniqueId() > 0)
+        if (publication.getUniqueId() > 0)
             getSupportLoaderManager().restartLoader(LOADER_ID_NUM_OF_REGED, null, this);
     }
 
@@ -801,7 +733,7 @@ public class PublicationDetailsActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data == null) return;
+        if (data == null) return;
         ArrayList<RegisteredUserForPublication> regs
                 = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(data);
         if (regs != null && tv_num_of_reged != null) {
@@ -811,6 +743,107 @@ public class PublicationDetailsActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    //endregion
+
+    //region facebook
+
+    // For Facebook
+    private boolean canPresentShareDialogWithPhotos;
+    private CallbackManager callbackManager;
+    private LoginManager loginManager;
+    private ShareDialog shareDialog;
+    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
+        @Override
+        public void onCancel() {
+            Log.d("Facebook", "Canceled");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d("Facebook", String.format("Error: %s", error.toString()));
+            String message = error.getMessage();
+            showResult(message);
+        }
+
+        @Override
+        public void onSuccess(Sharer.Result result) {
+            Log.d("Facebook", "Success!");
+            if (result.getPostId() != null) {
+                //String id = result.getPostId();
+                String message = getString(R.string.successfully_posted_post);
+                showResult(message);
+            }
+        }
+
+        private void showResult(String message) {
+            Toast.makeText(PublicationDetailsActivity.this,
+                    message,
+                    Toast.LENGTH_LONG).show();
+        }
+    };
+
+    //endregion
+
+    //region Report dialog
+
+    private void ShowReportDialog() {
+        final Dialog reportDialog = new Dialog(this);
+        reportDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        reportDialog.setContentView(R.layout.select_report_dialog);
+
+        Button btn_whole = (Button) reportDialog.findViewById(R.id.btn_whole_report_dialog);
+        Button btn_half = (Button) reportDialog.findViewById(R.id.btn_half_report_dialog);
+        Button btn_few = (Button) reportDialog.findViewById(R.id.btn_few_report_dialog);
+
+        ReportButtonListener listener = new ReportButtonListener(reportDialog, this);
+        btn_whole.setOnClickListener(listener);
+        btn_half.setOnClickListener(listener);
+        btn_few.setOnClickListener(listener);
+
+        reportDialog.show();
+
+    }
+
+    public void ReportMade(int reportID){
+        PublicationReport report = new PublicationReport();
+        report.setReport(String.valueOf(reportID));
+        report.setPublication_id(publication.getUniqueId());
+        report.setPublication_version(publication.getVersion());
+        report.setDevice_uuid(CommonUtil.GetIMEI(this));
+        report.setDate_reported(new Date());
+
+        RegisterUnregisterReportService.startActionReportForPublication(this, report);
+    }
+
+    class ReportButtonListener implements View.OnClickListener {
+
+        public int reportId = -1;
+        private Dialog dialog;
+        private PublicationDetailsActivity callback;
+
+        public ReportButtonListener(Dialog dialog, PublicationDetailsActivity callback){
+            this.dialog = dialog;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btn_whole_report_dialog:
+                    reportId = 1;
+                    break;
+                case R.id.btn_half_report_dialog:
+                    reportId = 3;
+                    break;
+                case R.id.btn_few_report_dialog:
+                    reportId = 5;
+                    break;
+            }
+            dialog.dismiss();
+            callback.ReportMade(reportId);
+        }
     }
 
     //endregion

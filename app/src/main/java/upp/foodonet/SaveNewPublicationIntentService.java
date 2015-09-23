@@ -73,7 +73,7 @@ public class SaveNewPublicationIntentService extends IntentService implements IF
             Cursor negIdCursor = getContentResolver()
                     .query(FooDoNetSQLProvider.URI_GET_NEW_NEGATIVE_ID,
                             new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID}, null, null, null);
-            if (negIdCursor.moveToFirst()) {
+            if (negIdCursor != null && negIdCursor.moveToFirst()) {
                 newNegativeID = negIdCursor.getInt(
                         negIdCursor.getColumnIndex(FCPublication.PUBLICATION_NEW_NEGATIVE_ID));
                 newNegativeID = newNegativeID >= 0 ? -1 : newNegativeID;

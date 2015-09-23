@@ -20,6 +20,9 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -84,6 +87,10 @@ public class MapAndListActivity
 
     Button btn_navigate_share, btn_navigate_take;
     ImageButton btn_show_M, btn_show_L;
+    Button btn_side_menu_coll_exp_all;
+    Button btn_side_menu_coll_exp_my;
+    boolean is_smenu_lv_my_expanded = true;
+    boolean is_smenu_lv_all_expanded = true;
 
     int currentPageIndex;
 
@@ -135,6 +142,11 @@ public class MapAndListActivity
                 invalidateOptionsMenu();
             }
         };
+
+        btn_side_menu_coll_exp_my = (Button)findViewById(R.id.btn_collapse_expand_ll_my);
+        btn_side_menu_coll_exp_all = (Button)findViewById(R.id.btn_collapse_expand_ll_all);
+        btn_side_menu_coll_exp_my.setOnClickListener(this);
+        btn_side_menu_coll_exp_all.setOnClickListener(this);
 
         lv_side_menu_my = (ListView)findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView)findViewById(R.id.lv_side_menu_reg);
@@ -252,8 +264,25 @@ public class MapAndListActivity
                 if (currentPageIndex == PAGE_LIST) {
                     mainPager.setCurrentItem(0);
                 }
-                //case R.id.tgl_btn_take_maplst:
-                //   break;
+                break;
+            case R.id.btn_collapse_expand_ll_my:
+                if(is_smenu_lv_my_expanded){
+                    collapse(lv_side_menu_my);
+                    is_smenu_lv_my_expanded = false;
+                } else {
+                    expand(lv_side_menu_my);
+                    is_smenu_lv_my_expanded = true;
+                }
+                break;
+            case R.id.btn_collapse_expand_ll_all:
+                if(is_smenu_lv_all_expanded){
+                    collapse(lv_side_menu_reg);
+                    is_smenu_lv_all_expanded = false;
+                } else {
+                    expand(lv_side_menu_reg);
+                    is_smenu_lv_all_expanded = true;
+                }
+                break;
         }
     }
 
@@ -477,7 +506,8 @@ public class MapAndListActivity
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()){
             case 0:
-                if (data.moveToFirst()) {
+                if (data != null && data.moveToFirst()) {
+                    //Log.i(MY_TAG, "num of rows in adapter: " + data.getCount());
                     ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
                     if (publications == null) {
                         Log.e(MY_TAG, "error getting publications from sql");
@@ -571,5 +601,66 @@ public class MapAndListActivity
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    }
+        //endregion
+
+    //region Collapse-expand lists
+
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration(500);//(int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration(200);//((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
     //endregion
 }
