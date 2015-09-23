@@ -9,15 +9,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -27,16 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -54,21 +47,14 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
-import CommonUtilPackage.GetMyLocationAsync;
-import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
-import FooDoNetServerClasses.DownloadImageTask;
-import FooDoNetServerClasses.HttpServerConnectorAsync;
-import FooDoNetServerClasses.IDownloadImageCallBack;
-import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
@@ -81,25 +67,11 @@ public class PublicationDetailsActivity
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
 
-    public static final int POST_FACEBOOK = 64206;
+    public static final int REQUEST_CODE_POST_FACEBOOK = 64206;
+    public static final int REQUEST_CODE_EDIT_PUBLICATION = 1;
     private static final String PERMISSION = "publish_actions";
 
     private FCPublication publication;
-
-    //old:
-/*
-    private static final int PHOTO_RADIUS = 200;
-    private TextView subtitleTextView;
-    private TextView interestedPersonsCountTextView;
-    private TextView postAddressTextView;
-    private TextView publicationDescriptionTextView;
-    private ListView interestedsListView;
-    private ArrayAdapter<String> interestedsAdapter;
-    private Button cancelPublicationButton;
-    ImageButton btn_Menu;
-    Button btnCall, btnRishum, btnSms, btnNavigate;
-    private ImageButton photoButton;
-*/
 
     private AlertDialog cancelPublicationDialog;
     private Bitmap photoBmp;
@@ -209,9 +181,12 @@ public class PublicationDetailsActivity
 
         FCPublication pub = new FCPublication();
         if (resultCode == RESULT_OK) {
-            if (requestCode == POST_FACEBOOK) {
+            if (requestCode == REQUEST_CODE_POST_FACEBOOK) {
                 super.onActivityResult(requestCode, resultCode, data);
                 callbackManager.onActivityResult(requestCode, resultCode, data);
+            }
+            if(requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
+                //todo: implement saving edited publication
             }
         }
         if (resultCode == RESULT_CANCELED) {
@@ -609,19 +584,21 @@ public class PublicationDetailsActivity
                 popup.getMenuInflater().inflate(R.menu.pub_details_popup_menu, popup.getMenu());
                 //TODO: implement
                 MenuItem itemEdit = popup.getMenu().getItem(0);
-                SpannableString stringEdit = new SpannableString("Edit");
-                stringEdit.setSpan(new ForegroundColorSpan(Color.RED), 0, stringEdit.length(), 0);
+                SpannableString stringEdit = new SpannableString(getString(R.string.pub_det_menu_item_edit));
+                stringEdit.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringEdit.length(), 0);
                 itemEdit.setTitle(stringEdit);
 
                 MenuItem itemDelete = popup.getMenu().getItem(1);
-                SpannableString stringDelete = new SpannableString("Delete");
+                SpannableString stringDelete = new SpannableString(getString(R.string.pub_det_menu_item_deactivate));
                 stringDelete.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringDelete.length(), 0);
                 itemDelete.setTitle(stringDelete);
 
+/*
                 MenuItem itemDeactivate = popup.getMenu().getItem(2);
                 SpannableString stringDeactivate = new SpannableString("Deactivate");
                 stringDeactivate.setSpan(new ForegroundColorSpan(Color.YELLOW), 0, stringDeactivate.length(), 0);
                 itemDeactivate.setTitle(stringDeactivate);
+*/
 
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
@@ -700,8 +677,17 @@ public class PublicationDetailsActivity
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
-        // todo: implement menu
+        switch (item.getItemId()){
+            case R.id.pub_det_menu_item_edit:
+                Intent intent = new Intent(this, AddEditPublicationActivity.class);
+                intent.putExtra(AddEditPublicationActivity.PUBLICATION_KEY, publication);
+                startActivityForResult(intent, REQUEST_CODE_EDIT_PUBLICATION);
+
+                break;
+            case R.id.pub_det_menu_item_deactivate:
+                break;
+        }
+        //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
     }
 

@@ -54,7 +54,7 @@
         android:layout_below="@+id/imgAddPicture"
         android:layout_marginRight="13dp"
         android:layout_marginLeft="13dp">
-        <requestFocus />
+        <!--<requestFocus />-->
     </EditText>
 
     <AutoCompleteTextView
@@ -67,15 +67,15 @@
         android:layout_marginRight="13dp"
         android:layout_marginLeft="13dp"/>
 
-<!--
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
--->
+    <!--
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:visibility="gone"/>
+    -->
 
     <Button
         android:id="@+id/btn_start_date_time_add_pub"
@@ -99,26 +99,26 @@
         android:textSize="20dp"
         android:layout_marginTop="10dp"/>
 
-<!--
-    <Button
-        android:id="@+id/end_date_picker_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/no_date_set_string"
-        android:layout_below="@+id/start_date_picker_button"
-        android:layout_toLeftOf="@+id/startTitle"
-        android:layout_toStartOf="@+id/startTitle" />
+    <!--
+        <Button
+            android:id="@+id/end_date_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/no_date_set_string"
+            android:layout_below="@+id/start_date_picker_button"
+            android:layout_toLeftOf="@+id/startTitle"
+            android:layout_toStartOf="@+id/startTitle" />
 
-    <Button
-        android:id="@+id/start_date_picker_button"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/no_date_set_string"
-        android:layout_below="@+id/actv_address_new_publication"
-        android:layout_alignLeft="@+id/end_date_picker_button"
-        android:layout_alignStart="@+id/end_date_picker_button" />
+        <Button
+            android:id="@+id/start_date_picker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/no_date_set_string"
+            android:layout_below="@+id/actv_address_new_publication"
+            android:layout_alignLeft="@+id/end_date_picker_button"
+            android:layout_alignStart="@+id/end_date_picker_button" />
 
--->
+    -->
     <TextView
         android:id="@+id/tv_set_date_start_add_pub"
         android:layout_width="165dp"
@@ -148,7 +148,7 @@
         android:gravity="center_vertical|right"/>
 
     <EditText
-        android:id="@+id/add_phoneNumber"
+        android:id="@+id/et_additional_info_add_edit_pub"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="@string/add_phoneNumber_string"
@@ -156,12 +156,12 @@
         android:layout_below="@+id/btn_end_date_time_add_pub" />
 
     <EditText
-        android:id="@+id/another_details"
+        android:id="@+id/et_subtitle_add_edit_pub"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="@string/another_details_string"
         android:ems="10"
-        android:layout_below="@+id/add_phoneNumber"/>
+        android:layout_below="@+id/et_additional_info_add_edit_pub"/>
 
     <ImageButton
         android:layout_width="45dp"

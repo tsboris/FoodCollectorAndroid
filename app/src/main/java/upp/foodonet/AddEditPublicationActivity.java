@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -72,11 +73,14 @@ import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 
 
-public class AddNewFCPublicationActivity extends FragmentActivity
+public class AddEditPublicationActivity extends FragmentActivity
         implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,View.OnClickListener {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
+
+    //region Variables
+
     public static final String START_DATE_PICKER_KEY = "startDatePicker";
     public static final String START_TIME_PICKER_KEY = "startTimePicker";
     public static final String END_DATE_PICKER_KEY = "endDatePicker";
@@ -85,32 +89,22 @@ public class AddNewFCPublicationActivity extends FragmentActivity
     public static final int REQUEST_CAMERA = 1;
     public static final int SELECT_FILE = 2;
 
-    private EditText mTitleText;
 
 
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
+    private EditText et_publication_title;
     private AutoCompleteTextView atv_address;
-    private TextView tv_title;
+    private EditText et_subtitle;
     //private TextView mAddressTextView;
     private TextView mIdTextView;
-    private TextView mPhoneTextView;
+    private EditText et_additional_info;
     private TextView mWebTextView;
     private TextView mAttTextView;
     private GoogleApiClient mGoogleApiClient;
     private PlaceArrayAdapter mPlaceArrayAdapter;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
-
-    private static String timeStartString;
-    private static String dateStartString;
-    private static String timeEndString;
-    private static String dateEndString;
-
-    private static TextView startDateView;
-    private static TextView startTimeView;
-    private static TextView endDateView;
-    private static TextView endTimeView;
 
     private Button btn_date_start;
     private Button btn_date_end;
@@ -129,52 +123,71 @@ public class AddNewFCPublicationActivity extends FragmentActivity
     private Date startDate;
     private Date endDate;
 
+    private boolean isNew = false;
+
+    //endregion
+
+    //region Activity overrides
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_publication);
+        setContentView(R.layout.activity_add_edit_publication);
 
 
         Bundle extras = getIntent().getExtras();
         if(extras == null) {
             publication = new FCPublication();
+            isNew = true;
         } else {
             publication = (FCPublication)extras.get(PUBLICATION_KEY);
         }
 
-        mTitleText = (EditText) findViewById(R.id.et_title_new_publication);
+        et_publication_title = (EditText) findViewById(R.id.et_title_new_publication);
+        et_additional_info = (EditText) findViewById(R.id.et_additional_info_add_edit_pub);
+        et_additional_info.setInputType(InputType.TYPE_CLASS_NUMBER);
+        et_subtitle = (EditText)findViewById(R.id.et_subtitle_add_edit_pub);
+
+        if(!isNew){
+            et_publication_title.setText(publication.getTitle());
+            et_subtitle.setText(publication.getSubtitle());
+            et_additional_info.setText(publication.getContactInfo());
+        }
 
         // Auto complete
-        mGoogleApiClient = new GoogleApiClient.Builder(AddNewFCPublicationActivity.this)
+        mGoogleApiClient = new GoogleApiClient.Builder(AddEditPublicationActivity.this)
                 .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(AddNewFCPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddNewFCPublicationActivity.this)
+                .enableAutoManage(AddEditPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddEditPublicationActivity.this)
                 .addConnectionCallbacks(this)
                 .build();
         atv_address = (AutoCompleteTextView) findViewById(R.id
                 .actv_address_new_publication);
         atv_address.setThreshold(3);
-        //mNameTextView = (TextView) findViewById(R.id.name1);
-        //mAddressTextView = (TextView) findViewById(R.id.address);
-        //mIdTextView = (TextView) findViewById(R.id.place_id);
-        mPhoneTextView = (TextView) findViewById(R.id.add_phoneNumber);
-        mPhoneTextView.setInputType(InputType.TYPE_CLASS_NUMBER);
-        //mWebTextView = (TextView) findViewById(R.id.web);
-        //mAttTextView = (TextView) findViewById(R.id.att);
         atv_address.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
         atv_address.setAdapter(mPlaceArrayAdapter);
+
+        if(!isNew){
+            atv_address.setText(publication.getAddress());
+        }
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
         btn_date_start = (Button)findViewById(R.id.btn_start_date_time_add_pub);
         btn_date_end = (Button)findViewById(R.id.btn_end_date_time_add_pub);
         btn_date_start.setOnClickListener(this);
         btn_date_end.setOnClickListener(this);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        startDate = calendar.getTime();
-        calendar.add(Calendar.DATE, 1);
-        endDate = calendar.getTime();
+
+        if(isNew || publication.getEndingDate().compareTo(new Date()) <= 0){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            startDate = calendar.getTime();
+            calendar.add(Calendar.DATE, 1);
+            endDate = calendar.getTime();
+        } else {
+            startDate = publication.getStartingDate();
+            endDate = publication.getEndingDate();
+        }
         setDateTimeTextToButton(R.id.btn_start_date_time_add_pub);
         setDateTimeTextToButton(R.id.btn_end_date_time_add_pub);
 
@@ -187,6 +200,10 @@ public class AddNewFCPublicationActivity extends FragmentActivity
         mAddPicImageView = (ImageView)findViewById(R.id.imgAddPicture);
         mAddPicImageView.setOnClickListener(this);
 
+        if(!isNew){
+            TryLoadExistingImage();
+        }
+
         cameraBtn = (ImageButton)findViewById(R.id.btn_camera_add_pub);
         cameraBtn.setOnClickListener(this);
 
@@ -194,36 +211,61 @@ public class AddNewFCPublicationActivity extends FragmentActivity
         submitButton.setOnClickListener(this);
     }
 
-    private void setDateTimeTextToButton(int id){
-        switch (id){
-            case R.id.btn_start_date_time_add_pub:
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(startDate);
-                btn_date_start.setText(GetDateTimeStringFromCalendar(calendar));
-                break;
-            case R.id.btn_end_date_time_add_pub:
-                Calendar calendar1 = Calendar.getInstance();
-                calendar1.setTime(endDate);
-                btn_date_end.setText(GetDateTimeStringFromCalendar(calendar1));
-                break;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_add_new_fcpublication, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
-    private String GetDateTimeStringFromCalendar(Calendar calendar){
-        if(calendar == null)
-            return "";
-        String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
-        String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
-        String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
-        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
-        String years = String.valueOf(calendar.get(Calendar.YEAR));
-        return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    @Override
+    public void onBackPressed() {
+        //todo: if any data changed ask if user sure he want's to discard them
+        //if yes - return appropriate result code
     }
 
+    //endregion
+
+    //region image
+
+    private void TryLoadExistingImage(){
+        int imageSize = mAddPicImageView.getLayoutParams().height;
+        Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(
+                publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
+        if(imageDrawable != null)
+            mAddPicImageView.setImageDrawable(imageDrawable);
+    }
 
     private void selectImage() {
         final CharSequence[] items = { "Take Photo", "Choose from Library", "Cancel" };
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddNewFCPublicationActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddEditPublicationActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -308,6 +350,10 @@ public class AddNewFCPublicationActivity extends FragmentActivity
 
         }
     }
+
+    //endregion
+
+    //region Address autocomplete
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
@@ -423,133 +469,35 @@ public class AddNewFCPublicationActivity extends FragmentActivity
         Log.e(MY_TAG, "Google Places API connection suspended.");
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
+    //endregion
 
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
+    //region DateTime methods and picker dialog
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_new_fcpublication, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private static void setDateString(int year, int monthOfYear, int dayOfMonth) {
-
-        // Increment monthOfYear for Calendar/Date -> Time Format setting
-        monthOfYear++;
-        String mon = "" + monthOfYear;
-        String day = "" + dayOfMonth;
-
-        if (monthOfYear < 10)
-            mon = "0" + monthOfYear;
-        if (dayOfMonth < 10)
-            day = "0" + dayOfMonth;
-
-        dateStartString = day + "-" + mon + "-" + year;
-        dateEndString = day + "-" + mon + "-" + year;
-    }
-
-    private static void setTimeString(int hourOfDay, int minute, int mili) {
-        String hour = "" + hourOfDay;
-        String min = "" + minute;
-
-        if (hourOfDay < 10)
-            hour = "0" + hourOfDay;
-        if (minute < 10)
-            min = "0" + minute;
-
-        timeStartString = hour + ":" + min;// + ":00";
-        timeEndString = hour + ":" + min;
-    }
-
-    // DialogFragment used to pick a ToDoItem deadline date
-
-/*
-    public static class DatePickerFragment extends DialogFragment implements
-            DatePickerDialog.OnDateSetListener {
-
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            // Use the current date as the default date in the picker
-
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            setDateString(year, monthOfYear, dayOfMonth);
-
-            if(this.getTag() == START_DATE_PICKER_KEY)
-                startDatePickerButton.setText(dateStartString);
-            else
-                endDatePickerButton.setText(dateEndString);
-        }
-
-    }
-*/
-
-    // DialogFragment used to pick a ToDoItem deadline time
-
-/*
-    public static class TimePickerFragment extends DialogFragment implements
-            TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return
-            return new TimePickerDialog(getActivity(), this, hour, minute, true);
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-            setTimeString(hourOfDay, minute, 0);
-
-            if(this.getTag() == START_TIME_PICKER_KEY)
-                startTimePickerButton.setText(timeStartString);
-            else
-                endTimePickerButton.setText(timeEndString);
+    private void setDateTimeTextToButton(int id){
+        switch (id){
+            case R.id.btn_start_date_time_add_pub:
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                btn_date_start.setText(GetDateTimeStringFromCalendar(calendar));
+                break;
+            case R.id.btn_end_date_time_add_pub:
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.setTime(endDate);
+                btn_date_end.setText(GetDateTimeStringFromCalendar(calendar1));
+                break;
         }
     }
-*/
+
+    private String GetDateTimeStringFromCalendar(Calendar calendar){
+        if(calendar == null)
+            return "";
+        String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
+        String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
+        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
+        String years = String.valueOf(calendar.get(Calendar.YEAR));
+        return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    }
 
     private void showDatePickerDialog(int btnId) {
 
@@ -606,6 +554,10 @@ public class AddNewFCPublicationActivity extends FragmentActivity
         dtpDialog.show();
     }
 
+    //endregion
+
+    //region Click
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -631,8 +583,9 @@ public class AddNewFCPublicationActivity extends FragmentActivity
                 break;
             case R.id.publishButton:
                 Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
-                String title = mTitleText.getText().toString();
-                publication.setTitle(title);
+                publication.setTitle(et_publication_title.getText().toString());
+                publication.setSubtitle(et_subtitle.getText().toString());
+                publication.setContactInfo(et_additional_info.getText().toString());
                 publication.setStartingDate(startDate);
                 publication.setEndingDate(endDate);
 
@@ -652,4 +605,6 @@ public class AddNewFCPublicationActivity extends FragmentActivity
                 break;
         }
     }
+
+    //endregion
 }

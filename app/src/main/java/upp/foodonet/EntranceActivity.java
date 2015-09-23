@@ -162,7 +162,7 @@ public class EntranceActivity
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:
-                Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
+                Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, REQUEST_ADD_NEW_PUBLICATION);
                 TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
                 String imei = tm.getDeviceId();

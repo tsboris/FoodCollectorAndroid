@@ -217,14 +217,14 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     }
 
     public long getStartingDateUnixTime() {
-        return startingDate.getTime();
+        return startingDate.getTime()/1000;
     }
 
     public void setStartingDate(Date startingDate) {
         this.startingDate = startingDate;
     }
 
-    public void setStartingDate(long startingDate) {
+    public void setStartingDateUnixTime(long startingDate) {
         this.startingDate = new Date(startingDate * 1000);
     }
 
@@ -235,7 +235,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     }
 
     public long getEndingDateUnixTime() {
-        return endingDate.getTime();
+        return endingDate.getTime()/1000;
     }
 
     public void setEndingDate(Date endingDate) {
@@ -431,7 +431,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                     publication.setPublisherUID(cursor.getString(cursor.getColumnIndex(PUBLICATION_PUBLISHER_UUID_KEY)));
                     publication.setSubtitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_SUBTITLE_KEY)));
                     publication.setTypeOfCollecting(cursor.getInt(cursor.getColumnIndex(PUBLICATION_TYPE_OF_COLLECTION_KEY)));
-                    publication.setStartingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_STARTING_DATE_KEY)));
+                    publication.setStartingDateUnixTime(cursor.getLong(cursor.getColumnIndex(PUBLICATION_STARTING_DATE_KEY)));
                     publication.setEndingDate(cursor.getLong(cursor.getColumnIndex(PUBLICATION_ENDING_DATE_KEY)));
                     publication.setContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_CONTACT_INFO_KEY)));
                     publication.setIsOnAir(cursor.getInt(cursor.getColumnIndex(PUBLICATION_IS_ON_AIR_KEY)) == 1);
@@ -470,7 +470,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
             publication.setTypeOfCollecting(jo.getInt(PUBLICATION_TYPE_OF_COLLECTION_KEY) - 1);
             publication.setLatitude(jo.getDouble(PUBLICATION_LATITUDE_KEY));
             publication.setLongitude(jo.getDouble(PUBLICATION_LONGITUDE_KEY));
-            publication.setStartingDate(jo.getLong(PUBLICATION_STARTING_DATE_KEY));
+            publication.setStartingDateUnixTime(jo.getLong(PUBLICATION_STARTING_DATE_KEY));
             publication.setEndingDate(jo.getLong(PUBLICATION_ENDING_DATE_KEY));
             publication.setContactInfo(jo.getString(PUBLICATION_CONTACT_INFO_KEY));
             publication.setPhotoUrl(jo.getString(PUBLICATION_PHOTO_URL));
@@ -560,6 +560,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         publicationData.put(PUBLICATION_ADDRESS_KEY, getAddress());
         publicationData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
         publicationData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
+        long stt = getStartingDateUnixTime();
         publicationData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
         publicationData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
         publicationData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting() + 1);

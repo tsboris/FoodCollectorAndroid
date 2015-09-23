@@ -122,17 +122,14 @@ public class MyPublicationsActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MapAndListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
     }
 
     @Override
@@ -149,7 +146,7 @@ public class MyPublicationsActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_add_new_myPubsLst:
-                Intent addNewPubIntent = new Intent(this, AddNewFCPublicationActivity.class);
+                Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, 1);
                 break;
             case R.id.btn_take_mypubs:
@@ -232,10 +229,12 @@ public class MyPublicationsActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data == null)
+            return;
         switch (resultCode) {
-            case AddNewFCPublicationActivity.RESULT_OK:
+            case AddEditPublicationActivity.RESULT_OK:
                 FCPublication publication
-                        = (FCPublication) data.getExtras().get(AddNewFCPublicationActivity.PUBLICATION_KEY);
+                        = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
                 if (publication == null) {
                     Log.i(MY_TAG, "got no pub from AddNew");
                     return;
@@ -288,6 +287,8 @@ public class MyPublicationsActivity
         switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
+                if(result == null)
+                    Log.e(MY_TAG, "OnSQLTaskComplete got null request.publicationForDetails");
                 String myIMEI = CommonUtil.GetIMEI(this);
                 if (result.getPublisherUID() != null)
                     result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;

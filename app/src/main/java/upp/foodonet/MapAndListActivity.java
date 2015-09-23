@@ -98,6 +98,8 @@ public class MapAndListActivity
     ListView lv_side_menu_my;
     SideMenuCursorAdapter adapter_my;
     SideMenuCursorAdapter adapter_reg;
+
+    boolean isSideMenuOpened = false;
     //endregion
 
     //region Overrides of activity
@@ -134,12 +136,14 @@ public class MapAndListActivity
                 //getActionBar().setTitle("Title 1");
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
+                isSideMenuOpened = false;
             }
 
             public void onDrawerOpened(View drawerView) {
                 //getActionBar().setTitle("Title 2");
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
+                isSideMenuOpened = true;
             }
         };
 
@@ -218,6 +222,17 @@ public class MapAndListActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isSideMenuOpened){
+            drawerLayout.closeDrawer(ll_sideMenu);
+            return;
+        }
+        Intent intent = new Intent(this, MyPublicationsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
+
     //endregion
 
     //region Overrides of FooDoNetCustomActivityConnectedToService
@@ -267,18 +282,22 @@ public class MapAndListActivity
                 break;
             case R.id.btn_collapse_expand_ll_my:
                 if(is_smenu_lv_my_expanded){
+                    //adapter_my.swapCursor(null);
                     collapse(lv_side_menu_my);
                     is_smenu_lv_my_expanded = false;
                 } else {
+                    //RestartLoadingSideMenuMy();
                     expand(lv_side_menu_my);
                     is_smenu_lv_my_expanded = true;
                 }
                 break;
             case R.id.btn_collapse_expand_ll_all:
                 if(is_smenu_lv_all_expanded){
+                    //adapter_reg.swapCursor(null);
                     collapse(lv_side_menu_reg);
                     is_smenu_lv_all_expanded = false;
                 } else {
+                    //RestartLoadingSideMenuReg();
                     expand(lv_side_menu_reg);
                     is_smenu_lv_all_expanded = true;
                 }
@@ -581,6 +600,10 @@ public class MapAndListActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
+        if(request == null){
+            Log.e(MY_TAG, "OnSQLTaskComplete got null internalRequest");
+            return;
+        }
         switch (request.ActionCommand){
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 lv_side_menu_reg.clearChoices();

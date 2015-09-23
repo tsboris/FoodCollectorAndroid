@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="upp.foodonet" >
-
-    <!-- todo check if this uses-sdk can be removed -->
+    package="upp.foodonet" > <!-- todo check if this uses-sdk can be removed -->
     <uses-sdk tools:overrideLibrary="android.support.v17.leanback" />
 
     <!-- For internet -->
@@ -63,7 +61,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -99,7 +96,7 @@
             android:name=".AddNewFCPublicationActivity"
             android:label="@string/title_activity_add_new_fcpublication"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <!--
@@ -157,15 +154,16 @@
             android:name=".PublicationDetailsActivity"
             android:label="@string/title_activity_publication_details" >
         </activity>
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
-        <provider android:authorities="com.facebook.app.FacebookContentProvider451780775026519"
+
+        <provider
             android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider451780775026519"
             android:exported="true" />
 
         <service
@@ -183,6 +181,11 @@
             android:name=".RegisterUnregisterReportService"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".AddEditPublicationActivity"
+            android:label="@string/title_activity_add_edit_publication" >
+        </activity>
     </application>
 
 </manifest>
