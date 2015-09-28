@@ -216,6 +216,8 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         submitButton = (ImageButton) findViewById(R.id.publishButton);
         submitButton.setOnClickListener(this);
+
+        ArrangePublicationFromInput(publicationOldVersion);
     }
 
     @Override
@@ -254,7 +256,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-        ArrangePublicationAndReturnAsResult();
+        ArrangePublicationFromInput(publication);
         if(!publication.IsEqualTo(publicationOldVersion)) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
@@ -613,7 +615,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 break;
             case R.id.publishButton:
                 Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
-                ArrangePublicationAndReturnAsResult();
+                ArrangePublicationFromInput(publication);
                 ReturnPublication();
                 break;
         }
@@ -623,7 +625,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //region My methods
 
-    private void ArrangePublicationAndReturnAsResult(){
+    private void ArrangePublicationFromInput(FCPublication publication){
         publication.setTitle(et_publication_title.getText().toString());
         publication.setSubtitle(et_subtitle.getText().toString());
         publication.setContactInfo(et_additional_info.getText().toString());
@@ -632,7 +634,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         if(TextUtils.isEmpty(publication.getPublisherUID()))
             publication.setPublisherUID(CommonUtil.GetIMEI(this));
-        publication.setTypeOfCollecting( FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
+        publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
         //        chkCallToPublisher.isChecked()
         //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
         publication.setVersion(publication.getVersion() + 1);
