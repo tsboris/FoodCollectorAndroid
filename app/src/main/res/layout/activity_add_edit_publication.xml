@@ -85,8 +85,9 @@
         android:layout_below="@+id/actv_address_new_publication"
         android:layout_alignParentLeft="true"
         android:background="@android:color/transparent"
-        android:textSize="20dp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="13dp"/>
 
     <Button
         android:id="@+id/btn_end_date_time_add_pub"
@@ -96,8 +97,9 @@
         android:layout_below="@+id/btn_start_date_time_add_pub"
         android:layout_alignParentLeft="true"
         android:background="@android:color/transparent"
-        android:textSize="20dp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="13dp"/>
 
     <!--
         <Button
@@ -123,8 +125,7 @@
         android:id="@+id/tv_set_date_start_add_pub"
         android:layout_width="165dp"
         android:layout_height="@dimen/top_panel_height"
-        android:textSize="20dp"
-        android:paddingRight="11dp"
+        android:textSize="20sp"
         android:text="@string/start_string"
         android:layout_below="@+id/actv_address_new_publication"
         android:layout_alignParentRight="true"
@@ -137,12 +138,11 @@
         android:id="@+id/tv_set_date_end_add_pub"
         android:layout_width="165dp"
         android:layout_height="@dimen/top_panel_height"
-        android:textSize="20dp"
-        android:paddingRight="11dp"
+        android:textSize="20sp"
         android:text="@string/end_string"
         android:layout_below="@+id/tv_set_date_start_add_pub"
-        android:layout_alignRight="@+id/publishButton"
-        android:layout_alignEnd="@+id/publishButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:gravity="center_vertical|right"/>
