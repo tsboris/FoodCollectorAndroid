@@ -119,6 +119,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private Date mDate;
 
     private static FCPublication publication;
+    private static FCPublication publicationOldVersion;
 
     private Date startDate;
     private Date endDate;
@@ -141,7 +142,9 @@ public class AddEditPublicationActivity extends FragmentActivity
             isNew = true;
         } else {
             publication = (FCPublication)extras.get(PUBLICATION_KEY);
+            isNew = false;
         }
+        publicationOldVersion = new FCPublication(publication);
 
         et_publication_title = (EditText) findViewById(R.id.et_title_new_publication);
         et_additional_info = (EditText) findViewById(R.id.et_additional_info_add_edit_pub);
@@ -182,8 +185,12 @@ public class AddEditPublicationActivity extends FragmentActivity
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             startDate = calendar.getTime();
+            publication.setStartingDate(startDate);
+            publicationOldVersion.setStartingDate(startDate);
             calendar.add(Calendar.DATE, 1);
             endDate = calendar.getTime();
+            publication.setEndingDate(endDate);
+            publicationOldVersion.setEndingDate(endDate);
         } else {
             startDate = publication.getStartingDate();
             endDate = publication.getEndingDate();
@@ -247,8 +254,30 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-        //todo: if any data changed ask if user sure he want's to discard them
-        //if yes - return appropriate result code
+        ArrangePublicationAndReturnAsResult();
+        if(!publication.IsEqualTo(publicationOldVersion)) {
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            ForceReturn();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            return;
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+        } else {
+            ForceReturn();
+        }
+    }
+
+    private void ForceReturn(){
+        super.onBackPressed();
     }
 
     //endregion
@@ -584,27 +613,39 @@ public class AddEditPublicationActivity extends FragmentActivity
                 break;
             case R.id.publishButton:
                 Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
-                publication.setTitle(et_publication_title.getText().toString());
-                publication.setSubtitle(et_subtitle.getText().toString());
-                publication.setContactInfo(et_additional_info.getText().toString());
-                publication.setStartingDate(startDate);
-                publication.setEndingDate(endDate);
-
-                if(TextUtils.isEmpty(publication.getPublisherUID()))
-                    publication.setPublisherUID(CommonUtil.GetIMEI(this));
-                publication.setTypeOfCollecting( FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
-                //        chkCallToPublisher.isChecked()
-                //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
-                publication.setVersion(publication.getVersion() + 1);
-                publication.setIsOnAir(true);
-                publication.setIfTriedToGetPictureBefore(true);
-                Intent dataPublicationIntent = new Intent();
-                dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
-                // return data Intent and finish
-                setResult(RESULT_OK, dataPublicationIntent);
-                finish();
+                ArrangePublicationAndReturnAsResult();
+                ReturnPublication();
                 break;
         }
+    }
+
+    //endregion
+
+    //region My methods
+
+    private void ArrangePublicationAndReturnAsResult(){
+        publication.setTitle(et_publication_title.getText().toString());
+        publication.setSubtitle(et_subtitle.getText().toString());
+        publication.setContactInfo(et_additional_info.getText().toString());
+        publication.setStartingDate(startDate);
+        publication.setEndingDate(endDate);
+
+        if(TextUtils.isEmpty(publication.getPublisherUID()))
+            publication.setPublisherUID(CommonUtil.GetIMEI(this));
+        publication.setTypeOfCollecting( FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
+        //        chkCallToPublisher.isChecked()
+        //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
+        publication.setVersion(publication.getVersion() + 1);
+        publication.setIsOnAir(true);
+        publication.setIfTriedToGetPictureBefore(true);
+    }
+
+    private void ReturnPublication(){
+        Intent dataPublicationIntent = new Intent();
+        dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
+        // return data Intent and finish
+        setResult(RESULT_OK, dataPublicationIntent);
+        finish();
     }
 
     //endregion

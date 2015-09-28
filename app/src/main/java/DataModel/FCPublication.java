@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import upp.foodonet.PublicationDetailsActivity;
+
 /**
  * Created by artyomshapet on 6/29/15.
  */
@@ -64,6 +66,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public FCPublication() {
         setCountOfRegisteredUsers(0);
         setIfTriedToGetPictureBefore(false);
+        setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);
     }
 
     public FCPublication(int id, String publisherUID, String title, String subtitle, String address, FCTypeOfCollecting typeOfCollecting, double latitude, double longitude, Date startingDate, Date endingDate, String contactInfo, String photoUrl, boolean isOnAir) {
@@ -81,6 +84,50 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         setContactInfo(contactInfo);
         setPhotoUrl(photoUrl);
         setIsOnAir(isOnAir);
+    }
+
+    public FCPublication(FCPublication publication){
+        this();
+        if(publication == null) return;
+        setUniqueId(publication.getUniqueId());
+        setVersion(publication.getVersion());
+        setTitle(publication.getTitle());
+        setSubtitle(publication.getSubtitle());
+        setPublisherUID(publication.getPublisherUID());
+        setAddress(publication.getAddress());
+        setStartingDate(publication.getStartingDate());
+        setEndingDate(publication.getEndingDate());
+        setTypeOfCollecting(publication.getTypeOfCollecting());
+        setLatitude(publication.getLatitude());
+        setLongitude(publication.getLongitude());
+        setContactInfo(publication.getContactInfo());
+        setIsOnAir(publication.getIsOnAir());
+        setPhotoUrl(publication.getPhotoUrl());
+    }
+
+    public boolean IsEqualTo(FCPublication otherPublication){
+        if(getUniqueId() != otherPublication.getUniqueId()) return false;
+        if(getVersion() != otherPublication.getVersion()) return false;
+        if(CheckIfStringsDiffer(getTitle(), otherPublication.getTitle())) return false;
+        if(CheckIfStringsDiffer(getSubtitle(), otherPublication.getSubtitle())) return false;
+        if(CheckIfStringsDiffer(getPublisherUID(), otherPublication.getPublisherUID()))return false;
+        if(CheckIfStringsDiffer(getAddress(), otherPublication.getAddress())) return false;
+        if(getStartingDateUnixTime() != otherPublication.getStartingDateUnixTime()) return false;
+        if (getEndingDateUnixTime() != otherPublication.getEndingDateUnixTime()) return false;
+        if(getTypeOfCollecting() != otherPublication.getTypeOfCollecting()) return false;
+        if(getLatitude() != otherPublication.getLatitude()) return false;
+        if(getLongitude() != otherPublication.getLongitude()) return false;
+        if(CheckIfStringsDiffer(getContactInfo(), otherPublication.getContactInfo())) return false;
+        if(getIsOnAir() != otherPublication.getIsOnAir()) return false;
+        if(CheckIfStringsDiffer(getPhotoUrl(), otherPublication.getPhotoUrl())) return false;
+        return true;
+    }
+
+    private boolean CheckIfStringsDiffer(String string1, String string2){
+        if(string1 == null && string2 != null) return true;
+        if(string1 != null && string2 == null) return true;
+        if(string1 == null && string2 == null) return false;
+        return (string1.compareTo(string2) != 0);
     }
 
     // Create a new Item from data packaged in an Intent
