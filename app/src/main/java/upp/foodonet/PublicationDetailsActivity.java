@@ -186,7 +186,15 @@ public class PublicationDetailsActivity
                 callbackManager.onActivityResult(requestCode, resultCode, data);
             }
             if(requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
-                //todo: implement saving edited publication
+
+                    FCPublication publication
+                            = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
+                    if (publication == null) {
+                        Log.i(MY_TAG, "got no pub from AddNew");
+                        return;
+                    }
+                    //=============>
+                    AddEditPublicationService.StartSaveEditedPublication(getApplicationContext(), publication);
             }
         }
         if (resultCode == RESULT_CANCELED) {

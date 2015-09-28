@@ -354,6 +354,8 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return publicationReports;
     }
 
+    public boolean pictureWasChangedDuringEditing = false;
+
     public static String[] GetColumnNamesArray() {
         return
                 new String[]{
@@ -560,7 +562,6 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         publicationData.put(PUBLICATION_ADDRESS_KEY, getAddress());
         publicationData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
         publicationData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
-        long stt = getStartingDateUnixTime();
         publicationData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
         publicationData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
         publicationData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting() + 1);

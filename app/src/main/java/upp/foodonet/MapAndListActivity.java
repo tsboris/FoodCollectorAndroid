@@ -282,7 +282,7 @@ public class MapAndListActivity
                 break;
             case R.id.btn_collapse_expand_ll_my:
                 if(is_smenu_lv_my_expanded){
-                    //adapter_my.swapCursor(null);
+                    adapter_my.swapCursor(null);
                     collapse(lv_side_menu_my);
                     is_smenu_lv_my_expanded = false;
                 } else {

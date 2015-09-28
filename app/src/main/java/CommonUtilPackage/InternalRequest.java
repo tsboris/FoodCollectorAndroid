@@ -40,6 +40,8 @@ public class InternalRequest {
     public static final int ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB = 16;
     public static final int ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB = 17;
     public static final int ACTION_POST_REPORT_FOR_PUBLICATION = 18;
+    public static final int ACTION_PUT_EDIT_PUBLICATION = 19;
+    public static final int ACTION_SQL_SAVE_EDITED_PUBLICATION = 20;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -82,6 +84,7 @@ public class InternalRequest {
         ActionCommand = com;
         switch (ActionCommand){
             case ACTION_SQL_SAVE_NEW_PUBLICATION:
+            case ACTION_SQL_SAVE_EDITED_PUBLICATION:
             case ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
                 publicationForSaving = newPublication;
                 break;

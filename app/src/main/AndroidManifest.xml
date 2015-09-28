@@ -174,10 +174,6 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
         <service
-            android:name=".SaveNewPublicationIntentService"
-            android:exported="false" >
-        </service>
-        <service
             android:name=".RegisterUnregisterReportService"
             android:exported="false" >
         </service>
@@ -186,6 +182,11 @@
             android:name=".AddEditPublicationActivity"
             android:label="@string/title_activity_add_edit_publication" >
         </activity>
+
+        <service
+            android:name=".AddEditPublicationService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

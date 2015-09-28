@@ -264,6 +264,20 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 contentResolver.delete(FooDoNetSQLProvider.URI_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION,
                         removeWhereString, null);
                 break;
+            case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
+                Uri updateUri = params[0].publicationForSaving.getUniqueId() < 0
+                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
+                        : FooDoNetSQLProvider.CONTENT_URI;
+                int tmpIdToUpdate = params[0].publicationForSaving.getUniqueId();
+                long pub_id_toUpdate = params[0].publicationForSaving.getUniqueId() < 0
+                        ? params[0].publicationForSaving.getUniqueId() * -1
+                        : params[0].publicationForSaving.getUniqueId();
+                FCPublication pubToUpdate = params[0].publicationForSaving;
+                int rows = contentResolver.update(Uri.parse(updateUri + "/" + pub_id_toUpdate),
+                        pubToUpdate.GetContentValuesRow(), null, null);
+                if (rows > 0)
+                    Log.i(MY_TAG, "successfully updated publication in db after editing");
+                break;
         }
         return null;
     }
@@ -341,6 +355,11 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 break;
             case InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB:
                 callbackHandler.OnSQLTaskComplete(new InternalRequest(incomingRequest.ActionCommand, true));
+                break;
+            case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
+                InternalRequest res = new InternalRequest(incomingRequest.ActionCommand, true);
+                res.publicationForSaving = incomingRequest.publicationForSaving;
+                callbackHandler.OnSQLTaskComplete(res);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

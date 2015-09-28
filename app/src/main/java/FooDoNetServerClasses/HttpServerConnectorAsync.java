@@ -33,7 +33,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
@@ -53,6 +55,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private static final String REQUEST_METHOD_POST = "POST";
     private static final String REQUEST_METHOD_GET = "GET";
     private static final String REQUEST_METHOD_DELETE = "DELETE";
+    private static final String REQUEST_METHOD_PUT = "PUT";
 
     private String baseUrl;
     private IFooDoNetServerCallback callbackListener;
@@ -206,6 +209,33 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 return "";
             //endregion
+            //region edit publication
+            case InternalRequest.ACTION_PUT_EDIT_PUBLICATION:
+                if (params[0].publicationForSaving == null) {
+                    Log.e(MY_TAG, "got null pubForSaving!");
+                    return "";
+                }
+                publicationForSaving = params[0].publicationForSaving;
+                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(responseString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                responseString = "";
+                if (jsonObject == null) {
+                    Log.e(MY_TAG, "cant transform edit pub response to json");
+                    isSuccess = false;
+                    return "";
+                }
+                try {
+                    publicationForSaving.setVersion(jsonObject.getInt(FCPublication.PUBLICATION_VERSION_KEY));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return "";
+            //endregion
             //region case register user to system
             case InternalRequest.ACTION_POST_REGISTER:
                 publicationForSaving = params[0].publicationForSaving;
@@ -221,13 +251,15 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region case unregister from publication
             case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
                 registrationToPublicationToPost = params[0].myRegisterToPublication;
-                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, registrationToPublicationToPost, false);
+//                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, registrationToPublicationToPost, false);
+                TestDeleteWithBody(registrationToPublicationToPost, baseUrl + server_sub_path);
+
                 return "";
             //endregion
             //region case report for publication
             case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
                 publicationReport = params[0].publicationReport;
-                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, publicationReport, false);
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, publicationReport, true);
                 return "";
             //endregion
 
@@ -256,19 +288,13 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     connection.setAllowUserInteraction(false);
                     break;
                 case REQUEST_METHOD_POST:
-                case REQUEST_METHOD_DELETE:
+                case REQUEST_METHOD_PUT:
                     //connection.setDoInput(true);
                     connection.setDoOutput(true);
-/*
-                    String str = "{\"active_device\":{\"last_location_longitude\":34.85003149, \"dev_uuid\":\"353784052343615\", \"last_location_latitude\":32.11102827, \"is_ios\":\"false\", \"remote_notification_token\":\"1234\"}}";
-                    Log.e(MY_TAG, str);
-                    bytes = str.getBytes("UTF-8");
-                    connection.setRequestProperty("Content-length", String.valueOf(bytes.length));
-                    OutputStream outputStream = connection.getOutputStream();
-                    outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
-                    outputStream.flush();
-                    outputStream.close();
-*/
+                    break;
+                case REQUEST_METHOD_DELETE:
+                    connection.setRequestProperty("Content-length",
+                            String.valueOf(writableObject.GetJsonObjectForPost().toString().length()));
                     break;
             }
             //connection.connect();
@@ -284,56 +310,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
 
                 wr.writeBytes(out);
-
-                //wr.writeBytes(writableObject.GetJsonObjectForPost().toString());
                 wr.flush();
                 wr.close();
-/*                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                JSONObject jo = new JSONObject(writableObject.GetJsonMapStringObject());
-                Log.i(MY_TAG, jo.toString());
-                dos.write(jo.toString().getBytes("UTF-8"));
-                dos.flush();
-                dos.close();
-
-                 OutputStream outputStream = connection.getOutputStream();
-                //Map<String, Object> regData = writableObject.GetJsonMapStringObject();
-                //JSONObject jo = new JSONObject(regData);
-                //OutputStreamWriter osw = new OutputStreamWriter(outputStream);
-                //Log.wtf(MY_TAG, jo.toString());
-                //outputStream.write(bytes);//jo.toString().getBytes("UTF-8"));
-                //outputStream.flush();
-                //outputStream.close();
-                StringWriter sw = new StringWriter();
-
-                JsonWriter writer = new JsonWriter(sw);//new OutputStreamWriter(outputStream, "UTF-8"));
-                writableObject.WriteSelfToJSONWriter(writer);
-                String jsonS = sw.toString();
-                Log.i(MY_TAG, jsonS);
-
-                JsonWriter writerToStream = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                writableObject.WriteSelfToJSONWriter(writerToStream);
-                //writer.flush();
-                writer.close();
-                //outputStream.flush();
-                outputStream.close();
-
-
-              //
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuffer sb = new StringBuffer();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                String answer = sb.toString();
-                Log.i(MY_TAG, answer);
-
-                //*/
             }
-            //Log.i(MY_TAG, "sending: " + connection.toString());
             int connectionResponse = connection.getResponseCode();
-
 
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
@@ -398,29 +378,35 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         new InternalRequest(Action_Command_ID, publicationForSaving));
                 break;
             case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
-                Log.i(MY_TAG, "register to pub: " + (isSuccess? "ok":"fail"));
+                Log.i(MY_TAG, "register to pub: " + (isSuccess ? "ok" : "fail"));
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 break;
             case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
-                Log.i(MY_TAG, "unregister from pub: " + (isSuccess? "ok":"fail"));
+                Log.i(MY_TAG, "unregister from pub: " + (isSuccess ? "ok" : "fail"));
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 break;
             case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
-                Log.i(MY_TAG, "report for publication: " + (isSuccess? "ok":"fail"));
+                Log.i(MY_TAG, "report for publication: " + (isSuccess ? "ok" : "fail"));
                 callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
+                break;
+            case InternalRequest.ACTION_PUT_EDIT_PUBLICATION:
+                Log.i(MY_TAG, "save edited publication on server: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irEdit = new InternalRequest(Action_Command_ID, isSuccess);
+                irEdit.publicationForSaving = publicationForSaving;
+                callbackListener.OnServerRespondedCallback(irEdit);
                 break;
         }
     }
 
-    private ArrayList<FCPublication> tmpConnectReportsToPublications(ArrayList<FCPublication> publications, ArrayList<PublicationReport> reports){
+    private ArrayList<FCPublication> tmpConnectReportsToPublications(ArrayList<FCPublication> publications, ArrayList<PublicationReport> reports) {
         //ArrayList<Integer> validReports = new ArrayList<>();
-        for(PublicationReport report : reports){
+        for (PublicationReport report : reports) {
             int pubId = report.getPublication_id();
             int pubVersion = report.getPublication_version();
             FCPublication pub = FCPublication.GetPublicationFromArrayListByID(publications, pubId);
-            if(pub == null) continue;
-            if(pub.getVersion() == pubVersion){
-                if(pub.getPublicationReports() == null)
+            if (pub == null) continue;
+            if (pub.getVersion() == pubVersion) {
+                if (pub.getPublicationReports() == null)
                     pub.setPublicationReports(new ArrayList<PublicationReport>());
                 pub.getPublicationReports().add(report);
             }
@@ -568,4 +554,89 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
         return null;    }
         */
+
+    private void TestDeleteWithBody(ICanWriteSelfToJSONWriter object, String connString) {
+//        Map<String, Object> registrationData = new HashMap<String, Object>();
+
+
+//        registrationData.put("publication_id", 384);
+//        registrationData.put("active_device_dev_uuid", "DD42331F-3E58-43E2-979C-6A0AC0E5A5C0");
+//        registrationData.put("date_of_registration", 11243423); //this is for future use.
+//        //if you don't save the registration date, you can pass any number here (or just use this one)
+//        registrationData.put("publication_version", 1);
+//
+//        // make hash map
+//        Map<String, Object> dataToSend = new HashMap<String, Object>();
+//        dataToSend.put("registered_user_for_publication", registrationData);
+
+
+        // convert dataToSend to a valid json object
+//        org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+//        json.putAll(dataToSend);
+//        System.out.println(json);
+
+        try {
+
+            // 1. URL
+            URL url = new URL(connString);
+
+            // 2. Open connection
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            // 3. Specify DELETE method
+            conn.setRequestMethod("DELETE");
+
+            // 4. Set the headers
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
+            conn.setDoOutput(true);
+
+            // 5. Add JSON data into POST request body
+
+            // 5.1 Get connection output stream
+            // 5.2 write the json to bytes
+
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+
+            org.json.simple.JSONObject json = object.GetJsonObjectForPost();
+            String tstStr = json.toString();
+
+            wr.writeBytes(json.toString());
+
+            // 5.3 Send the request
+            wr.flush();
+
+            // 5.5 close
+            wr.close();
+
+            // 6. Get the response
+            int responseCode = conn.getResponseCode();
+            System.out.println("\nSending 'DELETE' request to URL : " + url);
+            System.out.println("Response Code : " + responseCode);
+
+            // 7. if the service returns something, this is how you read it back
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // 7. Print result
+            System.out.println(response.toString());
+
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+    }
 }

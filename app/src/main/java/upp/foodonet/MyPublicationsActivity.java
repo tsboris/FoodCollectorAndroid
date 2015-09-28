@@ -1,5 +1,6 @@
 package upp.foodonet;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -61,6 +62,8 @@ public class MyPublicationsActivity
     SearchView src_all_pub_listView;
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     Animation animZoomIn;
+
+    ProgressDialog progressDialog;
 
 /*    ToggleButton tgl_btn_navigate_share;
       ToggleButton tgl_btn_navigate_take;*/
@@ -233,6 +236,11 @@ public class MyPublicationsActivity
             return;
         switch (resultCode) {
             case AddEditPublicationActivity.RESULT_OK:
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle("Saving...");
+                progressDialog.show();
                 FCPublication publication
                         = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
                 if (publication == null) {
@@ -240,7 +248,7 @@ public class MyPublicationsActivity
                     return;
                 }
                 //=============>
-                SaveNewPublicationIntentService.StartSaveNewPublication(getApplicationContext(), publication);
+                AddEditPublicationService.StartSaveNewPublication(getApplicationContext(), publication);
                 break;
         }
     }
@@ -267,6 +275,9 @@ public class MyPublicationsActivity
                 lv_my_publications_list.setOnItemClickListener(this);
                 onClick(btn_active_pub);
                 break;
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE:
+                if(progressDialog != null)
+                    progressDialog.dismiss();
             default:
                 if(adapter != null)
                     RestartLoadingCursorForList();

@@ -295,6 +295,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         Log.i(MY_TAG, "Entered onActivityResult()");
 
         if (resultCode == RESULT_OK) {
+            publication.pictureWasChangedDuringEditing = true;
             if (requestCode == REQUEST_CAMERA)
             {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");

@@ -77,6 +77,7 @@
     <!-- Server strings -->
     <string name="server_base_url">https://prv-fd-server.herokuapp.com</string>
     <string name="server_add_new_publication_path">/publications.json</string>
+    <string name="server_edit_publication_path">/publications/{0}.json</string>
     <string name="server_get_publications_path">/publications</string>
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
