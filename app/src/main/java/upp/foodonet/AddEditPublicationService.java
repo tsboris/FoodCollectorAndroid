@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -130,25 +131,29 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 publication.setUniqueId(newNegativeID);
             }
         }
+        if(publication.getPhotoUrl() != null
+                && TextUtils.isEmpty(publication.getPhotoUrl())){
+            String partId = "n"
+                    + String.valueOf(publication.getUniqueId()>0?publication.getUniqueId():publication.getUniqueId()*-1);
+            String fileName = partId + "." + String.valueOf(publication.getVersion()) + ".jpg";
+            File sourceFile = new File(publication.getPhotoUrl());
+            File destinationFile = new File(Environment.getExternalStorageDirectory(), fileName);
+            try {
+                CommonUtil.CopyFile(sourceFile, destinationFile);
+                //todo: think how to check is it photo from libruary or shot right now.
+                //todo: if right now - it could be deleted
+//                if(sourceFile.exists())
+//                    sourceFile.delete();
+                publication.setPhotoUrl(destinationFile.getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         FooDoNetSQLExecuterAsync saveExecuter
                 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         saveExecuter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                 new InternalRequest(
                         InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, publication));
-    }
-
-    public void copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
     }
 
     @Override
@@ -159,6 +164,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                     Log.i(MY_TAG, "cant save new pub in sql");
                     return;
                 }
+/*
                 if(TextUtils.isEmpty(request.publicationForSaving.getPhotoUrl())){
                     File imageToSave = new File(request.publicationForSaving.getPhotoUrl());
                     File imageToSaveOnDevice=new File(Environment.getExternalStorageDirectory(),
@@ -167,11 +173,12 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                         imageToSaveOnDevice.delete();
                     }
                     try {
-                        copy(imageToSave, imageToSaveOnDevice);
+                        CommonUtil.CopyFile(imageToSave, imageToSaveOnDevice);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+*/
 
 
                 Log.i(MY_TAG, "new pub successfully saved in db, sending to server");
@@ -230,6 +237,24 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 Log.i(MY_TAG, "succeeded saving pub to server, new id: "
                         + response.publicationForSaving.getNewIdFromServer());
+                if (response.publicationForSaving.getPhotoUrl() != null
+                        && !TextUtils.isEmpty(response.publicationForSaving.getPhotoUrl())){
+                    String fileName
+                            = String.valueOf(response.publicationForSaving.getNewIdFromServer()) + "."
+                            + String.valueOf(response.publicationForSaving.getVersionFromServer()) + ".jpg";
+                    File sourceFile = new File(response.publicationForSaving.getPhotoUrl());
+                    File destinationFile = new File(Environment.getExternalStorageDirectory(), fileName);
+                    try {
+                        CommonUtil.CopyFile(sourceFile, destinationFile);
+                        //todo: think how to check is it photo from libruary or shot right now.
+                        //todo: if right now - it could be deleted
+//                        if(sourceFile.exists())
+//                            sourceFile.delete();
+                        response.publicationForSaving.setPhotoUrl(destinationFile.getPath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 FooDoNetSQLExecuterAsync executerAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 executerAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new InternalRequest(
                         InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER,

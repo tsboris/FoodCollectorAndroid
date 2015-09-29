@@ -276,8 +276,11 @@ public class MyPublicationsActivity
                 onClick(btn_active_pub);
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE:
-                if(progressDialog != null)
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS:
+                if(progressDialog != null){
                     progressDialog.dismiss();
+                    progressDialog = null;
+                }
             default:
                 if(adapter != null)
                     RestartLoadingCursorForList();

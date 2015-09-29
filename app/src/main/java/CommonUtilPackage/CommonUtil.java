@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.amazonaws.util.IOUtils;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,7 +17,10 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import upp.foodonet.R;
 
@@ -24,6 +28,8 @@ import upp.foodonet.R;
  * Created by Asher on 01.09.2015.
  */
 public class CommonUtil {
+
+    private static final String MY_TAG = "food_CommonUtil";
 
     public static String GetIMEI(Context context){
         TelephonyManager tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -156,5 +162,26 @@ public class CommonUtil {
         }
         return null;
     }
+
+    public static void CopyFile(File src, File dst) throws IOException {
+        if(!src.exists())
+            throw new IOException("CopyFile - source file doesn't exists");
+        if(dst.exists()){
+            Log.w(MY_TAG, "CopyFile - destination file exists and will be overwritten");
+            dst.delete();
+        }
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
 
 }

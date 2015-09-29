@@ -84,7 +84,12 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
         final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
-        Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg", 100, 100);
+        Drawable imageDrawable;
+        if(id <= 0){
+            Log.i(MY_TAG, "negative id");
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg", 100, 100);
+        } else
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg", 100, 100);
         if(imageDrawable != null)
             publicationImage.setImageDrawable(imageDrawable);
 /*        new Thread(new Runnable() {

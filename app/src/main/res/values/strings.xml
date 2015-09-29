@@ -82,7 +82,8 @@
     <string name="server_get_registered_for_publications">/publications/{0}/registered_user_for_publications</string>
     <string name="server_get_publication_report">/publications/{0}/publication_reports</string>
     <string name="server_post_register_to_publication">/publications/{0}/registered_user_for_publications.json</string>
-    <string name="server_post_unregister_from_publication">/publications/{0}/registered_user_for_publications/5</string>
+    <string name="server_post_unregister_from_publication_old">/publications/{0}/registered_user_for_publications/5</string>
+    <string name="server_post_unregister_from_publication">/publications/{0}/registered_user_for_publications/1?publication_version={1}&amp;active_device_dev_uuid={2}</string>
     <string name="server_post_report_to_publication">/publications/{0}/publication_reports.json</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>

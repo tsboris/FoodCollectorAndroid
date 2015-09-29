@@ -135,11 +135,13 @@ public class RegisterUnregisterReportService
         //if(true) return;
         String subPath = getResources().getString(R.string.server_post_unregister_from_publication);
         subPath = subPath.replace("{0}", String.valueOf(rufp.getPublication_id()));
+        subPath = subPath.replace("{1}", String.valueOf(rufp.getPublication_version()));
+        subPath = subPath.replace("{2}", rufp.getDevice_registered_uuid());
         HttpServerConnectorAsync connector
                 = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
         InternalRequest ir
                 = new InternalRequest(InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION, subPath);
-        ir.canWriteSelfToJSONWriterObject = rufp;
+        //ir.canWriteSelfToJSONWriterObject = rufp;
         ir.myRegisterToPublication = rufp;
         connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
     }

@@ -251,8 +251,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region case unregister from publication
             case InternalRequest.ACTION_POST_UNREGISTER_FROM_PUBLICATION:
                 registrationToPublicationToPost = params[0].myRegisterToPublication;
-//                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, registrationToPublicationToPost, false);
-                TestDeleteWithBody(registrationToPublicationToPost, baseUrl + server_sub_path);
+                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, registrationToPublicationToPost, false);
+//                TestDeleteWithBody(registrationToPublicationToPost, baseUrl + server_sub_path);
 
                 return "";
             //endregion
@@ -293,12 +293,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     connection.setDoOutput(true);
                     break;
                 case REQUEST_METHOD_DELETE:
-                    connection.setRequestProperty("Content-length",
-                            String.valueOf(writableObject.GetJsonObjectForPost().toString().length()));
                     break;
             }
             //connection.connect();
-            if (writableObject != null) {
+            if (writableObject != null && requestMethod != REQUEST_METHOD_DELETE) {
 
                 DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
                 String s = writableObject.GetJsonObjectForPost().toString();
@@ -555,7 +553,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         return null;    }
         */
 
-    private void TestDeleteWithBody(ICanWriteSelfToJSONWriter object, String connString) {
+//    private void TestDeleteWithBody(ICanWriteSelfToJSONWriter object, String connString) {
 //        Map<String, Object> registrationData = new HashMap<String, Object>();
 
 
@@ -575,68 +573,68 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 //        json.putAll(dataToSend);
 //        System.out.println(json);
 
-        try {
-
-            // 1. URL
-            URL url = new URL(connString);
-
-            // 2. Open connection
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            // 3. Specify DELETE method
-            conn.setRequestMethod("DELETE");
-
-            // 4. Set the headers
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Accept", "application/json");
-
-            conn.setDoOutput(true);
-
-            // 5. Add JSON data into POST request body
-
-            // 5.1 Get connection output stream
-            // 5.2 write the json to bytes
-
-            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-
-            org.json.simple.JSONObject json = object.GetJsonObjectForPost();
-            String tstStr = json.toString();
-
-            wr.writeBytes(json.toString());
-
-            // 5.3 Send the request
-            wr.flush();
-
-            // 5.5 close
-            wr.close();
-
-            // 6. Get the response
-            int responseCode = conn.getResponseCode();
-            System.out.println("\nSending 'DELETE' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-
-            // 7. if the service returns something, this is how you read it back
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // 7. Print result
-            System.out.println(response.toString());
-
-        } catch (MalformedURLException e) {
-
-            e.printStackTrace();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-    }
+//        try {
+//
+//            // 1. URL
+//            URL url = new URL(connString);
+//
+//            // 2. Open connection
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//
+//            // 3. Specify DELETE method
+//            conn.setRequestMethod("DELETE");
+//
+//            // 4. Set the headers
+//            conn.setRequestProperty("Content-Type", "application/json");
+//            conn.setRequestProperty("Accept", "application/json");
+//
+//            conn.setDoOutput(true);
+//
+//            // 5. Add JSON data into POST request body
+//
+//            // 5.1 Get connection output stream
+//            // 5.2 write the json to bytes
+//
+//            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+//
+//            org.json.simple.JSONObject json = object.GetJsonObjectForPost();
+//            String tstStr = json.toString();
+//
+//            wr.writeBytes(json.toString());
+//
+//            // 5.3 Send the request
+//            wr.flush();
+//
+//            // 5.5 close
+//            wr.close();
+//
+//            // 6. Get the response
+//            int responseCode = conn.getResponseCode();
+//            System.out.println("\nSending 'DELETE' request to URL : " + url);
+//            System.out.println("Response Code : " + responseCode);
+//
+//            // 7. if the service returns something, this is how you read it back
+//
+//            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            String inputLine;
+//            StringBuffer response = new StringBuffer();
+//
+//            while ((inputLine = in.readLine()) != null) {
+//                response.append(inputLine);
+//            }
+//            in.close();
+//
+//            // 7. Print result
+//            System.out.println(response.toString());
+//
+//        } catch (MalformedURLException e) {
+//
+//            e.printStackTrace();
+//
+//        } catch (IOException e) {
+//
+//            e.printStackTrace();
+//
+//        }
+//    }
 }

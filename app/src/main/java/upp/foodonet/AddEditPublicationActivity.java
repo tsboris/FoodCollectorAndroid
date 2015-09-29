@@ -637,7 +637,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
         //        chkCallToPublisher.isChecked()
         //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
-        publication.setVersion(publication.getVersion() + 1);
+        publication.setVersion(publication.getVersion());
         publication.setIsOnAir(true);
         publication.setIfTriedToGetPictureBefore(true);
     }

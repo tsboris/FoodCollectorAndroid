@@ -257,12 +257,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 }
                 RegisteredUserForPublication myRegistrationToCancel = params[0].myRegisterToPublication;
                 String removeWhereString =
-                        " " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + " = "
-                                + String.valueOf(myRegistrationToCancel.getId()) + " AND "
-                                + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = "
-                                + myRegistrationToCancel.getDevice_registered_uuid();
-                contentResolver.delete(FooDoNetSQLProvider.URI_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION,
+                        " " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + " = "
+                                + String.valueOf(myRegistrationToCancel.getPublication_id()) + " AND "
+                                + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = '"
+                                + myRegistrationToCancel.getDevice_registered_uuid() + "'";
+                int rowsDeleted = contentResolver.delete(FooDoNetSQLProvider.URI_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION,
                         removeWhereString, null);
+                Log.i(MY_TAG, "removed " + rowsDeleted + " rows - unregister");
                 break;
             case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
                 Uri updateUri = params[0].publicationForSaving.getUniqueId() < 0

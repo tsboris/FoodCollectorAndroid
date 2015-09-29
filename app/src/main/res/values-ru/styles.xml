@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:popupMenuStyle">@style/popup_menu_style</item>
-        <item name="android:fontFamily">Arial</item>
+        <!--<item name="android:fontFamily">Arial</item>-->
     </style>
 
     <style name="popup_menu_style" parent="@style/Widget.AppCompat.PopupMenu">

@@ -64,6 +64,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public static final String REPORST_MESSAGE_ARRAY = "reportsMessageArray";
 
     public FCPublication() {
+        setVersion(0);
         setCountOfRegisteredUsers(0);
         setIfTriedToGetPictureBefore(false);
         setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);
@@ -666,6 +667,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
 
     private byte[] BitmapToBytes(Bitmap bitmap){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        //todo: error null pointer could be thrown here, check if reproducable
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         return byteArray;
