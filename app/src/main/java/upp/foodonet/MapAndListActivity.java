@@ -147,13 +147,13 @@ public class MapAndListActivity
             }
         };
 
-        btn_side_menu_coll_exp_my = (Button)findViewById(R.id.btn_collapse_expand_ll_my);
-        btn_side_menu_coll_exp_all = (Button)findViewById(R.id.btn_collapse_expand_ll_all);
+        btn_side_menu_coll_exp_my = (Button) findViewById(R.id.btn_collapse_expand_ll_my);
+        btn_side_menu_coll_exp_all = (Button) findViewById(R.id.btn_collapse_expand_ll_all);
         btn_side_menu_coll_exp_my.setOnClickListener(this);
         btn_side_menu_coll_exp_all.setOnClickListener(this);
 
-        lv_side_menu_my = (ListView)findViewById(R.id.lv_side_menu_my);
-        lv_side_menu_reg = (ListView)findViewById(R.id.lv_side_menu_reg);
+        lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
+        lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
         adapter_my = new SideMenuCursorAdapter(this, null, 0);
         adapter_reg = new SideMenuCursorAdapter(this, null, 0);
         lv_side_menu_my.setAdapter(adapter_my);
@@ -224,7 +224,7 @@ public class MapAndListActivity
 
     @Override
     public void onBackPressed() {
-        if(isSideMenuOpened){
+        if (isSideMenuOpened) {
             drawerLayout.closeDrawer(ll_sideMenu);
             return;
         }
@@ -281,7 +281,7 @@ public class MapAndListActivity
                 }
                 break;
             case R.id.btn_collapse_expand_ll_my:
-                if(is_smenu_lv_my_expanded){
+                if (is_smenu_lv_my_expanded) {
                     adapter_my.swapCursor(null);
                     collapse(lv_side_menu_my);
                     is_smenu_lv_my_expanded = false;
@@ -292,7 +292,7 @@ public class MapAndListActivity
                 }
                 break;
             case R.id.btn_collapse_expand_ll_all:
-                if(is_smenu_lv_all_expanded){
+                if (is_smenu_lv_all_expanded) {
                     //adapter_reg.swapCursor(null);
                     collapse(lv_side_menu_reg);
                     is_smenu_lv_all_expanded = false;
@@ -353,7 +353,7 @@ public class MapAndListActivity
         if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
             return;
         SetCamera();
-        if(mainPagerAdapter != null)
+        if (mainPagerAdapter != null)
             mainPagerAdapter.NotifyListOnLocationChange(location);
     }
 
@@ -361,7 +361,8 @@ public class MapAndListActivity
     public void OnGotMyLocationCallback(Location location) {
         if (location != null)
             myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        OnReadyToUpdateCamera();
+        if (isMapLoaded)
+            OnReadyToUpdateCamera();
     }
 
     private Marker AddMarker(float latitude, float longtitude, String title, BitmapDescriptor icon) {
@@ -394,7 +395,7 @@ public class MapAndListActivity
 
     //region My methods
 
-    private void OnPublicationSelected(long publicationID){
+    private void OnPublicationSelected(long publicationID) {
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = publicationID;
@@ -427,7 +428,7 @@ public class MapAndListActivity
                 counter++;
             }
 
-            for ( Marker m : myMarkers.keySet()) {
+            for (Marker m : myMarkers.keySet()) {
                 latitude += m.getPosition().latitude;
                 longtitude += m.getPosition().longitude;
                 counter++;
@@ -475,24 +476,27 @@ public class MapAndListActivity
 
     //region SQL Loader methods
 
-    private void StartLoadingSideMenuMy(){
+    private void StartLoadingSideMenuMy() {
         getSupportLoaderManager().initLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE, null, this);
     }
-    private void RestartLoadingSideMenuMy(){
+
+    private void RestartLoadingSideMenuMy() {
         getSupportLoaderManager().restartLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE, null, this);
     }
 
-    private void StartLoadingSideMenuReg(){
+    private void StartLoadingSideMenuReg() {
         getSupportLoaderManager().initLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED, null, this);
     }
-    private void RestartLoadingSideMenuReg(){
+
+    private void RestartLoadingSideMenuReg() {
         getSupportLoaderManager().restartLoader(FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED, null, this);
     }
 
-    private void StartLoadingForMarkers(){
+    private void StartLoadingForMarkers() {
         getSupportLoaderManager().initLoader(0, null, this);
     }
-    private void RestartLoadingForMarkers(){
+
+    private void RestartLoadingForMarkers() {
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -501,11 +505,11 @@ public class MapAndListActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         android.support.v4.content.CursorLoader cursorLoader = null;
         String[] projection;
-        switch (id){
+        switch (id) {
             case 0:
                 projection = FCPublication.GetColumnNamesArray();
                 cursorLoader = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI,
-                                                                                projection, null, null, null);
+                        projection, null, null, null);
                 break;
             case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
             case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE:
@@ -523,7 +527,7 @@ public class MapAndListActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()){
+        switch (loader.getId()) {
             case 0:
                 if (data != null && data.moveToFirst()) {
                     //Log.i(MY_TAG, "num of rows in adapter: " + data.getCount());
@@ -536,7 +540,7 @@ public class MapAndListActivity
                     if (myMarkers == null)
                         myMarkers = new HashMap<>();
                     else {
-                        for(Marker m : myMarkers.keySet())
+                        for (Marker m : myMarkers.keySet())
                             m.remove();
                         myMarkers.clear();
                     }
@@ -544,21 +548,21 @@ public class MapAndListActivity
                         Bitmap markerIcon;
 
                         BitmapDescriptor icon = null;
-                        switch (publication.getUniqueId() % 3){
+                        switch (publication.getUniqueId() % 3) {
                             case 0:
                                 markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
                                         getResources(), R.drawable.map_marker_few, 13, 13);
-                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
                                 break;
                             case 1:
                                 markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
                                         getResources(), R.drawable.map_marker_half, 13, 13);
-                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
                                 break;
                             case 2:
                                 markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
                                         getResources(), R.drawable.map_marker_whole, 13, 13);
-                                icon = BitmapDescriptorFactory .fromBitmap(markerIcon);
+                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
                                 break;
                         }
                         myMarkers.put(AddMarker(publication.getLatitude().floatValue(),
@@ -591,7 +595,7 @@ public class MapAndListActivity
     @Override
     public void onBroadcastReceived(Intent intent) {
         super.onBroadcastReceived(intent);
-        if(isMapLoaded){
+        if (isMapLoaded) {
             RestartLoadingForMarkers();
         }
         RestartLoadingSideMenuMy();
@@ -600,11 +604,11 @@ public class MapAndListActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        if(request == null){
+        if (request == null) {
             Log.e(MY_TAG, "OnSQLTaskComplete got null internalRequest");
             return;
         }
-        switch (request.ActionCommand){
+        switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 lv_side_menu_reg.clearChoices();
                 lv_side_menu_my.clearChoices();
@@ -628,7 +632,7 @@ public class MapAndListActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     }
-        //endregion
+    //endregion
 
     //region Collapse-expand lists
 
@@ -639,13 +643,12 @@ public class MapAndListActivity
         // Older versions of android (pre API 21) cancel animations for views with a height of 0.
         v.getLayoutParams().height = 1;
         v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
+        Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
                 v.getLayoutParams().height = interpolatedTime == 1
                         ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
+                        : (int) (targetHeight * interpolatedTime);
                 v.requestLayout();
             }
 
@@ -663,14 +666,13 @@ public class MapAndListActivity
     public static void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
-        Animation a = new Animation()
-        {
+        Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
+                if (interpolatedTime == 1) {
                     v.setVisibility(View.GONE);
-                }else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
                     v.requestLayout();
                 }
             }
