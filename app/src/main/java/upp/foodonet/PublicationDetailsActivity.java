@@ -53,6 +53,7 @@ import java.util.List;
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
+import DataModel.FCTypeOfCollecting;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
@@ -61,8 +62,7 @@ import UIUtil.RoundedImageView;
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>
-{
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
@@ -154,7 +154,6 @@ public class PublicationDetailsActivity
             tv_num_of_reged.setText("0");
 */
         StartNumOfRegedLoader();
-        SetRegedUserIcon();
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
         SetReportsList();
@@ -185,16 +184,16 @@ public class PublicationDetailsActivity
                 super.onActivityResult(requestCode, resultCode, data);
                 callbackManager.onActivityResult(requestCode, resultCode, data);
             }
-            if(requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
+            if (requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
 
-                    FCPublication publication
-                            = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
-                    if (publication == null) {
-                        Log.i(MY_TAG, "got no pub from AddNew");
-                        return;
-                    }
-                    //=============>
-                    AddEditPublicationService.StartSaveEditedPublication(getApplicationContext(), publication);
+                FCPublication publication
+                        = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
+                if (publication == null) {
+                    Log.i(MY_TAG, "got no pub from AddNew");
+                    return;
+                }
+                //=============>
+                AddEditPublicationService.StartSaveEditedPublication(getApplicationContext(), publication);
             }
         }
         if (resultCode == RESULT_CANCELED) {
@@ -225,13 +224,6 @@ public class PublicationDetailsActivity
         StartGetMyLocation();
     }
 
-    private void SetRegedUserIcon() {
-        //todo:
-        // check if this icon can change according to data
-        // implement or set here or in xml it's constant drawable
-        iv_num_of_reged.setImageDrawable(getResources().getDrawable(R.drawable.icon_whole));
-    }
-
     private void ChooseButtonPanel() {
         if (publication.isOwnPublication) {
             ll_button_panel_my.setVisibility(View.VISIBLE);
@@ -249,8 +241,14 @@ public class PublicationDetailsActivity
             SetupRegisterUnregisterButton();
             btn_reg_unreg.setOnClickListener(this);
             btn_navigate.setOnClickListener(this);
-            btn_call_owner.setOnClickListener(this);
-            btn_sms_owner.setOnClickListener(this);
+            if (publication.getTypeOfCollecting() == FCTypeOfCollecting.ContactPublisher.ordinal()) {
+                btn_call_owner.setOnClickListener(this);
+                btn_sms_owner.setOnClickListener(this);
+            } else {
+                btn_call_owner.setEnabled(false);
+                btn_sms_owner.setEnabled(false);
+                //todo: change icon to gray - waiting for design from Olga
+            }
             btn_menu.setVisibility(View.GONE);
             //todo: visibility/functions of this button depend if user registered to this publication
             btn_leave_report.setOnClickListener(this);
@@ -263,6 +261,9 @@ public class PublicationDetailsActivity
                         ? R.drawable.cancel_rishum_pub_det_btn
                         : R.drawable.rishum_pub_det_btn));
         btn_reg_unreg.setImageDrawable(image);
+            iv_num_of_reged.setImageDrawable(isRegisteredForCurrentPublication
+                    ? getResources().getDrawable(R.drawable.user_icon_green)
+                    : getResources().getDrawable(R.drawable.user_icon_blue));
     }
 
     private boolean checkIfRegisteredForThisPublication() {
@@ -685,7 +686,7 @@ public class PublicationDetailsActivity
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.pub_det_menu_item_edit:
                 Intent intent = new Intent(this, AddEditPublicationActivity.class);
                 intent.putExtra(AddEditPublicationActivity.PUBLICATION_KEY, publication);
@@ -730,8 +731,8 @@ public class PublicationDetailsActivity
         if (data == null) return;
         ArrayList<RegisteredUserForPublication> regs
                 = RegisteredUserForPublication.GetArrayListOfRegisteredForPublicationsFromCursor(data);
-        if (regs != null && tv_num_of_reged != null) {
-            tv_num_of_reged.setText(String.valueOf(regs.size()));
+        if (tv_num_of_reged != null) {
+            tv_num_of_reged.setText(String.valueOf(regs != null ? regs.size() : 0));
         }
     }
 
@@ -800,7 +801,7 @@ public class PublicationDetailsActivity
 
     }
 
-    public void ReportMade(int reportID){
+    public void ReportMade(int reportID) {
         PublicationReport report = new PublicationReport();
         report.setReport(String.valueOf(reportID));
         report.setPublication_id(publication.getUniqueId());
@@ -817,7 +818,7 @@ public class PublicationDetailsActivity
         private Dialog dialog;
         private PublicationDetailsActivity callback;
 
-        public ReportButtonListener(Dialog dialog, PublicationDetailsActivity callback){
+        public ReportButtonListener(Dialog dialog, PublicationDetailsActivity callback) {
             this.dialog = dialog;
             this.callback = callback;
         }

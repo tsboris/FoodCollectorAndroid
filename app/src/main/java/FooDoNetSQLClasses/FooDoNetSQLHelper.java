@@ -66,10 +66,9 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
             case FILTER_ID_LIST_ALL_BY_LESS_REGS:
-                // not implemented yet
                 return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderByLessRegs();
             case FILTER_ID_LIST_ALL_BY_TEXT_FILTER:
                 imei = params[0];
                 String filterString = params[1];
@@ -148,6 +147,10 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                 + ") + (PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + " - " + longitude
                 + ")*(PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + " - " + longitude
                 + ") ASC";
+    }
+
+    private static final String getRawForListOrderByLessRegs(){
+        return " ORDER BY COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") ASC ";
     }
 
     private static final String getRawForListWhere(String tableName, String fieldName, String operator, String value, boolean isAdditional){
