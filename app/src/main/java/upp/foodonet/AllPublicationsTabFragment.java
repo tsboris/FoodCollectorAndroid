@@ -1,5 +1,6 @@
 package upp.foodonet;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -60,12 +61,15 @@ public class AllPublicationsTabFragment
     ListView lv_my_publications;
     SearchView sv_search_in_all_pubs;
     boolean preventOverflow = false;
+    boolean isFirstLoad = false;
 
     Button btn_close_search;
     Button btn_filter_closest;
     Button btn_filter_newest;
     Button btn_filter_less_regs;
 
+    ProgressDialog progressDialog;
+    boolean waitingForMyLocationForList = false;
     //Button btn_new_publication;
 
     @Nullable
@@ -101,10 +105,10 @@ public class AllPublicationsTabFragment
         //int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
-
         GetMyLocationAsync locationAsync
                 = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
         locationAsync.setGotLocationCallback(this);
+        isFirstLoad = true;
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return view;
@@ -209,11 +213,29 @@ public class AllPublicationsTabFragment
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
-        LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
-        adapter = new PublicationsListCursorAdapter(context, null, 0, locationData);
-        lv_my_publications.setAdapter(adapter);
-        lv_my_publications.setOnItemClickListener(this);
-        getLoaderManager().initLoader(0, null, this);
+        if(isFirstLoad){
+            isFirstLoad = false;
+            LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
+            if(locationData != null)
+                CommonUtil.UpdateFilterMyLocationPreferences(context, locationData);
+            adapter = new PublicationsListCursorAdapter(context, null, 0, locationData);
+            lv_my_publications.setAdapter(adapter);
+            lv_my_publications.setOnItemClickListener(this);
+            getLoaderManager().initLoader(0, null, this);
+            return;
+        }
+        if(waitingForMyLocationForList){
+            waitingForMyLocationForList = false;
+            if(progressDialog != null)
+                progressDialog.dismiss();
+            progressDialog = null;
+            preventOverflow = true;
+            sv_search_in_all_pubs.setFocusable(false);
+            sv_search_in_all_pubs.setQuery("", false);
+            sv_search_in_all_pubs.setFocusable(true);
+            preventOverflow = false;
+            StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
+        }
 
     }
 
@@ -249,12 +271,7 @@ public class AllPublicationsTabFragment
                 btn_filter_closest.startAnimation(animZoomIn);
                 btn_filter_newest.setAnimation(null);
                 btn_filter_less_regs.setAnimation(null);
-                preventOverflow = true;
-                sv_search_in_all_pubs.setFocusable(false);
-                sv_search_in_all_pubs.setQuery("", false);
-                sv_search_in_all_pubs.setFocusable(true);
-                preventOverflow = false;
-                StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
+                CheckIfMyLocationSavedInPreferencesAndLoad();
                 break;
             case R.id.btn_filter_newest_all_pubs:
                 btn_filter_closest.setAnimation(null);
@@ -290,6 +307,25 @@ public class AllPublicationsTabFragment
             adapter.swapCursor(null);
             currentFilterID = filterID;
             StartLoadingCursorForList(currentFilterID);
+        }
+    }
+
+    private void CheckIfMyLocationSavedInPreferencesAndLoad(){
+        LatLng myLocationFromPreferences = CommonUtil.GetFilterLocationFromPreferences(context);
+        if (myLocationFromPreferences.latitude == -1000
+                || myLocationFromPreferences.longitude == -1000){
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setTitle("Trying to get location data...");
+            progressDialog.show();
+            GetMyLocationAsync locationTask
+                    = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+            locationTask.setGotLocationCallback(this);
+            waitingForMyLocationForList = true;
+            locationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
         }
     }
 

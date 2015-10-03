@@ -52,11 +52,15 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     }
 
     public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params){
+        String imei = "";
         switch (filterID){
             case FILTER_ID_LIST_ALL_BY_CLOSEST:
+                imei = params[0];
+                String latitude = params[1];
+                String longitude = params[2];
                 return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
-                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", imei, false)
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderByDistance(latitude, longitude);
             case FILTER_ID_LIST_ALL_BY_NEWEST:
                 return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
@@ -67,7 +71,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
             case FILTER_ID_LIST_ALL_BY_TEXT_FILTER:
-                String imei = params[0];
+                imei = params[0];
                 String filterString = params[1];
                 if(TextUtils.isEmpty(filterString))
                     return GetRawSelectPublicationsForListByFilterID(FILTER_ID_LIST_ALL_BY_NEWEST);
@@ -136,6 +140,14 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     private static final String getRawForListOrderBy(String tableName, String fieldName, boolean isDesc){
         return " ORDER BY " + tableName + "." + fieldName + (isDesc? " DESC": " ASC");
+    }
+
+    private static final String getRawForListOrderByDistance(String latitude, String longitude){
+        return " ORDER BY (PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + " - " + latitude
+                + ")*(PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + " - " + latitude
+                + ") + (PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + " - " + longitude
+                + ")*(PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + " - " + longitude
+                + ") ASC";
     }
 
     private static final String getRawForListWhere(String tableName, String fieldName, String operator, String value, boolean isAdditional){

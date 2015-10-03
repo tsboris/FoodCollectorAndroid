@@ -192,4 +192,31 @@ public class CommonUtil {
         return result;
     }
 
+    public static LatLng GetFilterLocationFromPreferences(Context context){
+        SharedPreferences sp
+                = context.getSharedPreferences(
+                    context.getString(R.string.shared_preferences_my_location_key), Context.MODE_PRIVATE);
+        float lat = sp.getFloat(context.getString(R.string.shared_preferences_my_latitude_key), -1000);
+        float lon = sp.getFloat(context.getString(R.string.shared_preferences_my_longitude_key), -1000);
+        return new LatLng(lat, lon);
+    }
+
+    public static void UpdateFilterMyLocationPreferences(Context context, LatLng myLocation){
+        SharedPreferences sp
+                = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_my_location_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        if(sp.contains(context.getString(R.string.shared_preferences_my_latitude_key))){
+            editor.remove(context.getString(R.string.shared_preferences_my_latitude_key));
+            editor.commit();
+        }
+        if(sp.contains(context.getString(R.string.shared_preferences_my_longitude_key))){
+            editor.remove(context.getString(R.string.shared_preferences_my_longitude_key));
+            editor.commit();
+        }
+        editor.putFloat(context.getString(R.string.shared_preferences_my_latitude_key), ((float) myLocation.latitude));
+        editor.putFloat(context.getString(R.string.shared_preferences_my_longitude_key), ((float) myLocation.longitude));
+        editor.commit();
+    }
+
 }

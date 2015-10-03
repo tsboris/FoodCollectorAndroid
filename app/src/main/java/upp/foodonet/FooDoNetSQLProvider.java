@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.sql.SQLDataException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -200,6 +202,16 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 if(filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER
                         || filterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_TEXT_FILTER)
                     stringFilter = CommonUtil.GetFilterStringFromPreferences(this.getContext());
+                if(filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST){
+                    LatLng myLocation = CommonUtil.GetFilterLocationFromPreferences(this.getContext());
+                    String rawSelect = FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
+                            filterID, imei, String.valueOf(myLocation.latitude),
+                            String.valueOf(myLocation.longitude));
+                    return database.getReadableDatabase()
+                            .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
+                                    filterID, imei, String.valueOf(myLocation.latitude),
+                                    String.valueOf(myLocation.longitude)), null);
+                }
                 return database.getReadableDatabase()
                         .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
                                 filterID, imei, stringFilter), null);
