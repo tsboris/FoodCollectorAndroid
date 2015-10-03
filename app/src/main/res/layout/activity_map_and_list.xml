@@ -104,6 +104,17 @@
 
         </LinearLayout>
 
+        <ImageButton android:id="@+id/btn_center_on_my_location_map"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="100dp"
+            android:src="@drawable/map_my_location_button"
+            android:scaleType="fitCenter"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <LinearLayout
@@ -157,6 +168,7 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
+<!--
             <Button
                 android:id="@+id/btn_collapse_expand_ll_all"
                 android:layout_width="wrap_content"
@@ -166,6 +178,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="A"
                 android:textSize="20sp" />
+-->
             <!--
             -->
 
@@ -206,6 +219,7 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
+<!--
             <Button
                 android:id="@+id/btn_collapse_expand_ll_my"
                 android:layout_width="wrap_content"
@@ -215,6 +229,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="B"
                 android:textSize="20sp" />
+-->
 
         </RelativeLayout>
 

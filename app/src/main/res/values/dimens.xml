@@ -51,4 +51,13 @@
     <color name="transparent">#00000000</color>
     <!-- ====================== -->
 
+    <!-- === Map constants == -->
+
+    <item name="map_one_kilometer_for_calculation" type="dimen" format="float">0.009</item>
+    <integer name="map_max_distance_if_location_not_available">30</integer>
+    <integer name="map_max_distance_if_location_available">10</integer>
+    <integer name="map_refresh_my_location_frequency_milliseconds">10000</integer>
+    
+    <!-- ==================== -->
+
 </resources>

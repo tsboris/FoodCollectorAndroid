@@ -183,5 +183,13 @@ public class CommonUtil {
         out.close();
     }
 
+    public static String GetFilterStringFromPreferences(Context context){
+        SharedPreferences sp
+                = context.getSharedPreferences(
+                    context.getString(R.string.shared_preferences_text_filter_key),
+                    Context.MODE_PRIVATE);
+        String result = sp.getString(context.getString(R.string.shared_preferences_text_filter_text_key), "");
+        return result;
+    }
 
 }

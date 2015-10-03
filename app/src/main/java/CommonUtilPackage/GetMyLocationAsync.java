@@ -45,20 +45,22 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
             Log.e(MY_TAG, "could not get location!");
             return null;
         }
+        Log.i(MY_TAG, "got location! " + location.getLatitude() + ":" + location.getLongitude());
         gotLocation = true;
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
-        if(gotLocation){
-            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS);
-            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY, location);
+        if(context != null) {
+            Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+            if (gotLocation) {
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS);
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY, location);
+            } else
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
+            context.sendBroadcast(intent);
         }
-        else
-            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
-        context.sendBroadcast(intent);
         if(callback != null)
             callback.OnGotMyLocationCallback(location);
     }

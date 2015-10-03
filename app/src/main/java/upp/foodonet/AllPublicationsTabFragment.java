@@ -5,17 +5,23 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -26,8 +32,10 @@ import CommonUtilPackage.GetMyLocationAsync;
 import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import CommonUtilPackage.InternalRequest;
+import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 /**
  * Created by Asher on 26.08.2015.
@@ -35,17 +43,29 @@ import CommonUtilPackage.InternalRequest;
 public class AllPublicationsTabFragment
         extends android.support.v4.app.Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        AdapterView.OnItemClickListener, IFooDoNetSQLCallback, IGotMyLocationCallback {
+        AdapterView.OnItemClickListener, IFooDoNetSQLCallback, IGotMyLocationCallback, SearchView.OnQueryTextListener, View.OnClickListener {
 
     private static final String MY_TAG = "food_allPubs";
 
     private static final int ADD_TODO_ITEM_REQUEST = 0;
+
+    private int currentFilterID;
+
     //FCPublicationListAdapter mAdapter;
     private Context context;
     //SimpleCursorAdapter adapter;
     PublicationsListCursorAdapter adapter;
+    Animation animZoomIn;
 
     ListView lv_my_publications;
+    SearchView sv_search_in_all_pubs;
+    boolean preventOverflow = false;
+
+    Button btn_close_search;
+    Button btn_filter_closest;
+    Button btn_filter_newest;
+    Button btn_filter_less_regs;
+
     //Button btn_new_publication;
 
     @Nullable
@@ -58,6 +78,19 @@ public class AllPublicationsTabFragment
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_all_publications_activity, container, false);
         lv_my_publications = (ListView) view.findViewById(R.id.lv_all_active_publications);
+        sv_search_in_all_pubs = (SearchView) view.findViewById(R.id.sv_search_in_all_pubs);
+        sv_search_in_all_pubs.setOnQueryTextListener(this);
+        sv_search_in_all_pubs.setIconified(true);
+//        btn_close_search = (Button)sv_search_in_all_pubs.findViewById(R.id.search_close_btn);
+//        btn_close_search.setOnClickListener(this);
+        btn_filter_closest = (Button)view.findViewById(R.id.btn_filter_closest_all_pubs);
+        btn_filter_closest.setOnClickListener(this);
+        btn_filter_newest = (Button)view.findViewById(R.id.btn_filter_newest_all_pubs);
+        btn_filter_newest.setOnClickListener(this);
+        btn_filter_less_regs = (Button)view.findViewById(R.id.btn_filter_less_regs_all_pubs);
+        btn_filter_less_regs.setOnClickListener(this);
+
+        animZoomIn = AnimationUtils.loadAnimation(context, R.anim.zoom_in);
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
@@ -66,6 +99,9 @@ public class AllPublicationsTabFragment
                 /*,Distance(Double.parseDouble(FCPublication.PUBLICATION_LONGITUDE_KEY),Double.parseDouble(FCPublication.PUBLICATION_LATITUDE_KEY))*/
                /* ,FCPublication.PUBLICATION_PHOTO_URL*///};
         //int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
+
+        currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
+
         GetMyLocationAsync locationAsync
                 = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
         locationAsync.setGotLocationCallback(this);
@@ -89,26 +125,41 @@ public class AllPublicationsTabFragment
         super.onStart();
     }
 
+    private void StartLoadingCursorForList(int filterTypeID) {
+        getLoaderManager().initLoader(filterTypeID, null, this);
+    }
+
+    private void RestartLoadingCursorForList(){//int filterTypeID) {
+        getLoaderManager().restartLoader(currentFilterID, null, this);
+//        onLoaderReset(null);
+//        StartLoadingCursorForList(filterTypeID);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (context == null) return null;
         String[] projection = FCPublication.GetColumnNamesForListArray();
         android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(context, FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC, projection, null, null, null);
+                = new android.support.v4.content.CursorLoader(context,
+                Uri.parse(FooDoNetSQLProvider.URI_GET_PUBS_FOR_LIST_BY_FILTER_ID + "/" + id),
+                projection, null, null, null);
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
+        if(data != null && adapter != null){
+            adapter.swapCursor(data);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        if(adapter != null)
+            adapter.swapCursor(null);
     }
 
-/*
+    /*
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(context, AddNewFCPublicationActivity.class);
@@ -164,6 +215,82 @@ public class AllPublicationsTabFragment
         lv_my_publications.setOnItemClickListener(this);
         getLoaderManager().initLoader(0, null, this);
 
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {// on button search pressed
+        Log.i(MY_TAG, "text query: " + query);
+        sv_search_in_all_pubs.clearFocus();
+        FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(context, query);
+        btn_filter_closest.setAnimation(null);
+        btn_filter_newest.setAnimation(null);
+        btn_filter_less_regs.setAnimation(null);
+        StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {// on letter entered
+        Log.i(MY_TAG, "text newText: " + newText);
+        if(TextUtils.isEmpty(newText) && !preventOverflow){
+            Log.i(MY_TAG, "clean search button pressed");
+            sv_search_in_all_pubs.clearFocus();
+            onClick(btn_filter_newest);
+            sv_search_in_all_pubs.onActionViewCollapsed();
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        sv_search_in_all_pubs.onActionViewCollapsed();
+        switch (v.getId()){
+            case R.id.btn_filter_closest_all_pubs:
+                btn_filter_closest.startAnimation(animZoomIn);
+                btn_filter_newest.setAnimation(null);
+                btn_filter_less_regs.setAnimation(null);
+                preventOverflow = true;
+                sv_search_in_all_pubs.setFocusable(false);
+                sv_search_in_all_pubs.setQuery("", false);
+                sv_search_in_all_pubs.setFocusable(true);
+                preventOverflow = false;
+                StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
+                break;
+            case R.id.btn_filter_newest_all_pubs:
+                btn_filter_closest.setAnimation(null);
+                btn_filter_newest.startAnimation(animZoomIn);
+                btn_filter_less_regs.setAnimation(null);
+                preventOverflow = true;
+                sv_search_in_all_pubs.setFocusable(false);
+                sv_search_in_all_pubs.setQuery("", false);
+                sv_search_in_all_pubs.setFocusable(true);
+                preventOverflow = false;
+                StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
+                break;
+            case R.id.btn_filter_less_regs_all_pubs:
+                btn_filter_closest.setAnimation(null);
+                btn_filter_newest.setAnimation(null);
+                btn_filter_less_regs.startAnimation(animZoomIn);
+                preventOverflow = true;
+                sv_search_in_all_pubs.setFocusable(false);
+                sv_search_in_all_pubs.setQuery("", false);
+                sv_search_in_all_pubs.setFocusable(true);
+                preventOverflow = false;
+                StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_LESS_REGS);
+                break;
+//            case R.id.search_close_btn:
+//                break;
+        }
+    }
+
+    private void StartLoaderByFilterID(int filterID){
+        if(currentFilterID == filterID)
+            RestartLoadingCursorForList();
+        else {
+            adapter.swapCursor(null);
+            currentFilterID = filterID;
+            StartLoadingCursorForList(currentFilterID);
+        }
     }
 
     /*

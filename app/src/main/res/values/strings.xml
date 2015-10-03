@@ -35,9 +35,12 @@
     <string name="title_all_publications">שיתופים של אחרים</string>
     <string name="share_btn">שיתוף</string>
     <string name="pickup_btn">איסוף</string>
-    <string name="publication_ending">מסתיים</string>
-    <string name="publication_active">פעיל</string>
-    <string name="publication_not_active">לא פעיל</string>
+    <string name="filter_ending_btn_text">מסתיים</string>
+    <string name="filter_active_btn_text">פעיל</string>
+    <string name="filter_not_active_btn_text">לא פעיל</string>
+    <string name="filter_closest_btn_text">קרובים</string>
+    <string name="filter_newest_btn_text">חדשים</string>
+    <string name="filter_less_regs_btn_text">פחות נרשמו</string>
     <string name="leave_report_pub_details">דווח</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
@@ -95,6 +98,11 @@
     <!-- Shared Preferences keys -->
     <string name="shared_preferences_token">sp_token</string>
     <string name="shared_preferences_token_key">token_key</string>
+    <string name="shared_preferences_my_location_key">my_location_key</string>
+    <string name="shared_preferences_my_latitude_key">lat_key</string>
+    <string name="shared_preferences_my_longitude_key">lon_key</string>
+    <string name="shared_preferences_text_filter_key">text_filter_key</string>
+    <string name="shared_preferences_text_filter_text_key">text_filter_text_key</string>
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>

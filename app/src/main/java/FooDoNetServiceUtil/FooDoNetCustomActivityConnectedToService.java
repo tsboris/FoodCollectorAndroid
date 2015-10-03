@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -19,6 +20,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,7 @@ import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import FooDoNetServerClasses.ConnectionDetector;
 import upp.foodonet.FooDoNetService;
+import upp.foodonet.R;
 
 /**
  * Created by Asher on 31-Jul-15.
@@ -157,6 +160,8 @@ public abstract class FooDoNetCustomActivityConnectedToService
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS:
                 Location location = (Location)intent.getParcelableExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY);
                 OnGotMyLocationCallback(location);
+                if(location != null)
+                    UpdateMyLocationPreferences(new LatLng(location.getLatitude(), location.getLongitude()));
                 break;
         }
     }
@@ -165,8 +170,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
 
     public abstract void OnInternetNotConnected();
 
-    public void OnGotMyLocationCallback(Location location) {
-    }
+    public void OnGotMyLocationCallback(Location location) {}
 
     /*
         protected ServiceConnection mConnection = new ServiceConnection() {
@@ -211,6 +215,41 @@ public abstract class FooDoNetCustomActivityConnectedToService
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         GetMyLocationAsync locationAsync = new GetMyLocationAsync(locationManager, this);
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    protected void UpdateMyLocationPreferences(LatLng myLocation){
+        if(myLocation == null){
+            Log.e(MY_TAG, "got null myLocation (updateMyLocationPreferences)");
+            return;
+        }
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_my_location_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        if(sp.contains(getString(R.string.shared_preferences_my_latitude_key))){
+            editor.remove(getString(R.string.shared_preferences_my_latitude_key));
+            editor.commit();
+        }
+        if(sp.contains(getString(R.string.shared_preferences_my_longitude_key))){
+            editor.remove(getString(R.string.shared_preferences_my_longitude_key));
+            editor.commit();
+        }
+        editor.putFloat(getString(R.string.shared_preferences_my_latitude_key), ((float) myLocation.latitude));
+        editor.putFloat(getString(R.string.shared_preferences_my_longitude_key), ((float) myLocation.longitude));
+        editor.commit();
+    }
+
+    protected void UpdateFilterTextPreferences(String filterText){
+        UpdateFilterTextPreferences(this, filterText);
+    }
+
+    public static void UpdateFilterTextPreferences(Context ctx, String filterText){
+        SharedPreferences sp = ctx.getSharedPreferences(ctx.getString(R.string.shared_preferences_text_filter_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        if (sp.contains(ctx.getString(R.string.shared_preferences_text_filter_text_key))){
+            editor.remove(ctx.getString(R.string.shared_preferences_text_filter_text_key));
+            editor.commit();
+        }
+        editor.putString(ctx.getString(R.string.shared_preferences_text_filter_text_key), filterText);
+        editor.commit();
     }
 
 }

@@ -193,12 +193,16 @@ public class FooDoNetSQLProvider extends ContentProvider {
                         .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
                                 FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON, imei), null);
             case PUBLICATIONS_FOR_LIST_BY_FILTER_ID:
-                imei = CommonUtil.GetIMEI(this.getContext());
                 String filterIDStr = uri.getLastPathSegment();
                 int filterID = Integer.parseInt(filterIDStr);
+                String stringFilter = "";
+                imei = CommonUtil.GetIMEI(this.getContext());
+                if(filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER
+                        || filterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_TEXT_FILTER)
+                    stringFilter = CommonUtil.GetFilterStringFromPreferences(this.getContext());
                 return database.getReadableDatabase()
                         .rawQuery(FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
-                                filterID, imei), null);
+                                filterID, imei, stringFilter), null);
             case REGS_FOR_PUBLICATION:
                 queryBuilder.setTables(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME);
                 break;

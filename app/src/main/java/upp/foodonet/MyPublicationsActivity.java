@@ -59,7 +59,7 @@ public class MyPublicationsActivity
     //SimpleCursorAdapter adapter;
     PublicationsListCursorAdapter adapter;
 
-    SearchView src_all_pub_listView;
+    //SearchView src_all_pub_listView;
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     Animation animZoomIn;
 
@@ -73,7 +73,7 @@ public class MyPublicationsActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_publications);
 
-        src_all_pub_listView = (SearchView) findViewById(R.id.searchView1);
+        //src_all_pub_listView = (SearchView) findViewById(R.id.searchView1);
         btn_ending_pub = (Button) findViewById(R.id.btn_publication_ending);
         btn_ending_pub.setOnClickListener(this);
         btn_not_active_pub = (Button) findViewById(R.id.btn_publication_notActive);

@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.Button;
@@ -43,6 +45,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import Adapters.MainViewPagerAdapter;
@@ -87,6 +90,7 @@ public class MapAndListActivity
 
     Button btn_navigate_share, btn_navigate_take;
     ImageButton btn_show_M, btn_show_L;
+    ImageButton btn_focus_on_my_location;
     Button btn_side_menu_coll_exp_all;
     Button btn_side_menu_coll_exp_my;
     boolean is_smenu_lv_my_expanded = true;
@@ -100,6 +104,11 @@ public class MapAndListActivity
     SideMenuCursorAdapter adapter_reg;
 
     boolean isSideMenuOpened = false;
+
+    float kilometer_for_map;
+    Date lastLocationUpdateDate;
+    int myLocationRefreshRate;
+    int width, height;
     //endregion
 
     //region Overrides of activity
@@ -147,10 +156,13 @@ public class MapAndListActivity
             }
         };
 
-        btn_side_menu_coll_exp_my = (Button) findViewById(R.id.btn_collapse_expand_ll_my);
-        btn_side_menu_coll_exp_all = (Button) findViewById(R.id.btn_collapse_expand_ll_all);
-        btn_side_menu_coll_exp_my.setOnClickListener(this);
-        btn_side_menu_coll_exp_all.setOnClickListener(this);
+//        btn_side_menu_coll_exp_my = (Button) findViewById(R.id.btn_collapse_expand_ll_my);
+//        btn_side_menu_coll_exp_all = (Button) findViewById(R.id.btn_collapse_expand_ll_all);
+//        btn_side_menu_coll_exp_my.setOnClickListener(this);
+//        btn_side_menu_coll_exp_all.setOnClickListener(this);
+
+        btn_focus_on_my_location = (ImageButton) findViewById(R.id.btn_center_on_my_location_map);
+        btn_focus_on_my_location.setOnClickListener(this);
 
         lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
@@ -164,6 +176,14 @@ public class MapAndListActivity
         StartLoadingSideMenuReg();
 
         //endregion
+
+        TypedValue typedValue = new TypedValue();
+        getResources().getValue(R.dimen.map_one_kilometer_for_calculation, typedValue, true);
+        kilometer_for_map = typedValue.getFloat();
+        myLocationRefreshRate = getResources().getInteger(R.integer.map_refresh_my_location_frequency_milliseconds);
+        Point size = GetScreenSize();
+        width = size.x;
+        height = size.y;
 
         /*drawerList = (ListView)findViewById(R.id.list_slidermenu);
         drawerList.setOnItemClickListener(this);*/
@@ -280,6 +300,13 @@ public class MapAndListActivity
                     mainPager.setCurrentItem(0);
                 }
                 break;
+            case R.id.btn_center_on_my_location_map:
+                if (myLocation == null)
+                    return;
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(myLocation), width, height, 0);
+                googleMap.animateCamera(cu);
+                break;
+            /*
             case R.id.btn_collapse_expand_ll_my:
                 if (is_smenu_lv_my_expanded) {
                     adapter_my.swapCursor(null);
@@ -302,6 +329,7 @@ public class MapAndListActivity
                     is_smenu_lv_all_expanded = true;
                 }
                 break;
+            */
         }
     }
 
@@ -312,20 +340,45 @@ public class MapAndListActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        if (this.googleMap != null)
-            Toast.makeText(getBaseContext(), "Map loaded!", Toast.LENGTH_SHORT);
-        else {
+        if (this.googleMap != null) {
+            Toast.makeText(this, "Map loaded!", Toast.LENGTH_SHORT);
             isMapLoaded = true;
+        } else {
             myMarkers = new HashMap<>();
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
+/*
+        Location myLocationLoc = googleMap.getMyLocation();
+        if(myLocationLoc != null)
+            myLocation = new LatLng(myLocationLoc.getLatitude(), myLocationLoc.getLongitude());
+*/
 
         drawerLayout.setDrawerListener(mDrawerToggle);
 
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+/*
+        googleMap.setOnMyLocationButtonClickListener();
+        googleMap.setMyLocationEnabled();
+
+        // Get the button view
+        View locationButton = ((View) googleMap.get(1).getParent()).findViewById(2);
+
+        // and next place it, for exemple, on bottom right (as Google Maps app)
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        // position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        rlp.setMargins(0, 0, 30, 30);
+*/
+
         StartLoadingForMarkers();
         //getSupportLoaderManager().initLoader(0, null, this);
+
+        if (btn_focus_on_my_location != null)
+            btn_focus_on_my_location.setVisibility(View.VISIBLE);
 
         SetCamera();
     }
@@ -338,9 +391,20 @@ public class MapAndListActivity
 
     @Override
     public void onMyLocationChange(Location location) {
+        Log.i(MY_TAG, "got location update from map");
         if (location == null)
             return;
-
+        if (lastLocationUpdateDate == null)
+            lastLocationUpdateDate = new Date();
+        else {
+            long millisPassed = new Date().getTime() - lastLocationUpdateDate.getTime();
+            if (millisPassed < myLocationRefreshRate) {
+                Log.i(MY_TAG, millisPassed + " after last update, not updating");
+                return;
+            } else {
+                lastLocationUpdateDate = new Date();
+            }
+        }
 /*
         if(myLocation == null) {
             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.blue_dot_circle);
@@ -348,17 +412,22 @@ public class MapAndListActivity
         }
 */
         myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+/*
         if (GetDistance(myLocation, new LatLng(location.getLatitude(), location.getLongitude())) <= maxDistance)
             return;
+*/
         if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
             return;
         SetCamera();
-        if (mainPagerAdapter != null)
-            mainPagerAdapter.NotifyListOnLocationChange(location);
+        if (mainPagerAdapter != null){
+            //mainPagerAdapter.NotifyListOnLocationChange(location);
+            //UpdateMyLocationPreferences(new LatLng(location.getLatitude(), location.getLongitude()));
+        }
     }
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
+        Log.i(MY_TAG, "got location callback from task");
         if (location != null)
             myLocation = new LatLng(location.getLatitude(), location.getLongitude());
         if (isMapLoaded)
@@ -384,6 +453,8 @@ public class MapAndListActivity
     @Override
     public void onPageSelected(int position) {
         currentPageIndex = position;
+        if (btn_focus_on_my_location != null)
+            btn_focus_on_my_location.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -404,7 +475,6 @@ public class MapAndListActivity
 
     private void SetCamera() {
         if (myLocation == null) {
-            maxDistance = 0.009 * 40;
             StartGetMyLocation();
         } else {
             OnReadyToUpdateCamera();
@@ -412,13 +482,10 @@ public class MapAndListActivity
     }
 
     private void OnReadyToUpdateCamera() {
-        Point size = GetScreenSize();
-        int width = size.x;
-        int height = size.y;
         if (myMarkers != null && myMarkers.size() != 0) {
             double latitude = 0;
             double longtitude = 0;
-            int counter = 1;
+            int counter = 0;
             if (myLocation != null) {
                 if (average != null && GetDistance(average, myLocation) < maxDistance)
                     return;
@@ -426,28 +493,34 @@ public class MapAndListActivity
                 latitude += myLocation.latitude;
                 longtitude += myLocation.longitude;
                 counter++;
-            }
-
-            for (Marker m : myMarkers.keySet()) {
-                latitude += m.getPosition().latitude;
-                longtitude += m.getPosition().longitude;
-                counter++;
+                maxDistance = getResources().getInteger(R.integer.map_max_distance_if_location_available) * kilometer_for_map;
+            } else {
+                for (Marker m : myMarkers.keySet()) {
+                    latitude += m.getPosition().latitude;
+                    longtitude += m.getPosition().longitude;
+                    counter++;
+                }
+                maxDistance = getResources().getInteger(R.integer.map_max_distance_if_location_not_available) * kilometer_for_map;
             }
 
             average = new LatLng(latitude / counter, longtitude / counter);
+            Log.i(MY_TAG, "center coordinades: " + average.latitude + ":" + average.longitude);
 
-            maxDistance = 0;
-
-            if (myLocation != null)
+/*
+            if (myLocation != null && GetDistance(average, myLocation) < maxDistance)
                 maxDistance = GetDistance(average, myLocation);
+*/
 
+/*
             for (Marker m : myMarkers.keySet()) {
                 if (GetDistance(average, m.getPosition()) > maxDistance)
                     maxDistance = GetDistance(average, m.getPosition());
             }
+*/
 
         } else {
             average = myLocation;
+            Log.i(MY_TAG, "center coordinades (by my location): " + average.latitude + ":" + average.longitude);
         }
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(average), width, height, 0);// new LatLngBounds(southWest, northEast)
         googleMap.animateCamera(cu);
@@ -465,11 +538,10 @@ public class MapAndListActivity
     }
 
     private LatLngBounds GetBoundsByCenterLatLng(LatLng center) {
+        double distance = maxDistance * 1.5;
         return new LatLngBounds
-                (new LatLng(center.latitude - maxDistance * 1.5, center.longitude - maxDistance * 1.5),
-                        new LatLng(center.latitude + maxDistance * 1.5, center.longitude + maxDistance * 1.5));
-
-
+                (new LatLng(center.latitude - distance, center.longitude - distance),
+                        new LatLng(center.latitude + distance, center.longitude + distance));
     }
 
     //endregion

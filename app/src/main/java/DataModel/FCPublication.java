@@ -490,7 +490,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 result.add(publication);
             } while (cursor.moveToNext());
         }
-        cursor.close();
+        //cursor.close();
         return result;
     }
 
