@@ -303,6 +303,7 @@ public class PublicationDetailsActivity
         Drawable image = CommonUtil.GetBitmapDrawableFromFile(
                 publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
         if (image != null) {
+            // TODO - move init of facebook and twitter pictures
             bImageFacebook = ((BitmapDrawable) image).getBitmap();
             isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
             riv_image.setImageDrawable(image);
