@@ -219,4 +219,25 @@ public class CommonUtil {
         editor.commit();
     }
 
+    public static InputStream ConvertFileToInputStream(String fileName)
+    {
+        InputStream is = null;
+        File photo = new File(Environment.getExternalStorageDirectory(), fileName);
+        if(!photo.exists()) return null;
+
+        try {
+            is = new FileInputStream(photo.getPath());
+
+            //is.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return is;
+    }
+
 }

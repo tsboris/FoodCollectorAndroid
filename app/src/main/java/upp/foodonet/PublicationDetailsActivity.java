@@ -5,14 +5,18 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
@@ -45,6 +49,11 @@ import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,6 +68,10 @@ import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
+import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
@@ -104,8 +117,15 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
-
-    Bitmap bImage;
+    Bitmap bImageFacebook;
+    // Twitter
+    InputStream isImageTwitter;
+    private final Handler mTwitterHandler = new Handler();
+    final Runnable mUpdateTwitterNotification = new Runnable() {
+        public void run() {
+            Toast.makeText(getBaseContext(), "Tweet sent !", Toast.LENGTH_LONG).show();
+        }
+    };
 
     //region Activity
     @Override
@@ -283,10 +303,13 @@ public class PublicationDetailsActivity
         Drawable image = CommonUtil.GetBitmapDrawableFromFile(
                 publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
         if (image != null) {
+            bImageFacebook = ((BitmapDrawable) image).getBitmap();
+            isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
-            bImage = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
+            bImageFacebook = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);//Facebook
+            isImageTwitter = getResources().openRawResource(+ R.drawable.no_photo_placeholder);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
@@ -304,6 +327,7 @@ public class PublicationDetailsActivity
 */
     }
 
+
     private void SetReportsList() {
         adapter = new PublicationDetailsReportsAdapter(this,
                 R.layout.pub_details_report_item, publication.getPublicationReports());
@@ -312,13 +336,52 @@ public class PublicationDetailsActivity
 
     //endregion
 
-    //region Facebook method
+    //region Facebook methods
+    private void PostOnFacebook()
+    {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        callbackManager = CallbackManager.Factory.create();
+
+        List<String> permissionNeeds = Arrays.asList(PERMISSION);
+
+        //this loginManager helps you eliminate adding a LoginButton to your UI
+        loginManager = LoginManager.getInstance();
+
+        loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
+
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                sharePhotoToFacebook();
+
+            }
+
+            @Override
+            public void onCancel() {
+                System.out.println("onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                System.out.println("onError");
+            }
+        });
+
+        shareDialog = new ShareDialog(this);
+        shareDialog.registerCallback(
+                callbackManager,
+                shareCallback);
+
+        canPresentShareDialogWithPhotos = ShareDialog.canShow(SharePhotoContent.class);
+
+    }
 
     private void sharePhotoToFacebook() {
         //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
-        if (bImage != null) {
+        if (bImageFacebook != null) {
             SharePhoto photo = new SharePhoto.Builder()
-                    .setBitmap(bImage)
+                    .setBitmap(bImageFacebook)
                             //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
                     .build();
 
@@ -353,6 +416,49 @@ public class PublicationDetailsActivity
     private boolean hasPublishPermission() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         return accessToken != null && accessToken.getPermissions().contains(PERMISSION);
+    }
+    // endregion
+
+    // region Twitter methods
+    public void SendTweet() {
+        Thread t = new Thread() {
+            public void run() {
+
+                try {
+                    //InputStream isImageTwitter = getResources().openRawResource(R.drawable.foodonet_logo_200_200);
+                    PostTweet(getTweetMsg(), isImageTwitter);
+                    mTwitterHandler.post(mUpdateTwitterNotification);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        };
+        t.start();
+    }
+
+
+    public void PostTweet(String msg, InputStream is) throws Exception {
+        String token = getString(R.string.access_token);
+        String secret = getString(R.string.access_token_secret);
+        twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token,secret);
+        Twitter twitter = new TwitterFactory().getInstance();
+        twitter.setOAuthConsumer(getString(R.string.consumer_key), getString(R.string.consumer_secret));
+        twitter.setOAuthAccessToken(a);
+
+        twitter.getAccountSettings();
+        // Update status
+        StatusUpdate statusUpdate = new StatusUpdate(msg);
+        statusUpdate.setMedia("test.jpg", is);
+
+        twitter.updateStatus(statusUpdate);
+    }
+
+    private String getTweetMsg() {
+        return getString(R.string.hashtag) + " : " + getString(R.string.tweet_text) + " " + publication.getTitle() + ". " +
+                getString(R.string.tweet_question) + " " + new Date().toLocaleString() + "\n " +
+                getString(R.string.facebook_page_url);
     }
     // endregion
 
@@ -616,48 +722,13 @@ public class PublicationDetailsActivity
                 ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
-                FacebookSdk.sdkInitialize(getApplicationContext());
-
-                callbackManager = CallbackManager.Factory.create();
-
-                List<String> permissionNeeds = Arrays.asList(PERMISSION);
-
-                //this loginManager helps you eliminate adding a LoginButton to your UI
-                loginManager = LoginManager.getInstance();
-
-                loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
-
-                loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        sharePhotoToFacebook();
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        System.out.println("onCancel");
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        System.out.println("onError");
-                    }
-                });
-
-                shareDialog = new ShareDialog(this);
-                shareDialog.registerCallback(
-                        callbackManager,
-                        shareCallback);
-
-                canPresentShareDialogWithPhotos = ShareDialog.canShow(SharePhotoContent.class);
-
+                PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
                 //todo
                 break;
             case R.id.btn_tweet_my_pub_details:
-                //todo
+                SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
                 RegisteredUserForPublication newRegistrationForPub
