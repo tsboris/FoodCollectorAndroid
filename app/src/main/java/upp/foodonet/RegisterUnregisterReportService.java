@@ -3,9 +3,11 @@ package upp.foodonet;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -190,6 +192,29 @@ public class RegisterUnregisterReportService
             case InternalRequest.ACTION_POST_REPORT_FOR_PUBLICATION:
                 InternalRequest ire = response;
                 int com = ire.ActionCommand;
+                int reportNewNegativeID = -1;
+                Cursor reportNegIDCursor = getContentResolver().query(FooDoNetSQLProvider.URI_REPORT_GET_NEW_NEGATIVE_ID,
+                        new String[]{PublicationReport.PUBLICATION_REPORT_FIELD_KEY_NEG_ID}, null, null, null);
+                if(reportNegIDCursor.moveToFirst()){
+                    int idFromDB = reportNegIDCursor.getInt(
+                            reportNegIDCursor.getColumnIndex(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_NEG_ID));
+                    if(reportNewNegativeID > idFromDB)
+                        reportNewNegativeID = idFromDB;
+                }
+                myReportToPublication.setId(reportNewNegativeID);
+                getContentResolver().insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, myReportToPublication.GetContentValuesRow());
+                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                        ServicesBroadcastReceiver.ACTION_CODE_REPORT_TO_PUBLICATION_SUCCESS);
+                RegisteredUserForPublication regToDelete = new RegisteredUserForPublication();
+                regToDelete.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
+                regToDelete.setPublication_id(myReportToPublication.getPublication_id());
+                FooDoNetSQLExecuterAsync sqlExecuter1 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                InternalRequest irUnreg1 = new InternalRequest(InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB);
+                irUnreg1.myRegisterToPublication = myRegistrationToPublication;
+                sqlExecuter1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, irUnreg1);
+
+                //sendBroadcast(intent);
                 break;
             default:
                 Log.e(MY_TAG, "unexpected callback received from server");

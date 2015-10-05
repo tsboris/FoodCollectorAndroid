@@ -147,6 +147,12 @@ public class CommonUtil {
         }
     }
 
+    public static double GetDistanceInKM(LatLng point1, LatLng point2){
+        if(point1 == null || point2 == null)
+            return -1;
+        return GetKilometersBetweenLatLongs(point1, point2);
+    }
+
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, int width, int heigth){
         File photo = new File(Environment.getExternalStorageDirectory(), fileName);
         if(!photo.exists()) return null;
@@ -202,6 +208,10 @@ public class CommonUtil {
     }
 
     public static void UpdateFilterMyLocationPreferences(Context context, LatLng myLocation){
+        if(myLocation == null){
+            Log.e(MY_TAG, "UpdateFilterMyLocationPreferences got null location");
+        }
+        Log.i(MY_TAG, "UpdateFilterMyLocationPreferences saves myLocation: lat:" + myLocation.latitude + " long:" + myLocation.longitude);
         SharedPreferences sp
                 = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_my_location_key), Context.MODE_PRIVATE);
@@ -230,9 +240,6 @@ public class CommonUtil {
 
             //is.close();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

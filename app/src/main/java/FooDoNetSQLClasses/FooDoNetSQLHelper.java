@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import DataModel.FCPublication;
+import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 
 /**
@@ -169,6 +170,11 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " FROM " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME
             + " ORDER BY " + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + " LIMIT 1";
 
+    public static final String RAW_SELECT_NEW_NEGATIVE_ID_REPORT_FOR_PUBLICATION
+            = "SELECT " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID
+            + " - 1 AS " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_NEG_ID
+            + " FROM " + PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME
+            + " ORDER BY " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID + " LIMIT 1";
 
 /*
     public static final String RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC

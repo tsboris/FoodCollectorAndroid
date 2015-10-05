@@ -52,12 +52,18 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         super(context, c, flags);
         this.context = context;
         if(mLocation != null){
+            Log.i(MY_TAG, "PublicationsListCursorAdapter got location: "
+                    + mLocation.latitude + "-" + mLocation.longitude);
             myLocation = mLocation;
         }
 /*
         if(context!=null)
             amazonBaseAddress = context.getResources().getString(R.string.amazon_base_url_for_images);
 */
+    }
+
+    public void SetMyLocation(LatLng myLocation){
+        this.myLocation = myLocation;
     }
 
 /*

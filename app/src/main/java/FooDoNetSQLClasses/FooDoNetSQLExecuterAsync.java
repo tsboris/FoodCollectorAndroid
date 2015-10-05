@@ -56,6 +56,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
         if (params.length == 0) return null;
         incomingRequest = params[0];
         switch (incomingRequest.ActionCommand) {
+            //region Update db from server
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
                 publicationsFromServer = params[0].publications;
                 regUsersFromServer = params[0].registeredUsers;
@@ -120,6 +121,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     FCPublication.DeletePublicationFromCollectionByID(publicationsFromDB, i);
                 }
                 return null;
+            //endregion
+            //region get publications for list
             case InternalRequest.ACTION_SQL_GET_ALL_PUBS_FOR_LIST_BY_ID_DESC:
                 Cursor publicationsForListCursor
                         = contentResolver.query(FooDoNetSQLProvider.URI_GET_ALL_PUBS_FOR_LIST_ID_DESC,
@@ -127,6 +130,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 publicationsForList = FCPublication.GetArrayListOfPublicationsFromCursor(publicationsForListCursor, true);
                 publicationsForListCursor.close();
                 break;
+            //endregion
+            //region Save new/edited publication
             case InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION:
                 if (params[0].publicationForSaving == null) {
                     Log.e(MY_TAG, "got null publication for saving");
@@ -154,6 +159,39 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 Log.i(MY_TAG, "insert succeeded! id: " + newPublicationForSaving.getUniqueId()
                         + "; new row url: " + newRowURLForLog);
                 break;
+            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
+                Uri getUpdateUri = params[0].publicationForSaving.getUniqueId() < 0
+                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
+                        : FooDoNetSQLProvider.CONTENT_URI;
+                int tmpIdToDelete = params[0].publicationForSaving.getUniqueId();
+                long pubIdToUpdate = params[0].publicationForSaving.getUniqueId() < 0
+                        ? params[0].publicationForSaving.getUniqueId() * -1
+                        : params[0].publicationForSaving.getUniqueId();
+                FCPublication publication = params[0].publicationForSaving;
+                publication.setUniqueId(publication.getNewIdFromServer());
+                publication.setVersion(publication.getVersionFromServer());
+                int rowsUpdated = contentResolver.update(Uri.parse(getUpdateUri + "/" + pubIdToUpdate), publication.GetContentValuesRow(), null, null);
+                if (rowsUpdated > 0)
+                    Log.i(MY_TAG, "successfully updated new id and version");
+                rowsUpdated = 0;
+                publicationAfterUpdate = publication;
+                break;
+            case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
+                Uri updateUri = params[0].publicationForSaving.getUniqueId() < 0
+                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
+                        : FooDoNetSQLProvider.CONTENT_URI;
+                int tmpIdToUpdate = params[0].publicationForSaving.getUniqueId();
+                long pub_id_toUpdate = params[0].publicationForSaving.getUniqueId() < 0
+                        ? params[0].publicationForSaving.getUniqueId() * -1
+                        : params[0].publicationForSaving.getUniqueId();
+                FCPublication pubToUpdate = params[0].publicationForSaving;
+                int rows = contentResolver.update(Uri.parse(updateUri + "/" + pub_id_toUpdate),
+                        pubToUpdate.GetContentValuesRow(), null, null);
+                if (rows > 0)
+                    Log.i(MY_TAG, "successfully updated publication in db after editing");
+                break;
+            //endregion
+            //region get single publication
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 Uri getPubUri = params[0].PublicationID < 0
                         ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
@@ -192,39 +230,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     resultPublication.setPublicationReports(reports);
                 publicationDetailsByID = resultPublication;
                 break;
-            case InternalRequest.ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
-                Uri getUpdateUri = params[0].publicationForSaving.getUniqueId() < 0
-                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
-                        : FooDoNetSQLProvider.CONTENT_URI;
-                int tmpIdToDelete = params[0].publicationForSaving.getUniqueId();
-                long pubIdToUpdate = params[0].publicationForSaving.getUniqueId() < 0
-                        ? params[0].publicationForSaving.getUniqueId() * -1
-                        : params[0].publicationForSaving.getUniqueId();
-                FCPublication publication = params[0].publicationForSaving;
-                publication.setUniqueId(publication.getNewIdFromServer());
-                publication.setVersion(publication.getVersionFromServer());
-                int rowsUpdated = contentResolver.update(Uri.parse(getUpdateUri + "/" + pubIdToUpdate), publication.GetContentValuesRow(), null, null);
-                if (rowsUpdated > 0)
-                    Log.i(MY_TAG, "successfully updated new id and version");
-                rowsUpdated = 0;
-                publicationAfterUpdate = publication;
-/*  No need to delete - update works fine
-                Uri deleteUri = tmpIdToDelete < 0 ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE:FooDoNetSQLProvider.CONTENT_URI;
-                int idToDelete = tmpIdToDelete < 0 ? tmpIdToDelete * -1 : tmpIdToDelete;
-                rowsUpdated = contentResolver.delete(Uri.parse(deleteUri + "/" + idToDelete), null, null);
-                if(rowsUpdated > 0)
-                    Log.i(MY_TAG, "successfully deleted rows: " + rowsUpdated);
-*/
-                //throw new UnsupportedOperationException("yet implemented updating id");
-                break;
-            case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
-                Map<Integer, byte[]> imgToPub = params[0].publicationImageMap;
-                ContentValues cv = new ContentValues();
-                for (int pubId : imgToPub.keySet()) {
-                    cv.put(String.valueOf(pubId), imgToPub.get(pubId));
-                }
-                int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null, null);
-                break;
+            //endregion
+            //region register/unregister to publication
             case InternalRequest.ACTION_SQL_ADD_MYSELF_TO_REGISTERED_TO_PUB:
                 if(params[0].myRegisterToPublication == null){
                     Log.e(MY_TAG, "no data in myRegisterToPublication");
@@ -265,19 +272,14 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                         removeWhereString, null);
                 Log.i(MY_TAG, "removed " + rowsDeleted + " rows - unregister");
                 break;
-            case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
-                Uri updateUri = params[0].publicationForSaving.getUniqueId() < 0
-                        ? FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE
-                        : FooDoNetSQLProvider.CONTENT_URI;
-                int tmpIdToUpdate = params[0].publicationForSaving.getUniqueId();
-                long pub_id_toUpdate = params[0].publicationForSaving.getUniqueId() < 0
-                        ? params[0].publicationForSaving.getUniqueId() * -1
-                        : params[0].publicationForSaving.getUniqueId();
-                FCPublication pubToUpdate = params[0].publicationForSaving;
-                int rows = contentResolver.update(Uri.parse(updateUri + "/" + pub_id_toUpdate),
-                        pubToUpdate.GetContentValuesRow(), null, null);
-                if (rows > 0)
-                    Log.i(MY_TAG, "successfully updated publication in db after editing");
+            //endregion
+            case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:
+                Map<Integer, byte[]> imgToPub = params[0].publicationImageMap;
+                ContentValues cv = new ContentValues();
+                for (int pubId : imgToPub.keySet()) {
+                    cv.put(String.valueOf(pubId), imgToPub.get(pubId));
+                }
+                int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null, null);
                 break;
         }
         return null;

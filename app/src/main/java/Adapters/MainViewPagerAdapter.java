@@ -5,6 +5,7 @@ import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,6 +19,8 @@ import upp.foodonet.AllPublicationsTabFragment;
  * Created by Asher on 20.06.2015.
  */
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
+
+    private static final String MY_TAG = "food_pagerAdapter";
 
     SupportMapFragment mapFragment;
     AllPublicationsTabFragment allPublicationsTabFragment;
@@ -73,6 +76,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void NotifyListOnLocationChange(Location location){
+        Log.i(MY_TAG, "updating location from map to list");
         allPublicationsTabFragment.OnGotMyLocationCallback(location);
     }
 }

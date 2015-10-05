@@ -402,6 +402,8 @@ public class MapAndListActivity
                 Log.i(MY_TAG, millisPassed + " after last update, not updating");
                 return;
             } else {
+                Log.i(MY_TAG, "updating location! lat: " + location.getLatitude()
+                        + "; long: " + location.getLongitude());
                 lastLocationUpdateDate = new Date();
             }
         }
@@ -411,18 +413,18 @@ public class MapAndListActivity
             myLocation = AddMarker(((float)location.getLatitude()), (float)location.getLongitude(), getString(R.string.my_location), icon);
         }
 */
+        if (myLocation != null && myLocation.latitude == location.getLatitude() && myLocation.longitude == location.getLongitude())
+            return;
         myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        if (mainPagerAdapter != null){
+            mainPagerAdapter.NotifyListOnLocationChange(location);
+        }
+        SetCamera();
 /*
         if (GetDistance(myLocation, new LatLng(location.getLatitude(), location.getLongitude())) <= maxDistance)
             return;
 */
-        if (myLocation == new LatLng(location.getLatitude(), location.getLongitude()))
-            return;
-        SetCamera();
-        if (mainPagerAdapter != null){
-            //mainPagerAdapter.NotifyListOnLocationChange(location);
             //UpdateMyLocationPreferences(new LatLng(location.getLatitude(), location.getLongitude()));
-        }
     }
 
     @Override
@@ -475,6 +477,7 @@ public class MapAndListActivity
 
     private void SetCamera() {
         if (myLocation == null) {
+            Log.i(MY_TAG, "SetCamera starts getting location");
             StartGetMyLocation();
         } else {
             OnReadyToUpdateCamera();

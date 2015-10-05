@@ -213,16 +213,23 @@ public class AllPublicationsTabFragment
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
+        LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
+        if(locationData != null)
+            CommonUtil.UpdateFilterMyLocationPreferences(context, locationData);
+        Log.i(MY_TAG, "list got location from map");
         if(isFirstLoad){
+            Log.i(MY_TAG, "location got first time");
             isFirstLoad = false;
-            LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
-            if(locationData != null)
-                CommonUtil.UpdateFilterMyLocationPreferences(context, locationData);
             adapter = new PublicationsListCursorAdapter(context, null, 0, locationData);
             lv_my_publications.setAdapter(adapter);
             lv_my_publications.setOnItemClickListener(this);
-            getLoaderManager().initLoader(0, null, this);
+            StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
             return;
+        } else {
+            Log.i(MY_TAG, "updating adapter's my location field");
+            if(adapter!=null)
+                adapter.SetMyLocation(locationData);
+            adapter.notifyDataSetChanged();
         }
         if(waitingForMyLocationForList){
             waitingForMyLocationForList = false;
@@ -242,6 +249,7 @@ public class AllPublicationsTabFragment
     @Override
     public boolean onQueryTextSubmit(String query) {// on button search pressed
         Log.i(MY_TAG, "text query: " + query);
+        currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER;
         sv_search_in_all_pubs.clearFocus();
         FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(context, query);
         btn_filter_closest.setAnimation(null);
@@ -268,12 +276,14 @@ public class AllPublicationsTabFragment
         sv_search_in_all_pubs.onActionViewCollapsed();
         switch (v.getId()){
             case R.id.btn_filter_closest_all_pubs:
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST;
                 btn_filter_closest.startAnimation(animZoomIn);
                 btn_filter_newest.setAnimation(null);
                 btn_filter_less_regs.setAnimation(null);
                 CheckIfMyLocationSavedInPreferencesAndLoad();
                 break;
             case R.id.btn_filter_newest_all_pubs:
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
                 btn_filter_closest.setAnimation(null);
                 btn_filter_newest.startAnimation(animZoomIn);
                 btn_filter_less_regs.setAnimation(null);
@@ -285,6 +295,7 @@ public class AllPublicationsTabFragment
                 StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
                 break;
             case R.id.btn_filter_less_regs_all_pubs:
+                currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_LESS_REGS;
                 btn_filter_closest.setAnimation(null);
                 btn_filter_newest.setAnimation(null);
                 btn_filter_less_regs.startAnimation(animZoomIn);

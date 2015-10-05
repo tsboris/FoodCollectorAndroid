@@ -3,6 +3,7 @@ package upp.foodonet;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -117,6 +118,7 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
+    ProgressDialog progressDialog;
     Bitmap bImageFacebook;
     // Twitter
     InputStream isImageTwitter;
@@ -265,6 +267,8 @@ public class PublicationDetailsActivity
                 btn_call_owner.setOnClickListener(this);
                 btn_sms_owner.setOnClickListener(this);
             } else {
+                btn_call_owner.setImageDrawable(getResources().getDrawable(R.drawable.btn_call_inactive_pub_det));
+                btn_sms_owner.setImageDrawable(getResources().getDrawable(R.drawable.btn_sms_inactive_pub_det));
                 btn_call_owner.setEnabled(false);
                 btn_sms_owner.setEnabled(false);
                 //todo: change icon to gray - waiting for design from Olga
@@ -281,9 +285,10 @@ public class PublicationDetailsActivity
                         ? R.drawable.cancel_rishum_pub_det_btn
                         : R.drawable.rishum_pub_det_btn));
         btn_reg_unreg.setImageDrawable(image);
-            iv_num_of_reged.setImageDrawable(isRegisteredForCurrentPublication
-                    ? getResources().getDrawable(R.drawable.user_icon_green)
-                    : getResources().getDrawable(R.drawable.user_icon_blue));
+        iv_num_of_reged.setImageDrawable(isRegisteredForCurrentPublication
+                ? getResources().getDrawable(R.drawable.user_icon_green)
+                : getResources().getDrawable(R.drawable.user_icon_blue));
+        btn_leave_report.setVisibility(isRegisteredForCurrentPublication ? View.VISIBLE : View.GONE);
     }
 
     private boolean checkIfRegisteredForThisPublication() {
@@ -310,7 +315,7 @@ public class PublicationDetailsActivity
             riv_image.setOnClickListener(this);
         } else {
             bImageFacebook = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);//Facebook
-            isImageTwitter = getResources().openRawResource(+ R.drawable.no_photo_placeholder);
+            isImageTwitter = getResources().openRawResource(+R.drawable.no_photo_placeholder);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
@@ -338,8 +343,7 @@ public class PublicationDetailsActivity
     //endregion
 
     //region Facebook methods
-    private void PostOnFacebook()
-    {
+    private void PostOnFacebook() {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         callbackManager = CallbackManager.Factory.create();
@@ -443,7 +447,7 @@ public class PublicationDetailsActivity
     public void PostTweet(String msg, InputStream is) throws Exception {
         String token = getString(R.string.access_token);
         String secret = getString(R.string.access_token_secret);
-        twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token,secret);
+        twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token, secret);
         Twitter twitter = new TwitterFactory().getInstance();
         twitter.setOAuthConsumer(getString(R.string.consumer_key), getString(R.string.consumer_secret));
         twitter.setOAuthAccessToken(a);
@@ -673,12 +677,27 @@ public class PublicationDetailsActivity
                 Log.i(MY_TAG, "successfully added myself to regs! refreshing number");
                 isRegisteredForCurrentPublication = true;
                 SetupRegisterUnregisterButton();
+                if (progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
                 RestartNumOfRegedLoader();
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION:
                 Log.i(MY_TAG, "successfully removed myself from regs! refreshing number");
                 isRegisteredForCurrentPublication = false;
                 SetupRegisterUnregisterButton();
+                if (progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
+                RestartNumOfRegedLoader();
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_REPORT_TO_PUBLICATION_SUCCESS:
+                Log.i(MY_TAG, "successfully left report for publication!");
+                isRegisteredForCurrentPublication = false;
+                SetupRegisterUnregisterButton();
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
                 RestartNumOfRegedLoader();
                 break;
         }
@@ -720,7 +739,8 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
-                ShowReportDialog();
+                if (CheckIfMyLocationAvailableAndAskReportConfirmation())
+                    ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
                 PostOnFacebook();
@@ -732,6 +752,12 @@ public class PublicationDetailsActivity
                 SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
+                //open progress dialog
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle("Registering to publication...");
+                progressDialog.show();
                 RegisteredUserForPublication newRegistrationForPub
                         = new RegisteredUserForPublication();
                 newRegistrationForPub.setDate_registered(new Date());
@@ -748,12 +774,49 @@ public class PublicationDetailsActivity
                 //todo
                 break;
             case R.id.btn_message_owner_pub_details:
-                //todo
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+// Always use string resources for UI text.
+// This says something like "Share this photo with"
+                String title = "choose program";
+// Create intent to show the chooser dialog
+                Intent chooser = Intent.createChooser(sendIntent, title);
+
+// Verify the original intent will resolve to at least one activity
+                if (sendIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(chooser);
+                }
                 break;
             case R.id.riv_image_pub_details:
                 //todo
                 break;
         }
+    }
+
+    private boolean CheckIfMyLocationAvailableAndAskReportConfirmation() {
+        LatLng myLocation = CommonUtil.GetFilterLocationFromPreferences(this);
+        if (myLocation.latitude == -1000 || myLocation.longitude == -1000)
+            return true;
+        double distance = CommonUtil.GetDistanceInKM(new LatLng(publication.getLatitude(), publication.getLongitude()), myLocation);
+        if (distance < 2)
+            return true;
+        else {
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            ShowReportDialog();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            return;
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Distance > 2km, leave report?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+        }
+        return false;
     }
 
     @Override
@@ -874,6 +937,12 @@ public class PublicationDetailsActivity
     }
 
     public void ReportMade(int reportID) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("Leaving report to publication...");
+        progressDialog.show();
+
         PublicationReport report = new PublicationReport();
         report.setReport(String.valueOf(reportID));
         report.setPublication_id(publication.getUniqueId());

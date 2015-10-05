@@ -30,6 +30,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
     public static final String PUBLICATION_REPORT_FIELD_KEY_DATE = "date_of_report";
     public static final String PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID = "active_device_dev_uuid";
 
+    public static final String PUBLICATION_REPORT_FIELD_KEY_NEG_ID = "neg_id";
+
     public PublicationReport(int id, int pub_id, int pub_version, String report, Date date, String dev_UID){
         setId(id);
         setPublication_id(pub_id);
