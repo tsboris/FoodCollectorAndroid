@@ -4,6 +4,7 @@ package upp.foodonet;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -232,17 +233,11 @@ public class PublicationDetailsActivity
     //region new: My methods
 
     private void CalculateDistanceAndSetText() {
-        //todo:
-        // 1. set default text "calculating.."
-        // 2. call get last position async
-        // 3. update text of tv_distance
         if (publication.getLatitude() == 0 && publication.getLongitude() == 0) {
             tv_distance.setText(getResources().getString(R.string.pub_det_cant_get_distance));
             return;
         }
         tv_distance.setText(getResources().getString(R.string.pub_det_calculating_distance));
-        //GetMyLocationAsync getLocationTask = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
-        //getLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         StartGetMyLocation();
     }
 
@@ -746,7 +741,18 @@ public class PublicationDetailsActivity
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
-                //todo
+                try
+                {
+                    String url = "waze://?ll=" + publication.getLatitude() + "," + publication.getLongitude();
+                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+                    startActivity( intent );
+                }
+                catch ( ActivityNotFoundException ex  )
+                {
+                    Intent intent =
+                            new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze") );
+                    startActivity(intent);
+                }
                 break;
             case R.id.btn_tweet_my_pub_details:
                 SendTweet();
@@ -771,23 +777,33 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_call_owner_pub_details:
-                //todo
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+            }
                 break;
             case R.id.btn_message_owner_pub_details:
-                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-// Always use string resources for UI text.
-// This says something like "Share this photo with"
-                String title = "choose program";
-// Create intent to show the chooser dialog
-                Intent chooser = Intent.createChooser(sendIntent, title);
-
-// Verify the original intent will resolve to at least one activity
-                if (sendIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(chooser);
+//                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+//// Always use string resources for UI text.
+//// This says something like "Share this photo with"
+//                String title = "choose program";
+//// Create intent to show the chooser dialog
+//                Intent chooser = Intent.createChooser(sendIntent, title);
+//
+//// Verify the original intent will resolve to at least one activity
+//                if (sendIntent.resolveActivity(getPackageManager()) != null) {
+//                    startActivity(chooser);
+//                }
+//                break;
+//            case R.id.riv_image_pub_details:
+                Intent intentSMS = new Intent(Intent.ACTION_SEND);
+                intentSMS.setData(Uri.parse("smsto:"));// + publication.getContactInfo()));  // This ensures only SMS apps respond
+                intentSMS.putExtra("sms_body", "test sms body");
+                //intentSMS.putExtra(Intent.EXTRA_STREAM, attachment);
+                if (intentSMS.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intentSMS);
                 }
-                break;
-            case R.id.riv_image_pub_details:
-                //todo
                 break;
         }
     }
