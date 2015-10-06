@@ -67,6 +67,7 @@
     <string name="pub_det_uimessage_failed_register_to_pub">Failed to register to publication</string>
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
+    <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
 
 
     <!-- Report dialog -->

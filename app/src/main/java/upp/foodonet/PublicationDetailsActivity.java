@@ -51,6 +51,8 @@ import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.http.protocol.HTTP;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -245,13 +247,19 @@ public class PublicationDetailsActivity
         if (publication.isOwnPublication) {
             ll_button_panel_my.setVisibility(View.VISIBLE);
             ll_button_panel_others.setVisibility(View.GONE);
-            btn_facebook_my.setOnClickListener(this);
-            btn_twitter_my.setOnClickListener(this);
-            btn_call_reg.setOnClickListener(this);
-            btn_sms_reg.setOnClickListener(this);
             btn_leave_report.setVisibility(View.GONE);
             btn_menu.setScaleType(ImageView.ScaleType.FIT_CENTER);
             btn_menu.setOnClickListener(this);
+            if(publication.getIsOnAir()){
+                btn_facebook_my.setOnClickListener(this);
+                btn_twitter_my.setOnClickListener(this);
+                btn_call_reg.setOnClickListener(this);
+                btn_sms_reg.setOnClickListener(this);
+            } else {
+                btn_call_reg.setImageDrawable(getResources().getDrawable(R.drawable.btn_call_inactive_pub_det));
+                btn_sms_reg.setImageDrawable(getResources().getDrawable(R.drawable.btn_sms_inactive_pub_det));
+                //todo: set gray drawables to buttons facebook and twitter
+            }
         } else {
             ll_button_panel_my.setVisibility(View.GONE);
             ll_button_panel_others.setVisibility(View.VISIBLE);
@@ -784,22 +792,10 @@ public class PublicationDetailsActivity
             }
                 break;
             case R.id.btn_message_owner_pub_details:
-//                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-//// Always use string resources for UI text.
-//// This says something like "Share this photo with"
-//                String title = "choose program";
-//// Create intent to show the chooser dialog
-//                Intent chooser = Intent.createChooser(sendIntent, title);
-//
-//// Verify the original intent will resolve to at least one activity
-//                if (sendIntent.resolveActivity(getPackageManager()) != null) {
-//                    startActivity(chooser);
-//                }
-//                break;
-//            case R.id.riv_image_pub_details:
-                Intent intentSMS = new Intent(Intent.ACTION_SEND);
-                intentSMS.setData(Uri.parse("smsto:"));// + publication.getContactInfo()));  // This ensures only SMS apps respond
-                intentSMS.putExtra("sms_body", "test sms body");
+                Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
+                intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
+                intentSMS.setData(Uri.parse("smsto:" + publication.getContactInfo()));// + publication.getContactInfo()));  // This ensures only SMS apps respond
+                intentSMS.putExtra("sms_body", getString(R.string.pub_det_sms_default_text) + ": " + publication.getTitle());
                 //intentSMS.putExtra(Intent.EXTRA_STREAM, attachment);
                 if (intentSMS.resolveActivity(getPackageManager()) != null) {
                     startActivity(intentSMS);
