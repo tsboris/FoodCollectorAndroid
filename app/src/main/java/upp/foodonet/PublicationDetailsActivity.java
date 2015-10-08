@@ -309,7 +309,8 @@ public class PublicationDetailsActivity
     private void SetImage() {
         int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
         Drawable image = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
+                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                getString(R.string.image_folder_path), imageSize, imageSize);
         if (image != null) {
             // TODO - move init of facebook and twitter pictures
             bImageFacebook = ((BitmapDrawable) image).getBitmap();

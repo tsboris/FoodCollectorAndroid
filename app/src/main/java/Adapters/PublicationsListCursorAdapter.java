@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
@@ -48,6 +50,8 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
     String amazonBaseAddress;
     LatLng myLocation;
 
+    private Map<Integer, Drawable> imageDictionary;
+
     public PublicationsListCursorAdapter(Context context, Cursor c, int flags, LatLng mLocation) {
         super(context, c, flags);
         this.context = context;
@@ -56,6 +60,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
                     + mLocation.latitude + "-" + mLocation.longitude);
             myLocation = mLocation;
         }
+        imageDictionary = new HashMap<>();
 /*
         if(context!=null)
             amazonBaseAddress = context.getResources().getString(R.string.amazon_base_url_for_images);
@@ -87,17 +92,26 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         TextView publicationAddress = (TextView)view.findViewById(R.id.tv_pub_list_item_address);
         TextView publicationDistance = (TextView)view.findViewById(R.id.tv_pub_list_item_distance);
 
-        publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+
         final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
         final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
         Drawable imageDrawable;
-        if(id <= 0){
-            Log.i(MY_TAG, "negative id");
-            imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg", 100, 100);
-        } else
-            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg", 100, 100);
-        if(imageDrawable != null)
-            publicationImage.setImageDrawable(imageDrawable);
+        if(imageDictionary.containsKey(id))
+            publicationImage.setImageDrawable(imageDictionary.get(id));
+        else {
+            if (id <= 0) {
+                Log.i(MY_TAG, "negative id");
+                imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg",
+                        context.getString(R.string.image_folder_path), 100, 100);
+            } else
+                imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg",
+                        context.getString(R.string.image_folder_path), 100, 100);
+            if(imageDrawable != null){
+                publicationImage.setImageDrawable(imageDrawable);
+                imageDictionary.put(id, imageDrawable);
+            } else
+                publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+        }
 /*        new Thread(new Runnable() {
             @Override
             public void run() {
@@ -158,6 +172,10 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
             publicationDistance.setText(context.getResources().getString(R.string.pub_det_cant_get_distance));
         }
 
+    }
+
+    public void ClearImagesDictionary(){
+        imageDictionary.clear();
     }
 
 /*

@@ -72,7 +72,8 @@ public class SideMenuCursorAdapter extends CursorAdapter {
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-                File photo = new File(Environment.getExternalStorageDirectory(), id + "." + version + ".jpg");
+                File photo = new File(Environment.getExternalStorageDirectory()
+                        + context.getString(R.string.image_folder_path), id + "." + version + ".jpg");
                 if(!photo.exists()) return;
                 try {
                     FileInputStream fis = new FileInputStream(photo.getPath());

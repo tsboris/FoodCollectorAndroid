@@ -56,7 +56,7 @@ public class AllPublicationsTabFragment
     private Context context;
     //SimpleCursorAdapter adapter;
     PublicationsListCursorAdapter adapter;
-    Animation animZoomIn;
+    //Animation animZoomIn;
 
     ListView lv_my_publications;
     SearchView sv_search_in_all_pubs;
@@ -94,7 +94,7 @@ public class AllPublicationsTabFragment
         btn_filter_less_regs = (Button)view.findViewById(R.id.btn_filter_less_regs_all_pubs);
         btn_filter_less_regs.setOnClickListener(this);
 
-        animZoomIn = AnimationUtils.loadAnimation(context, R.anim.zoom_in);
+        //animZoomIn = AnimationUtils.loadAnimation(context, R.anim.zoom_in);
         //btn_new_publication = (Button)view.findViewById(R.id.btn_add_new_publication);
         //btn_new_publication.setOnClickListener(this);
 
@@ -277,16 +277,20 @@ public class AllPublicationsTabFragment
         switch (v.getId()){
             case R.id.btn_filter_closest_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST;
+/*
                 btn_filter_closest.startAnimation(animZoomIn);
                 btn_filter_newest.setAnimation(null);
                 btn_filter_less_regs.setAnimation(null);
+*/
                 CheckIfMyLocationSavedInPreferencesAndLoad();
                 break;
             case R.id.btn_filter_newest_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
+/*
                 btn_filter_closest.setAnimation(null);
                 btn_filter_newest.startAnimation(animZoomIn);
                 btn_filter_less_regs.setAnimation(null);
+*/
                 preventOverflow = true;
                 sv_search_in_all_pubs.setFocusable(false);
                 sv_search_in_all_pubs.setQuery("", false);
@@ -296,9 +300,11 @@ public class AllPublicationsTabFragment
                 break;
             case R.id.btn_filter_less_regs_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_LESS_REGS;
+/*
                 btn_filter_closest.setAnimation(null);
                 btn_filter_newest.setAnimation(null);
                 btn_filter_less_regs.startAnimation(animZoomIn);
+*/
                 preventOverflow = true;
                 sv_search_in_all_pubs.setFocusable(false);
                 sv_search_in_all_pubs.setQuery("", false);

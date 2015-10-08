@@ -131,23 +131,21 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 publication.setUniqueId(newNegativeID);
             }
         }
-        if(publication.getPhotoUrl() != null
-                && TextUtils.isEmpty(publication.getPhotoUrl())){
+        if (publication.getPhotoUrl() != null
+                && TextUtils.isEmpty(publication.getPhotoUrl())) {
             String partId = "n"
-                    + String.valueOf(publication.getUniqueId()>0?publication.getUniqueId():publication.getUniqueId()*-1);
+                    + String.valueOf(publication.getUniqueId() > 0 ? publication.getUniqueId() : publication.getUniqueId() * -1);
             String fileName = partId + "." + String.valueOf(publication.getVersion()) + ".jpg";
             File sourceFile = new File(publication.getPhotoUrl());
-            File destinationFile = new File(Environment.getExternalStorageDirectory(), fileName);
-            try {
-                CommonUtil.CopyFile(sourceFile, destinationFile);
-                //todo: think how to check is it photo from libruary or shot right now.
-                //todo: if right now - it could be deleted
+            File destinationFile = new File(Environment.getExternalStorageDirectory()
+                    + getResources().getString(R.string.image_folder_path), fileName);
+            CommonUtil.CopyImageFileWithCompressionBySize(sourceFile, destinationFile, getResources().getInteger(R.integer.max_image_width_height));
+            //CommonUtil.CopyFile(sourceFile, destinationFile);
+            //todo: think how to check is it photo from libruary or shot right now.
+            //todo: if right now - it could be deleted
 //                if(sourceFile.exists())
 //                    sourceFile.delete();
-                publication.setPhotoUrl(destinationFile.getPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            publication.setPhotoUrl(destinationFile.getPath());
         }
         FooDoNetSQLExecuterAsync saveExecuter
                 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
@@ -238,7 +236,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 Log.i(MY_TAG, "succeeded saving pub to server, new id: "
                         + response.publicationForSaving.getNewIdFromServer());
                 if (response.publicationForSaving.getPhotoUrl() != null
-                        && !TextUtils.isEmpty(response.publicationForSaving.getPhotoUrl())){
+                        && !TextUtils.isEmpty(response.publicationForSaving.getPhotoUrl())) {
                     String fileName
                             = String.valueOf(response.publicationForSaving.getNewIdFromServer()) + "."
                             + String.valueOf(response.publicationForSaving.getVersionFromServer()) + ".jpg";

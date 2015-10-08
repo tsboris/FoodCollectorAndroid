@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -209,6 +211,10 @@ public class SplashScreenActivity
                 StartNextActivity();
             return;
         } else {
+            File directory = new File(Environment.getExternalStorageDirectory()
+                    + getResources().getString(R.string.image_folder_path));
+            if(!directory.exists())
+                directory.mkdirs();
             FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
         }
 

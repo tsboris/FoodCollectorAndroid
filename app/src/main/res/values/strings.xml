@@ -121,5 +121,9 @@
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
     <string name="title_activity_add_edit_publication">AddEditPublicationActivity</string>
 
+    <!-- File system keys -->
+
+    <string name="image_folder_path">/Foodonet/PublicationImages</string>
+
 
 </resources>

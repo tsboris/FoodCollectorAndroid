@@ -289,7 +289,8 @@ public class AddEditPublicationActivity extends FragmentActivity
     private void TryLoadExistingImage(){
         int imageSize = mAddPicImageView.getLayoutParams().height;
         Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg", imageSize, imageSize);
+                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                getString(R.string.image_folder_path), imageSize, imageSize);
         if(imageDrawable != null)
             mAddPicImageView.setImageDrawable(imageDrawable);
     }
@@ -330,10 +331,13 @@ public class AddEditPublicationActivity extends FragmentActivity
             if (requestCode == REQUEST_CAMERA)
             {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                thumbnail = CommonUtil.CompressBitmapByMaxSize(thumbnail,
+                                getResources().getInteger(R.integer.max_image_width_height));
                 publication.setImageByteArrayFromBitmap(thumbnail);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-                File destination = new File(Environment.getExternalStorageDirectory(),
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                File destination = new File(Environment.getExternalStorageDirectory()
+                        + getResources().getString(R.string.image_folder_path),
                         System.currentTimeMillis() + ".jpg");
                 FileOutputStream fo;
                 try {

@@ -46,6 +46,8 @@ public class ReloadDataIntentService
     HttpServerConnectorAsync connecterToServer;
     FooDoNetSQLExecuterAsync sqlExecuter;
 
+    private int maxImageWidthHeight = 0;
+
     @Override
     public void onCreate() {
         Log.i(MY_TAG, "creating reload service...");
@@ -102,7 +104,11 @@ public class ReloadDataIntentService
                 sqlExecuter = null;
                 break;
             case taskImages:
-                DownloadImageTask imageTask = new DownloadImageTask(this, getResources().getString(R.string.amazon_base_url_for_images));
+                maxImageWidthHeight = getResources().getInteger(R.integer.max_image_width_height);
+                DownloadImageTask imageTask
+                        = new DownloadImageTask(this,
+                        getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
+                        getResources().getString(R.string.image_folder_path));
                 imageTask.execute(needToLoadImages);
                 break;
             case taskActivity:

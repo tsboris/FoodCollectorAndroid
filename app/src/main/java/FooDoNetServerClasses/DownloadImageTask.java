@@ -9,6 +9,7 @@ import android.util.Log;
 import com.amazonaws.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import CommonUtilPackage.CommonUtil;
+
 /**
  * Created by ah on 31/08/15.
  */
@@ -33,12 +36,17 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
     IDownloadImageCallBack callback;
     String baseUrl;
 
+    private int maxImageWidthHeight;
+    private String imageFolderPath;
+
     Map<Integer, byte[]> resultImages;
 
-    public DownloadImageTask(IDownloadImageCallBack callBack, String baseUrlImages) {
+    public DownloadImageTask(IDownloadImageCallBack callBack, String baseUrlImages, int maxImageWidthHeight, String imageFolderPath) {
         this.callback = callBack;
         baseUrl = baseUrlImages;
         resultImages = null;
+        this.maxImageWidthHeight = maxImageWidthHeight;
+        this.imageFolderPath = imageFolderPath;
     }
 
     protected Void doInBackground(Map<Integer, Integer>... urls) {
@@ -59,10 +67,13 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
                 connection.setUseCaches(false);
                 is = connection.getInputStream();
 
-
+                String fileName = id + "." + urls[0].get(id) + ".jpg";
                 //is = new java.net.URL(url).openStream();
                 byte[] result = IOUtils.toByteArray(is);
-                File photo=new File(Environment.getExternalStorageDirectory(), id + "." + urls[0].get(id) + ".jpg");
+                result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
+                Log.i(MY_TAG, "Compressed image to " + (int)Math.round(result.length/1024) + " kb");
+
+                File photo=new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
 
                 if (photo.exists()) {
                     photo.delete();
