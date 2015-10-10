@@ -42,14 +42,17 @@
     <string name="filter_newest_btn_text">חדשים</string>
     <string name="filter_less_regs_btn_text">פחות נרשמו</string>
     <string name="leave_report_pub_details">דווח</string>
+    <string name="start_date_time_picker_dialog_title">תבחר תאריך ושעה מ:</string>
+    <string name="end_date_time_picker_dialog_title">תבחר תאריך ושעה עד:</string>
+    <string name="my_pubs_list_end_date_base_string">מועד סיום: {0}</string>
+
+    <!-- Common - check if needed -->
+
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_map_and_list">MapAndListActivity</string>
     <string name="title_activity_all_publications">AllPublicationsActivity</string>
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
-
-    <string name="start_date_time_picker_dialog_title">תבחר תאריך ושעה מ:</string>
-    <string name="end_date_time_picker_dialog_title">תבחר תאריך ושעה עד:</string>
 
     <!-- my publication details -->
     <string name="pub_det_on_the_way_to_take">בדרך לאסוף</string>
@@ -68,7 +71,7 @@
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
     <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
-
+    <string name="pub_list_search_hint">חיפוש בשיתופים</string>
 
     <!-- Report dialog -->
     <string name="report_dialog_whole_btn_text">נשאר עוד</string>

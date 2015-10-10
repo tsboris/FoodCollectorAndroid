@@ -24,8 +24,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginTop="@dimen/top_panel_height"
-        android:layout_alignParentTop="true">
+        android:layout_marginTop="60dp"
+        android:layout_alignParentTop="true"
+        android:divider="@drawable/filter_btns_ll_divider_vertical"
+        android:showDividers="middle">
         <Button android:id="@+id/btn_filter_closest_all_pubs"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
@@ -59,6 +61,7 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+<!--
     <SearchView
         android:id="@+id/sv_search_in_all_pubs"
         android:layout_width="match_parent"
@@ -66,14 +69,22 @@
         android:layout_below="@+id/ll_filters"
         android:searchIcon="@android:drawable/ic_search_category_default"
         tools:ignore="UnusedAttribute" />
+-->
 
+    <EditText android:id="@+id/et_search_in_all_pubs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_filters"
+        android:hint="@string/pub_list_search_hint"
+        android:imeOptions="actionSearch"
+        android:drawableLeft="@drawable/collect_v6_30x30"/>
 
     <ListView
         android:id="@+id/lv_all_active_publications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/top_panel_height"
-        android:layout_below="@+id/sv_search_in_all_pubs"/>
+        android:layout_below="@+id/et_search_in_all_pubs"/>
+    <!-- android:layout_marginBottom="@dimen/top_panel_height" -->
 
 </RelativeLayout>

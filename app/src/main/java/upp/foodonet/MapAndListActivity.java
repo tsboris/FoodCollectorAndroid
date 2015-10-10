@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
@@ -91,8 +92,8 @@ public class MapAndListActivity
     Button btn_navigate_share, btn_navigate_take;
     ImageButton btn_show_M, btn_show_L;
     ImageButton btn_focus_on_my_location;
-    Button btn_side_menu_coll_exp_all;
-    Button btn_side_menu_coll_exp_my;
+//    Button btn_side_menu_coll_exp_all;
+//    Button btn_side_menu_coll_exp_my;
     boolean is_smenu_lv_my_expanded = true;
     boolean is_smenu_lv_all_expanded = true;
 
@@ -196,6 +197,21 @@ public class MapAndListActivity
         //mainPagerAdapter.SetListFragment(eventArrayList, this);
         mainPager.setAdapter(mainPagerAdapter);
         mainPager.addOnPageChangeListener(this);
+
+        final View activityRootView = findViewById(R.id.drawer_layout);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > 100) { // if more than 100 pixels, its probably a keyboard...
+                    btn_navigate_share.setVisibility(View.GONE);
+                    btn_navigate_take.setVisibility(View.GONE);
+                } else {
+                    btn_navigate_take.setVisibility(View.VISIBLE);
+                    btn_navigate_share.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -209,6 +225,16 @@ public class MapAndListActivity
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+        // Checks whether a hardware keyboard is available
+//        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+//            Toast.makeText(this, "keyboard visible", Toast.LENGTH_SHORT).show();
+//            btn_navigate_share.setVisibility(View.VISIBLE);
+//            btn_navigate_take.setVisibility(View.VISIBLE);
+//        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+//            Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
+//            btn_navigate_share.setVisibility(View.GONE);
+//            btn_navigate_take.setVisibility(View.GONE);
+//        }
     }
 
     @Override

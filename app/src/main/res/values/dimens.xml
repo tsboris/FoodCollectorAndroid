@@ -18,10 +18,6 @@
     <dimen name="side_menu_item_score_circle_size">40dp</dimen>
     <dimen name="side_menu_item_icon_size">42dp</dimen>
 
-    <dimen name="pub_list_item_image_size">90dp</dimen>
-    <dimen name="pub_list_item_image_left_margin">16dp</dimen>
-    <dimen name="pub_list_item_image_top_bottom_margin">10dp</dimen>
-
     <color name="white">#FFFFFF</color>
     <color name="side_menu_score_circle_red">#B80000</color>
 
@@ -53,6 +49,7 @@
     <color name="event_list_item_background_onair">#99FF33</color>
     <color name="event_list_item_background_expired">#FF8080</color>
     <color name="basic_blue">#0079FF</color>
+    <color name="inactive_blue">#66AFFF</color>
     <color name="transparent">#00000000</color>
     <!-- ====================== -->
 
@@ -64,5 +61,22 @@
     <integer name="map_refresh_my_location_frequency_milliseconds">30000</integer>
     
     <!-- ==================== -->
+
+    <!-- My/other's publications list -->
+
+    <color name="red_for_dot_my_pubs_list">#FF0000</color>
+    <color name="green_for_dot_my_pubs_list">#00FF00</color>
+    <dimen name="dot_size_my_pubs_list">7dp</dimen>
+    <dimen name="my_pubs_list_item_right_left_padding">16dp</dimen>
+    <dimen name="pub_list_item_image_size">90dp</dimen>
+    <dimen name="pub_list_item_image_left_margin">16dp</dimen>
+    <dimen name="pub_list_item_image_top_bottom_margin">10dp</dimen>
+    <integer name="pub_list_item_image_size_others">100</integer>
+    <integer name="pub_list_item_image_size_my">90</integer>
+    <dimen name="my_pub_list_item_title_text_size">16dp</dimen>
+    <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
+    <dimen name="my_pub_list_text_block_height">40dp</dimen>
+
+    <!-- ============================ -->
 
 </resources>

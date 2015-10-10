@@ -435,9 +435,10 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
                 PUBLICATION_LATITUDE_KEY,
                 PUBLICATION_LONGITUDE_KEY,
                 PUBLICATION_ADDRESS_KEY,
-                //PUBLICATION_PHOTO_URL,
-                PUBLICATION_NUMBER_OF_REGISTERED//,
-                //PUBLICATION_IMAGE_BYTEARRAY_KEY
+                PUBLICATION_ENDING_DATE_KEY,
+                PUBLICATION_IS_ON_AIR_KEY,
+                PUBLICATION_NUMBER_OF_REGISTERED,
+                PUBLICATION_PHOTO_URL
         };
     }
 

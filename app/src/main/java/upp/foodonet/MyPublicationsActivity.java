@@ -53,7 +53,7 @@ public class MyPublicationsActivity
 
     private static final String MY_TAG = "food_myPubs";
 
-    private int currentFilterID;
+    private int currentFilterID = 0;
     ListView lv_my_publications_list;
     Cursor cursor_my_publications;
     //SimpleCursorAdapter adapter;
@@ -61,7 +61,7 @@ public class MyPublicationsActivity
 
     //SearchView src_all_pub_listView;
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
-    Animation animZoomIn;
+    //Animation animZoomIn;
 
     ProgressDialog progressDialog;
 
@@ -86,7 +86,7 @@ public class MyPublicationsActivity
         btn_navigate_take = (Button) findViewById(R.id.btn_take_mypubs);
         //tgl_btn_navigate_share.setOnClickListener(this);
         btn_navigate_take.setOnClickListener(this);
-        animZoomIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
+        //animZoomIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
 
         Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);
         Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);
@@ -103,7 +103,12 @@ public class MyPublicationsActivity
         GetMyLocationAsync locationAsync = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 */
-        StartGetMyLocation();
+        //StartGetMyLocation();
+        adapter = new PublicationsListCursorAdapter(this, null, 0, null, true);
+        lv_my_publications_list.setAdapter(adapter);
+        lv_my_publications_list.setOnItemClickListener(this);
+        onClick(btn_active_pub);
+
     }
 
 
@@ -158,9 +163,12 @@ public class MyPublicationsActivity
                 startActivity(intent);
                 break;
             case R.id.btn_publication_ending:
-                btn_not_active_pub.setAnimation(null);
-                btn_active_pub.setAnimation(null);
-                btn_ending_pub.startAnimation(animZoomIn);
+                btn_ending_pub.setEnabled(false);
+                btn_ending_pub.setTextColor(getResources().getColor(R.color.inactive_blue));
+                btn_not_active_pub.setEnabled(true);
+                btn_not_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_active_pub.setEnabled(true);
+                btn_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
                 if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON)
                     RestartLoadingCursorForList();
                 else {
@@ -170,9 +178,12 @@ public class MyPublicationsActivity
                 }
                 break;
             case R.id.btn_publication_active:
-                btn_not_active_pub.setAnimation(null);
-                btn_ending_pub.setAnimation(null);
-                btn_active_pub.startAnimation(animZoomIn);
+                btn_ending_pub.setEnabled(true);
+                btn_ending_pub.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_not_active_pub.setEnabled(true);
+                btn_not_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_active_pub.setEnabled(false);
+                btn_active_pub.setTextColor(getResources().getColor(R.color.inactive_blue));
                 if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC)
                     RestartLoadingCursorForList();
                 else {
@@ -182,9 +193,12 @@ public class MyPublicationsActivity
                 }
                 break;
             case R.id.btn_publication_notActive:
-                btn_active_pub.setAnimation(null);
-                btn_ending_pub.setAnimation(null);
-                btn_not_active_pub.startAnimation(animZoomIn);
+                btn_ending_pub.setEnabled(true);
+                btn_ending_pub.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_not_active_pub.setEnabled(false);
+                btn_not_active_pub.setTextColor(getResources().getColor(R.color.inactive_blue));
+                btn_active_pub.setEnabled(true);
+                btn_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
                 if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC)
                     RestartLoadingCursorForList();
                 else {
@@ -264,16 +278,7 @@ public class MyPublicationsActivity
                     Log.e(MY_TAG, "got null location extra from broadcast");
                     return;
                 }
-                adapter = new PublicationsListCursorAdapter(this, null, 0, new LatLng(location.getLatitude(), location.getLongitude()));
-                lv_my_publications_list.setAdapter(adapter);
-                lv_my_publications_list.setOnItemClickListener(this);
-                onClick(btn_active_pub);
-                break;
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
-                adapter = new PublicationsListCursorAdapter(this, null, 0, null);
-                lv_my_publications_list.setAdapter(adapter);
-                lv_my_publications_list.setOnItemClickListener(this);
-                onClick(btn_active_pub);
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE:
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS:

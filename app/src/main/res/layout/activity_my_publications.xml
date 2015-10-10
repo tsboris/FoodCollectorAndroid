@@ -38,7 +38,10 @@
         android:layout_alignLeft="@+id/textView"
         android:layout_alignStart="@+id/textView"
         android:layout_below="@+id/tv_my_pubs_title"
-        android:id="@+id/ll_filter_btns">
+        android:layout_marginTop="4dp"
+        android:id="@+id/ll_filter_btns"
+        android:divider="@drawable/filter_btns_ll_divider_vertical"
+        android:showDividers="middle">
         <Button android:id="@+id/btn_publication_ending"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
@@ -82,8 +85,8 @@
     <ListView android:id="@+id/lv_my_publications_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/top_panel_height"
-        android:layout_below="@+id/ll_filter_btns"></ListView>
+        android:layout_below="@+id/ll_filter_btns"/>
+    <!-- android:layout_marginBottom="@dimen/top_panel_height" -->
 
     <!--    <ListView android:id="@+id/lst_my_publications_list"
             android:layout_width="match_parent"

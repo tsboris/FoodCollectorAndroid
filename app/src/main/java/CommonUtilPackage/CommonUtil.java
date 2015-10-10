@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 
 import upp.foodonet.R;
 
@@ -155,7 +156,9 @@ public class CommonUtil {
     }
 
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, String imageSubFolder, int width, int heigth) {
-        File photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        File photo = new File(fileName);
+        if(!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
         if (!photo.exists()) return null;
         try {
             FileInputStream fis = new FileInputStream(photo.getPath());
@@ -300,4 +303,14 @@ public class CommonUtil {
 
     }
 
+    public static String GetDateTimeStringFromCalendar(Calendar calendar){
+        if(calendar == null)
+            return "";
+        String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
+        String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
+        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
+        String years = String.valueOf(calendar.get(Calendar.YEAR));
+        return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    }
 }

@@ -514,25 +514,14 @@ public class AddEditPublicationActivity extends FragmentActivity
             case R.id.btn_start_date_time_add_pub:
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(startDate);
-                btn_date_start.setText(GetDateTimeStringFromCalendar(calendar));
+                btn_date_start.setText(CommonUtil.GetDateTimeStringFromCalendar(calendar));
                 break;
             case R.id.btn_end_date_time_add_pub:
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTime(endDate);
-                btn_date_end.setText(GetDateTimeStringFromCalendar(calendar1));
+                btn_date_end.setText(CommonUtil.GetDateTimeStringFromCalendar(calendar1));
                 break;
         }
-    }
-
-    private String GetDateTimeStringFromCalendar(Calendar calendar){
-        if(calendar == null)
-            return "";
-        String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
-        String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
-        String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
-        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
-        String years = String.valueOf(calendar.get(Calendar.YEAR));
-        return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
     }
 
     private void showDatePickerDialog(int btnId) {

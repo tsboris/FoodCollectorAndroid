@@ -54,20 +54,22 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params){
         String imei = "";
+        Log.i(MY_TAG, "selected filter: " + filterID);
         switch (filterID){
+            //region other's list
             case FILTER_ID_LIST_ALL_BY_CLOSEST:
                 imei = params[0];
                 String latitude = params[1];
                 String longitude = params[2];
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", imei, false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderByDistance(latitude, longitude);
             case FILTER_ID_LIST_ALL_BY_NEWEST:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
             case FILTER_ID_LIST_ALL_BY_LESS_REGS:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderByLessRegs();
             case FILTER_ID_LIST_ALL_BY_TEXT_FILTER:
@@ -75,7 +77,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                 String filterString = params[1];
                 if(TextUtils.isEmpty(filterString))
                     return GetRawSelectPublicationsForListByFilterID(FILTER_ID_LIST_ALL_BY_NEWEST);
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", imei, false)
                         + " AND ("
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_TITLE_KEY, " LIKE ", "%" + filterString + "%", true)
@@ -83,33 +85,45 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_SUBTITLE_KEY, " LIKE ", "%" + filterString + "%", true)
                         + ") "
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
+            //endregion
+            //region my publication
             case FILTER_ID_LIST_MY_BY_ENDING_SOON:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+                        //+ RAW_FOR_LIST_GROUP
+                        + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
             case FILTER_ID_LIST_MY_ACTIVE_ID_DESC:
-            case FILTER_ID_SIDEMENU_MY_ACTIVE:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
                         + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
+                        //+ RAW_FOR_LIST_GROUP
+                        + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
             case FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
                         + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 0 "
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
+                        //+ RAW_FOR_LIST_GROUP
+                        + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
+            //endregion
+            //region sidemenu
             case FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
-                return RAW_FOR_LIST_SELECT + RAW_FOR_LIST_FROM
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + " WHERE REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = " + params[0]
                         + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
+            case FILTER_ID_SIDEMENU_MY_ACTIVE:
+                return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
+                        + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
+            //endregion
             default:
                 Log.e(MY_TAG, "unexpected filter id = " + filterID);
                 return "";
         }
     }
 
-    private static final String RAW_FOR_LIST_SELECT
+    private static final String RAW_FOR_LIST_SELECT_OTHERS
             = "SELECT "
             + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
@@ -122,11 +136,23 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + "COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") "
             + FCPublication.PUBLICATION_NUMBER_OF_REGISTERED;
 
-    private static final String RAW_FOR_LIST_FROM
+    private static final String RAW_FOR_LIST_SELECT_MY
+            = "SELECT "
+            + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_VERSION_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_ENDING_DATE_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_PHOTO_URL + ", "
+            + "PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY;
+
+    private static final String RAW_FOR_LIST_FROM_OTHERS
             = " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS "
             + "LEFT JOIN " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME + " REGS "
             + "ON PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
             + " = REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID;
+
+    private static final String RAW_FOR_LIST_FROM_MY
+            = " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS ";
 
     private static final String RAW_FOR_LIST_GROUP
             = " GROUP BY "

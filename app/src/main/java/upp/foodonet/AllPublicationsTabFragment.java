@@ -12,15 +12,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -44,7 +49,10 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 public class AllPublicationsTabFragment
         extends android.support.v4.app.Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        AdapterView.OnItemClickListener, IFooDoNetSQLCallback, IGotMyLocationCallback, SearchView.OnQueryTextListener, View.OnClickListener {
+        AdapterView.OnItemClickListener,
+        IFooDoNetSQLCallback,
+        IGotMyLocationCallback,
+        View.OnClickListener, TextWatcher {
 
     private static final String MY_TAG = "food_allPubs";
 
@@ -59,7 +67,8 @@ public class AllPublicationsTabFragment
     //Animation animZoomIn;
 
     ListView lv_my_publications;
-    SearchView sv_search_in_all_pubs;
+    //SearchView sv_search_in_all_pubs;
+    EditText et_search_in_all_pubs;
     boolean preventOverflow = false;
     boolean isFirstLoad = false;
 
@@ -82,16 +91,19 @@ public class AllPublicationsTabFragment
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_all_publications_activity, container, false);
         lv_my_publications = (ListView) view.findViewById(R.id.lv_all_active_publications);
-        sv_search_in_all_pubs = (SearchView) view.findViewById(R.id.sv_search_in_all_pubs);
-        sv_search_in_all_pubs.setOnQueryTextListener(this);
-        sv_search_in_all_pubs.setIconified(true);
+        et_search_in_all_pubs = (EditText) view.findViewById(R.id.et_search_in_all_pubs);
+        et_search_in_all_pubs.addTextChangedListener(this);
+//        et_search_in_all_pubs.setOnFocusChangeListener(this);
+//        sv_search_in_all_pubs = (SearchView) view.findViewById(R.id.sv_search_in_all_pubs);
+//        sv_search_in_all_pubs.setOnQueryTextListener(this);
+//        sv_search_in_all_pubs.setIconified(true);
 //        btn_close_search = (Button)sv_search_in_all_pubs.findViewById(R.id.search_close_btn);
 //        btn_close_search.setOnClickListener(this);
-        btn_filter_closest = (Button)view.findViewById(R.id.btn_filter_closest_all_pubs);
+        btn_filter_closest = (Button) view.findViewById(R.id.btn_filter_closest_all_pubs);
         btn_filter_closest.setOnClickListener(this);
-        btn_filter_newest = (Button)view.findViewById(R.id.btn_filter_newest_all_pubs);
+        btn_filter_newest = (Button) view.findViewById(R.id.btn_filter_newest_all_pubs);
         btn_filter_newest.setOnClickListener(this);
-        btn_filter_less_regs = (Button)view.findViewById(R.id.btn_filter_less_regs_all_pubs);
+        btn_filter_less_regs = (Button) view.findViewById(R.id.btn_filter_less_regs_all_pubs);
         btn_filter_less_regs.setOnClickListener(this);
 
         //animZoomIn = AnimationUtils.loadAnimation(context, R.anim.zoom_in);
@@ -99,14 +111,14 @@ public class AllPublicationsTabFragment
         //btn_new_publication.setOnClickListener(this);
 
         //String[] from = new String[]{FCPublication.PUBLICATION_TITLE_KEY,
-                //FCPublication.PUBLICATION_ADDRESS_KEY
+        //FCPublication.PUBLICATION_ADDRESS_KEY
                 /*,Distance(Double.parseDouble(FCPublication.PUBLICATION_LONGITUDE_KEY),Double.parseDouble(FCPublication.PUBLICATION_LATITUDE_KEY))*/
                /* ,FCPublication.PUBLICATION_PHOTO_URL*///};
         //int[] to = new int[]{R.id.tv_title_myPub_item,R.id.tv_subtitle_myPub_item/*,R.id.tv_distance_myPub_item,*//*,R.id.img_main__myPub_item*/};
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
         GetMyLocationAsync locationAsync
-                = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+                = new GetMyLocationAsync((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
         locationAsync.setGotLocationCallback(this);
         isFirstLoad = true;
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -133,7 +145,7 @@ public class AllPublicationsTabFragment
         getLoaderManager().initLoader(filterTypeID, null, this);
     }
 
-    private void RestartLoadingCursorForList(){//int filterTypeID) {
+    private void RestartLoadingCursorForList() {//int filterTypeID) {
         getLoaderManager().restartLoader(currentFilterID, null, this);
 //        onLoaderReset(null);
 //        StartLoadingCursorForList(filterTypeID);
@@ -151,7 +163,7 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data != null && adapter != null){
+        if (data != null && adapter != null) {
             adapter.swapCursor(data);
             adapter.notifyDataSetChanged();
         }
@@ -159,7 +171,7 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(adapter != null)
+        if (adapter != null)
             adapter.swapCursor(null);
     }
 
@@ -190,13 +202,13 @@ public class AllPublicationsTabFragment
         sqlGetPubAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
     }
 
-    private void GetPublicationFromListDetails(){
+    private void GetPublicationFromListDetails() {
 
     }
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        switch (request.ActionCommand){
+        switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
                 String myIMEI = CommonUtil.GetIMEI(context);
@@ -213,48 +225,49 @@ public class AllPublicationsTabFragment
 
     @Override
     public void OnGotMyLocationCallback(Location location) {
-        LatLng locationData = location == null ? null: new LatLng(location.getLatitude(), location.getLongitude());
-        if(locationData != null)
+        LatLng locationData = location == null ? null : new LatLng(location.getLatitude(), location.getLongitude());
+        if (locationData != null)
             CommonUtil.UpdateFilterMyLocationPreferences(context, locationData);
         Log.i(MY_TAG, "list got location from map");
-        if(isFirstLoad){
+        if (isFirstLoad) {
             Log.i(MY_TAG, "location got first time");
             isFirstLoad = false;
-            adapter = new PublicationsListCursorAdapter(context, null, 0, locationData);
+            adapter = new PublicationsListCursorAdapter(context, null, 0, locationData, false);
             lv_my_publications.setAdapter(adapter);
             lv_my_publications.setOnItemClickListener(this);
             StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
             return;
         } else {
             Log.i(MY_TAG, "updating adapter's my location field");
-            if(adapter!=null)
+            if (adapter != null)
                 adapter.SetMyLocation(locationData);
             adapter.notifyDataSetChanged();
         }
-        if(waitingForMyLocationForList){
+        if (waitingForMyLocationForList) {
             waitingForMyLocationForList = false;
-            if(progressDialog != null)
+            if (progressDialog != null)
                 progressDialog.dismiss();
             progressDialog = null;
-            preventOverflow = true;
-            sv_search_in_all_pubs.setFocusable(false);
-            sv_search_in_all_pubs.setQuery("", false);
-            sv_search_in_all_pubs.setFocusable(true);
-            preventOverflow = false;
+//            preventOverflow = true;
+//            sv_search_in_all_pubs.setFocusable(false);
+//            sv_search_in_all_pubs.setQuery("", false);
+//            sv_search_in_all_pubs.setFocusable(true);
+//            preventOverflow = false;
             StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
         }
 
     }
 
+/*
     @Override
     public boolean onQueryTextSubmit(String query) {// on button search pressed
         Log.i(MY_TAG, "text query: " + query);
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER;
         sv_search_in_all_pubs.clearFocus();
         FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(context, query);
-        btn_filter_closest.setAnimation(null);
-        btn_filter_newest.setAnimation(null);
-        btn_filter_less_regs.setAnimation(null);
+//        btn_filter_closest.setAnimation(null);
+//        btn_filter_newest.setAnimation(null);
+//        btn_filter_less_regs.setAnimation(null);
         StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER);
         return false;
     }
@@ -270,46 +283,62 @@ public class AllPublicationsTabFragment
         }
         return false;
     }
+*/
 
     @Override
     public void onClick(View v) {
-        sv_search_in_all_pubs.onActionViewCollapsed();
-        switch (v.getId()){
+        //sv_search_in_all_pubs.onActionViewCollapsed();
+        et_search_in_all_pubs.removeTextChangedListener(this);
+        et_search_in_all_pubs.setText("");
+        et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.collect_v6_30x30, 0, 0, 0);
+        InputMethodManager inputManager = (InputMethodManager)
+                context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(et_search_in_all_pubs.getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
+        et_search_in_all_pubs.addTextChangedListener(this);
+        switch (v.getId()) {
             case R.id.btn_filter_closest_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST;
-/*
-                btn_filter_closest.startAnimation(animZoomIn);
-                btn_filter_newest.setAnimation(null);
-                btn_filter_less_regs.setAnimation(null);
-*/
+                btn_filter_closest.setEnabled(false);
+                btn_filter_closest.setTextColor(getResources().getColor(R.color.inactive_blue));
+                btn_filter_newest.setEnabled(true);
+                btn_filter_newest.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_filter_less_regs.setEnabled(true);
+                btn_filter_less_regs.setTextColor(getResources().getColor(R.color.basic_blue));
                 CheckIfMyLocationSavedInPreferencesAndLoad();
                 break;
             case R.id.btn_filter_newest_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
+                btn_filter_closest.setEnabled(true);
+                btn_filter_closest.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_filter_newest.setEnabled(false);
+                btn_filter_newest.setTextColor(getResources().getColor(R.color.inactive_blue));
+                btn_filter_less_regs.setEnabled(true);
+                btn_filter_less_regs.setTextColor(getResources().getColor(R.color.basic_blue));
 /*
-                btn_filter_closest.setAnimation(null);
-                btn_filter_newest.startAnimation(animZoomIn);
-                btn_filter_less_regs.setAnimation(null);
-*/
                 preventOverflow = true;
                 sv_search_in_all_pubs.setFocusable(false);
                 sv_search_in_all_pubs.setQuery("", false);
                 sv_search_in_all_pubs.setFocusable(true);
                 preventOverflow = false;
+*/
                 StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
                 break;
             case R.id.btn_filter_less_regs_all_pubs:
                 currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_LESS_REGS;
+                btn_filter_closest.setEnabled(true);
+                btn_filter_closest.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_filter_newest.setEnabled(true);
+                btn_filter_newest.setTextColor(getResources().getColor(R.color.basic_blue));
+                btn_filter_less_regs.setEnabled(false);
+                btn_filter_less_regs.setTextColor(getResources().getColor(R.color.inactive_blue));
 /*
-                btn_filter_closest.setAnimation(null);
-                btn_filter_newest.setAnimation(null);
-                btn_filter_less_regs.startAnimation(animZoomIn);
-*/
                 preventOverflow = true;
                 sv_search_in_all_pubs.setFocusable(false);
                 sv_search_in_all_pubs.setQuery("", false);
                 sv_search_in_all_pubs.setFocusable(true);
                 preventOverflow = false;
+*/
                 StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_LESS_REGS);
                 break;
 //            case R.id.search_close_btn:
@@ -317,8 +346,8 @@ public class AllPublicationsTabFragment
         }
     }
 
-    private void StartLoaderByFilterID(int filterID){
-        if(currentFilterID == filterID)
+    private void StartLoaderByFilterID(int filterID) {
+        if (currentFilterID == filterID)
             RestartLoadingCursorForList();
         else {
             adapter.swapCursor(null);
@@ -327,22 +356,45 @@ public class AllPublicationsTabFragment
         }
     }
 
-    private void CheckIfMyLocationSavedInPreferencesAndLoad(){
+    private void CheckIfMyLocationSavedInPreferencesAndLoad() {
         LatLng myLocationFromPreferences = CommonUtil.GetFilterLocationFromPreferences(context);
         if (myLocationFromPreferences.latitude == -1000
-                || myLocationFromPreferences.longitude == -1000){
+                || myLocationFromPreferences.longitude == -1000) {
             progressDialog = new ProgressDialog(context);
             progressDialog.setCancelable(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setTitle("Trying to get location data...");
             progressDialog.show();
             GetMyLocationAsync locationTask
-                    = new GetMyLocationAsync((LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+                    = new GetMyLocationAsync((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
             locationTask.setGotLocationCallback(this);
             waitingForMyLocationForList = true;
             locationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST);
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (TextUtils.isEmpty(et_search_in_all_pubs.getText().toString()))
+            onClick(btn_filter_newest);
+        FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(context, et_search_in_all_pubs.getText().toString());
+        StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (s.toString().length() > 0) {
+            et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        } else {
+            //Assign your image again to the view, otherwise it will always be gone even if the text is 0 again.
+            et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.collect_v6_30x30, 0, 0, 0);
         }
     }
 
