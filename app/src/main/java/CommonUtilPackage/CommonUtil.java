@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 
+import android.provider.Settings.Secure;
+
 import upp.foodonet.R;
 
 /**
@@ -34,8 +36,9 @@ public class CommonUtil {
     private static final String MY_TAG = "food_CommonUtil";
 
     public static String GetIMEI(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return tm.getDeviceId();
+//        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        return tm.getDeviceId();
+        return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
     }
 
     public static double GetKilometersBetweenLatLongs(LatLng point1, LatLng point2) {
@@ -157,7 +160,7 @@ public class CommonUtil {
 
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, String imageSubFolder, int width, int heigth) {
         File photo = new File(fileName);
-        if(!photo.exists())
+        if (!photo.exists())
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
         if (!photo.exists()) return null;
         try {
@@ -303,8 +306,8 @@ public class CommonUtil {
 
     }
 
-    public static String GetDateTimeStringFromCalendar(Calendar calendar){
-        if(calendar == null)
+    public static String GetDateTimeStringFromCalendar(Calendar calendar) {
+        if (calendar == null)
             return "";
         String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
         String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));

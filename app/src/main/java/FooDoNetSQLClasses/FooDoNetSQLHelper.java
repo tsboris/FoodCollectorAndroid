@@ -53,16 +53,16 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     }
 
     public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params){
-        String imei = "";
+        String androidId = "";
         Log.i(MY_TAG, "selected filter: " + filterID);
         switch (filterID){
             //region other's list
             case FILTER_ID_LIST_ALL_BY_CLOSEST:
-                imei = params[0];
+                androidId = params[0];
                 String latitude = params[1];
                 String longitude = params[2];
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
-                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", imei, false)
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", androidId, false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderByDistance(latitude, longitude);
             case FILTER_ID_LIST_ALL_BY_NEWEST:
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
@@ -73,12 +73,12 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
                         + RAW_FOR_LIST_GROUP + getRawForListOrderByLessRegs();
             case FILTER_ID_LIST_ALL_BY_TEXT_FILTER:
-                imei = params[0];
+                androidId = params[0];
                 String filterString = params[1];
                 if(TextUtils.isEmpty(filterString))
                     return GetRawSelectPublicationsForListByFilterID(FILTER_ID_LIST_ALL_BY_NEWEST);
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
-                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", imei, false)
+                        + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", androidId, false)
                         + " AND ("
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_TITLE_KEY, " LIKE ", "%" + filterString + "%", true)
                         + " OR "
@@ -108,7 +108,9 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             //region sidemenu
             case FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
-                        + " WHERE REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID + " = " + params[0]
+                        + " WHERE REGS."
+                        + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_DEVICE_UUID
+                        + " = " + "'" + params[0] + "'"
                         + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
                         + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
             case FILTER_ID_SIDEMENU_MY_ACTIVE:
