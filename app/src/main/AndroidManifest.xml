@@ -92,12 +92,14 @@
             android:noHistory="true"
             android:screenOrientation="portrait" >
         </activity>
+<!--
         <activity
             android:name=".AddNewFCPublicationActivity"
             android:label="@string/title_activity_add_new_fcpublication"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
+-->
 
         <!--
         <activity
