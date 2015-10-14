@@ -77,7 +77,8 @@
         android:layout_below="@+id/ll_filters"
         android:hint="@string/pub_list_search_hint"
         android:imeOptions="actionSearch"
-        android:drawableLeft="@drawable/collect_v6_30x30"/>
+        android:drawableLeft="@drawable/collect_v6_30x30"
+        android:singleLine="true"/>
 
     <ListView
         android:id="@+id/lv_all_active_publications"

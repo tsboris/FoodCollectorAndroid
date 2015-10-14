@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
@@ -24,6 +25,8 @@ import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 public class FooDoNetInstanceIDListenerService extends IntentService implements IFooDoNetServerCallback {
+
+    private static final String[] TOPICS = {"global"};
 
     private static final String MY_TAG = "food_intentService_ID";
 
@@ -63,6 +66,7 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         try {
             token = instanceID.getToken(getString(R.string.notifications_server_id),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            subscribeTopics(token);
             SharedPreferences sp = getSharedPreferences(getResources().getString(R.string.shared_preferences_token), MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString(getResources().getString(R.string.shared_preferences_token_key), token);
@@ -131,5 +135,12 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
                 return;
         }
         sendBroadcast(intent);
+    }
+
+    private void subscribeTopics(String token) throws IOException {
+        GcmPubSub pubSub = GcmPubSub.getInstance(this);
+        for (String topic : TOPICS) {
+            pubSub.subscribe(token, "/topics/" + topic, null);
+        }
     }
 }

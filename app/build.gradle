@@ -29,6 +29,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     // Google Play Services
     compile 'com.google.android.gms:play-services:7.5.0'
+    //compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.google.android.gms:play-services-gcm:7.5.0'
     // Facebook
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
     // Support Libraries

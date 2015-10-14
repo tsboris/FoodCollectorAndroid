@@ -20,6 +20,7 @@ import java.util.Date;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.GcmSenderTest;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
@@ -162,6 +163,8 @@ public class EntranceActivity
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:
+                GcmSenderTest sender = new GcmSenderTest();
+                sender.execute();
 //                Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
 //                startActivityForResult(addNewPubIntent, REQUEST_ADD_NEW_PUBLICATION);
 //                TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
