@@ -1,10 +1,12 @@
 package upp.foodonet;
 
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,10 +14,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -25,16 +29,25 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +75,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
@@ -94,6 +109,7 @@ public class PublicationDetailsActivity
     private Bitmap photoBmp;
     private boolean isOwnPublication;
     private boolean isRegisteredForCurrentPublication = false;
+    boolean isImageFitToScreen = false;
 
     //new:
     ImageButton btn_menu;
@@ -114,9 +130,13 @@ public class PublicationDetailsActivity
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
+    ImageView fullSizeImage;
+
+    LinearLayout ll_fullSize;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
+    LinearLayout ll_details;
 
     PublicationDetailsReportsAdapter adapter;
 
@@ -145,6 +165,8 @@ public class PublicationDetailsActivity
             Log.e(MY_TAG, "no publication found in extras!");
             finish();
         }
+
+
         isRegisteredForCurrentPublication = checkIfRegisteredForThisPublication();
 
         btn_menu = (ImageButton) findViewById(R.id.btn_menu_pub_details);
@@ -167,6 +189,10 @@ public class PublicationDetailsActivity
         lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
+        ll_details = (LinearLayout)findViewById(R.id.ll_pub_details);
+
+        //fullSizeImage = (ImageView)findViewById(R.id.iv_full_size_image_pub_details);
+        ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
 
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
@@ -255,9 +281,11 @@ public class PublicationDetailsActivity
                 btn_twitter_my.setOnClickListener(this);
                 btn_call_reg.setOnClickListener(this);
                 btn_sms_reg.setOnClickListener(this);
+                btn_call_reg.setEnabled(false);
+                btn_sms_reg.setEnabled(false);
             } else {
-                btn_call_reg.setImageDrawable(getResources().getDrawable(R.drawable.btn_call_inactive_pub_det));
-                btn_sms_reg.setImageDrawable(getResources().getDrawable(R.drawable.btn_sms_inactive_pub_det));
+                btn_call_reg.setEnabled(false);
+                btn_sms_reg.setEnabled(false);
                 //todo: set gray drawables to buttons facebook and twitter
             }
         } else {
@@ -287,7 +315,14 @@ public class PublicationDetailsActivity
                 .getDrawable((isRegisteredForCurrentPublication
                         ? R.drawable.cancel_rishum_pub_det_btn
                         : R.drawable.rishum_pub_det_btn));
+
+       ;
+
+
+
         btn_reg_unreg.setImageDrawable(image);
+
+
         iv_num_of_reged.setImageDrawable(isRegisteredForCurrentPublication
                 ? getResources().getDrawable(R.drawable.user_icon_green)
                 : getResources().getDrawable(R.drawable.user_icon_blue));
@@ -747,9 +782,11 @@ public class PublicationDetailsActivity
                     ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
+                growAnim(R.drawable.facebook_green_xxh,R.drawable.pub_det_facebook,btn_facebook_my);
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
+                growAnim(R.drawable.navigate_green_xxh,R.drawable.navigate_pub_det_btn,btn_navigate);
                 try
                 {
                     String url = "waze://?ll=" + publication.getLatitude() + "," + publication.getLongitude();
@@ -764,10 +801,16 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_tweet_my_pub_details:
+
+                growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
+
                 SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //open progress dialog
+
+                growAnim(R.drawable.cancel_rishum_pub_det_btn,R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setCancelable(false);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -786,6 +829,9 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_call_owner_pub_details:
+
+                growAnim(R.drawable.call_green_xxh,R.drawable.pub_det_call,btn_call_reg);
+
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
                 if (intent.resolveActivity(getPackageManager()) != null) {
@@ -793,6 +839,9 @@ public class PublicationDetailsActivity
             }
                 break;
             case R.id.btn_message_owner_pub_details:
+
+                growAnim(R.drawable.sms_green_xxh,R.drawable.pub_det_sms,btn_sms_reg);
+
                 Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
                 intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
                 intentSMS.setData(Uri.parse("smsto:" + publication.getContactInfo()));// + publication.getContactInfo()));  // This ensures only SMS apps respond
@@ -802,6 +851,42 @@ public class PublicationDetailsActivity
                     startActivity(intentSMS);
                 }
                 break;
+
+            case R.id.riv_image_pub_details:
+
+                WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
+                int width, height;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+                    width = manager.getDefaultDisplay().getWidth();
+                    height = manager.getDefaultDisplay().getHeight();
+                } else {
+                    Point point = new Point();
+                    manager.getDefaultDisplay().getSize(point);
+                    width = point.x;
+                    height = point.y;
+                }
+
+                Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
+                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                        getString(R.string.image_folder_path), width, height);
+
+                ImageView image = new ImageView(this);
+                image.setImageDrawable(imageD);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this).
+                                setView(image);
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.getWindow();
+                alertDialog.show();
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(alertDialog.getWindow().getAttributes());
+                lp.width = width;
+                lp.height = height;
+                alertDialog.getWindow().setAttributes(lp);
+
+                break;
+
         }
     }
 
@@ -995,6 +1080,31 @@ public class PublicationDetailsActivity
         }
     }
 
+    public void growAnim(final int iconGreen, final int iconBlue, final ImageButton btn){
+        ScaleAnimation grow = new ScaleAnimation(1, 1.2f, 1, 1.2f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        grow.setDuration(200);
+        btn.startAnimation(grow);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                btn.setImageDrawable(getResources().getDrawable(iconGreen));
+
+            }
+        }, 100);
+
+        //final Handler handlerb = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                btn.setImageDrawable(getResources().getDrawable(iconBlue));
+
+            }
+        }, 200);
+
+    }
     //endregion
 }
 

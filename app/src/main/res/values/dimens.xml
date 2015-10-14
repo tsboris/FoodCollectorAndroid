@@ -29,7 +29,7 @@
     <dimen name="pub_details_pub_title_height">42dp</dimen>
     <dimen name="pub_details_image_size">100dp</dimen>
     <dimen name="pub_details_pub_props_panel_height">180dp</dimen>
-    <dimen name="pub_details_btns_panel_height">90dp</dimen>
+    <dimen name="pub_details_btns_panel_height">108dp</dimen>
     <dimen name="pub_details_btn_height">56dp</dimen>
 
     <!-- colors -->

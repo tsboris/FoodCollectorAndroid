@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
+    android:id="@+id/ll_pub_details"
     tools:context="upp.foodonet.MyPublicationDetailsActivity">
 
     <RelativeLayout
@@ -158,46 +159,51 @@
         android:id="@+id/ll_others_pub_dets_buttons_panel"
         android:layout_width="match_parent"
         android:layout_height="@dimen/pub_details_btns_panel_height"
+
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btn_register_unregister_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/rishum_pub_det_btn"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_navigate_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/navigate_pub_det_btn"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_message_owner_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/pub_det_sms"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_call_owner_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/pub_det_call"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
     </LinearLayout>
@@ -211,41 +217,45 @@
         <ImageButton
             android:id="@+id/btn_facebook_my_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/pub_det_facebook"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_tweet_my_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
             android:src="@drawable/pub_det_twitter"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_message_reged_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
-            android:src="@drawable/pub_det_sms"
+            android:src="@drawable/btn_sms_inactive_pub_det"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"/>
 
         <ImageButton
             android:id="@+id/btn_call_reged_pub_details"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="90dp"
             android:layout_weight="1"
-            android:src="@drawable/pub_det_call"
+            android:src="@drawable/btn_call_inactive_pub_det"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
 <!---->
