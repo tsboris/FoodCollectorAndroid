@@ -22,30 +22,35 @@ public class GcmSenderTest extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-        JSONObject jGcmData = new JSONObject();
-        JSONObject jData = new JSONObject();
-        jData.put("message", "Hello Artem!");
-        // Where to send GCM message.
-            //jGcmData.put("to", args[1].trim());
-            jGcmData.put("to", "/topics/global");
-        // What to send in GCM message.
-        jGcmData.put("data", jData);
+            String serverApiKey = "AIzaSyCJbsdVaI0yajvOgrQRiUkbuC-s7XFWZhk";
+            String messageText = "Hello Artem!";
 
-        // Create connection to send GCM Message request.
-        URL url = new URL("https://android.googleapis.com/gcm/send");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Authorization", "key=" + "AIzaSyCJbsdVaI0yajvOgrQRiUkbuC-s7XFWZhk");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
+            JSONObject jGcmData = new JSONObject();
+            JSONObject jData = new JSONObject();
+            jData.put("message", messageText);
 
-        // Send GCM message content.
-        OutputStream outputStream = conn.getOutputStream();
-        outputStream.write(jGcmData.toString().getBytes());
+            // Where to send GCM message.
+            //jGcmData.put("to", token); ---- use this to send message to specific user (token from DB, created on user's device)
+            jGcmData.put("to", "/topics/global"); //--- use this to send message to ALL registered android users
 
-        // Read GCM response.
-        InputStream inputStream = conn.getInputStream();
-        String resp = IOUtils.toString(inputStream);
+            // What to send in GCM message.
+            jGcmData.put("data", jData);
+
+            // Create connection to send GCM Message request.
+            URL url = new URL("https://android.googleapis.com/gcm/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("Authorization", "key=" + serverApiKey); //-- code here is our
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+
+            // Send GCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jGcmData.toString().getBytes());
+
+            // Read GCM response.
+            InputStream inputStream = conn.getInputStream();
+            String resp = IOUtils.toString(inputStream);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {

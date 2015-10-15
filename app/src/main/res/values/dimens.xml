@@ -79,4 +79,13 @@
 
     <!-- ============================ -->
 
+    <!-- Add/Edit publication -->
+
+    <color name="validation_red_text_color">#FF0000</color>
+    <color name="edit_text_input_default_color">#000000</color>
+    <dimen name="edit_text_height_add_edit_pub">56dp</dimen>
+    <dimen name="edit_text_side_margin_add_edit_pub">13dp</dimen>
+
+    <!-- ==================== -->
+
 </resources>

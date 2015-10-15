@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,10 +23,13 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.Time;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,7 +78,7 @@ import DataModel.FCTypeOfCollecting;
 
 
 public class AddEditPublicationActivity extends FragmentActivity
-        implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,View.OnClickListener {
+        implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, View.OnClickListener {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
@@ -90,10 +94,10 @@ public class AddEditPublicationActivity extends FragmentActivity
     public static final int SELECT_FILE = 2;
 
 
-
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private EditText et_publication_title;
+    private EditText et_address;
     private AutoCompleteTextView atv_address;
     private EditText et_subtitle;
     //private TextView mAddressTextView;
@@ -114,7 +118,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private ImageView mAddPicImageView;
     private Uri imageURI;
 
-    private static ImageButton submitButton,cameraBtn;
+    private static ImageButton submitButton, cameraBtn;
 
     private Date mDate;
 
@@ -137,21 +141,26 @@ public class AddEditPublicationActivity extends FragmentActivity
 
 
         Bundle extras = getIntent().getExtras();
-        if(extras == null) {
+        if (extras == null) {
             publication = new FCPublication();
             isNew = true;
         } else {
-            publication = (FCPublication)extras.get(PUBLICATION_KEY);
+            publication = (FCPublication) extras.get(PUBLICATION_KEY);
             isNew = false;
         }
         publicationOldVersion = new FCPublication(publication);
 
         et_publication_title = (EditText) findViewById(R.id.et_title_new_publication);
+        et_publication_title.setOnClickListener(this);
+
+        et_address = (EditText) findViewById(R.id.et_address_edit_add_pub);
+        et_publication_title.setOnClickListener(this);
+
         et_additional_info = (EditText) findViewById(R.id.et_additional_info_add_edit_pub);
         et_additional_info.setInputType(InputType.TYPE_CLASS_NUMBER);
-        et_subtitle = (EditText)findViewById(R.id.et_subtitle_add_edit_pub);
+        et_subtitle = (EditText) findViewById(R.id.et_subtitle_add_edit_pub);
 
-        if(!isNew){
+        if (!isNew) {
             et_publication_title.setText(publication.getTitle());
             et_subtitle.setText(publication.getSubtitle());
             et_additional_info.setText(publication.getContactInfo());
@@ -171,17 +180,17 @@ public class AddEditPublicationActivity extends FragmentActivity
                 BOUNDS_MOUNTAIN_VIEW, null);
         atv_address.setAdapter(mPlaceArrayAdapter);
 
-        if(!isNew){
+        if (!isNew) {
             atv_address.setText(publication.getAddress());
         }
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
-        btn_date_start = (Button)findViewById(R.id.btn_start_date_time_add_pub);
-        btn_date_end = (Button)findViewById(R.id.btn_end_date_time_add_pub);
+        btn_date_start = (Button) findViewById(R.id.btn_start_date_time_add_pub);
+        btn_date_end = (Button) findViewById(R.id.btn_end_date_time_add_pub);
         btn_date_start.setOnClickListener(this);
         btn_date_end.setOnClickListener(this);
 
-        if(isNew || publication.getEndingDate().compareTo(new Date()) <= 0){
+        if (isNew || publication.getEndingDate().compareTo(new Date()) <= 0) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             startDate = calendar.getTime();
@@ -204,14 +213,14 @@ public class AddEditPublicationActivity extends FragmentActivity
         //chkCallToPublisher = (CheckBox) findViewById(R.id.chkCallToPublisher);
         //chkCallToPublisher.setOnClickListener(this);
 
-        mAddPicImageView = (ImageView)findViewById(R.id.imgAddPicture);
+        mAddPicImageView = (ImageView) findViewById(R.id.imgAddPicture);
         mAddPicImageView.setOnClickListener(this);
 
-        if(!isNew){
+        if (!isNew) {
             TryLoadExistingImage();
         }
 
-        cameraBtn = (ImageButton)findViewById(R.id.btn_camera_add_pub);
+        cameraBtn = (ImageButton) findViewById(R.id.btn_camera_add_pub);
         cameraBtn.setOnClickListener(this);
 
         submitButton = (ImageButton) findViewById(R.id.publishButton);
@@ -257,11 +266,11 @@ public class AddEditPublicationActivity extends FragmentActivity
     @Override
     public void onBackPressed() {
         ArrangePublicationFromInput(publication);
-        if(!publication.IsEqualTo(publicationOldVersion)) {
+        if (!publication.IsEqualTo(publicationOldVersion)) {
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    switch (which){
+                    switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
                             ForceReturn();
                             break;
@@ -278,7 +287,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         }
     }
 
-    private void ForceReturn(){
+    private void ForceReturn() {
         super.onBackPressed();
     }
 
@@ -286,17 +295,17 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //region image
 
-    private void TryLoadExistingImage(){
+    private void TryLoadExistingImage() {
         int imageSize = mAddPicImageView.getLayoutParams().height;
         Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(
                 publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
                 getString(R.string.image_folder_path), imageSize, imageSize);
-        if(imageDrawable != null)
+        if (imageDrawable != null)
             mAddPicImageView.setImageDrawable(imageDrawable);
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library", "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
         AlertDialog.Builder builder = new AlertDialog.Builder(AddEditPublicationActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -310,7 +319,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                             Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     intent.setType("image/*");
-                    startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+                    startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -328,11 +337,10 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         if (resultCode == RESULT_OK) {
             publication.pictureWasChangedDuringEditing = true;
-            if (requestCode == REQUEST_CAMERA)
-            {
+            if (requestCode == REQUEST_CAMERA) {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 thumbnail = CommonUtil.CompressBitmapByMaxSize(thumbnail,
-                                getResources().getInteger(R.integer.max_image_width_height));
+                        getResources().getInteger(R.integer.max_image_width_height));
                 publication.setImageByteArrayFromBitmap(thumbnail);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -352,14 +360,12 @@ public class AddEditPublicationActivity extends FragmentActivity
                     e.printStackTrace();
                 }
                 mAddPicImageView.setImageBitmap(thumbnail);
-            }
-            else if (requestCode == SELECT_FILE)
-            {
+            } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
-                String[] projection = { MediaStore.MediaColumns.DATA };
+                String[] projection = {MediaStore.MediaColumns.DATA};
                 Cursor cursor = managedQuery(selectedImageUri, projection, null, null,
                         null);
-                if(cursor == null)
+                if (cursor == null)
                     throw new NullPointerException("can't get picture cursor, critical error");
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                 cursor.moveToFirst();
@@ -437,45 +443,37 @@ public class AddEditPublicationActivity extends FragmentActivity
         }
     };
 
-    public double getLatitudeFromAddress(String strAddress)
-    {
+    public double getLatitudeFromAddress(String strAddress) {
 
         Geocoder coder = new Geocoder(this);
         List<Address> address;
         double latitude = 0;
 
-        try
-        {
+        try {
             address = coder.getFromLocationName(strAddress, 5);
             if (address != null) {
                 Address location = address.get(0);
                 latitude = location.getLatitude();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return latitude;
     }
 
-    public double getLongitudeFromAddress(String strAddress)
-    {
+    public double getLongitudeFromAddress(String strAddress) {
 
         Geocoder coder = new Geocoder(this);
         List<Address> address;
         double longitude = 0;
 
-        try
-        {
+        try {
             address = coder.getFromLocationName(strAddress, 5);
             if (address != null) {
                 Address location = address.get(0);
                 longitude = location.getLongitude();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return longitude;
@@ -509,8 +507,8 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //region DateTime methods and picker dialog
 
-    private void setDateTimeTextToButton(int id){
-        switch (id){
+    private void setDateTimeTextToButton(int id) {
+        switch (id) {
             case R.id.btn_start_date_time_add_pub:
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(startDate);
@@ -533,13 +531,13 @@ public class AddEditPublicationActivity extends FragmentActivity
         dtpDialog.setContentView(R.layout.date_time_picker_dialog);
 
         //dtpDialog.setTitle(getResources().getString(R.string.date_time_picker_dialog_title));
-        final DatePicker dp = (DatePicker)dtpDialog.findViewById(R.id.dp_date_time_dialog);
-        final TimePicker tp = (TimePicker)dtpDialog.findViewById(R.id.tp_date_time_dialog);
-        Button btnOk = (Button)dtpDialog.findViewById(R.id.btn_ok_date_time_dialog);
-        TextView tvTitle = (TextView)dtpDialog.findViewById(R.id.tv_date_time_picker_title);
+        final DatePicker dp = (DatePicker) dtpDialog.findViewById(R.id.dp_date_time_dialog);
+        final TimePicker tp = (TimePicker) dtpDialog.findViewById(R.id.tp_date_time_dialog);
+        Button btnOk = (Button) dtpDialog.findViewById(R.id.btn_ok_date_time_dialog);
+        TextView tvTitle = (TextView) dtpDialog.findViewById(R.id.tv_date_time_picker_title);
 
         final Calendar calendar = Calendar.getInstance();
-        switch (btnId){
+        switch (btnId) {
             case R.id.btn_start_date_time_add_pub:
                 calendar.setTime(startDate);
                 break;
@@ -564,7 +562,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 int h2 = resCalendar.get(Calendar.HOUR_OF_DAY);
                 resCalendar.set(Calendar.HOUR, tp.getCurrentHour());
                 resCalendar.set(Calendar.MINUTE, tp.getCurrentMinute());
-                switch (id){
+                switch (id) {
                     case R.id.btn_start_date_time_add_pub:
                         startDate = resCalendar.getTime();
                         break;
@@ -585,7 +583,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_start_date_time_add_pub:
             case R.id.btn_end_date_time_add_pub:
                 showDatePickerDialog(view.getId());
@@ -607,9 +605,20 @@ public class AddEditPublicationActivity extends FragmentActivity
                 selectImage();
                 break;
             case R.id.publishButton:
-                Log.i(MY_TAG, "Entered submitButton.OnClickListener.onClick()");
+                if (!ValidateInputDate()) return;
                 ArrangePublicationFromInput(publication);
                 ReturnPublication();
+                break;
+            case R.id.et_title_new_publication:
+                et_publication_title.getBackground()
+                        .setColorFilter(getResources()
+                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                break;
+            case R.id.et_address_edit_add_pub:
+                et_publication_title.getBackground()
+                        .setColorFilter(getResources()
+                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                StartAddressDialog();
                 break;
         }
     }
@@ -618,14 +627,14 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //region My methods
 
-    private void ArrangePublicationFromInput(FCPublication publication){
+    private void ArrangePublicationFromInput(FCPublication publication) {
         publication.setTitle(et_publication_title.getText().toString());
         publication.setSubtitle(et_subtitle.getText().toString());
         publication.setContactInfo(et_additional_info.getText().toString());
         publication.setStartingDate(startDate);
         publication.setEndingDate(endDate);
 
-        if(TextUtils.isEmpty(publication.getPublisherUID()))
+        if (TextUtils.isEmpty(publication.getPublisherUID()))
             publication.setPublisherUID(CommonUtil.GetIMEI(this));
         publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
         //        chkCallToPublisher.isChecked()
@@ -635,13 +644,60 @@ public class AddEditPublicationActivity extends FragmentActivity
         publication.setIfTriedToGetPictureBefore(true);
     }
 
-    private void ReturnPublication(){
+    private void ReturnPublication() {
         Intent dataPublicationIntent = new Intent();
         dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
         // return data Intent and finish
         setResult(RESULT_OK, dataPublicationIntent);
         finish();
     }
+
+    private boolean ValidateInputDate() {
+        //check title
+        if (et_publication_title.getText().toString().length() == 0) {
+            //et_publication_title.setTextColor(getResources().getColor(R.color.validation_red_text_color));
+            et_publication_title.getBackground()
+                    .setColorFilter(getResources()
+                            .getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+            Toast.makeText(this, getString(R.string.validation_title_empty), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //todo: check max lenght of title
+        if (et_publication_title.getText().toString().length() >= 10000) {//HARDCODE!!!
+            et_publication_title.getBackground()
+                    .setColorFilter(getResources()
+                            .getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+            Toast.makeText(this, getString(
+                    R.string.validation_title_too_long).replace("{0}", String.valueOf(10000)),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean CheckPhoneNumberString(String phoneNumber) {
+        String phonePattern = getString(R.string.regex_israel_phone_number);
+        return phoneNumber.matches(phonePattern);
+    }
+
+    private void StartAddressDialog() {
+
+    }
+
+
+//    @Override
+//    public void onFocusChange(View v, boolean hasFocus) {
+//        switch (v.getId()) {
+//            case R.id.et_title_new_publication:
+//                if (hasFocus) {
+//                    et_publication_title.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
+//                    et_publication_title.getBackground()
+//                            .setColorFilter(getResources()
+//                                    .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+//                }
+//                break;
+//        }
+//    }
 
     //endregion
 }

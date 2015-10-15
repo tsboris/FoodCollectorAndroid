@@ -128,5 +128,13 @@
 
     <string name="image_folder_path">/Foodonet/PublicationImages</string>
 
+    <!-- Add/Edit publication -->
+
+    <string name="regex_israel_phone_number">/^05\d([-]{0,1})\d{7}$/</string>
+    <string name="regex_israel_mobile_phone_number">/^0\d([\d]{0,1})([-]{0,1})\d{7}$/</string>
+
+    <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
+    <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
+
 
 </resources>

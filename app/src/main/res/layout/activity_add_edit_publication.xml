@@ -16,8 +16,8 @@
         android:background="@color/transparent"
         android:src="@drawable/done_xxh"
         android:scaleType="fitCenter"
-        android:layout_marginRight="13dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
+        android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"/>
 
@@ -30,8 +30,8 @@
         android:src="@drawable/menu_xxh"
         android:scaleType="fitCenter"
         android:textSize="38sp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
+        android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"/>
 
@@ -47,16 +47,26 @@
     <EditText
         android:id="@+id/et_title_new_publication"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/edit_text_height_add_edit_pub"
         android:ems="10"
         android:hint="@string/enter_title_string"
         android:inputType="textShortMessage"
         android:layout_below="@+id/imgAddPicture"
-        android:layout_marginRight="13dp"
-        android:layout_marginLeft="13dp">
+        android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
+        android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub">
         <!--<requestFocus />-->
     </EditText>
+    
+    <EditText android:id="@+id/et_address_edit_add_pub"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_text_height_add_edit_pub"
+        android:hint="@string/address_string"
+        android:layout_below="@+id/et_title_new_publication"
+        android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
+        android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
+        android:singleLine="true"/>
 
+<!--
     <AutoCompleteTextView
         android:id="@+id/actv_address_new_publication"
         android:layout_width="match_parent"
@@ -66,6 +76,7 @@
         android:layout_below="@+id/et_title_new_publication"
         android:layout_marginRight="13dp"
         android:layout_marginLeft="13dp"/>
+-->
 
     <!--
         <TextView
