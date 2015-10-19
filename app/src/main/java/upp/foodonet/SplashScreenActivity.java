@@ -77,7 +77,14 @@ public class SplashScreenActivity
         return super.onOptionsItemSelected(item);
     }
 
-/*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(AllLoaded())
+            StartNextActivity();
+    }
+
+    /*
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = FCPublication.GetColumnNamesArray();

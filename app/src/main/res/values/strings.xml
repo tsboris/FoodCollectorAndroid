@@ -136,5 +136,9 @@
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
 
+    <!-- Address dialog -->
+
+    <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
+
 
 </resources>

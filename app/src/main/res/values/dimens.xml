@@ -88,4 +88,17 @@
 
     <!-- ==================== -->
 
+    <!-- Address dialog -->
+
+    <dimen name="address_dialog_height">300dp</dimen>
+    <dimen name="address_dialog_width">320dp</dimen>
+    <dimen name="address_dialog_ll_side_padding">8dp</dimen>
+    <dimen name="address_dialog_ll_top_bottom_padding">8dp</dimen>
+    <dimen name="address_dialog_edit_field_height">52dp</dimen>
+    <dimen name="address_dialog_get_curr_location_height">48dp</dimen>
+    <dimen name="address_dialog_history_list_height">144dp</dimen>
+    <dimen name="address_dialog_divider_height">12dp</dimen>
+
+    <!-- ============== -->
+
 </resources>
