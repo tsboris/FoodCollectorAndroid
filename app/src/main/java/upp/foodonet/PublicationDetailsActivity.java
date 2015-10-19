@@ -349,7 +349,7 @@ public class PublicationDetailsActivity
         if (image != null) {
             // TODO - move init of facebook and twitter pictures
             bImageFacebook = ((BitmapDrawable) image).getBitmap();
-            isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
+            //isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
@@ -488,7 +488,7 @@ public class PublicationDetailsActivity
         String secret = getString(R.string.access_token_secret);
         twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token, secret);
         Twitter twitter = new TwitterFactory().getInstance();
-        twitter.setOAuthConsumer(getString(R.string.consumer_key), getString(R.string.consumer_secret));
+        twitter.setOAuthConsumer(getString(R.string.twitter_consumer_key), getString(R.string.twitter_consumer_secret));
         twitter.setOAuthAccessToken(a);
 
         twitter.getAccountSettings();
@@ -804,7 +804,12 @@ public class PublicationDetailsActivity
 
                 growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
 
-                SendTweet();
+                //SendTweet();
+
+                Intent intentTwitter = new Intent(getApplicationContext(),ShareToTwitterActivity.class);
+                intentTwitter.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM,publication);
+                startActivity(intentTwitter);
+
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //open progress dialog

@@ -236,8 +236,9 @@ public class CommonUtil {
         editor.commit();
     }
 
-    public static InputStream ConvertFileToInputStream(String fileName) {
+    public static InputStream ConvertFileToInputStream(String fileName, String imageSubFolder) {
         InputStream is = null;
+
         File photo = new File(Environment.getExternalStorageDirectory(), fileName);
         if (!photo.exists()) return null;
 

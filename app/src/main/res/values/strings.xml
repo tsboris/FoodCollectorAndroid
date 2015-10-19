@@ -102,10 +102,18 @@
     <string name="successfully_posted_post">Successfully posted to Facebook</string>
 
     <!-- Twitter keys -->
-    <string name="consumer_key">RiDOc2BKu13b7qGwjLmlJrNJk</string>
-    <string name="consumer_secret">zXuZ2q1WCJ5NwhyAEZVriXJG9dEiUl6WHjo7Ct46rs2nUn1fzE</string>
+    <!-- Twitter Configurations -->
+    <string name="twitter_consumer_key">RiDOc2BKu13b7qGwjLmlJrNJk</string>
+    <string name="twitter_consumer_secret">zXuZ2q1WCJ5NwhyAEZVriXJG9dEiUl6WHjo7Ct46rs2nUn1fzE</string>
     <string name="access_token">3527768239-5mhYS1OYF0LljCCE38iC54BBRrzo2ZQ2tNGGkHa</string>
     <string name="access_token_secret">MhJ4YAUfyvCw18o7qKMVa5fNY8qfUx9HiEwcZDXPMPkvK</string>
+    <string name="twitter_callback">x-oauthflow-twitter://callback</string>
+    <string name="twitter_oauth_verifier">oauth_verifier</string>
+    <string name="hello">Hello, </string>
+    <string name="login_instructions">Login to twitter</string>
+    <string name="share_instructions">Enter share message</string>
+    <string name="btn_login">Login to Twitter</string>
+    <string name="btn_share">Share</string>
     <string name="hashtag">#FooDoNet</string>
     <string name="facebook_page_url">https://www.facebook.com/foodonet</string>
     <string name="tweet_text">יש לי</string>
@@ -132,9 +140,9 @@
 
     <string name="regex_israel_phone_number">/^05\d([-]{0,1})\d{7}$/</string>
     <string name="regex_israel_mobile_phone_number">/^0\d([\d]{0,1})([-]{0,1})\d{7}$/</string>
-
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
-
+    <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_share_to_twitter">ShareToTwitterActivity</string>
 
 </resources>
