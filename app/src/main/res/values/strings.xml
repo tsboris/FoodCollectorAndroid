@@ -139,6 +139,8 @@
     <!-- Address dialog -->
 
     <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
+    <string name="address_dialog_btn_ok">שמירה</string>
+    <string name="address_dialog_btn_cancel">חזרה</string>
 
 
 </resources>

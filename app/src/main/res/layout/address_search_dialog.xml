@@ -11,12 +11,10 @@
     <AutoCompleteTextView
         android:id="@+id/actv_address_new_publication"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/address_dialog_edit_field_height"
         android:ems="10"
         android:hint="@string/address_string"
-        android:layout_below="@+id/et_title_new_publication"
-        android:layout_marginRight="13dp"
-        android:layout_marginLeft="13dp"/>
+        android:layout_below="@+id/et_title_new_publication"/>
 
     <RelativeLayout android:id="@+id/rl_btn_get_location_address_dialog"
         android:layout_width="match_parent"
@@ -27,14 +25,40 @@
         <CheckBox android:id="@+id/cb_use_current_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/get_current_location_checkbox_text"
+            android:text=""
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/cb_use_current_location"
+            android:text="@string/get_current_location_checkbox_text"/>
 
     </RelativeLayout>
 
     <ListView android:id="@+id/lv_address_history"
         android:layout_width="match_parent"
         android:layout_height="@dimen/address_dialog_history_list_height"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/address_dialog_edit_field_height"
+        android:orientation="horizontal">
+
+        <Button android:id="@+id/btn_address_dialog_ok"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/address_dialog_btn_ok"/>
+
+        <Button android:id="@+id/btn_address_dialog_cancel"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/address_dialog_btn_cancel"/>
+
+    </LinearLayout>
 
 </LinearLayout>

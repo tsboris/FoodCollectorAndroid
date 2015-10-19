@@ -90,7 +90,7 @@
 
     <!-- Address dialog -->
 
-    <dimen name="address_dialog_height">300dp</dimen>
+    <dimen name="address_dialog_height">340dp</dimen>
     <dimen name="address_dialog_width">320dp</dimen>
     <dimen name="address_dialog_ll_side_padding">8dp</dimen>
     <dimen name="address_dialog_ll_top_bottom_padding">8dp</dimen>

@@ -128,7 +128,10 @@ public class AddEditPublicationActivity extends FragmentActivity
     //address picker
     private AutoCompleteTextView atv_address;
     private CheckBox cb_use_my_current_location;
+    private Button btn_address_dialog_ok;
+    private Button btn_address_dialog_cancel;
     private boolean addressDialogStarted = false;
+    private Dialog addressDialog;
 
     private static FCPublication publication;
     private static FCPublication publicationOldVersion;
@@ -587,7 +590,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     private void ShowAddressDialog(){
         addressDialogStarted = true;
-        final Dialog addressDialog = new Dialog(this);
+        addressDialog = new Dialog(this);
         addressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         addressDialog.setContentView(R.layout.address_search_dialog);
         addressDialog.setCanceledOnTouchOutside(false);
@@ -608,6 +611,11 @@ public class AddEditPublicationActivity extends FragmentActivity
         cb_use_my_current_location = (CheckBox)addressDialog.findViewById(R.id.cb_use_current_location);
         cb_use_my_current_location.setOnClickListener(this);
         cb_use_my_current_location.setChecked(false);
+
+        btn_address_dialog_ok = (Button)addressDialog.findViewById(R.id.btn_address_dialog_ok);
+        btn_address_dialog_ok.setOnClickListener(this);
+        btn_address_dialog_cancel = (Button)addressDialog.findViewById(R.id.btn_address_dialog_cancel);
+        btn_address_dialog_cancel.setOnClickListener(this);
 
         mGoogleApiClient.connect();
         addressDialog.show();
@@ -667,6 +675,14 @@ public class AddEditPublicationActivity extends FragmentActivity
 //                        .setColorFilter(getResources()
 //                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
                 //ShowAddressDialog();
+                break;
+            case R.id.btn_address_dialog_ok:
+                if(addressDialog != null)
+                    addressDialog.dismiss();
+                et_address.setText(publication.getAddress());
+                addressDialogStarted = false;
+                break;
+            case R.id.btn_address_dialog_cancel:
                 break;
         }
     }
