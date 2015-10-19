@@ -239,8 +239,9 @@ public class CommonUtil {
     public static InputStream ConvertFileToInputStream(String fileName, String imageSubFolder) {
         InputStream is = null;
 
-        File photo = new File(Environment.getExternalStorageDirectory(), fileName);
-        if (!photo.exists()) return null;
+        File photo = new File(fileName);
+        if (!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
 
         try {
             is = new FileInputStream(photo.getPath());

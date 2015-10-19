@@ -143,14 +143,6 @@ public class PublicationDetailsActivity
     PopupMenu popup;
     ProgressDialog progressDialog;
     Bitmap bImageFacebook;
-    // Twitter
-    InputStream isImageTwitter;
-    private final Handler mTwitterHandler = new Handler();
-    final Runnable mUpdateTwitterNotification = new Runnable() {
-        public void run() {
-            Toast.makeText(getBaseContext(), "Tweet sent !", Toast.LENGTH_LONG).show();
-        }
-    };
 
     //region Activity
     @Override
@@ -347,14 +339,12 @@ public class PublicationDetailsActivity
                 publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
                 getString(R.string.image_folder_path), imageSize, imageSize);
         if (image != null) {
-            // TODO - move init of facebook and twitter pictures
+            // TODO - move init of facebook pictures
             bImageFacebook = ((BitmapDrawable) image).getBitmap();
-            //isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
             bImageFacebook = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);//Facebook
-            isImageTwitter = getResources().openRawResource(+R.drawable.no_photo_placeholder);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
@@ -463,47 +453,13 @@ public class PublicationDetailsActivity
     }
     // endregion
 
-    // region Twitter methods
-    public void SendTweet() {
-        Thread t = new Thread() {
-            public void run() {
+    // region  OLD NOT IN USE Twitter methods
 
-                try {
-                    //InputStream isImageTwitter = getResources().openRawResource(R.drawable.foodonet_logo_200_200);
-                    PostTweet(getTweetMsg(), isImageTwitter);
-                    mTwitterHandler.post(mUpdateTwitterNotification);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-        };
-        t.start();
-    }
-
-
-    public void PostTweet(String msg, InputStream is) throws Exception {
-        String token = getString(R.string.access_token);
-        String secret = getString(R.string.access_token_secret);
-        twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token, secret);
-        Twitter twitter = new TwitterFactory().getInstance();
-        twitter.setOAuthConsumer(getString(R.string.twitter_consumer_key), getString(R.string.twitter_consumer_secret));
-        twitter.setOAuthAccessToken(a);
-
-        twitter.getAccountSettings();
-        // Update status
-        StatusUpdate statusUpdate = new StatusUpdate(msg);
-        statusUpdate.setMedia("test.jpg", is);
-
-        twitter.updateStatus(statusUpdate);
-    }
-
-    private String getTweetMsg() {
-        return getString(R.string.hashtag) + " : " + getString(R.string.tweet_text) + " " + publication.getTitle() + ". " +
-                getString(R.string.tweet_question) + " " + new Date().toLocaleString() + "\n " +
-                getString(R.string.facebook_page_url);
-    }
+//    private String getTweetMsg() {
+//        return getString(R.string.hashtag) + " : " + getString(R.string.tweet_text) + " " + publication.getTitle() + ". " +
+//                getString(R.string.tweet_question) + " " + new Date().toLocaleString() + "\n " +
+//                getString(R.string.facebook_page_url);
+//    }
     // endregion
 
     //region methods making parts of activity (to call in OnCreate)

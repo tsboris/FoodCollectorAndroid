@@ -210,8 +210,10 @@ public class ShareToTwitterActivity extends Activity implements View.OnClickList
 
                 // Update status
                 StatusUpdate statusUpdate = new StatusUpdate(status);
-//                imageStreamForSharing = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
-//                statusUpdate.setMedia(publication.getTitle(), imageStreamForSharing);
+                imageStreamForSharing = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." +
+                                                                            publication.getVersion() + ".jpg",
+                                                                        getString(R.string.image_folder_path));
+                statusUpdate.setMedia(publication.getTitle(), imageStreamForSharing);
 
                 twitter4j.Status response = twitter.updateStatus(statusUpdate);
 
