@@ -33,6 +33,7 @@ import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -78,7 +79,9 @@ import DataModel.FCTypeOfCollecting;
 
 
 public class AddEditPublicationActivity extends FragmentActivity
-        implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, View.OnClickListener {
+        implements View.OnClickListener,
+                    GoogleApiClient.OnConnectionFailedListener,
+                    GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
@@ -98,7 +101,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private EditText et_publication_title;
     private EditText et_address;
-    private AutoCompleteTextView atv_address;
+
     private EditText et_subtitle;
     //private TextView mAddressTextView;
     private TextView mIdTextView;
@@ -121,6 +124,11 @@ public class AddEditPublicationActivity extends FragmentActivity
     private static ImageButton submitButton, cameraBtn;
 
     private Date mDate;
+
+    //address picker
+    private AutoCompleteTextView atv_address;
+    private CheckBox cb_use_my_current_location;
+    private boolean addressDialogStarted = false;
 
     private static FCPublication publication;
     private static FCPublication publicationOldVersion;
@@ -154,7 +162,8 @@ public class AddEditPublicationActivity extends FragmentActivity
         et_publication_title.setOnClickListener(this);
 
         et_address = (EditText) findViewById(R.id.et_address_edit_add_pub);
-        et_publication_title.setOnClickListener(this);
+        et_address.setOnClickListener(this);
+        et_address.setOnTouchListener(this);
 
         et_additional_info = (EditText) findViewById(R.id.et_additional_info_add_edit_pub);
         et_additional_info.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -164,24 +173,6 @@ public class AddEditPublicationActivity extends FragmentActivity
             et_publication_title.setText(publication.getTitle());
             et_subtitle.setText(publication.getSubtitle());
             et_additional_info.setText(publication.getContactInfo());
-        }
-
-        // Auto complete
-        mGoogleApiClient = new GoogleApiClient.Builder(AddEditPublicationActivity.this)
-                .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(AddEditPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddEditPublicationActivity.this)
-                .addConnectionCallbacks(this)
-                .build();
-        atv_address = (AutoCompleteTextView) findViewById(R.id
-                .actv_address_new_publication);
-        atv_address.setThreshold(3);
-        atv_address.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
-                BOUNDS_MOUNTAIN_VIEW, null);
-        atv_address.setAdapter(mPlaceArrayAdapter);
-
-        if (!isNew) {
-            atv_address.setText(publication.getAddress());
         }
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
@@ -227,19 +218,28 @@ public class AddEditPublicationActivity extends FragmentActivity
         submitButton.setOnClickListener(this);
 
         ArrangePublicationFromInput(publicationOldVersion);
+
+        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
+        if(mGoogleApiClient == null)
+            mGoogleApiClient = new GoogleApiClient.Builder(AddEditPublicationActivity.this)
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(AddEditPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddEditPublicationActivity.this)
+                    .addConnectionCallbacks(this)
+                    .build();
     }
 
+/*
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
     }
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -481,9 +481,11 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onConnected(Bundle bundle) {
-        mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
-        Log.i(MY_TAG, "Google Places API connected.");
 
+        if(mPlaceArrayAdapter != null){
+            mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
+            Log.i(MY_TAG, "Google Places API connected.");
+        }
     }
 
     @Override
@@ -499,8 +501,10 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onConnectionSuspended(int i) {
-        mPlaceArrayAdapter.setGoogleApiClient(null);
-        Log.e(MY_TAG, "Google Places API connection suspended.");
+        if(mPlaceArrayAdapter != null){
+            mPlaceArrayAdapter.setGoogleApiClient(null);
+            Log.e(MY_TAG, "Google Places API connection suspended.");
+        }
     }
 
     //endregion
@@ -579,6 +583,50 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //endregion
 
+    //region Address dialog
+
+    private void ShowAddressDialog(){
+        addressDialogStarted = true;
+        final Dialog addressDialog = new Dialog(this);
+        addressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        addressDialog.setContentView(R.layout.address_search_dialog);
+        addressDialog.setCanceledOnTouchOutside(false);
+        addressDialog.setOnDismissListener(this);
+        addressDialog.setOnCancelListener(this);
+
+        // Auto complete
+        atv_address = (AutoCompleteTextView) addressDialog.findViewById(R.id
+                .actv_address_new_publication);
+        atv_address.setThreshold(3);
+        atv_address.setOnItemClickListener(mAutocompleteClickListener);
+        atv_address.setAdapter(mPlaceArrayAdapter);
+
+        if (!isNew) {
+            atv_address.setText(publication.getAddress());
+        }
+
+        cb_use_my_current_location = (CheckBox)addressDialog.findViewById(R.id.cb_use_current_location);
+        cb_use_my_current_location.setOnClickListener(this);
+        cb_use_my_current_location.setChecked(false);
+
+        mGoogleApiClient.connect();
+        addressDialog.show();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        addressDialogStarted = false;
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        addressDialogStarted = false;
+        mGoogleApiClient.disconnect();
+    }
+
+    //endregion
+
     //region Click
 
     @Override
@@ -615,10 +663,10 @@ public class AddEditPublicationActivity extends FragmentActivity
                                 .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
                 break;
             case R.id.et_address_edit_add_pub:
-                et_publication_title.getBackground()
-                        .setColorFilter(getResources()
-                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
-                StartAddressDialog();
+//                et_publication_title.getBackground()
+//                        .setColorFilter(getResources()
+//                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                //ShowAddressDialog();
                 break;
         }
     }
@@ -680,10 +728,20 @@ public class AddEditPublicationActivity extends FragmentActivity
         return phoneNumber.matches(phonePattern);
     }
 
-    private void StartAddressDialog() {
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()){
+            case R.id.et_address_edit_add_pub:
+                et_publication_title.getBackground()
+                        .setColorFilter(getResources()
+                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                if(!addressDialogStarted)
+                    ShowAddressDialog();
+                break;
 
+        }
+        return true;
     }
-
 
 //    @Override
 //    public void onFocusChange(View v, boolean hasFocus) {
