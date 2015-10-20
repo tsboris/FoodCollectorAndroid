@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -71,6 +73,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -453,13 +457,42 @@ public class PublicationDetailsActivity
     }
     // endregion
 
-    // region  OLD NOT IN USE Twitter methods
+    // region  Twitter method
 
-//    private String getTweetMsg() {
-//        return getString(R.string.hashtag) + " : " + getString(R.string.tweet_text) + " " + publication.getTitle() + ". " +
-//                getString(R.string.tweet_question) + " " + new Date().toLocaleString() + "\n " +
-//                getString(R.string.facebook_page_url);
-//    }
+    private void SendTweet() {
+
+        Intent tweetIntent = new Intent(Intent.ACTION_SEND);
+        String msg = getString(R.string.hashtag) + " : " + publication.getTitle() + "\n " +
+                getString(R.string.facebook_page_url);
+        tweetIntent.putExtra(Intent.EXTRA_TEXT, msg);
+
+        String fileName = publication.getUniqueId() + "." + publication.getVersion() + ".jpg";
+        String imageSubFolder = getString(R.string.image_folder_path);
+        File photo = new File(fileName);
+        if (!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        tweetIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photo));
+        tweetIntent.setType("text/plain");
+
+        PackageManager packManager = getPackageManager();
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent,  PackageManager.MATCH_DEFAULT_ONLY);
+
+        boolean resolved = false;
+        for(ResolveInfo resolveInfo: resolvedInfoList){
+            if(resolveInfo.activityInfo.packageName.startsWith("com.twitter.android")){
+                tweetIntent.setClassName(
+                        resolveInfo.activityInfo.packageName,
+                        resolveInfo.activityInfo.name );
+                resolved = true;
+                break;
+            }
+        }
+        if(resolved){
+            startActivity(tweetIntent);
+        }else{
+            Toast.makeText(this, "Twitter app isn't found", Toast.LENGTH_LONG).show();
+        }
+    }
     // endregion
 
     //region methods making parts of activity (to call in OnCreate)
@@ -760,11 +793,7 @@ public class PublicationDetailsActivity
 
                 growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
 
-                //SendTweet();
-
-                Intent intentTwitter = new Intent(getApplicationContext(),ShareToTwitterActivity.class);
-                intentTwitter.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM,publication);
-                startActivity(intentTwitter);
+                SendTweet();
 
                 break;
             case R.id.btn_register_unregister_pub_details:
