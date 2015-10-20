@@ -795,6 +795,10 @@ public class PublicationDetailsActivity
 
                 SendTweet();
 
+//                Intent intentTwitter = new Intent(getApplicationContext(),ShareToTwitterActivity.class);
+//                intentTwitter.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM,publication);
+//                startActivity(intentTwitter);
+
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //open progress dialog
