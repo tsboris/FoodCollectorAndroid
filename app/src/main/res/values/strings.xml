@@ -136,9 +136,6 @@
     <!-- Add/Edit publication -->
 
     <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
-<!--
-    <string name="regex_israel_mobile_phone_number">/^0\d([\d]{0,1})([-]{0,1})\d{7}$/</string>
--->
 
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
@@ -155,6 +152,10 @@
     <string name="validation_location_empty">לצורך שמירת שיתוף נדרש לציין מיקום מאיפה לעסוף. תבחר אחד מכתובות שחיפוש מציע, תסמן מיקום נוכחי או תבחר אחד מכתובות שהשתמשת בהם בעבר</string>
     <string name="progress_waiting_for_location">מקבל מיקום הנוכחי</string>
     <string name="validation_cant_get_my_location">לא הצליח לקבל מיקום נוכחי, תצא למקום פתוח ותנסה שוב</string>
+
+    <!-- Publication details -->
+
+    <string name="progress_taking_pub_off_air">מעדכן שיתוף...</string>
 
     <!-- -->
     <string name="title_activity_web_view">WebViewActivity</string>

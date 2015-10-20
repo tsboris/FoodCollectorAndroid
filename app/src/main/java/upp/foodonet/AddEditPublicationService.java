@@ -204,21 +204,6 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 if (request.publicationForSaving.getPhotoUrl() != null
                         && !TextUtils.isEmpty(request.publicationForSaving.getPhotoUrl()))
                     UploadImageToAmazon(request.publicationForSaving);
-/*
-                if(request.Status == InternalRequest.STATUS_FAIL){
-                    Log.i(MY_TAG, "cant update edited pub in sql");
-                    return;
-                }
-                HttpServerConnectorAsync connector1
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
-                String subPath = getString(R.string.server_edit_publication_path);
-                subPath = subPath.replace("{0}", String.valueOf(request.publicationForSaving.getUniqueId()));
-                InternalRequest ir1
-                        = new InternalRequest(InternalRequest.ACTION_PUT_EDIT_PUBLICATION,
-                        subPath, request.publicationForSaving);
-                ir1.publicationForSaving = request.publicationForSaving;
-                connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
-*/
                 break;
         }
     }
@@ -241,7 +226,8 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                             = String.valueOf(response.publicationForSaving.getNewIdFromServer()) + "."
                             + String.valueOf(response.publicationForSaving.getVersionFromServer()) + ".jpg";
                     File sourceFile = new File(response.publicationForSaving.getPhotoUrl());
-                    File destinationFile = new File(Environment.getExternalStorageDirectory(), fileName);
+                    File destinationFile = new File(Environment.getExternalStorageDirectory()
+                            + getString(R.string.image_folder_path), fileName);
                     try {
                         CommonUtil.CopyFile(sourceFile, destinationFile);
                         //todo: think how to check is it photo from libruary or shot right now.
@@ -259,6 +245,26 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                         response.publicationForSaving));
                 break;
             case InternalRequest.ACTION_PUT_EDIT_PUBLICATION:
+                String fileName
+                        = String.valueOf(response.publicationForSaving.getUniqueId()) + "."
+                        + String.valueOf(response.publicationForSaving.getVersion() - 1) + ".jpg";
+                File oldVersionSource = new File(
+                        Environment.getExternalStorageDirectory()
+                                + getString(R.string.image_folder_path), fileName);
+                if(oldVersionSource.exists()){
+                    String newFileName
+                            = String.valueOf(response.publicationForSaving.getUniqueId()) + "."
+                            + String.valueOf(response.publicationForSaving.getVersion()) + ".jpg";
+                    File newVersionDestination = new File(
+                            Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path), newFileName);
+                    try {
+                        CommonUtil.CopyFile(oldVersionSource, newVersionDestination);
+                        response.publicationForSaving.setPhotoUrl(newVersionDestination.getPath());
+                        oldVersionSource.delete();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 FooDoNetSQLExecuterAsync saveExecuter
                         = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 saveExecuter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,

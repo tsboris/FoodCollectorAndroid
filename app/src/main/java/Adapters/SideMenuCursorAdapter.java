@@ -69,25 +69,20 @@ public class SideMenuCursorAdapter extends CursorAdapter {
         riv_image.setImageDrawable(context.getResources().getDrawable(R.drawable.default_publication_icon_side_menu));
         final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
         final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-                File photo = new File(Environment.getExternalStorageDirectory()
-                        + context.getString(R.string.image_folder_path), id + "." + version + ".jpg");
-                if(!photo.exists()) return;
-                try {
-                    FileInputStream fis = new FileInputStream(photo.getPath());
-                    byte[] imageBytes = IOUtils.toByteArray(fis);
-                    Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 42, 42);
-                    Drawable image = new BitmapDrawable(bImage);
-                    riv_image.setImageDrawable(image);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-//            }
-//        }).start();
+        File photo = new File(Environment.getExternalStorageDirectory()
+                + context.getString(R.string.image_folder_path), id + "." + version + ".jpg");
+        if (!photo.exists()) return;
+        try {
+            FileInputStream fis = new FileInputStream(photo.getPath());
+            byte[] imageBytes = IOUtils.toByteArray(fis);
+            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 42, 42);
+            Drawable image = new BitmapDrawable(bImage);
+            riv_image.setImageDrawable(image);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 /*
         byte[] imageBytes = cursor.getBlob(cursor.getColumnIndex(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY));

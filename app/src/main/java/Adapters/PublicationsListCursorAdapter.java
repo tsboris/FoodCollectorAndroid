@@ -170,6 +170,8 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         if (imageDictionary.containsKey(id))
             publicationImage.setImageDrawable(imageDictionary.get(id));
         else {
+            imageDrawable = CommonUtil.GetImageFromFileForPublicationCursor(context, cursor, imageSize);
+/*
             if (id <= 0) {
                 Log.i(MY_TAG, "negative id");
                 imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg",
@@ -181,6 +183,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
                 String imagePath = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL));
                 imageDrawable = CommonUtil.GetBitmapDrawableFromFile(imagePath, "", imageSize, imageSize);
             }
+*/
             if (imageDrawable != null) {
                 publicationImage.setImageDrawable(imageDrawable);
                 imageDictionary.put(id, imageDrawable);

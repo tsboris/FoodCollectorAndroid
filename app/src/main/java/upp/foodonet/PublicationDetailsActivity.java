@@ -21,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -84,10 +85,13 @@ import java.util.TimerTask;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
@@ -98,7 +102,7 @@ import twitter4j.TwitterFactory;
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
@@ -339,9 +343,8 @@ public class PublicationDetailsActivity
 
     private void SetImage() {
         int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
-        Drawable image = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                getString(R.string.image_folder_path), imageSize, imageSize);
+        Drawable image = CommonUtil.GetImageFromFileForPublication(
+                this, publication.getUniqueId(), publication.getVersion(), publication.getPhotoUrl(), imageSize);
         if (image != null) {
             // TODO - move init of facebook pictures
             bImageFacebook = ((BitmapDrawable) image).getBitmap();
@@ -921,10 +924,38 @@ public class PublicationDetailsActivity
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
+                if(progressDialog == null)
+                    progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle(getString(R.string.progress_taking_pub_off_air));
+                progressDialog.show();
+                publication.setIsOnAir(false);
+                HttpServerConnectorAsync connector1
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+                String subPath = getString(R.string.server_edit_publication_path);
+                subPath = subPath.replace("{0}", String.valueOf(publication.getUniqueId()));
+                InternalRequest ir1
+                        = new InternalRequest(InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR,
+                        subPath, publication);
+                ir1.publicationForSaving = publication;
+                connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        publication.setIsOnAir(response.Status == InternalRequest.STATUS_FAIL);
+        if(response.Status == InternalRequest.STATUS_OK){
+            getContentResolver().update(Uri.parse(
+                    FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()),
+                    publication.GetContentValuesRow(), null, null);
+        }
+        if(progressDialog != null)
+            progressDialog.dismiss();
     }
 
     //endregion

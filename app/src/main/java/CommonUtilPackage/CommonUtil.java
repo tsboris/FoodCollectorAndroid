@@ -334,4 +334,29 @@ public class CommonUtil {
             } while (cursor.moveToNext());
         return result;
     }
+
+    public static BitmapDrawable GetImageFromFileForPublicationCursor(Context context, Cursor cursor, int imageSize){
+        final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
+        final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
+        final boolean cursorHasPhotoUrl = cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL) != -1;
+        String imagePath = "";
+        if(cursorHasPhotoUrl)
+            imagePath = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL));
+        return GetImageFromFileForPublication(context, id, version, imagePath, imageSize);
+    }
+
+    public static BitmapDrawable GetImageFromFileForPublication(Context context, int id, int version, String imagePath, int imageSize){
+        BitmapDrawable imageDrawable = null;
+        if (id <= 0) {
+            Log.i(MY_TAG, "negative id");
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg",
+                    context.getString(R.string.image_folder_path), imageSize, imageSize);
+        } else
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg",
+                    context.getString(R.string.image_folder_path), imageSize, imageSize);
+        if(imageDrawable == null && imagePath != null && imagePath.length() > 0){
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(imagePath, "", imageSize, imageSize);
+        }
+        return imageDrawable;
+    }
 }
