@@ -82,6 +82,7 @@
     <!-- Add/Edit publication -->
 
     <color name="validation_red_text_color">#FF0000</color>
+    <color name="validation_green_text_color">#30AC59</color>
     <color name="edit_text_input_default_color">#000000</color>
     <dimen name="edit_text_height_add_edit_pub">56dp</dimen>
     <dimen name="edit_text_side_margin_add_edit_pub">13dp</dimen>
@@ -97,7 +98,11 @@
     <dimen name="address_dialog_edit_field_height">52dp</dimen>
     <dimen name="address_dialog_get_curr_location_height">48dp</dimen>
     <dimen name="address_dialog_history_list_height">144dp</dimen>
+    <dimen name="address_dialog_history_item_height">48dp</dimen>
     <dimen name="address_dialog_divider_height">12dp</dimen>
+    <dimen name="address_dialog_validation_img_size">18dp</dimen>
+    <dimen name="address_dialog_history_item_text_size">20dp</dimen>
+    <dimen name="address_dialog_history_item_right_margin">16dp</dimen>
 
     <!-- ============== -->
 
