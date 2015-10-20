@@ -58,6 +58,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int PUBLICATION_REPORTS_BY_NEG_ID = 53;
     private static final int UPDATE_IMAGES_FOR_PUBLICATIONS = 60;
     private static final int REPORT_NEW_NEGATIVE_ID = 70;
+    private static final int PREVIOUS_ADDRESSES = 80;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -91,6 +92,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_UPDATE_PUBLICATION_IMAGES = "/UpdateImages";
 
     private static final String EXT_REPORT_NEW_NEGATIVE_ID = "/ReportNewNegativeID";
+
+    private static final String EXT_PREVIOUS_ADDRESSES = "/PrevAddresses";
 
     public static final String BASE_STRING_FOR_URI = "content://" + AUTHORITY + "/" + BASE_PATH;
 
@@ -130,9 +133,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(URI_GET_ALL_REPORTS_BY_PUB_ID + EXT_NEGATIVE_ID);
     public static final Uri URI_REPORT_GET_NEW_NEGATIVE_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REPORT_NEW_NEGATIVE_ID);
-
     public static final Uri URI_UPDATE_IMAGES
             = Uri.parse(BASE_STRING_FOR_URI + EXT_UPDATE_PUBLICATION_IMAGES);
+    public static final Uri URI_PREVIOUS_ADDRESSES
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_PREVIOUS_ADDRESSES);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
@@ -162,6 +166,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID, REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_REMOVE_MYSELF, REGS_FOR_PUBLICATION_REMOVE_MYSELF);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REPORT_NEW_NEGATIVE_ID, REPORT_NEW_NEGATIVE_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PREVIOUS_ADDRESSES, PREVIOUS_ADDRESSES);
     }
 
     @Override
@@ -255,6 +260,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case REPORT_NEW_NEGATIVE_ID:
                 return database.getReadableDatabase()
                         .rawQuery(FooDoNetSQLHelper.RAW_SELECT_NEW_NEGATIVE_ID_REPORT_FOR_PUBLICATION, null);
+            case PREVIOUS_ADDRESSES:
+                return database.getReadableDatabase()
+                        .rawQuery(FooDoNetSQLHelper.RAW_SELECT_PREVIOUS_ADDRESSES.replace("{0}", CommonUtil.GetIMEI(getContext())), null);
             default:
                 throw new IllegalArgumentException("Unknown URI: " +  uri);
         }
@@ -428,6 +436,12 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PUBLICATION_REPORTS_BY_ID:
             case PUBLICATION_REPORTS_BY_NEG_ID:
                 available = PublicationReport.GetColumnNamesArray();
+                break;
+            case PREVIOUS_ADDRESSES:
+                available = new String[]
+                        {FCPublication.PUBLICATION_ADDRESS_KEY,
+                                FCPublication.PUBLICATION_LATITUDE_KEY,
+                                FCPublication.PUBLICATION_LONGITUDE_KEY};
                 break;
             default:
                 Log.e(MY_TAG, "checkColumns got bad parameter action");

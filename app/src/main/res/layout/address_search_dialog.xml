@@ -29,12 +29,21 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>
 
-        <TextView
+        <TextView android:id="@+id/tv_address_dialog_my_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/cb_use_current_location"
             android:text="@string/get_current_location_checkbox_text"/>
+
+        <ImageView android:id="@+id/iv_address_dialog_my_loc_validation"
+            android:layout_width="@dimen/address_dialog_validation_img_size"
+            android:layout_height="@dimen/address_dialog_validation_img_size"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tv_address_dialog_my_location"
+            android:layout_marginRight="@dimen/address_dialog_validation_img_size"
+            android:src="@drawable/validation_ok"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

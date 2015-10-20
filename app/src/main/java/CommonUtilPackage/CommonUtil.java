@@ -3,6 +3,7 @@ package CommonUtilPackage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,9 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.provider.Settings.Secure;
 
+import DataModel.FCPublication;
 import upp.foodonet.R;
 
 /**
@@ -159,6 +163,7 @@ public class CommonUtil {
     }
 
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, String imageSubFolder, int width, int heigth) {
+        if(fileName == null || fileName.length() == 0) return null;
         File photo = new File(fileName);
         if (!photo.exists())
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
@@ -317,5 +322,16 @@ public class CommonUtil {
         String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
         String years = String.valueOf(calendar.get(Calendar.YEAR));
         return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    }
+
+    public static Map<String, LatLng> GetPreviousAddressesMapFromCursor(Cursor cursor){
+        Map<String, LatLng> result = new HashMap<>();
+        if(cursor.moveToFirst())
+            do{
+                result.put(cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_ADDRESS_KEY)),
+                        new LatLng(cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LATITUDE_KEY)),
+                                cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LONGITUDE_KEY))));
+            } while (cursor.moveToNext());
+        return result;
     }
 }

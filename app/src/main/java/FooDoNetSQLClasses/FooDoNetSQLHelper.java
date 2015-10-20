@@ -204,6 +204,14 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " FROM " + PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME
             + " ORDER BY " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID + " LIMIT 1";
 
+    public static final String RAW_SELECT_PREVIOUS_ADDRESSES
+            = "SELECT " + FCPublication.PUBLICATION_ADDRESS_KEY + ", "
+            + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
+            + FCPublication.PUBLICATION_LONGITUDE_KEY
+            + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
+            + " WHERE " + FCPublication.PUBLICATION_PUBLISHER_UUID_KEY + " = '{0}' "
+            + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " DESC ";
+
 /*
     public static final String RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC
             = "SELECT "
