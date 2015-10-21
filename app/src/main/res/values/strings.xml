@@ -97,6 +97,7 @@
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
+    <string name="title_fullSizeImg_activity">FullSizeImgActivity</string>
 
     <string name="hashtag">#FooDoNet</string>
     <string name="facebook_page_url">https://www.facebook.com/foodonet</string>
@@ -134,6 +135,11 @@
     <string name="validation_phone_number_invalid">מספר טלפון אינו תקין</string>
     <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות גדול מתאריך התחלה</string>
 
+    <string name="title_begin_pub_details">התחלה:</string>
+    <string name="title_end_pub_details">סיום:</string>
+    <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
+    <string name="btn_ok_add_pub">בחר</string>
+    <string name="btn_cancel_add_pub">בטל</string>
     <!-- Address dialog -->
 
     <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
