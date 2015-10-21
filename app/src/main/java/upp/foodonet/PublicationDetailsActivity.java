@@ -21,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -84,10 +85,13 @@ import java.util.TimerTask;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
@@ -95,7 +99,7 @@ import UIUtil.RoundedImageView;
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
@@ -142,7 +146,7 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
     Bitmap bImageFacebook;
 
     //region Activity
@@ -336,9 +340,8 @@ public class PublicationDetailsActivity
 
     private void SetImage() {
         int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
-        Drawable image = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                getString(R.string.image_folder_path), imageSize, imageSize);
+        Drawable image = CommonUtil.GetImageFromFileForPublication(
+                this, publication.getUniqueId(), publication.getVersion(), publication.getPhotoUrl(), imageSize);
         if (image != null) {
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
@@ -747,13 +750,9 @@ public class PublicationDetailsActivity
             case R.id.btn_register_unregister_pub_details:
                 //open progress dialog
 
-                growAnim(R.drawable.cancel_rishum_pub_det_btn,R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+                growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
 
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Registering to publication...");
-                progressDialog.show();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_registration_to_pub));
                 RegisteredUserForPublication newRegistrationForPub
                         = new RegisteredUserForPublication();
                 newRegistrationForPub.setDate_registered(new Date());
@@ -805,7 +804,7 @@ public class PublicationDetailsActivity
                 }
 
                 Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
-                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                        CommonUtil.GetFileNameByPublication(publication),
                         getString(R.string.image_folder_path), width, height);
 
                 ImageView image = new ImageView(this);
@@ -865,10 +864,35 @@ public class PublicationDetailsActivity
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_taking_pub_off_air));
+                publication.setIsOnAir(false);
+                HttpServerConnectorAsync connector1
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+                String subPath = getString(R.string.server_edit_publication_path);
+                subPath = subPath.replace("{0}", String.valueOf(publication.getUniqueId()));
+                InternalRequest ir1
+                        = new InternalRequest(InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR,
+                        subPath, publication);
+                ir1.publicationForSaving = publication;
+                connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        publication.setIsOnAir(response.Status == InternalRequest.STATUS_FAIL);
+        if(response.Status == InternalRequest.STATUS_OK){
+            getContentResolver().update(Uri.parse(
+                    FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()),
+                    publication.GetContentValuesRow(), null, null);
+        }
+        if(progressDialog != null)
+            progressDialog.dismiss();
     }
 
     //endregion
@@ -973,12 +997,7 @@ public class PublicationDetailsActivity
     }
 
     public void ReportMade(int reportID) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle("Leaving report to publication...");
-        progressDialog.show();
-
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_leaving_report));
         PublicationReport report = new PublicationReport();
         report.setReport(String.valueOf(reportID));
         report.setPublication_id(publication.getUniqueId());

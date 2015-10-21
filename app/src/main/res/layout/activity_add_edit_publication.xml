@@ -53,7 +53,8 @@
         android:inputType="textShortMessage"
         android:layout_below="@+id/imgAddPicture"
         android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
-        android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub">
+        android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
+        android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub">
         <!--<requestFocus />-->
     </EditText>
     

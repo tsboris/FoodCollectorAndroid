@@ -262,7 +262,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, publicationReport, true);
                 return "";
             //endregion
-
+            //region take pub off air
+            case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
+                publicationForSaving = params[0].publicationForSaving;
+                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, publicationForSaving, false);
+                return "";
+            //endregion
             default:
                 return "";
         }
@@ -363,7 +368,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");
-                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS
@@ -392,6 +397,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 InternalRequest irEdit = new InternalRequest(Action_Command_ID, isSuccess);
                 irEdit.publicationForSaving = publicationForSaving;
                 callbackListener.OnServerRespondedCallback(irEdit);
+                break;
+            case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
+                Log.i(MY_TAG, "take publication off air: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irOffAir = new InternalRequest(Action_Command_ID, isSuccess);
+                callbackListener.OnServerRespondedCallback(irOffAir);
                 break;
         }
     }

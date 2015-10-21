@@ -124,6 +124,10 @@
     <string name="shared_preferences_my_longitude_key">lon_key</string>
     <string name="shared_preferences_text_filter_key">text_filter_key</string>
     <string name="shared_preferences_text_filter_text_key">text_filter_text_key</string>
+    <string name="shared_preferences_data_loaded">data_loaded</string>
+    <string name="shared_preferences_data_loaded_key">data_loaded_key</string>
+    <string name="shared_preferences_is_registered">is_registered</string>
+    <string name="shared_preferences_is_registered_key">is_registered_key</string>
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
@@ -135,19 +139,49 @@
 
     <!-- Add/Edit publication -->
 
-    <string name="regex_israel_phone_number">/^05\d([-]{0,1})\d{7}$/</string>
-    <string name="regex_israel_mobile_phone_number">/^0\d([\d]{0,1})([-]{0,1})\d{7}$/</string>
+    <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
+    <string name="file_name_part_just_shot">justShot</string>
 
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
-    <string name="title_activity_web_view">WebViewActivity</string>
-    <string name="title_activity_share_to_twitter">ShareToTwitterActivity</string>
+    <string name="validation_address_empty">כתובת לא יכול להיות ריק</string>
+    <string name="validation_phone_number_empty">מספר טלפון לא יכול להיות ריק</string>
+    <string name="validation_phone_number_invalid">מספר טלפון אינו תקין</string>
+    <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות גדול מתאריך התחלה</string>
 
     <!-- Address dialog -->
 
     <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
     <string name="address_dialog_btn_ok">שמירה</string>
     <string name="address_dialog_btn_cancel">חזרה</string>
+    <string name="validation_location_empty">לצורך שמירת שיתוף נדרש לציין מיקום מאיפה לעסוף. תבחר אחד מכתובות שחיפוש מציע, תסמן מיקום נוכחי או תבחר אחד מכתובות שהשתמשת בהם בעבר</string>
+    <string name="progress_waiting_for_location">מקבל מיקום הנוכחי</string>
+    <string name="validation_cant_get_my_location">לא הצליח לקבל מיקום נוכחי, תצא למקום פתוח ותנסה שוב</string>
+
+    <!-- Publication details -->
+
+    <string name="progress_taking_pub_off_air">מעדכן שיתוף...</string>
+    <string name="progress_registration_to_pub">הרשמה...</string>
+    <string name="progress_leaving_report">שומר תגובה...</string>
+
+    <!-- All publications list -->
+
+    <!-- My publications list -->
+
+    <string name="progress_saving">שמירה...</string>
+
+    <!-- Entrance activity -->
+
+    <string name="progress_loading">טוען..</string>
+
+    <!-- SplashScreen -->
+
+    <string name="progress_foodonet_loading">טעינת אפליקציה..</string>
+    <string name="progress_first_load">טעינה ראשונה..</string>
+
+    <!-- -->
+    <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_share_to_twitter">ShareToTwitterActivity</string>
 
 
 </resources>

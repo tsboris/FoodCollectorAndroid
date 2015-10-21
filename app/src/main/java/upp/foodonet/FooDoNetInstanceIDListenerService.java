@@ -118,23 +118,25 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         //parentForCallback.OnServerRespondedCallback(response);
-        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+//        Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
         switch (response.Status){
             case InternalRequest.STATUS_OK:
                 Log.i(MY_TAG, "got server callback registration ok");
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
-                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
+                CommonUtil.PutCommonPreferenceIsRegistered(this, true);
+//                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+//                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
                 break;
             case InternalRequest.STATUS_FAIL:
                 Log.i(MY_TAG, "got server callback registration fail");
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
-                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
+                CommonUtil.PutCommonPreferenceIsRegistered(this, false);
+//                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+//                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
                 break;
             default:
                 Log.i(MY_TAG, "unexpected callback status from server!");
                 return;
         }
-        sendBroadcast(intent);
+//        sendBroadcast(intent);
     }
 
     private void subscribeTopics(String token) throws IOException {

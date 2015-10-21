@@ -3,6 +3,7 @@ package FooDoNetSQLClasses;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -42,12 +44,17 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
     InternalRequest incomingRequest;
     int newNegativeID;
     Map<Integer, Integer> needToLoadPicturesFor;
+    Context context;
 
     public FooDoNetSQLExecuterAsync(IFooDoNetSQLCallback callback, ContentResolver content) {
         //ArrayList<FCPublication> fromServer removed from parameters
         //publicationsFromServer = fromServer;
         callbackHandler = callback;
         contentResolver = content;
+    }
+
+    public void SetContext(Context context){
+        this.context = context;
     }
 
 
@@ -109,12 +116,13 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     }
                 }
                 ArrayList<Integer> toRemoveFromDB = new ArrayList<Integer>();
-                for (FCPublication publicationFromDB : publicationsFromDB) {
-                    if (publicationFromDB.getUniqueId() <= 0) {
-
-                    } else {
-                        toRemoveFromDB.add(publicationFromDB.getUniqueId());
-                        DeletePublicationFromDB(contentResolver, publicationFromDB);
+                if(context != null) {
+                    String androidID = CommonUtil.GetIMEI(context);
+                    for (FCPublication publicationFromDB : publicationsFromDB) {
+                        if (publicationFromDB.getPublisherUID().compareTo(androidID) != 0) {
+                            toRemoveFromDB.add(publicationFromDB.getUniqueId());
+                            DeletePublicationFromDB(contentResolver, publicationFromDB);
+                        }
                     }
                 }
                 for (Integer i : toRemoveFromDB) {
