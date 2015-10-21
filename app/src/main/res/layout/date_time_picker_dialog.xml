@@ -1,31 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_date_time_dialog"
-    android:layout_width="fill_parent"
+    android:layout_width="248dp"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:divider="@drawable/filter_tv_divider_horizontal"
+    android:showDividers="end">
 
     <TextView android:id="@+id/tv_date_time_picker_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"/>
+    android:layout_width="wrap_content"
+    android:layout_height="42dp"
+    android:text="@string/title_date_time_picker_activity"
+    android:textColor="@color/basic_blue"
+    android:textSize="20sp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
+    android:layout_gravity="right"
+    />
+
+</LinearLayout>
+
 
     <DatePicker
         android:id="@+id/dp_date_time_dialog"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false">
     </DatePicker>
 
     <TimePicker
         android:id="@+id/tp_date_time_dialog"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+
+        android:timePickerMode="spinner"
+
+        >
     </TimePicker>
 
-    <Button android:id="@+id/btn_ok_date_time_dialog"
-        android:layout_width="200dp"
-        android:layout_height="48dp"
-        android:text="Ok"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="48dp">
+
+        <Button
+            android:id="@+id/btn_cancel_date_time_dialog"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:text="@string/btn_cancel_add_pub"
+            />
+
+        <Button android:id="@+id/btn_ok_date_time_dialog"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@string/btn_ok_add_pub"
+            android:background="@color/transparent"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

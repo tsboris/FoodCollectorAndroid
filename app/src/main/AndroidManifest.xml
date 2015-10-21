@@ -158,6 +158,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".FullSizeImgActivity"
+            android:label="@string/title_fullSizeImg_activity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"

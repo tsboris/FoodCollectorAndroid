@@ -96,6 +96,7 @@
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
+    <string name="title_fullSizeImg_activity">FullSizeImgActivity</string>
 
     <!-- Facebook keys -->
     <string name="facebook_app_id">451780775026519</string>
@@ -136,6 +137,11 @@
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
 
+    <string name="title_begin_pub_details">התחלה:</string>
+    <string name="title_end_pub_details">סיום:</string>
+    <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
+    <string name="btn_ok_add_pub">בחר</string>
+    <string name="btn_cancel_add_pub">בטל</string>
     <!-- Address dialog -->
 
     <string name="get_current_location_checkbox_text">מיקום נוכחי</string>

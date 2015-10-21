@@ -69,13 +69,13 @@ import org.apache.http.protocol.HTTP;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import Adapters.PublicationDetailsReportsAdapter;
@@ -111,6 +111,8 @@ public class PublicationDetailsActivity
     private boolean isRegisteredForCurrentPublication = false;
     boolean isImageFitToScreen = false;
 
+    static Drawable fullImage;
+
     //new:
     ImageButton btn_menu;
     Button btn_leave_report;
@@ -130,13 +132,10 @@ public class PublicationDetailsActivity
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
-    ImageView fullSizeImage;
 
-    LinearLayout ll_fullSize;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
-    LinearLayout ll_details;
 
     PublicationDetailsReportsAdapter adapter;
 
@@ -189,10 +188,7 @@ public class PublicationDetailsActivity
         lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
-        ll_details = (LinearLayout)findViewById(R.id.ll_pub_details);
 
-        //fullSizeImage = (ImageView)findViewById(R.id.iv_full_size_image_pub_details);
-        ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
 
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
@@ -854,41 +850,26 @@ public class PublicationDetailsActivity
 
             case R.id.riv_image_pub_details:
 
-                WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
+                /*WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
                 int width, height;
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
-                    width = manager.getDefaultDisplay().getWidth();
-                    height = manager.getDefaultDisplay().getHeight();
-                } else {
-                    Point point = new Point();
-                    manager.getDefaultDisplay().getSize(point);
-                    width = point.x;
-                    height = point.y;
-                }
 
-                Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
+                Point point = new Point();
+                manager.getDefaultDisplay().getSize(point);
+                width = point.x;
+                height = point.y;*/
+
+                fullImage = CommonUtil.GetBitmapDrawableFromFile(
                         publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                        getString(R.string.image_folder_path), width, height);
+                        getString(R.string.image_folder_path), 1000, 1000);
 
-                ImageView image = new ImageView(this);
-                image.setImageDrawable(imageD);
-                AlertDialog.Builder builder = new AlertDialog.Builder(this).
-                                setView(image);
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.getWindow();
-                alertDialog.show();
-
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(alertDialog.getWindow().getAttributes());
-                lp.width = width;
-                lp.height = height;
-                alertDialog.getWindow().setAttributes(lp);
+                Intent i = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                startActivity(i);
 
                 break;
 
         }
     }
+
 
     private boolean CheckIfMyLocationAvailableAndAskReportConfirmation() {
         LatLng myLocation = CommonUtil.GetFilterLocationFromPreferences(this);
