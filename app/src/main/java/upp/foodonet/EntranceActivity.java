@@ -149,12 +149,11 @@ public class EntranceActivity
 
     @Override
     public void OnGooglePlayServicesCheckError() {
-
     }
 
     @Override
     public void OnInternetNotConnected() {
-
+        Toast.makeText(this, getString(R.string.no_internet_connection_available_error_message), Toast.LENGTH_LONG).show();
     }
 
     @Override

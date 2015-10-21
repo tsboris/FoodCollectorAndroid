@@ -634,13 +634,23 @@ public class PublicationDetailsActivity
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS:
                 Log.i(MY_TAG, "successfully registered to publication " + publication.getUniqueId());
-                Toast.makeText(getBaseContext(),
-                        getResources().getString(R.string.pub_det_uimessage_successfully_registered_to_pub), Toast.LENGTH_LONG);
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL:
                 Log.i(MY_TAG, "failed to register to publication");
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
                 Toast.makeText(getBaseContext(),
-                        getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG);
+                        getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG).show();
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_SUCCESS:
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL:
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
+                Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.pub_det_uimessage_failed_unregister_from_pub), Toast.LENGTH_LONG).show();
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION:
                 Log.i(MY_TAG, "successfully added myself to regs! refreshing number");
@@ -708,11 +718,15 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
+                if(!CheckInternetForAction(getString(R.string.action_leave_report)))
+                    return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
-                growAnim(R.drawable.facebook_green_xxh,R.drawable.pub_det_facebook,btn_facebook_my);
+                growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
+                if(!CheckInternetForAction(getString(R.string.action_facebook)))
+                    return;
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
@@ -731,17 +745,22 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_tweet_my_pub_details:
-                growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
-
+                growAnim(R.drawable.twitter_green_xxh, R.drawable.pub_det_twitter, btn_twitter_my);
+                if(!CheckInternetForAction(getString(R.string.action_tweet)))
+                    return;
                 SendTweet();
 
                 break;
             case R.id.btn_register_unregister_pub_details:
-                //open progress dialog
-
-                growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
-
-                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_registration_to_pub));
+                //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+                if(!CheckInternetForAction(isRegisteredForCurrentPublication
+                        ? getString(R.string.action_unregister_from_pub)
+                        : getString(R.string.action_register_to_pub)))
+                    return;
+                progressDialog = CommonUtil.ShowProgressDialog(this,
+                        isRegisteredForCurrentPublication
+                                ? getString(R.string.progress_unregistering_from_pub)
+                                : getString(R.string.progress_registration_to_pub));
                 RegisteredUserForPublication newRegistrationForPub
                         = new RegisteredUserForPublication();
                 newRegistrationForPub.setDate_registered(new Date());
@@ -755,9 +774,7 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_call_owner_pub_details:
-
                 growAnim(R.drawable.call_green_xxh,R.drawable.pub_det_call,btn_call_reg);
-
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
                 if (intent.resolveActivity(getPackageManager()) != null) {
@@ -765,9 +782,7 @@ public class PublicationDetailsActivity
             }
                 break;
             case R.id.btn_message_owner_pub_details:
-
                 growAnim(R.drawable.sms_green_xxh,R.drawable.pub_det_sms,btn_sms_reg);
-
                 Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
                 intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
                 intentSMS.setData(Uri.parse("smsto:" + publication.getContactInfo()));// + publication.getContactInfo()));  // This ensures only SMS apps respond
@@ -777,9 +792,7 @@ public class PublicationDetailsActivity
                     startActivity(intentSMS);
                 }
                 break;
-
             case R.id.riv_image_pub_details:
-
                 WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
                 int width, height;
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
@@ -847,12 +860,16 @@ public class PublicationDetailsActivity
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.pub_det_menu_item_edit:
+                if(!CheckInternetForAction(getString(R.string.action_edit_publication)))
+                    return false;
                 Intent intent = new Intent(this, AddEditPublicationActivity.class);
                 intent.putExtra(AddEditPublicationActivity.PUBLICATION_KEY, publication);
                 startActivityForResult(intent, REQUEST_CODE_EDIT_PUBLICATION);
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
+                if(!CheckInternetForAction(getString(R.string.action_take_off_air)))
+                    return false;
                 if(progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_taking_pub_off_air));

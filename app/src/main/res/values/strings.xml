@@ -67,7 +67,8 @@
     <string name="cancel_publication">cancel publication</string>
     <string name="cancel_publication_question">Really cancel this publication?</string>
     <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
-    <string name="pub_det_uimessage_failed_register_to_pub">Failed to register to publication</string>
+    <string name="pub_det_uimessage_failed_register_to_pub">הרשמה לשיתוף נכשלה</string>
+    <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
     <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
@@ -146,7 +147,17 @@
 
     <string name="progress_taking_pub_off_air">מעדכן שיתוף...</string>
     <string name="progress_registration_to_pub">הרשמה...</string>
+    <string name="progress_unregistering_from_pub">ביטול הרשמה...</string>
     <string name="progress_leaving_report">שומר תגובה...</string>
+    <string name="error_cant_perform_this_action_without_internet">לא ניתן לבצע {0} ללא חיבור לאינטרנט</string>
+    <string name="action_leave_report">השארת תגובה</string>
+    <string name="action_register_to_pub">הרשמה לשיתוף</string>
+    <string name="action_unregister_from_pub">ביטול הרשמה לשיתוף</string>
+    <string name="action_tweet">שיתוף בטוויטר</string>
+    <string name="action_facebook">שיטוף בפייסבוק</string>
+    <string name="action_add_new_publication">יצירת שיתוף חדש</string>
+    <string name="action_edit_publication">עריכה של שיתוף</string>
+    <string name="action_take_off_air">הפיכה ללא פעיל</string>
 
     <!-- All publications list -->
 
@@ -157,6 +168,7 @@
     <!-- Entrance activity -->
 
     <string name="progress_loading">טוען..</string>
+    <string name="no_internet_connection_available_error_message">לא נמצא חיבור לאינטרנט, רוב הפונקציות של אפליקציה לא יהיו זמינות</string>
 
     <!-- SplashScreen -->
 
