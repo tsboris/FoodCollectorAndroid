@@ -174,6 +174,8 @@ public class MyPublicationsActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_add_new_myPubsLst:
+                if(!CheckInternetForAction(getString(R.string.action_add_new_publication)))
+                    return;
                 Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, 1);
                 break;

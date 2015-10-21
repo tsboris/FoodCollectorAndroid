@@ -752,7 +752,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 publication.setLongitude(longitudeTmpForEdit);
                 publication.setAddress(addressTmpForEdit);
                 et_address.setText(publication.getAddress());
-                SetEditTextIsValid(et_address, true);
+                //SetEditTextIsValid(et_address, true);
                 onDismiss(addressDialog);
                 break;
             case R.id.btn_address_dialog_cancel:

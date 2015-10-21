@@ -136,8 +136,13 @@ public class ReloadDataIntentService
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         Log.i(MY_TAG, "finished task server");
-        fetchedFromServer = response.publications;
-        DoNextTaskFromWorkPlan();
+        if(response.Status == InternalRequest.STATUS_OK) {
+            fetchedFromServer = response.publications;
+            DoNextTaskFromWorkPlan();
+        } else {
+            Log.i(MY_TAG, "failed loading from server, skipping this cycle");
+            stopSelf();
+        }
     }
 
     public void OnSQLTaskComplete(InternalRequest request) {
