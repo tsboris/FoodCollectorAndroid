@@ -54,17 +54,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.protocol.HTTP;
@@ -104,7 +93,6 @@ public class PublicationDetailsActivity
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
 
-    public static final int REQUEST_CODE_POST_FACEBOOK = 64206;
     public static final int REQUEST_CODE_EDIT_PUBLICATION = 1;
     private static final String PERMISSION = "publish_actions";
 
@@ -147,7 +135,6 @@ public class PublicationDetailsActivity
 
     PopupMenu popup;
     //ProgressDialog progressDialog;
-    Bitmap bImageFacebook;
 
     //region Activity
     @Override
@@ -228,10 +215,7 @@ public class PublicationDetailsActivity
 
         FCPublication pub = new FCPublication();
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_POST_FACEBOOK) {
-                super.onActivityResult(requestCode, resultCode, data);
-                callbackManager.onActivityResult(requestCode, resultCode, data);
-            }
+
             if (requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
 
                 FCPublication publication
@@ -375,8 +359,8 @@ public class PublicationDetailsActivity
     //region Facebook method
     private void PostOnFacebook() {
 
-        String msg = publication.getTitle();
         Intent facebookIntent = new Intent(Intent.ACTION_SEND);
+        String msg = publication.getTitle() + "\n " + getString(R.string.facebook_page_url) + "\n ";
         facebookIntent.putExtra(Intent.EXTRA_TEXT, msg);
 
         String fileName = publication.getUniqueId() + "." + publication.getVersion() + ".jpg";
@@ -386,6 +370,7 @@ public class PublicationDetailsActivity
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
         facebookIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photo));
         facebookIntent.setType("image/*");
+        //facebookIntent.setType("text/plain");
 
         PackageManager packManager = getPackageManager();
         List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(facebookIntent,  PackageManager.MATCH_DEFAULT_ONLY);
@@ -404,6 +389,8 @@ public class PublicationDetailsActivity
             startActivity(facebookIntent);
         }else{
             Toast.makeText(this, "Facebook app isn't found", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.facebook.katana") );
+            startActivity(intent);
         }
 
     }
@@ -443,6 +430,8 @@ public class PublicationDetailsActivity
             startActivity(tweetIntent);
         }else{
             Toast.makeText(this, "Twitter app isn't found", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android") );
+            startActivity(intent);
         }
     }
     // endregion
@@ -934,45 +923,6 @@ public class PublicationDetailsActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
-
-    //endregion
-
-    //region facebook
-
-    // For Facebook
-    private boolean canPresentShareDialogWithPhotos;
-    private CallbackManager callbackManager;
-    private LoginManager loginManager;
-    private ShareDialog shareDialog;
-    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
-        @Override
-        public void onCancel() {
-            Log.d("Facebook", "Canceled");
-        }
-
-        @Override
-        public void onError(FacebookException error) {
-            Log.d("Facebook", String.format("Error: %s", error.toString()));
-            String message = error.getMessage();
-            showResult(message);
-        }
-
-        @Override
-        public void onSuccess(Sharer.Result result) {
-            Log.d("Facebook", "Success!");
-            if (result.getPostId() != null) {
-                //String id = result.getPostId();
-                String message = getString(R.string.successfully_posted_post);
-                showResult(message);
-            }
-        }
-
-        private void showResult(String message) {
-            Toast.makeText(PublicationDetailsActivity.this,
-                    message,
-                    Toast.LENGTH_LONG).show();
-        }
-    };
 
     //endregion
 

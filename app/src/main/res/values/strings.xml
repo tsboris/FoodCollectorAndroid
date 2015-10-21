@@ -97,24 +97,8 @@
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
 
-    <!-- Facebook keys -->
-    <string name="facebook_app_id">451780775026519</string>
-    <string name="successfully_posted_post">Successfully posted to Facebook</string>
-
-    <!-- Twitter keys -->
-    <string name="twitter_consumer_key">RiDOc2BKu13b7qGwjLmlJrNJk</string>
-    <string name="twitter_consumer_secret">zXuZ2q1WCJ5NwhyAEZVriXJG9dEiUl6WHjo7Ct46rs2nUn1fzE</string>
-    <string name="twitter_callback">x-oauthflow-twitter://callback</string>
-    <string name="twitter_oauth_verifier">oauth_verifier</string>
-    <string name="hello">Hello, </string>
-    <string name="login_instructions">Login to twitter</string>
-    <string name="share_instructions">Enter share message</string>
-    <string name="btn_login">Login to Twitter</string>
-    <string name="btn_share">Share</string>
     <string name="hashtag">#FooDoNet</string>
     <string name="facebook_page_url">https://www.facebook.com/foodonet</string>
-    <string name="tweet_text">יש לי</string>
-    <string name="tweet_question">מי בא לקחת?</string>
 
     <!-- Shared Preferences keys -->
     <string name="shared_preferences_token">sp_token</string>

@@ -60,9 +60,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
 
         <!--
          Vitaly laptop: AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0
@@ -194,14 +191,6 @@
             android:exported="false" >
         </service>
 
-        <activity
-            android:name=".WebViewActivity"
-            android:label="@string/title_activity_web_view" >
-        </activity>
-        <activity
-            android:name=".ShareToTwitterActivity"
-            android:label="@string/title_activity_share_to_twitter" >
-        </activity>
     </application>
 
 </manifest>
