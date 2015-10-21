@@ -63,7 +63,7 @@ public class MyPublicationsActivity
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     //Animation animZoomIn;
 
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
 
 /*    ToggleButton tgl_btn_navigate_share;
       ToggleButton tgl_btn_navigate_take;*/
@@ -122,6 +122,25 @@ public class MyPublicationsActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(progressDialog != null){
+            progressDialog.dismiss();
+            progressDialog = null;
+            StartLoadingCursorForList(currentFilterID);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_my_publications, menu);
@@ -135,6 +154,7 @@ public class MyPublicationsActivity
 
     @Override
     public void onBackPressed() {
+        progressDialog = CommonUtil.ShowProgressDialog(this, "");
         Intent intent = new Intent(this, MapAndListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
@@ -250,11 +270,7 @@ public class MyPublicationsActivity
             return;
         switch (resultCode) {
             case AddEditPublicationActivity.RESULT_OK:
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Saving...");
-                progressDialog.show();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_saving));
                 FCPublication publication
                         = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
                 if (publication == null) {

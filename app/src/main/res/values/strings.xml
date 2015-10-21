@@ -124,6 +124,10 @@
     <string name="shared_preferences_my_longitude_key">lon_key</string>
     <string name="shared_preferences_text_filter_key">text_filter_key</string>
     <string name="shared_preferences_text_filter_text_key">text_filter_text_key</string>
+    <string name="shared_preferences_data_loaded">data_loaded</string>
+    <string name="shared_preferences_data_loaded_key">data_loaded_key</string>
+    <string name="shared_preferences_is_registered">is_registered</string>
+    <string name="shared_preferences_is_registered_key">is_registered_key</string>
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
@@ -136,6 +140,7 @@
     <!-- Add/Edit publication -->
 
     <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
+    <string name="file_name_part_just_shot">justShot</string>
 
     <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
@@ -156,6 +161,23 @@
     <!-- Publication details -->
 
     <string name="progress_taking_pub_off_air">מעדכן שיתוף...</string>
+    <string name="progress_registration_to_pub">הרשמה...</string>
+    <string name="progress_leaving_report">שומר תגובה...</string>
+
+    <!-- All publications list -->
+
+    <!-- My publications list -->
+
+    <string name="progress_saving">שמירה...</string>
+
+    <!-- Entrance activity -->
+
+    <string name="progress_loading">טוען..</string>
+
+    <!-- SplashScreen -->
+
+    <string name="progress_foodonet_loading">טעינת אפליקציה..</string>
+    <string name="progress_first_load">טעינה ראשונה..</string>
 
     <!-- -->
     <string name="title_activity_web_view">WebViewActivity</string>

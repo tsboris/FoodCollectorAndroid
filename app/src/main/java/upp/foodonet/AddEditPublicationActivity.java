@@ -259,7 +259,14 @@ public class AddEditPublicationActivity extends FragmentActivity
                     .build();
     }
 
-/*
+    @Override
+    protected void onPause() {
+        if(progressDialog != null)
+            progressDialog.dismiss();
+        super.onPause();
+    }
+
+    /*
     @Override
     protected void onStart() {
         super.onStart();
@@ -328,7 +335,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private void TryLoadExistingImage() {
         int imageSize = mAddPicImageView.getLayoutParams().height;
         Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                CommonUtil.GetFileNameByPublication(publication),
                 getString(R.string.image_folder_path), imageSize, imageSize);
         if (imageDrawable != null)
             mAddPicImageView.setImageDrawable(imageDrawable);
@@ -376,14 +383,14 @@ public class AddEditPublicationActivity extends FragmentActivity
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                 File destination = new File(Environment.getExternalStorageDirectory()
                         + getResources().getString(R.string.image_folder_path),
-                        System.currentTimeMillis() + ".jpg");
+                        System.currentTimeMillis() + getString(R.string.file_name_part_just_shot) + ".jpg");
                 FileOutputStream fo;
                 try {
                     destination.createNewFile();
                     fo = new FileOutputStream(destination);
                     fo.write(bytes.toByteArray());
                     fo.close();
-                    publication.setPhotoUrl(destination.getPath());
+                    publication.setPhotoUrl(destination.getAbsolutePath());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -757,11 +764,8 @@ public class AddEditPublicationActivity extends FragmentActivity
                 onCancel(addressDialog);
                 break;
             case R.id.cb_use_current_location:
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle(getString(R.string.progress_waiting_for_location));
-                progressDialog.show();
+                String message = getString(R.string.progress_waiting_for_location);
+                progressDialog = CommonUtil.ShowProgressDialog(this, message);
                 GetMyLocationAsync getLocAsync = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
                 getLocAsync.setGotLocationCallback(this);
                 getLocAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

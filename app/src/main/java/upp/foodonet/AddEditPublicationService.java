@@ -131,21 +131,19 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 publication.setUniqueId(newNegativeID);
             }
         }
-        if (publication.getPhotoUrl() != null
-                && TextUtils.isEmpty(publication.getPhotoUrl())) {
-            String partId = "n"
-                    + String.valueOf(publication.getUniqueId() > 0 ? publication.getUniqueId() : publication.getUniqueId() * -1);
-            String fileName = partId + "." + String.valueOf(publication.getVersion()) + ".jpg";
+        if (publication.getPhotoUrl() != null && publication.getPhotoUrl().length() > 0) {
             File sourceFile = new File(publication.getPhotoUrl());
-            File destinationFile = new File(Environment.getExternalStorageDirectory()
-                    + getResources().getString(R.string.image_folder_path), fileName);
-            CommonUtil.CopyImageFileWithCompressionBySize(sourceFile, destinationFile, getResources().getInteger(R.integer.max_image_width_height));
-            //CommonUtil.CopyFile(sourceFile, destinationFile);
-            //todo: think how to check is it photo from libruary or shot right now.
-            //todo: if right now - it could be deleted
-//                if(sourceFile.exists())
-//                    sourceFile.delete();
-            publication.setPhotoUrl(destinationFile.getPath());
+            if (sourceFile.exists()) {
+                String imgFileName
+                        = CommonUtil.GetFileNameByPublication(publication);
+                File destinationFile
+                        = new File(Environment.getExternalStorageDirectory()
+                        + getString(R.string.image_folder_path), imgFileName);
+                CommonUtil.CopyImageFileWithCompressionBySize(sourceFile, destinationFile, getResources().getInteger(R.integer.max_image_width_height));
+                if(publication.getPhotoUrl().contains(getString(R.string.file_name_part_just_shot)))
+                    sourceFile.delete();
+                publication.setPhotoUrl(null);
+            }
         }
         FooDoNetSQLExecuterAsync saveExecuter
                 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
@@ -195,15 +193,17 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                     Log.i(MY_TAG, "cant update new pub's id in sql");
                     return;
                 }
-                if (request.publicationForSaving.getPhotoUrl() != null
-                        && !TextUtils.isEmpty(request.publicationForSaving.getPhotoUrl()))
-                    UploadImageToAmazon(request.publicationForSaving);
+                File imgFile = new File(Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path),
+                                            CommonUtil.GetFileNameByPublication(request.publicationForSaving));
+                if (imgFile.exists())
+                    UploadImageToAmazon(imgFile);
                 //NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
                 break;
             case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
-                if (request.publicationForSaving.getPhotoUrl() != null
-                        && !TextUtils.isEmpty(request.publicationForSaving.getPhotoUrl()))
-                    UploadImageToAmazon(request.publicationForSaving);
+                File imgFile1 = new File(Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path),
+                        CommonUtil.GetFileNameByPublication(request.publicationForSaving));
+                if (imgFile1.exists())
+                    UploadImageToAmazon(imgFile1);
                 break;
         }
     }
@@ -220,21 +220,19 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
                 Log.i(MY_TAG, "succeeded saving pub to server, new id: "
                         + response.publicationForSaving.getNewIdFromServer());
-                if (response.publicationForSaving.getPhotoUrl() != null
-                        && !TextUtils.isEmpty(response.publicationForSaving.getPhotoUrl())) {
+                File existingImageFile
+                        = new File(Environment.getExternalStorageDirectory()
+                        + getString(R.string.image_folder_path),
+                                    CommonUtil.GetFileNameByPublication(response.publicationForSaving));
+                if (existingImageFile.exists()) {
                     String fileName
                             = String.valueOf(response.publicationForSaving.getNewIdFromServer()) + "."
                             + String.valueOf(response.publicationForSaving.getVersionFromServer()) + ".jpg";
-                    File sourceFile = new File(response.publicationForSaving.getPhotoUrl());
                     File destinationFile = new File(Environment.getExternalStorageDirectory()
                             + getString(R.string.image_folder_path), fileName);
                     try {
-                        CommonUtil.CopyFile(sourceFile, destinationFile);
-                        //todo: think how to check is it photo from libruary or shot right now.
-                        //todo: if right now - it could be deleted
-//                        if(sourceFile.exists())
-//                            sourceFile.delete();
-                        response.publicationForSaving.setPhotoUrl(destinationFile.getPath());
+                        CommonUtil.CopyFile(existingImageFile, destinationFile);
+                        existingImageFile.delete();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -251,7 +249,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 File oldVersionSource = new File(
                         Environment.getExternalStorageDirectory()
                                 + getString(R.string.image_folder_path), fileName);
-                if(oldVersionSource.exists()){
+                if (oldVersionSource.exists()) {
                     String newFileName
                             = String.valueOf(response.publicationForSaving.getUniqueId()) + "."
                             + String.valueOf(response.publicationForSaving.getVersion()) + ".jpg";
@@ -273,13 +271,10 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
         }
     }
 
-    private void UploadImageToAmazon(FCPublication publication) {
+    private void UploadImageToAmazon(File imgFile) {
         RegisterAWSS3();
-        File imageToSave = new File(publication.getPhotoUrl());
-        //Environment.getExternalStorageDirectory(), publication.getPhotoUrl());
-
-        String imageName = String.valueOf(publication.getUniqueId()) + "."
-                + String.valueOf(publication.getVersion()) + ".jpg";
+        File imageToSave = imgFile;
+        String imageName = imgFile.getName();
         uploadPhotoForPublication(imageToSave, imageName);
     }
 

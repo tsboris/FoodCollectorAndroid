@@ -1,5 +1,6 @@
 package FooDoNetServiceUtil;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ public abstract class FooDoNetCustomActivityConnectedToService
     //protected Intent serviceIntent;
 
     ServicesBroadcastReceiver servicesBroadcastReceiver;
+    protected ProgressDialog progressDialog;
 
     private final String MY_TAG = "food_abstract_fActivity";
 
@@ -95,7 +97,8 @@ public abstract class FooDoNetCustomActivityConnectedToService
             unregisterReceiver(servicesBroadcastReceiver);
             servicesBroadcastReceiver = null;
         }
-
+//        if(progressDialog != null)
+//            progressDialog.dismiss();
         super.onPause();
     }
 

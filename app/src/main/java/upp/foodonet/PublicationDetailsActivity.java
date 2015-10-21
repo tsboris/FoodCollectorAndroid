@@ -149,7 +149,7 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
     Bitmap bImageFacebook;
 
     //region Activity
@@ -806,13 +806,9 @@ public class PublicationDetailsActivity
             case R.id.btn_register_unregister_pub_details:
                 //open progress dialog
 
-                growAnim(R.drawable.cancel_rishum_pub_det_btn,R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+                growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
 
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Registering to publication...");
-                progressDialog.show();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_registration_to_pub));
                 RegisteredUserForPublication newRegistrationForPub
                         = new RegisteredUserForPublication();
                 newRegistrationForPub.setDate_registered(new Date());
@@ -864,7 +860,7 @@ public class PublicationDetailsActivity
                 }
 
                 Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
-                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                        CommonUtil.GetFileNameByPublication(publication),
                         getString(R.string.image_folder_path), width, height);
 
                 ImageView image = new ImageView(this);
@@ -924,12 +920,9 @@ public class PublicationDetailsActivity
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
-                if(progressDialog == null)
-                    progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle(getString(R.string.progress_taking_pub_off_air));
-                progressDialog.show();
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_taking_pub_off_air));
                 publication.setIsOnAir(false);
                 HttpServerConnectorAsync connector1
                         = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
@@ -1060,12 +1053,7 @@ public class PublicationDetailsActivity
     }
 
     public void ReportMade(int reportID) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle("Leaving report to publication...");
-        progressDialog.show();
-
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_leaving_report));
         PublicationReport report = new PublicationReport();
         report.setReport(String.valueOf(reportID));
         report.setPublication_id(publication.getUniqueId());

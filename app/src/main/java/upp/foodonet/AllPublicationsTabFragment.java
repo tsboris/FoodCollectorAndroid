@@ -360,11 +360,8 @@ public class AllPublicationsTabFragment
         LatLng myLocationFromPreferences = CommonUtil.GetFilterLocationFromPreferences(context);
         if (myLocationFromPreferences.latitude == -1000
                 || myLocationFromPreferences.longitude == -1000) {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setCancelable(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setTitle("Trying to get location data...");
-            progressDialog.show();
+            String progressMessage = getString(R.string.progress_waiting_for_location);
+            progressDialog = CommonUtil.ShowProgressDialog(context, progressMessage);
             GetMyLocationAsync locationTask
                     = new GetMyLocationAsync((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
             locationTask.setGotLocationCallback(this);

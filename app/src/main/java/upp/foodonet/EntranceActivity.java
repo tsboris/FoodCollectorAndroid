@@ -1,5 +1,6 @@
 package upp.foodonet;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
@@ -36,6 +38,8 @@ public class EntranceActivity
 
     private static final String MY_TAG = "food_EntanceActivity";
     Button btn_pick, btn_share, btn_ask;
+    boolean isUIBlocked;
+    ProgressDialog progressDialog;
 
     public static final int REQUEST_ADD_NEW_PUBLICATION = 1;
 
@@ -98,9 +102,13 @@ public class EntranceActivity
             }
         });
         */
+    }
 
-
-
+    @Override
+    protected void onPause() {
+        if(progressDialog != null)
+            progressDialog.dismiss();
+        super.onPause();
     }
 
     @Override
@@ -151,6 +159,10 @@ public class EntranceActivity
 
     @Override
     public void onClick(View v) {
+        if(isUIBlocked)
+            return;
+        isUIBlocked = true;
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         switch (v.getId()){
             case R.id.btn_pick_welcomeScreen:
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);

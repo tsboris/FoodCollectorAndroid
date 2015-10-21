@@ -1,5 +1,6 @@
 package CommonUtilPackage;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -244,9 +245,7 @@ public class CommonUtil {
     public static InputStream ConvertFileToInputStream(String fileName, String imageSubFolder) {
         InputStream is = null;
 
-        File photo = new File(fileName);
-        if (!photo.exists())
-            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        File photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
 
         try {
             is = new FileInputStream(photo.getPath());
@@ -358,5 +357,51 @@ public class CommonUtil {
             imageDrawable = CommonUtil.GetBitmapDrawableFromFile(imagePath, "", imageSize, imageSize);
         }
         return imageDrawable;
+    }
+
+    public static ProgressDialog ShowProgressDialog(Context context, String message){
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle(message);
+        progressDialog.show();
+        return progressDialog;
+    }
+
+    public static String GetFileNameByPublication(FCPublication publication){
+        return String.valueOf(publication.getUniqueId() > 0
+                ? String.valueOf(publication.getUniqueId())
+                : "n" + String.valueOf(publication.getUniqueId() * -1))
+                + "." + String.valueOf(publication.getVersion()) + ".jpg";
+    }
+
+    public static void PutCommonPreferenceIsDataLoaded(Context context, boolean isDataLoaded){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(context.getString(R.string.shared_preferences_data_loaded_key), isDataLoaded);
+        editor.commit();
+        Log.i(MY_TAG, "IsDataLoaded set to: " + String.valueOf(isDataLoaded));
+    }
+
+    public static boolean GetFromPreferencesIsDataLoaded(Context context){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_data_loaded_key), false);
+    }
+
+    public static void PutCommonPreferenceIsRegistered(Context context, boolean isDataLoaded){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(context.getString(R.string.shared_preferences_is_registered_key), isDataLoaded);
+        editor.commit();
+        Log.i(MY_TAG, "IsRegistered set to: " + String.valueOf(isDataLoaded));
+    }
+
+    public static boolean GetFromPreferencesIsRegistered(Context context){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_key), false);
     }
 }

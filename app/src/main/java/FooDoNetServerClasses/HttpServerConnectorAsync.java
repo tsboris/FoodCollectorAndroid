@@ -368,7 +368,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");
-                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS

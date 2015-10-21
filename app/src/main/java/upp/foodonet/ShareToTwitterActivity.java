@@ -91,7 +91,7 @@ public class ShareToTwitterActivity extends Activity implements View.OnClickList
 
         int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
         Drawable image = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                CommonUtil.GetFileNameByPublication(publication),
                 getString(R.string.image_folder_path), imageSize, imageSize);
 
 
@@ -210,8 +210,7 @@ public class ShareToTwitterActivity extends Activity implements View.OnClickList
 
                 // Update status
                 StatusUpdate statusUpdate = new StatusUpdate(status);
-                imageStreamForSharing = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." +
-                                                                            publication.getVersion() + ".jpg",
+                imageStreamForSharing = CommonUtil.ConvertFileToInputStream(CommonUtil.GetFileNameByPublication(publication),
                                                                         getString(R.string.image_folder_path));
                 statusUpdate.setMedia(publication.getTitle(), imageStreamForSharing);
 
