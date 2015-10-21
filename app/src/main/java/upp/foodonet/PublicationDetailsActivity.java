@@ -91,9 +91,6 @@ import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 
 public class PublicationDetailsActivity
@@ -343,12 +340,9 @@ public class PublicationDetailsActivity
                 publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
                 getString(R.string.image_folder_path), imageSize, imageSize);
         if (image != null) {
-            // TODO - move init of facebook pictures
-            bImageFacebook = ((BitmapDrawable) image).getBitmap();
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
-            bImageFacebook = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);//Facebook
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
@@ -375,85 +369,40 @@ public class PublicationDetailsActivity
 
     //endregion
 
-    //region Facebook methods
+    //region Facebook method
     private void PostOnFacebook() {
-        FacebookSdk.sdkInitialize(getApplicationContext());
 
-        callbackManager = CallbackManager.Factory.create();
+        String msg = publication.getTitle();
+        Intent facebookIntent = new Intent(Intent.ACTION_SEND);
+        facebookIntent.putExtra(Intent.EXTRA_TEXT, msg);
 
-        List<String> permissionNeeds = Arrays.asList(PERMISSION);
+        String fileName = publication.getUniqueId() + "." + publication.getVersion() + ".jpg";
+        String imageSubFolder = getString(R.string.image_folder_path);
+        File photo = new File(fileName);
+        if (!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        facebookIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photo));
+        facebookIntent.setType("image/*");
 
-        //this loginManager helps you eliminate adding a LoginButton to your UI
-        loginManager = LoginManager.getInstance();
+        PackageManager packManager = getPackageManager();
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(facebookIntent,  PackageManager.MATCH_DEFAULT_ONLY);
 
-        loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
-
-        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                sharePhotoToFacebook();
-
+        boolean resolved = false;
+        for(ResolveInfo resolveInfo: resolvedInfoList){
+            if(resolveInfo.activityInfo.packageName.startsWith("com.facebook.katana")){
+                facebookIntent.setClassName(
+                        resolveInfo.activityInfo.packageName,
+                        resolveInfo.activityInfo.name );
+                resolved = true;
+                break;
             }
-
-            @Override
-            public void onCancel() {
-                System.out.println("onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                System.out.println("onError");
-            }
-        });
-
-        shareDialog = new ShareDialog(this);
-        shareDialog.registerCallback(
-                callbackManager,
-                shareCallback);
-
-        canPresentShareDialogWithPhotos = ShareDialog.canShow(SharePhotoContent.class);
-
-    }
-
-    private void sharePhotoToFacebook() {
-        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
-        if (bImageFacebook != null) {
-            SharePhoto photo = new SharePhoto.Builder()
-                    .setBitmap(bImageFacebook)
-                            //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
-                    .build();
-
-
-            SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
-                    .addPhoto(photo)
-                    .build();
-
-            // Share with dialog
-            if (canPresentShareDialogWithPhotos)
-                shareDialog.show(sharePhotoContent);
-
-//            ShareLinkContent linkContent = new ShareLinkContent.Builder()
-//                    .setContentTitle("Hello Facebook")
-//                    .setContentDescription("יש לי " + tv_title.getText() + ". מי בא לקחת?")
-//                    .setContentUrl(Uri.parse("https://www.facebook.com/foodonet"))
-//                    .build();
-
-            // Share without dialog
-//            if (hasPublishPermission())
-//                ShareApi.share(content, shareCallback);
-
-
-//            if (canPresentShareDialogWithPhotos) {
-//                shareDialog.show(content);
-//            } else if (hasPublishPermission()) {
-//                ShareApi.share(content, shareCallback);
-//            }
         }
-    }
+        if(resolved){
+            startActivity(facebookIntent);
+        }else{
+            Toast.makeText(this, "Facebook app isn't found", Toast.LENGTH_LONG).show();
+        }
 
-    private boolean hasPublishPermission() {
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null && accessToken.getPermissions().contains(PERMISSION);
     }
     // endregion
 
@@ -790,14 +739,9 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_tweet_my_pub_details:
-
                 growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
 
                 SendTweet();
-
-//                Intent intentTwitter = new Intent(getApplicationContext(),ShareToTwitterActivity.class);
-//                intentTwitter.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM,publication);
-//                startActivity(intentTwitter);
 
                 break;
             case R.id.btn_register_unregister_pub_details:
