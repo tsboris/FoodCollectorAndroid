@@ -111,8 +111,6 @@ public class PublicationDetailsActivity
     private boolean isRegisteredForCurrentPublication = false;
     boolean isImageFitToScreen = false;
 
-    static Drawable fullImage;
-
     //new:
     ImageButton btn_menu;
     Button btn_leave_report;
@@ -858,11 +856,8 @@ public class PublicationDetailsActivity
                 width = point.x;
                 height = point.y;*/
 
-                fullImage = CommonUtil.GetBitmapDrawableFromFile(
-                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                        getString(R.string.image_folder_path), 1000, 1000);
-
                 Intent i = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                i.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(i);
 
                 break;
