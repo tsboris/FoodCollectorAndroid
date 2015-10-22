@@ -175,10 +175,10 @@ public class PublicationDetailsActivity
         lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
-        ll_details = (LinearLayout)findViewById(R.id.ll_pub_details);
+        //ll_details = (LinearLayout)findViewById(R.id.ll_pub_details);
 
         //fullSizeImage = (ImageView)findViewById(R.id.iv_full_size_image_pub_details);
-        ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
+        //ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
         tv_start_dateTime_details = (TextView)findViewById(R.id.tv_start_time_pub_details);
         tv_end_dateTime_details = (TextView)findViewById(R.id.tv_end_time_pub_details);
 
@@ -830,14 +830,6 @@ public class PublicationDetailsActivity
                 Intent intentFullSizeActivity = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
                 intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(intentFullSizeActivity);
-
-                fullImage = CommonUtil.GetBitmapDrawableFromFile(
-                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                        getString(R.string.image_folder_path), 1000, 1000);
-
-                Intent i = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
-                startActivity(i);
-
                 break;
 
         }
