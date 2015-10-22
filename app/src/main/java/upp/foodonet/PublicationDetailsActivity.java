@@ -702,10 +702,15 @@ public class PublicationDetailsActivity
                 stringEdit.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringEdit.length(), 0);
                 itemEdit.setTitle(stringEdit);
 
-                MenuItem itemDelete = popup.getMenu().getItem(1);
-                SpannableString stringDelete = new SpannableString(getString(R.string.pub_det_menu_item_deactivate));
+                MenuItem itemTakeOffAir = popup.getMenu().getItem(1);
+                SpannableString stringTakeOffAir = new SpannableString(getString(R.string.pub_det_menu_item_deactivate));
+                stringTakeOffAir.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringTakeOffAir.length(), 0);
+                itemTakeOffAir.setTitle(stringTakeOffAir);
+
+                MenuItem itemDelete = popup.getMenu().getItem(2);
+                SpannableString stringDelete = new SpannableString(getString(R.string.pub_det_menu_item_delete));
                 stringDelete.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringDelete.length(), 0);
-                itemDelete.setTitle(stringDelete);
+                itemTakeOffAir.setTitle(stringDelete);
 
 /*
                 MenuItem itemDeactivate = popup.getMenu().getItem(2);
@@ -727,6 +732,9 @@ public class PublicationDetailsActivity
                 growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
                 if(!CheckInternetForAction(getString(R.string.action_facebook)))
                     return;
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
@@ -748,8 +756,11 @@ public class PublicationDetailsActivity
                 growAnim(R.drawable.twitter_green_xxh, R.drawable.pub_det_twitter, btn_twitter_my);
                 if(!CheckInternetForAction(getString(R.string.action_tweet)))
                     return;
+                if(progressDialog != null){
+                    progressDialog.dismiss();
+                }
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
                 SendTweet();
-
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
@@ -883,6 +894,17 @@ public class PublicationDetailsActivity
                         subPath, publication);
                 ir1.publicationForSaving = publication;
                 connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
+                break;
+            case R.id.pub_det_menu_item_delete:
+                if(!CheckInternetForAction(getString(R.string.action_delete)))
+                    return false;
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
+                HttpServerConnectorAsync connector2
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+                String subPath1 = getString(R.string.server_edit_publication_path);
+                subPath = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();

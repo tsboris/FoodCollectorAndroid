@@ -71,6 +71,7 @@
     <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
+    <string name="pub_det_menu_item_delete">למחוק שיתוף</string>
     <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
     <string name="pub_list_search_hint">חיפוש בשיתופים</string>
 
@@ -149,6 +150,7 @@
     <string name="progress_registration_to_pub">הרשמה...</string>
     <string name="progress_unregistering_from_pub">ביטול הרשמה...</string>
     <string name="progress_leaving_report">שומר תגובה...</string>
+    <string name="progress_delete_pub">מוחק שיתוף</string>
     <string name="error_cant_perform_this_action_without_internet">לא ניתן לבצע {0} ללא חיבור לאינטרנט</string>
     <string name="action_leave_report">השארת תגובה</string>
     <string name="action_register_to_pub">הרשמה לשיתוף</string>
@@ -158,6 +160,7 @@
     <string name="action_add_new_publication">יצירת שיתוף חדש</string>
     <string name="action_edit_publication">עריכה של שיתוף</string>
     <string name="action_take_off_air">הפיכה ללא פעיל</string>
+    <string name="action_delete">מחיקה של שיתוף</string>
 
     <!-- All publications list -->
 

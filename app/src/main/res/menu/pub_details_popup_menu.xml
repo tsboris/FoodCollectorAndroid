@@ -12,6 +12,12 @@
         android:background="@color/basic_blue"
         />
 
+    <item
+        android:id="@+id/pub_det_menu_item_delete"
+        android:title="action3"
+        android:background="@color/basic_blue"
+        />
+
 <!--
     <item
         android:id="@+id/action3"
