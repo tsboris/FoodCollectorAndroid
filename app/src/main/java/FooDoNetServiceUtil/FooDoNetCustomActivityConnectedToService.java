@@ -1,5 +1,6 @@
 package FooDoNetServiceUtil;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -46,6 +48,10 @@ public abstract class FooDoNetCustomActivityConnectedToService
     //protected Intent serviceIntent;
 
     ServicesBroadcastReceiver servicesBroadcastReceiver;
+    protected ProgressDialog progressDialog;
+
+    protected boolean isInternetAvailable = false;
+    protected boolean isGoogleServiceAvailable = false;
 
     private final String MY_TAG = "food_abstract_fActivity";
 
@@ -95,15 +101,18 @@ public abstract class FooDoNetCustomActivityConnectedToService
             unregisterReceiver(servicesBroadcastReceiver);
             servicesBroadcastReceiver = null;
         }
-
+//        if(progressDialog != null)
+//            progressDialog.dismiss();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        if (!CheckInternetConnection())
+        isInternetAvailable = CheckInternetConnection();
+        if (!isInternetAvailable)
             OnInternetNotConnected();
-        if (!CheckPlayServices())
+        isGoogleServiceAvailable = CheckPlayServices();
+        if (!isGoogleServiceAvailable)
             OnGooglePlayServicesCheckError();
         super.onResume();
     }
@@ -143,6 +152,19 @@ public abstract class FooDoNetCustomActivityConnectedToService
         Log.i(MY_TAG, "Checking internet connection...");
         ConnectionDetector cd = new ConnectionDetector(getBaseContext());
         return cd.isConnectingToInternet();
+    }
+
+    protected boolean CheckInternetForAction(String action){
+        if(!isInternetAvailable){
+            isInternetAvailable = CheckInternetConnection();
+            if(!isInternetAvailable){
+                Toast.makeText(this,
+                        getString(R.string.error_cant_perform_this_action_without_internet).replace("{0}",
+                                action), Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        return true;
     }
 
 /*

@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,17 +54,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.protocol.HTTP;
@@ -72,6 +64,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -81,26 +75,25 @@ import java.util.TimerTask;
 
 import Adapters.PublicationDetailsReportsAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
-import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
 
-    public static final int REQUEST_CODE_POST_FACEBOOK = 64206;
     public static final int REQUEST_CODE_EDIT_PUBLICATION = 1;
     private static final String PERMISSION = "publish_actions";
 
@@ -140,16 +133,7 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
-    ProgressDialog progressDialog;
-    Bitmap bImageFacebook;
-    // Twitter
-    InputStream isImageTwitter;
-    private final Handler mTwitterHandler = new Handler();
-    final Runnable mUpdateTwitterNotification = new Runnable() {
-        public void run() {
-            Toast.makeText(getBaseContext(), "Tweet sent !", Toast.LENGTH_LONG).show();
-        }
-    };
+    //ProgressDialog progressDialog;
 
     //region Activity
     @Override
@@ -232,10 +216,7 @@ public class PublicationDetailsActivity
 
         FCPublication pub = new FCPublication();
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE_POST_FACEBOOK) {
-                super.onActivityResult(requestCode, resultCode, data);
-                callbackManager.onActivityResult(requestCode, resultCode, data);
-            }
+
             if (requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
 
                 FCPublication publication
@@ -344,18 +325,12 @@ public class PublicationDetailsActivity
 
     private void SetImage() {
         int imageSize = getResources().getDimensionPixelSize(R.dimen.pub_details_image_size);
-        Drawable image = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
-                getString(R.string.image_folder_path), imageSize, imageSize);
+        Drawable image = CommonUtil.GetImageFromFileForPublication(
+                this, publication.getUniqueId(), publication.getVersion(), publication.getPhotoUrl(), imageSize);
         if (image != null) {
-            // TODO - move init of facebook and twitter pictures
-            bImageFacebook = ((BitmapDrawable) image).getBitmap();
-            isImageTwitter = CommonUtil.ConvertFileToInputStream(publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
             riv_image.setImageDrawable(image);
             riv_image.setOnClickListener(this);
         } else {
-            bImageFacebook = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);//Facebook
-            isImageTwitter = getResources().openRawResource(+R.drawable.no_photo_placeholder);
             riv_image.setImageDrawable(getResources().getDrawable(R.drawable.foodonet_logo_200_200));
         }
 
@@ -382,128 +357,83 @@ public class PublicationDetailsActivity
 
     //endregion
 
-    //region Facebook methods
+    //region Facebook method
     private void PostOnFacebook() {
-        FacebookSdk.sdkInitialize(getApplicationContext());
 
-        callbackManager = CallbackManager.Factory.create();
+        Intent facebookIntent = new Intent(Intent.ACTION_SEND);
+        String msg = publication.getTitle() + "\n " + getString(R.string.facebook_page_url) + "\n ";
+        facebookIntent.putExtra(Intent.EXTRA_TEXT, msg);
 
-        List<String> permissionNeeds = Arrays.asList(PERMISSION);
+        String fileName = publication.getUniqueId() + "." + publication.getVersion() + ".jpg";
+        String imageSubFolder = getString(R.string.image_folder_path);
+        File photo = new File(fileName);
+        if (!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        facebookIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photo));
+        facebookIntent.setType("image/*");
+        //facebookIntent.setType("text/plain");
 
-        //this loginManager helps you eliminate adding a LoginButton to your UI
-        loginManager = LoginManager.getInstance();
+        PackageManager packManager = getPackageManager();
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(facebookIntent,  PackageManager.MATCH_DEFAULT_ONLY);
 
-        loginManager.logInWithPublishPermissions(PublicationDetailsActivity.this, permissionNeeds);
-
-        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                sharePhotoToFacebook();
-
+        boolean resolved = false;
+        for(ResolveInfo resolveInfo: resolvedInfoList){
+            if(resolveInfo.activityInfo.packageName.startsWith("com.facebook.katana")){
+                facebookIntent.setClassName(
+                        resolveInfo.activityInfo.packageName,
+                        resolveInfo.activityInfo.name );
+                resolved = true;
+                break;
             }
-
-            @Override
-            public void onCancel() {
-                System.out.println("onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                System.out.println("onError");
-            }
-        });
-
-        shareDialog = new ShareDialog(this);
-        shareDialog.registerCallback(
-                callbackManager,
-                shareCallback);
-
-        canPresentShareDialogWithPhotos = ShareDialog.canShow(SharePhotoContent.class);
-
-    }
-
-    private void sharePhotoToFacebook() {
-        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.foodonet_logo_200_200);
-        if (bImageFacebook != null) {
-            SharePhoto photo = new SharePhoto.Builder()
-                    .setBitmap(bImageFacebook)
-                            //.setCaption("יש לי " + tv_title.getText() + ". מי בא לקחת? " + "\n" + Uri.parse("https://www.facebook.com/foodonet"))
-                    .build();
-
-
-            SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
-                    .addPhoto(photo)
-                    .build();
-
-            // Share with dialog
-            if (canPresentShareDialogWithPhotos)
-                shareDialog.show(sharePhotoContent);
-
-//            ShareLinkContent linkContent = new ShareLinkContent.Builder()
-//                    .setContentTitle("Hello Facebook")
-//                    .setContentDescription("יש לי " + tv_title.getText() + ". מי בא לקחת?")
-//                    .setContentUrl(Uri.parse("https://www.facebook.com/foodonet"))
-//                    .build();
-
-            // Share without dialog
-//            if (hasPublishPermission())
-//                ShareApi.share(content, shareCallback);
-
-
-//            if (canPresentShareDialogWithPhotos) {
-//                shareDialog.show(content);
-//            } else if (hasPublishPermission()) {
-//                ShareApi.share(content, shareCallback);
-//            }
         }
-    }
+        if(resolved){
+            startActivity(facebookIntent);
+        }else{
+            Toast.makeText(this, "Facebook app isn't found", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.facebook.katana") );
+            startActivity(intent);
+        }
 
-    private boolean hasPublishPermission() {
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null && accessToken.getPermissions().contains(PERMISSION);
     }
     // endregion
 
-    // region Twitter methods
-    public void SendTweet() {
-        Thread t = new Thread() {
-            public void run() {
+    // region  Twitter method
 
-                try {
-                    //InputStream isImageTwitter = getResources().openRawResource(R.drawable.foodonet_logo_200_200);
-                    PostTweet(getTweetMsg(), isImageTwitter);
-                    mTwitterHandler.post(mUpdateTwitterNotification);
+    private void SendTweet() {
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-        };
-        t.start();
-    }
-
-
-    public void PostTweet(String msg, InputStream is) throws Exception {
-        String token = getString(R.string.access_token);
-        String secret = getString(R.string.access_token_secret);
-        twitter4j.auth.AccessToken a = new twitter4j.auth.AccessToken(token, secret);
-        Twitter twitter = new TwitterFactory().getInstance();
-        twitter.setOAuthConsumer(getString(R.string.consumer_key), getString(R.string.consumer_secret));
-        twitter.setOAuthAccessToken(a);
-
-        twitter.getAccountSettings();
-        // Update status
-        StatusUpdate statusUpdate = new StatusUpdate(msg);
-        statusUpdate.setMedia("test.jpg", is);
-
-        twitter.updateStatus(statusUpdate);
-    }
-
-    private String getTweetMsg() {
-        return getString(R.string.hashtag) + " : " + getString(R.string.tweet_text) + " " + publication.getTitle() + ". " +
-                getString(R.string.tweet_question) + " " + new Date().toLocaleString() + "\n " +
+        Intent tweetIntent = new Intent(Intent.ACTION_SEND);
+        String msg = getString(R.string.hashtag) + " : " + publication.getTitle() + "\n " +
                 getString(R.string.facebook_page_url);
+        tweetIntent.putExtra(Intent.EXTRA_TEXT, msg);
+
+        String fileName = publication.getUniqueId() + "." + publication.getVersion() + ".jpg";
+        String imageSubFolder = getString(R.string.image_folder_path);
+        File photo = new File(fileName);
+        if (!photo.exists())
+            photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
+        tweetIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photo));
+        tweetIntent.setType("text/plain");
+
+        PackageManager packManager = getPackageManager();
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent,  PackageManager.MATCH_DEFAULT_ONLY);
+
+        boolean resolved = false;
+        for(ResolveInfo resolveInfo: resolvedInfoList){
+            if(resolveInfo.activityInfo.packageName.startsWith("com.twitter.android")){
+                tweetIntent.setClassName(
+                        resolveInfo.activityInfo.packageName,
+                        resolveInfo.activityInfo.name );
+                resolved = true;
+                break;
+            }
+        }
+        if(resolved){
+            startActivity(tweetIntent);
+        }else{
+            Toast.makeText(this, "Twitter app isn't found", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android") );
+            startActivity(intent);
+        }
     }
     // endregion
 
@@ -705,13 +635,23 @@ public class PublicationDetailsActivity
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS:
                 Log.i(MY_TAG, "successfully registered to publication " + publication.getUniqueId());
-                Toast.makeText(getBaseContext(),
-                        getResources().getString(R.string.pub_det_uimessage_successfully_registered_to_pub), Toast.LENGTH_LONG);
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL:
                 Log.i(MY_TAG, "failed to register to publication");
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
                 Toast.makeText(getBaseContext(),
-                        getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG);
+                        getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG).show();
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_SUCCESS:
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL:
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = null;
+                Toast.makeText(getBaseContext(),
+                        getResources().getString(R.string.pub_det_uimessage_failed_unregister_from_pub), Toast.LENGTH_LONG).show();
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION:
                 Log.i(MY_TAG, "successfully added myself to regs! refreshing number");
@@ -779,11 +719,15 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
+                if(!CheckInternetForAction(getString(R.string.action_leave_report)))
+                    return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
-                growAnim(R.drawable.facebook_green_xxh,R.drawable.pub_det_facebook,btn_facebook_my);
+                growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
+                if(!CheckInternetForAction(getString(R.string.action_facebook)))
+                    return;
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
@@ -802,21 +746,22 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_tweet_my_pub_details:
-
-                growAnim(R.drawable.twitter_green_xxh,R.drawable.pub_det_twitter,btn_twitter_my);
-
+                growAnim(R.drawable.twitter_green_xxh, R.drawable.pub_det_twitter, btn_twitter_my);
+                if(!CheckInternetForAction(getString(R.string.action_tweet)))
+                    return;
                 SendTweet();
+
                 break;
             case R.id.btn_register_unregister_pub_details:
-                //open progress dialog
-
-                growAnim(R.drawable.cancel_rishum_pub_det_btn,R.drawable.rishum_pub_det_btn, btn_reg_unreg);
-
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Registering to publication...");
-                progressDialog.show();
+                //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+                if(!CheckInternetForAction(isRegisteredForCurrentPublication
+                        ? getString(R.string.action_unregister_from_pub)
+                        : getString(R.string.action_register_to_pub)))
+                    return;
+                progressDialog = CommonUtil.ShowProgressDialog(this,
+                        isRegisteredForCurrentPublication
+                                ? getString(R.string.progress_unregistering_from_pub)
+                                : getString(R.string.progress_registration_to_pub));
                 RegisteredUserForPublication newRegistrationForPub
                         = new RegisteredUserForPublication();
                 newRegistrationForPub.setDate_registered(new Date());
@@ -830,9 +775,7 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_call_owner_pub_details:
-
                 growAnim(R.drawable.call_green_xxh,R.drawable.pub_det_call,btn_call_reg);
-
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
                 if (intent.resolveActivity(getPackageManager()) != null) {
@@ -840,9 +783,7 @@ public class PublicationDetailsActivity
             }
                 break;
             case R.id.btn_message_owner_pub_details:
-
                 growAnim(R.drawable.sms_green_xxh,R.drawable.pub_det_sms,btn_sms_reg);
-
                 Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
                 intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
                 intentSMS.setData(Uri.parse("smsto:" + publication.getContactInfo()));// + publication.getContactInfo()));  // This ensures only SMS apps respond
@@ -852,10 +793,23 @@ public class PublicationDetailsActivity
                     startActivity(intentSMS);
                 }
                 break;
-
             case R.id.riv_image_pub_details:
+                WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
+                int width, height;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+                    width = manager.getDefaultDisplay().getWidth();
+                    height = manager.getDefaultDisplay().getHeight();
+                } else {
+                    Point point = new Point();
+                    manager.getDefaultDisplay().getSize(point);
+                    width = point.x;
+                    height = point.y;
+                }
 
 
+                Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
+                        CommonUtil.GetFileNameByPublication(publication),
+                        getString(R.string.image_folder_path), width, height);
                 Intent intentFullSizeActivity = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
                 intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(intentFullSizeActivity);
@@ -897,16 +851,45 @@ public class PublicationDetailsActivity
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.pub_det_menu_item_edit:
+                if(!CheckInternetForAction(getString(R.string.action_edit_publication)))
+                    return false;
                 Intent intent = new Intent(this, AddEditPublicationActivity.class);
                 intent.putExtra(AddEditPublicationActivity.PUBLICATION_KEY, publication);
                 startActivityForResult(intent, REQUEST_CODE_EDIT_PUBLICATION);
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
+                if(!CheckInternetForAction(getString(R.string.action_take_off_air)))
+                    return false;
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_taking_pub_off_air));
+                publication.setIsOnAir(false);
+                HttpServerConnectorAsync connector1
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+                String subPath = getString(R.string.server_edit_publication_path);
+                subPath = subPath.replace("{0}", String.valueOf(publication.getUniqueId()));
+                InternalRequest ir1
+                        = new InternalRequest(InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR,
+                        subPath, publication);
+                ir1.publicationForSaving = publication;
+                connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        publication.setIsOnAir(response.Status == InternalRequest.STATUS_FAIL);
+        if(response.Status == InternalRequest.STATUS_OK){
+            getContentResolver().update(Uri.parse(
+                    FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()),
+                    publication.GetContentValuesRow(), null, null);
+        }
+        if(progressDialog != null)
+            progressDialog.dismiss();
     }
 
     //endregion
@@ -951,45 +934,6 @@ public class PublicationDetailsActivity
 
     //endregion
 
-    //region facebook
-
-    // For Facebook
-    private boolean canPresentShareDialogWithPhotos;
-    private CallbackManager callbackManager;
-    private LoginManager loginManager;
-    private ShareDialog shareDialog;
-    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
-        @Override
-        public void onCancel() {
-            Log.d("Facebook", "Canceled");
-        }
-
-        @Override
-        public void onError(FacebookException error) {
-            Log.d("Facebook", String.format("Error: %s", error.toString()));
-            String message = error.getMessage();
-            showResult(message);
-        }
-
-        @Override
-        public void onSuccess(Sharer.Result result) {
-            Log.d("Facebook", "Success!");
-            if (result.getPostId() != null) {
-                //String id = result.getPostId();
-                String message = getString(R.string.successfully_posted_post);
-                showResult(message);
-            }
-        }
-
-        private void showResult(String message) {
-            Toast.makeText(PublicationDetailsActivity.this,
-                    message,
-                    Toast.LENGTH_LONG).show();
-        }
-    };
-
-    //endregion
-
     //region Report dialog
 
     private void ShowReportDialog() {
@@ -1011,12 +955,7 @@ public class PublicationDetailsActivity
     }
 
     public void ReportMade(int reportID) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle("Leaving report to publication...");
-        progressDialog.show();
-
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_leaving_report));
         PublicationReport report = new PublicationReport();
         report.setReport(String.valueOf(reportID));
         report.setPublication_id(publication.getUniqueId());

@@ -1,8 +1,10 @@
 package CommonUtilPackage;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,9 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.provider.Settings.Secure;
 
+import DataModel.FCPublication;
 import upp.foodonet.R;
 
 /**
@@ -159,6 +164,7 @@ public class CommonUtil {
     }
 
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, String imageSubFolder, int width, int heigth) {
+        if(fileName == null || fileName.length() == 0) return null;
         File photo = new File(fileName);
         if (!photo.exists())
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
@@ -236,10 +242,10 @@ public class CommonUtil {
         editor.commit();
     }
 
-    public static InputStream ConvertFileToInputStream(String fileName) {
+    public static InputStream ConvertFileToInputStream(String fileName, String imageSubFolder) {
         InputStream is = null;
-        File photo = new File(Environment.getExternalStorageDirectory(), fileName);
-        if (!photo.exists()) return null;
+
+        File photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
 
         try {
             is = new FileInputStream(photo.getPath());
@@ -315,5 +321,87 @@ public class CommonUtil {
         String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
         String years = String.valueOf(calendar.get(Calendar.YEAR));
         return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
+    }
+
+    public static Map<String, LatLng> GetPreviousAddressesMapFromCursor(Cursor cursor){
+        Map<String, LatLng> result = new HashMap<>();
+        if(cursor.moveToFirst())
+            do{
+                result.put(cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_ADDRESS_KEY)),
+                        new LatLng(cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LATITUDE_KEY)),
+                                cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LONGITUDE_KEY))));
+            } while (cursor.moveToNext());
+        return result;
+    }
+
+    public static BitmapDrawable GetImageFromFileForPublicationCursor(Context context, Cursor cursor, int imageSize){
+        final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
+        final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
+        final boolean cursorHasPhotoUrl = cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL) != -1;
+        String imagePath = "";
+        if(cursorHasPhotoUrl)
+            imagePath = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL));
+        return GetImageFromFileForPublication(context, id, version, imagePath, imageSize);
+    }
+
+    public static BitmapDrawable GetImageFromFileForPublication(Context context, int id, int version, String imagePath, int imageSize){
+        BitmapDrawable imageDrawable = null;
+        if (id <= 0) {
+            Log.i(MY_TAG, "negative id");
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg",
+                    context.getString(R.string.image_folder_path), imageSize, imageSize);
+        } else
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg",
+                    context.getString(R.string.image_folder_path), imageSize, imageSize);
+        if(imageDrawable == null && imagePath != null && imagePath.length() > 0){
+            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(imagePath, "", imageSize, imageSize);
+        }
+        return imageDrawable;
+    }
+
+    public static ProgressDialog ShowProgressDialog(Context context, String message){
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle(message);
+        progressDialog.show();
+        return progressDialog;
+    }
+
+    public static String GetFileNameByPublication(FCPublication publication){
+        return String.valueOf(publication.getUniqueId() > 0
+                ? String.valueOf(publication.getUniqueId())
+                : "n" + String.valueOf(publication.getUniqueId() * -1))
+                + "." + String.valueOf(publication.getVersion()) + ".jpg";
+    }
+
+    public static void PutCommonPreferenceIsDataLoaded(Context context, boolean isDataLoaded){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(context.getString(R.string.shared_preferences_data_loaded_key), isDataLoaded);
+        editor.commit();
+        Log.i(MY_TAG, "IsDataLoaded set to: " + String.valueOf(isDataLoaded));
+    }
+
+    public static boolean GetFromPreferencesIsDataLoaded(Context context){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_data_loaded_key), false);
+    }
+
+    public static void PutCommonPreferenceIsRegistered(Context context, boolean isDataLoaded){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(context.getString(R.string.shared_preferences_is_registered_key), isDataLoaded);
+        editor.commit();
+        Log.i(MY_TAG, "IsRegistered set to: " + String.valueOf(isDataLoaded));
+    }
+
+    public static boolean GetFromPreferencesIsRegistered(Context context){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_key), false);
     }
 }

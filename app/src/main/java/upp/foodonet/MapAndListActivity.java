@@ -217,7 +217,6 @@ public class MapAndListActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
     }
 
@@ -274,9 +273,19 @@ public class MapAndListActivity
             drawerLayout.closeDrawer(ll_sideMenu);
             return;
         }
+        progressDialog = CommonUtil.ShowProgressDialog(this, "");
         Intent intent = new Intent(this, MyPublicationsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        if(progressDialog != null){
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+        super.onPause();
     }
 
     //endregion

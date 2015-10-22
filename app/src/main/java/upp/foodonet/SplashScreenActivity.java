@@ -16,12 +16,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
@@ -38,6 +42,11 @@ public class SplashScreenActivity
     private final String PREFERENCES_KEY_BOOL_IF_REGISTERED = "ifRegistered";
     private final String MY_TAG = "food_splashscreen";
 
+    private LinearLayout ll_first_load_info;
+    private TextView tv_progress_text;
+
+    private boolean isLoadDataServiceStarted = false;
+
     private boolean AllLoaded() {
         return registerTaskFinished && flagWaitTaskFinished;
     }
@@ -47,6 +56,9 @@ public class SplashScreenActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        ll_first_load_info = (LinearLayout)findViewById(R.id.ll_first_load_info);
+        tv_progress_text = (TextView) findViewById(R.id.tv_progress_text_splash_screen);
+        tv_progress_text.setText(getString(R.string.progress_foodonet_loading));
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
         RegisterIfNotRegisteredYet();
@@ -80,6 +92,13 @@ public class SplashScreenActivity
     @Override
     protected void onResume() {
         super.onResume();
+        if(CommonUtil.GetFromPreferencesIsDataLoaded(this))
+            registerTaskFinished = true;
+        else if(CommonUtil.GetFromPreferencesIsRegistered(this) && !isLoadDataServiceStarted){
+            tv_progress_text.setText(getString(R.string.progress_first_load));
+            startService(new Intent(this, FooDoNetService.class));
+            isLoadDataServiceStarted = true;
+        }
         if(AllLoaded())
             StartNextActivity();
     }
@@ -202,17 +221,14 @@ public class SplashScreenActivity
     }
 
     private void StartNextActivity() {
-        // if register succeed or already registered
-        // start scheduler service
-        startService(new Intent(this, FooDoNetService.class));
         // and start next activity
         Intent intent = new Intent(this, EntranceActivity.class);
         this.startActivity(intent);
     }
 
     private void RegisterIfNotRegisteredYet() {
-        SharedPreferences preference = getPreferences(Context.MODE_PRIVATE);
-        if (preference.getBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, false)) {
+        if (CommonUtil.GetFromPreferencesIsRegistered(this)) {
+            startService(new Intent(this, FooDoNetService.class));
             registerTaskFinished = true;
             if(AllLoaded())
                 StartNextActivity();
@@ -234,11 +250,15 @@ public class SplashScreenActivity
         switch (regResult){
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL:
                 Toast.makeText(getBaseContext(), "problem registering device!", Toast.LENGTH_LONG);
+                return;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
-                SharedPreferences sp = getPreferences(MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putBoolean(PREFERENCES_KEY_BOOL_IF_REGISTERED, true);
-                editor.commit();
+                // if register succeed
+                // start scheduler service
+                startService(new Intent(this, FooDoNetService.class));
+                isLoadDataServiceStarted = true;
+                tv_progress_text.setText(getString(R.string.progress_first_load));
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_RELOAD_DATA_SUCCESS:
                 registerTaskFinished = true;
                 if(AllLoaded())
                     StartNextActivity();

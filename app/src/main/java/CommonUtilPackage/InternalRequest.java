@@ -42,6 +42,7 @@ public class InternalRequest {
     public static final int ACTION_POST_REPORT_FOR_PUBLICATION = 18;
     public static final int ACTION_PUT_EDIT_PUBLICATION = 19;
     public static final int ACTION_SQL_SAVE_EDITED_PUBLICATION = 20;
+    public static final int ACTION_PUT_TAKE_PUBLICATION_OFF_AIR = 21;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;

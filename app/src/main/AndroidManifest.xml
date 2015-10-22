@@ -60,9 +60,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCDunW--L9fhx73FZlit6PHiXziYivp1IM" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
 
         <!--
          Vitaly laptop: AIzaSyCb16EVJ1svPQhDzqSMDW_Wv-U3DL_iGF0
@@ -91,14 +88,15 @@
             android:noHistory="true"
             android:screenOrientation="portrait" >
         </activity>
-<!--
+        <!--
         <activity
             android:name=".AddNewFCPublicationActivity"
             android:label="@string/title_activity_add_new_fcpublication"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
--->
+        -->
+
 
         <!--
         <activity
@@ -127,14 +125,14 @@
         </activity>
 
         <service
-            android:name="upp.foodonet.FooDoNetGcmListenerService"
+            android:name=".FooDoNetGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
-            android:name="upp.foodonet.FooDoNetInstanceIDListenerService"
+            android:name=".FooDoNetInstanceIDListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
@@ -197,6 +195,7 @@
             android:name=".AddEditPublicationService"
             android:exported="false" >
         </service>
+
     </application>
 
 </manifest>

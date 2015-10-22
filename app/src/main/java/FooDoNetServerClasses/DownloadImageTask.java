@@ -51,6 +51,8 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
 
     protected Void doInBackground(Map<Integer, Integer>... urls) {
         resultImages = new HashMap<>();
+        if(urls == null || urls.length == 0)
+            return null;
         Set<Integer> pubIDs = urls[0].keySet();
         for (int id : pubIDs) {
             String url = baseUrl + "/" + String.valueOf(id)

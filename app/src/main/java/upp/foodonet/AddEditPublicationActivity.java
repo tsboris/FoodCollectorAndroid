@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,12 +15,17 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -44,6 +50,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -70,18 +77,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Adapters.PlaceArrayAdapter;
+import Adapters.PreviousAddressesHashMapAdapter;
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.GetMyLocationAsync;
+import CommonUtilPackage.IGotMyLocationCallback;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 
 
 public class AddEditPublicationActivity extends FragmentActivity
         implements View.OnClickListener,
-                    GoogleApiClient.OnConnectionFailedListener,
-                    GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, IGotMyLocationCallback, AdapterView.OnItemClickListener {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
@@ -128,7 +140,14 @@ public class AddEditPublicationActivity extends FragmentActivity
     //address picker
     private AutoCompleteTextView atv_address;
     private CheckBox cb_use_my_current_location;
+    private ImageView iv_address_dialog_location_validation;
+    private Button btn_address_dialog_ok;
+    private Button btn_address_dialog_cancel;
     private boolean addressDialogStarted = false;
+    private Dialog addressDialog;
+    private ProgressDialog progressDialog;
+    private ListView prevAddressesList;
+    private PreviousAddressesHashMapAdapter prevAddressAdapter;
 
     private static FCPublication publication;
     private static FCPublication publicationOldVersion;
@@ -137,6 +156,13 @@ public class AddEditPublicationActivity extends FragmentActivity
     private Date endDate;
 
     private boolean isNew = false;
+
+    private double latitude = -1000;
+    private double latitudeTmpForEdit = -1000;
+    private double longitude = -1000;
+    private double longitudeTmpForEdit = -1000;
+    private String address = "";
+    private String addressTmpForEdit = "";
 
     //endregion
 
@@ -151,6 +177,9 @@ public class AddEditPublicationActivity extends FragmentActivity
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             publication = new FCPublication();
+            publication.setLatitude(latitude);
+            publication.setLongitude(longitude);
+            publication.setAddress(address);
             isNew = true;
         } else {
             publication = (FCPublication) extras.get(PUBLICATION_KEY);
@@ -173,6 +202,7 @@ public class AddEditPublicationActivity extends FragmentActivity
             et_publication_title.setText(publication.getTitle());
             et_subtitle.setText(publication.getSubtitle());
             et_additional_info.setText(publication.getContactInfo());
+            et_address.setText(publication.getAddress());
         }
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
@@ -221,7 +251,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
                 BOUNDS_MOUNTAIN_VIEW, null);
-        if(mGoogleApiClient == null)
+        if (mGoogleApiClient == null)
             mGoogleApiClient = new GoogleApiClient.Builder(AddEditPublicationActivity.this)
                     .addApi(Places.GEO_DATA_API)
                     .enableAutoManage(AddEditPublicationActivity.this, GOOGLE_API_CLIENT_ID, AddEditPublicationActivity.this)
@@ -229,7 +259,14 @@ public class AddEditPublicationActivity extends FragmentActivity
                     .build();
     }
 
-/*
+    @Override
+    protected void onPause() {
+        if(progressDialog != null)
+            progressDialog.dismiss();
+        super.onPause();
+    }
+
+    /*
     @Override
     protected void onStart() {
         super.onStart();
@@ -298,7 +335,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private void TryLoadExistingImage() {
         int imageSize = mAddPicImageView.getLayoutParams().height;
         Drawable imageDrawable = CommonUtil.GetBitmapDrawableFromFile(
-                publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                CommonUtil.GetFileNameByPublication(publication),
                 getString(R.string.image_folder_path), imageSize, imageSize);
         if (imageDrawable != null)
             mAddPicImageView.setImageDrawable(imageDrawable);
@@ -346,14 +383,14 @@ public class AddEditPublicationActivity extends FragmentActivity
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                 File destination = new File(Environment.getExternalStorageDirectory()
                         + getResources().getString(R.string.image_folder_path),
-                        System.currentTimeMillis() + ".jpg");
+                        System.currentTimeMillis() + getString(R.string.file_name_part_just_shot) + ".jpg");
                 FileOutputStream fo;
                 try {
                     destination.createNewFile();
                     fo = new FileOutputStream(destination);
                     fo.write(bytes.toByteArray());
                     fo.close();
-                    publication.setPhotoUrl(destination.getPath());
+                    publication.setPhotoUrl(destination.getAbsolutePath());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -427,12 +464,14 @@ public class AddEditPublicationActivity extends FragmentActivity
             // mNameTextView.setText(Html.fromHtml(place.getName() + ""));
             String address = Html.fromHtml(place.getAddress() + "").toString();
             //mAddressTextView.setText(address);
-            double longitude = getLongitudeFromAddress(address);
-            double latitude = getLatitudeFromAddress(address);
+            longitudeTmpForEdit = getLongitudeFromAddress(address);
+            latitudeTmpForEdit = getLatitudeFromAddress(address);
+            if (cb_use_my_current_location != null)
+                cb_use_my_current_location.setChecked(false);
+            if (iv_address_dialog_location_validation != null)
+                iv_address_dialog_location_validation.setVisibility(View.GONE);
 
-            publication.setAddress(atv_address.getText().toString());
-            publication.setLongitude(longitude);
-            publication.setLatitude(latitude);
+            addressTmpForEdit = atv_address.getText().toString();
 
 //            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
 //            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
@@ -482,7 +521,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     @Override
     public void onConnected(Bundle bundle) {
 
-        if(mPlaceArrayAdapter != null){
+        if (mPlaceArrayAdapter != null) {
             mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
             Log.i(MY_TAG, "Google Places API connected.");
         }
@@ -501,7 +540,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onConnectionSuspended(int i) {
-        if(mPlaceArrayAdapter != null){
+        if (mPlaceArrayAdapter != null) {
             mPlaceArrayAdapter.setGoogleApiClient(null);
             Log.e(MY_TAG, "Google Places API connection suspended.");
         }
@@ -593,9 +632,22 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     //region Address dialog
 
-    private void ShowAddressDialog(){
+    private void ShowAddressDialog() {
+
+        if (publication.getAddress().toString().length() != 0) {
+            address = publication.getAddress();
+            addressTmpForEdit = publication.getAddress();
+        }
+
+        if (publication.getLatitude() != -1000) {
+            latitude = publication.getLatitude();
+            latitudeTmpForEdit = publication.getLatitude();
+            longitude = publication.getLongitude();
+            longitudeTmpForEdit = publication.getLongitude();
+        }
+
         addressDialogStarted = true;
-        final Dialog addressDialog = new Dialog(this);
+        addressDialog = new Dialog(this);
         addressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         addressDialog.setContentView(R.layout.address_search_dialog);
         addressDialog.setCanceledOnTouchOutside(false);
@@ -607,15 +659,36 @@ public class AddEditPublicationActivity extends FragmentActivity
                 .actv_address_new_publication);
         atv_address.setThreshold(3);
         atv_address.setOnItemClickListener(mAutocompleteClickListener);
+        atv_address.setOnClickListener(this);
         atv_address.setAdapter(mPlaceArrayAdapter);
 
-        if (!isNew) {
-            atv_address.setText(publication.getAddress());
-        }
+        atv_address.setText(address);
 
-        cb_use_my_current_location = (CheckBox)addressDialog.findViewById(R.id.cb_use_current_location);
+        cb_use_my_current_location = (CheckBox) addressDialog.findViewById(R.id.cb_use_current_location);
         cb_use_my_current_location.setOnClickListener(this);
         cb_use_my_current_location.setChecked(false);
+        iv_address_dialog_location_validation = (ImageView) addressDialog.findViewById(R.id.iv_address_dialog_my_loc_validation);
+
+        btn_address_dialog_ok = (Button) addressDialog.findViewById(R.id.btn_address_dialog_ok);
+        btn_address_dialog_ok.setOnClickListener(this);
+        btn_address_dialog_cancel = (Button) addressDialog.findViewById(R.id.btn_address_dialog_cancel);
+        btn_address_dialog_cancel.setOnClickListener(this);
+
+        prevAddressesList = (ListView) addressDialog.findViewById(R.id.lv_address_history);
+        prevAddressesList.setOnItemClickListener(this);
+        Cursor prevAddressesCursor
+                = getContentResolver().query(FooDoNetSQLProvider.URI_PREVIOUS_ADDRESSES,
+                new String[]{FCPublication.PUBLICATION_ADDRESS_KEY,
+                        FCPublication.PUBLICATION_LATITUDE_KEY,
+                        FCPublication.PUBLICATION_LONGITUDE_KEY}, null, null, null);
+        Map<String, LatLng> prevAddresses = new HashMap<>();
+        if (prevAddressesCursor != null)
+            prevAddresses = CommonUtil.GetPreviousAddressesMapFromCursor(prevAddressesCursor);
+        prevAddressAdapter = new PreviousAddressesHashMapAdapter(prevAddresses);
+        prevAddressesList.setAdapter(prevAddressAdapter);
+        if (prevAddresses.size() > 0) {
+
+        }
 
         mGoogleApiClient.connect();
         addressDialog.show();
@@ -661,20 +734,49 @@ public class AddEditPublicationActivity extends FragmentActivity
                 selectImage();
                 break;
             case R.id.publishButton:
-                if (!ValidateInputDate()) return;
+                if (!ValidateInputData()) return;
                 ArrangePublicationFromInput(publication);
                 ReturnPublication();
                 break;
             case R.id.et_title_new_publication:
-                et_publication_title.getBackground()
-                        .setColorFilter(getResources()
-                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                RemoveValidationFromEditText(et_publication_title);
                 break;
             case R.id.et_address_edit_add_pub:
 //                et_publication_title.getBackground()
 //                        .setColorFilter(getResources()
 //                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
                 //ShowAddressDialog();
+                break;
+            case R.id.actv_address_new_publication:
+                RemoveValidationFromEditText(atv_address);
+                break;
+            case R.id.btn_address_dialog_ok:
+                if (!ValidateAddressLineAndLocationData()) return;
+                if (atv_address != null)
+                    addressTmpForEdit = atv_address.getText().toString();
+                if (addressDialog != null)
+                    addressDialog.dismiss();
+                publication.setLatitude(latitudeTmpForEdit);
+                publication.setLongitude(longitudeTmpForEdit);
+                publication.setAddress(addressTmpForEdit);
+                et_address.setText(publication.getAddress());
+                //SetEditTextIsValid(et_address, true);
+                onDismiss(addressDialog);
+                break;
+            case R.id.btn_address_dialog_cancel:
+                if (addressDialog != null)
+                    addressDialog.dismiss();
+                publication.setLatitude(latitude);
+                publication.setLongitude(longitude);
+                publication.setAddress(address);
+                onCancel(addressDialog);
+                break;
+            case R.id.cb_use_current_location:
+                String message = getString(R.string.progress_waiting_for_location);
+                progressDialog = CommonUtil.ShowProgressDialog(this, message);
+                GetMyLocationAsync getLocAsync = new GetMyLocationAsync((LocationManager) getSystemService(LOCATION_SERVICE), this);
+                getLocAsync.setGotLocationCallback(this);
+                getLocAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
         }
     }
@@ -708,27 +810,103 @@ public class AddEditPublicationActivity extends FragmentActivity
         finish();
     }
 
-    private boolean ValidateInputDate() {
+    private boolean ValidateInputData() {
+        return ValidateTitle()
+                && ValidateAddress()
+                && ValidateAdditionalInfoField()
+                && ValidateDates();
+    }
+
+    private boolean ValidateTitle() {
         //check title
         if (et_publication_title.getText().toString().length() == 0) {
-            //et_publication_title.setTextColor(getResources().getColor(R.color.validation_red_text_color));
-            et_publication_title.getBackground()
-                    .setColorFilter(getResources()
-                            .getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+            SetEditTextIsValid(et_publication_title, false);
             Toast.makeText(this, getString(R.string.validation_title_empty), Toast.LENGTH_LONG).show();
             return false;
         }
         //todo: check max lenght of title
         if (et_publication_title.getText().toString().length() >= 10000) {//HARDCODE!!!
-            et_publication_title.getBackground()
-                    .setColorFilter(getResources()
-                            .getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+            SetEditTextIsValid(et_publication_title, false);
             Toast.makeText(this, getString(
-                    R.string.validation_title_too_long).replace("{0}", String.valueOf(10000)),
+                            R.string.validation_title_too_long).replace("{0}", String.valueOf(10000)),
                     Toast.LENGTH_LONG).show();
             return false;
         }
+        SetEditTextIsValid(et_publication_title, true);
         return true;
+    }
+
+    private boolean ValidateAddress() {
+        if (et_address.getText().toString().length() == 0) {
+            SetEditTextIsValid(et_address, false);
+            Toast.makeText(this, getString(R.string.validation_address_empty), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        SetEditTextIsValid(et_address, true);
+        return true;
+    }
+
+    private boolean ValidateAddressLineAndLocationData() {
+        if (atv_address.getText().toString().length() == 0) {
+            SetEditTextIsValid(atv_address, false);
+            Toast.makeText(this, getString(R.string.validation_address_empty), Toast.LENGTH_LONG).show();
+            return false;
+        } else
+            SetEditTextIsValid(atv_address, true);
+        if (latitudeTmpForEdit == -1000 || longitudeTmpForEdit == -1000) {
+            iv_address_dialog_location_validation.setImageDrawable(
+                    getResources().getDrawable(R.drawable.validation_wrong));
+            iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
+            Toast.makeText(this, getString(R.string.validation_location_empty), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        SetEditTextIsValid(atv_address, true);
+        return true;
+    }
+
+    private boolean ValidateAdditionalInfoField() {
+        if (et_additional_info.getText().length() == 0) {
+            SetEditTextIsValid(et_additional_info, false);
+            Toast.makeText(this, getString(R.string.validation_phone_number_empty), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if (!CheckPhoneNumberString(et_additional_info.getText().toString())) {
+            SetEditTextIsValid(et_additional_info, false);
+            Toast.makeText(this, getString(R.string.validation_phone_number_invalid), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        SetEditTextIsValid(et_additional_info, true);
+        return true;
+    }
+
+    private boolean ValidateDates(){
+        if(startDate.getTime() > endDate.getTime()){
+            btn_date_start.setTextColor(getResources().getColor(R.color.validation_red_text_color));
+            btn_date_end.setTextColor(getResources().getColor(R.color.validation_red_text_color));
+            Toast.makeText(this, getString(R.string.validation_phone_number_invalid), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        btn_date_start.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
+        btn_date_end.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
+        return true;
+    }
+
+    private void SetEditTextIsValid(EditText field, boolean isValid) {
+        field.getBackground()
+                .setColorFilter(isValid ? getResources().getColor(R.color.validation_green_text_color) :
+                        getResources().getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+        Bitmap validationBitmap = CommonUtil.decodeScaledBitmapFromDrawableResource(getResources(),
+                isValid ? R.drawable.validation_ok : R.drawable.validation_wrong,
+                getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size),
+                getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size));
+        Drawable validationDrawable = new BitmapDrawable(validationBitmap);
+        field.setCompoundDrawablesWithIntrinsicBounds(validationDrawable, null, null, null);
+    }
+
+    private void RemoveValidationFromEditText(EditText field) {
+        field.getBackground().setColorFilter(getResources()
+                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+        field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 
     private boolean CheckPhoneNumberString(String phoneNumber) {
@@ -738,17 +916,48 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.et_address_edit_add_pub:
-                et_publication_title.getBackground()
-                        .setColorFilter(getResources()
-                                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
-                if(!addressDialogStarted)
+                RemoveValidationFromEditText(et_publication_title);
+                if (!addressDialogStarted)
                     ShowAddressDialog();
                 break;
-
         }
         return true;
+    }
+
+    @Override
+    public void OnGotMyLocationCallback(Location location) {
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        if (location != null) {
+            latitudeTmpForEdit = location.getLatitude();
+            longitudeTmpForEdit = location.getLongitude();
+            if (iv_address_dialog_location_validation != null) {
+                iv_address_dialog_location_validation.setImageDrawable(getResources().getDrawable(R.drawable.validation_ok));
+                iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.validation_cant_get_my_location), Toast.LENGTH_LONG).show();
+            if (cb_use_my_current_location != null)
+                cb_use_my_current_location.setChecked(false);
+        }
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Map.Entry<String, LatLng> selectedAddress = prevAddressAdapter.getItem(position);
+        if (selectedAddress != null) {
+            addressTmpForEdit = selectedAddress.getKey();
+            atv_address.setText(selectedAddress.getKey());
+            latitudeTmpForEdit = selectedAddress.getValue().latitude;
+            longitudeTmpForEdit = selectedAddress.getValue().longitude;
+            if (atv_address != null)
+                SetEditTextIsValid(atv_address, true);
+            if (iv_address_dialog_location_validation != null)
+                iv_address_dialog_location_validation.setVisibility(View.GONE);
+        }
     }
 
 //    @Override

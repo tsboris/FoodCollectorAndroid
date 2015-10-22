@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Map;
 
+import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
@@ -98,7 +99,8 @@ public class ReloadDataIntentService
                 break;
             case taskSQL:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
-                sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());//fetchedFromServer,
+                sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                sqlExecuter.SetContext(this);
                 sqlExecuter.execute(
                         new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
                 sqlExecuter = null;
@@ -118,6 +120,7 @@ public class ReloadDataIntentService
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         ServicesBroadcastReceiver.ACTION_CODE_RELOAD_DATA_SUCCESS);
                 sendBroadcast(intent);
+                CommonUtil.PutCommonPreferenceIsDataLoaded(this, true);
                 return;
             default:
                 throw new IllegalArgumentException("no such task: " + workPlan[currentIndexInWorkPlan]);
@@ -133,8 +136,13 @@ public class ReloadDataIntentService
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         Log.i(MY_TAG, "finished task server");
-        fetchedFromServer = response.publications;
-        DoNextTaskFromWorkPlan();
+        if(response.Status == InternalRequest.STATUS_OK) {
+            fetchedFromServer = response.publications;
+            DoNextTaskFromWorkPlan();
+        } else {
+            Log.i(MY_TAG, "failed loading from server, skipping this cycle");
+            stopSelf();
+        }
     }
 
     public void OnSQLTaskComplete(InternalRequest request) {

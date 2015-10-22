@@ -115,6 +115,9 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region case get all pubs
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
+                if(!isSuccess)
+                    return "";
+                isSuccess = false;
                 ArrayList<FCPublication> publications = new ArrayList<>();
                 try {
                     publications = FCPublication.GetArrayListOfPublicationsFromJSON(new JSONArray(responseString));
@@ -128,6 +131,9 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     MakeServerRequest(REQUEST_METHOD_GET,
                             params[1].ServerSubPath.replace("{0}",
                                     String.valueOf(pub.getUniqueId())), null, true);
+                    if(!isSuccess)
+                        return "";
+                    isSuccess = false;
                     try {
                         regedUsers = RegisteredUserForPublication.
                                 GetArrayListOfRegisteredForPublicationsFromJSON(
@@ -164,11 +170,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     responseString = "";
                 }
 
-                //todo: this is tmp implementation - problem is request about reports contains
-                //todo: publication id, but always returns full list of them
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[2].ServerSubPath.replace("{0}",
                                 String.valueOf(0)), null, true);
+                if(!isSuccess)
+                    return "";
                 try {
                     pubReports = PublicationReport.
                             GetArrayListOfPublicationReportsFromJSON(
@@ -262,7 +268,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, publicationReport, true);
                 return "";
             //endregion
-
+            //region take pub off air
+            case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
+                publicationForSaving = params[0].publicationForSaving;
+                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, publicationForSaving, false);
+                return "";
+            //endregion
             default:
                 return "";
         }
@@ -339,7 +350,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }  finally {
             if (connection != null) {
                 try {
                     connection.disconnect();
@@ -357,13 +368,20 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         //super.onPostExecute(s);
         switch (Action_Command_ID) {
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
-                Log.i(MY_TAG, "data loaded from http, calling callback");
-                callbackListener.OnServerRespondedCallback(
-                        new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null));
+                InternalRequest irLoadData;
+                if(isSuccess) {
+                    Log.i(MY_TAG, "data loaded from http, calling callback");
+                    irLoadData = new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null);
+                    irLoadData.Status = InternalRequest.STATUS_OK;
+                } else {
+                    Log.i(MY_TAG, "failed to load data from server");
+                    irLoadData = new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, false);
+                }
+                callbackListener.OnServerRespondedCallback(irLoadData);
                 break;
             case InternalRequest.ACTION_POST_REGISTER:
                 Log.i(MY_TAG, "successfully registered user on server");
-                //callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, true));
+                callbackListener.OnServerRespondedCallback(new InternalRequest(Action_Command_ID, isSuccess));
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         isSuccess ? ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS
@@ -392,6 +410,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 InternalRequest irEdit = new InternalRequest(Action_Command_ID, isSuccess);
                 irEdit.publicationForSaving = publicationForSaving;
                 callbackListener.OnServerRespondedCallback(irEdit);
+                break;
+            case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
+                Log.i(MY_TAG, "take publication off air: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irOffAir = new InternalRequest(Action_Command_ID, isSuccess);
+                callbackListener.OnServerRespondedCallback(irOffAir);
                 break;
         }
     }
