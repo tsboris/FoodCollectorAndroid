@@ -74,6 +74,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
@@ -131,6 +132,7 @@ public class PublicationDetailsActivity
     TextView tv_subtitle;
     ListView lv_reports;
 
+    TextView tv_start_dateTime_details,tv_end_dateTime_details;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
@@ -187,6 +189,9 @@ public class PublicationDetailsActivity
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
 
+        tv_start_dateTime_details = (TextView)findViewById(R.id.tv_start_time_pub_details);
+        tv_end_dateTime_details = (TextView)findViewById(R.id.tv_end_time_pub_details);
+
 
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
@@ -202,6 +207,8 @@ public class PublicationDetailsActivity
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
         SetReportsList();
+
+        startEndTimeSet();
     }
 
     @Override
@@ -848,17 +855,10 @@ public class PublicationDetailsActivity
 
             case R.id.riv_image_pub_details:
 
-                /*WindowManager manager = (WindowManager) getSystemService(PublicationDetailsActivity.WINDOW_SERVICE);
-                int width, height;
 
-                Point point = new Point();
-                manager.getDefaultDisplay().getSize(point);
-                width = point.x;
-                height = point.y;*/
-
-                Intent i = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
-                i.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
-                startActivity(i);
+                Intent intentFullSizeActivity = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
+                startActivity(intentFullSizeActivity);
 
                 break;
 
@@ -1079,6 +1079,15 @@ public class PublicationDetailsActivity
 
             }
         }, 200);
+
+    }
+    public void startEndTimeSet(){
+
+
+
+       // tv_start_dateTime_details.setText(startTime);
+        tv_end_dateTime_details.setText(AddEditPublicationActivity.END_DATE_PICKER_KEY);
+
 
     }
     //endregion

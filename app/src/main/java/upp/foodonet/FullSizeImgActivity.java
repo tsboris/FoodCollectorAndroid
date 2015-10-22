@@ -37,12 +37,12 @@ public class FullSizeImgActivity extends Activity
         }
 
 
-        ImageView imgF = (ImageView)findViewById(R.id.iv_full_image_size);
+        ImageView imgFullSize = (ImageView)findViewById(R.id.iv_full_image_size);
 
-        BitmapDrawable fullImage = CommonUtil.GetBitmapDrawableFromFile(fileName,
+        BitmapDrawable fullSizeImage = CommonUtil.GetBitmapDrawableFromFile(fileName,
                 getString(R.string.image_folder_path), 1000, 1000);
 
-        imgF.setImageDrawable(fullImage);
+        imgFullSize.setImageDrawable(fullSizeImage);
 
     }
 }
