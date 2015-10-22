@@ -67,6 +67,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -126,6 +127,7 @@ public class PublicationDetailsActivity
     ImageView fullSizeImage;
 
     LinearLayout ll_fullSize;
+    TextView tv_start_dateTime_details,tv_end_dateTime_details;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
@@ -177,6 +179,9 @@ public class PublicationDetailsActivity
 
         //fullSizeImage = (ImageView)findViewById(R.id.iv_full_size_image_pub_details);
         ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
+        tv_start_dateTime_details = (TextView)findViewById(R.id.tv_start_time_pub_details);
+        tv_end_dateTime_details = (TextView)findViewById(R.id.tv_end_time_pub_details);
+
 
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
@@ -192,6 +197,8 @@ public class PublicationDetailsActivity
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
         SetReportsList();
+
+        startEndTimeSet();
     }
 
     @Override
@@ -805,24 +812,20 @@ public class PublicationDetailsActivity
                     height = point.y;
                 }
 
+
                 Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
                         CommonUtil.GetFileNameByPublication(publication),
                         getString(R.string.image_folder_path), width, height);
+                Intent intentFullSizeActivity = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
+                startActivity(intentFullSizeActivity);
 
-                ImageView image = new ImageView(this);
-                image.setImageDrawable(imageD);
-                AlertDialog.Builder builder = new AlertDialog.Builder(this).
-                                setView(image);
+                fullImage = CommonUtil.GetBitmapDrawableFromFile(
+                        publication.getUniqueId() + "." + publication.getVersion() + ".jpg",
+                        getString(R.string.image_folder_path), 1000, 1000);
 
-                AlertDialog alertDialog = builder.create();
-                alertDialog.getWindow();
-                alertDialog.show();
-
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(alertDialog.getWindow().getAttributes());
-                lp.width = width;
-                lp.height = height;
-                alertDialog.getWindow().setAttributes(lp);
+                Intent i = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                startActivity(i);
 
                 break;
 
@@ -1027,6 +1030,15 @@ public class PublicationDetailsActivity
 
             }
         }, 200);
+
+    }
+    public void startEndTimeSet(){
+
+
+
+       // tv_start_dateTime_details.setText(startTime);
+        tv_end_dateTime_details.setText(AddEditPublicationActivity.END_DATE_PICKER_KEY);
+
 
     }
     //endregion
