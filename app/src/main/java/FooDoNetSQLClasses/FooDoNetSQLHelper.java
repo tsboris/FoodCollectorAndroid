@@ -18,7 +18,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     private static final String MY_TAG = "food_SQLHelper";
 
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
-    public static final int FC_DATABASE_VERSION = 9;
+    public static final int FC_DATABASE_VERSION = 10;
 
     public static final int FILTER_ID_LIST_ALL_BY_CLOSEST = 0;
     public static final int FILTER_ID_LIST_ALL_BY_NEWEST = 1;
@@ -32,7 +32,6 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
 
     public static final int FILTER_ID_SIDEMENU_MY_ACTIVE = 20;
     public static final int FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED = 21;
-
 
     public FooDoNetSQLHelper(Context context) {
         super(context, FC_DATABASE_NAME, null, FC_DATABASE_VERSION);
@@ -211,6 +210,13 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
             + " WHERE " + FCPublication.PUBLICATION_PUBLISHER_UUID_KEY + " = '{0}' "
             + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " DESC ";
+
+//    public static final String RAW_SELECT_REPORTS_FOR_PUB_DETAILS
+//            = "SELECT " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_REPORT + ", "
+//            + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_DATE
+//            + " FROM " + PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME
+//            + " WHERE " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID + " = {0} "
+//            + " ORDER BY " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID + " DESC";
 
 /*
     public static final String RAW_SELECT_FOR_LIST_ALL_PUBS_ID_DESC

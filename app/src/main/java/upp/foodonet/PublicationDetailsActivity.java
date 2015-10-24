@@ -124,14 +124,11 @@ public class PublicationDetailsActivity
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
-    ImageView fullSizeImage;
-
-    LinearLayout ll_fullSize;
     TextView tv_start_dateTime_details,tv_end_dateTime_details;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
-    LinearLayout ll_details;
+    LinearLayout ll_reports_panel;
 
     PublicationDetailsReportsAdapter adapter;
 
@@ -173,12 +170,9 @@ public class PublicationDetailsActivity
         btn_navigate = (ImageButton) findViewById(R.id.btn_navigate_pub_details);
         tv_subtitle = (TextView) findViewById(R.id.tv_subtitle_pub_details);
         lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
+        ll_reports_panel = (LinearLayout) findViewById(R.id.ll_reports_list_pub_details);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
-        //ll_details = (LinearLayout)findViewById(R.id.ll_pub_details);
-
-        //fullSizeImage = (ImageView)findViewById(R.id.iv_full_size_image_pub_details);
-        //ll_fullSize = (LinearLayout)findViewById(R.id.ll_full_image_size);
         tv_start_dateTime_details = (TextView)findViewById(R.id.tv_start_time_pub_details);
         tv_end_dateTime_details = (TextView)findViewById(R.id.tv_end_time_pub_details);
 
@@ -187,12 +181,6 @@ public class PublicationDetailsActivity
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
         tv_address.setText(publication.getAddress());
         SetImage();
-/* replaced by loader
-        if(publication.getRegisteredForThisPublication() != null)
-            tv_num_of_reged.setText(String.valueOf(publication.getRegisteredForThisPublication().size()));
-        else
-            tv_num_of_reged.setText("0");
-*/
         StartNumOfRegedLoader();
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
@@ -356,6 +344,11 @@ public class PublicationDetailsActivity
 
 
     private void SetReportsList() {
+        if(publication.getPublicationReports() == null
+                || publication.getPublicationReports().size() == 0){
+            ll_reports_panel.setVisibility(View.GONE);
+            return;
+        }
         adapter = new PublicationDetailsReportsAdapter(this,
                 R.layout.pub_details_report_item, publication.getPublicationReports());
         lv_reports.setAdapter(adapter);
@@ -703,7 +696,6 @@ public class PublicationDetailsActivity
                 }
                 popup = new PopupMenu(this, v);
                 popup.getMenuInflater().inflate(R.menu.pub_details_popup_menu, popup.getMenu());
-                //TODO: implement
                 MenuItem itemEdit = popup.getMenu().getItem(0);
                 SpannableString stringEdit = new SpannableString(getString(R.string.pub_det_menu_item_edit));
                 stringEdit.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringEdit.length(), 0);
@@ -717,7 +709,7 @@ public class PublicationDetailsActivity
                 MenuItem itemDelete = popup.getMenu().getItem(2);
                 SpannableString stringDelete = new SpannableString(getString(R.string.pub_det_menu_item_delete));
                 stringDelete.setSpan(new ForegroundColorSpan(Color.WHITE), 0, stringDelete.length(), 0);
-                itemTakeOffAir.setTitle(stringDelete);
+                itemDelete.setTitle(stringDelete);
 
 /*
                 MenuItem itemDeactivate = popup.getMenu().getItem(2);
@@ -891,15 +883,17 @@ public class PublicationDetailsActivity
                 connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
                 break;
             case R.id.pub_det_menu_item_delete:
-                if(!CheckInternetForAction(getString(R.string.action_delete)))
-                    return false;
-                if(progressDialog != null)
-                    progressDialog.dismiss();
-                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
-                HttpServerConnectorAsync connector2
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
-                String subPath1 = getString(R.string.server_edit_publication_path);
-                subPath = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
+//                if(!CheckInternetForAction(getString(R.string.action_delete)))
+//                    return false;
+//                if(progressDialog != null)
+//                    progressDialog.dismiss();
+//                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
+//                HttpServerConnectorAsync connector2
+//                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+//                String subPath1 = getString(R.string.server_edit_publication_path);
+//                subPath = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
+                //TODO: implement
+                Toast.makeText(this, "delete publication not implemented for now", Toast.LENGTH_LONG).show();
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
@@ -983,7 +977,7 @@ public class PublicationDetailsActivity
     public void ReportMade(int reportID) {
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_leaving_report));
         PublicationReport report = new PublicationReport();
-        report.setReport(String.valueOf(reportID));
+        report.setReport(reportID);
         report.setPublication_id(publication.getUniqueId());
         report.setPublication_version(publication.getVersion());
         report.setDevice_uuid(CommonUtil.GetIMEI(this));
@@ -1046,14 +1040,12 @@ public class PublicationDetailsActivity
         }, 200);
 
     }
-    public void startEndTimeSet(){
 
-
-
-       // tv_start_dateTime_details.setText(startTime);
-        tv_end_dateTime_details.setText(AddEditPublicationActivity.END_DATE_PICKER_KEY);
-
-
+    private void startEndTimeSet(){
+        tv_start_dateTime_details.setText(tv_start_dateTime_details.getText() + " "
+                + CommonUtil.GetDateTimeStringFromGate(publication.getStartingDate()));
+        tv_end_dateTime_details.setText(tv_end_dateTime_details.getText() + " "
+                + CommonUtil.GetDateTimeStringFromGate(publication.getEndingDate()));
     }
     //endregion
 }

@@ -32,7 +32,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
 
     public static final String PUBLICATION_REPORT_FIELD_KEY_NEG_ID = "neg_id";
 
-    public PublicationReport(int id, int pub_id, int pub_version, String report, Date date, String dev_UID){
+    public PublicationReport(int id, int pub_id, int pub_version, int report, Date date, String dev_UID){
         setId(id);
         setPublication_id(pub_id);
         setPublication_version(pub_version);
@@ -83,11 +83,11 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         device_uuid = val;
     }
 
-    private String report;
-    public String getReport(){
+    private int report;
+    public int getReport(){
         return report;
     }
-    public void setReport(String val){
+    public void setReport(int val){
         report = val;
     }
 
@@ -114,7 +114,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
                 pr.setPublication_version(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION)));
                 pr.setDate_reported(cursor.getLong(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DATE)));
                 pr.setDevice_uuid(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID)));
-                pr.setReport(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT)));
+                pr.setReport(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT)));
                 result.add(pr);
             } while (cursor.moveToNext());
         }
@@ -144,7 +144,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
             pr.setPublication_version(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION));
             pr.setDate_reported(jo.getLong(PUBLICATION_REPORT_FIELD_KEY_DATE));
             pr.setDevice_uuid(jo.getString(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID));
-            pr.setReport(jo.getString(PUBLICATION_REPORT_FIELD_KEY_REPORT));
+            pr.setReport(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_REPORT));
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(MY_TAG, e.getMessage());

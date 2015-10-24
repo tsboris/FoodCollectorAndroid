@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -310,6 +311,14 @@ public class CommonUtil {
             e.printStackTrace();
         }
 
+    }
+
+    public static String GetDateTimeStringFromGate(Date date){
+        if(date == null)
+            return "";
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return GetDateTimeStringFromCalendar(c);
     }
 
     public static String GetDateTimeStringFromCalendar(Calendar calendar) {

@@ -274,6 +274,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, publicationForSaving, false);
                 return "";
             //endregion
+            //region delete publication
+            case InternalRequest.ACTION_POST_DELETE_PUBLICATION:
+                //todo: not implemented in api
+                return "";
+            //endregion
             default:
                 return "";
         }

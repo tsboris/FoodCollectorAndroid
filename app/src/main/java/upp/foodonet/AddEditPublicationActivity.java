@@ -93,21 +93,15 @@ import DataModel.FCTypeOfCollecting;
 public class AddEditPublicationActivity extends FragmentActivity
         implements View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, IGotMyLocationCallback, AdapterView.OnItemClickListener {
+        GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, IGotMyLocationCallback, AdapterView.OnItemClickListener, TextWatcher {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
 
     //region Variables
 
-    public static final String START_DATE_PICKER_KEY = "startDatePicker";
-    public static final String START_TIME_PICKER_KEY = "startTimePicker";
-    public static final String END_DATE_PICKER_KEY = "endDatePicker";
-    public static final String END_TIME_PICKER_KEY = "endTimePicker";
-
     public static final int REQUEST_CAMERA = 1;
     public static final int SELECT_FILE = 2;
-
 
     //private GoogleApiClient mGoogleApiClient;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -148,6 +142,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private ProgressDialog progressDialog;
     private ListView prevAddressesList;
     private PreviousAddressesHashMapAdapter prevAddressAdapter;
+    private boolean isGoogleAddress;
 
     private static FCPublication publication;
     private static FCPublication publicationOldVersion;
@@ -466,6 +461,7 @@ public class AddEditPublicationActivity extends FragmentActivity
             //mAddressTextView.setText(address);
             longitudeTmpForEdit = getLongitudeFromAddress(address);
             latitudeTmpForEdit = getLatitudeFromAddress(address);
+            isGoogleAddress = true;
             if (cb_use_my_current_location != null)
                 cb_use_my_current_location.setChecked(false);
             if (iv_address_dialog_location_validation != null)
@@ -660,6 +656,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         atv_address.setThreshold(3);
         atv_address.setOnItemClickListener(mAutocompleteClickListener);
         atv_address.setOnClickListener(this);
+        atv_address.addTextChangedListener(this);
         atv_address.setAdapter(mPlaceArrayAdapter);
 
         atv_address.setText(address);
@@ -794,9 +791,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         if (TextUtils.isEmpty(publication.getPublisherUID()))
             publication.setPublisherUID(CommonUtil.GetIMEI(this));
-        publication.setTypeOfCollecting(FCTypeOfCollecting.FreePickUp);//tmp todo no checkbox
-        //        chkCallToPublisher.isChecked()
-        //                ? FCTypeOfCollecting.ContactPublisher : FCTypeOfCollecting.FreePickUp);
+        publication.setTypeOfCollecting(FCTypeOfCollecting.ContactPublisher);
         publication.setVersion(publication.getVersion());
         publication.setIsOnAir(true);
         publication.setIfTriedToGetPictureBefore(true);
@@ -933,6 +928,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         if (location != null) {
             latitudeTmpForEdit = location.getLatitude();
             longitudeTmpForEdit = location.getLongitude();
+            isGoogleAddress = false;
             if (iv_address_dialog_location_validation != null) {
                 iv_address_dialog_location_validation.setImageDrawable(getResources().getDrawable(R.drawable.validation_ok));
                 iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
@@ -953,10 +949,32 @@ public class AddEditPublicationActivity extends FragmentActivity
             atv_address.setText(selectedAddress.getKey());
             latitudeTmpForEdit = selectedAddress.getValue().latitude;
             longitudeTmpForEdit = selectedAddress.getValue().longitude;
+            isGoogleAddress = true;
             if (atv_address != null)
                 SetEditTextIsValid(atv_address, true);
             if (iv_address_dialog_location_validation != null)
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        if(isGoogleAddress){
+            latitudeTmpForEdit = -1000;
+            longitudeTmpForEdit = -1000;
+            isGoogleAddress = false;
+            iv_address_dialog_location_validation.setImageDrawable(
+                    getResources().getDrawable(R.drawable.validation_wrong));
+            iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
         }
     }
 

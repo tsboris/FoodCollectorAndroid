@@ -28,7 +28,7 @@ public class PublicationReportsTable {
         sb.append(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID);
         sb.append(" text not null, ");
         sb.append(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_REPORT);
-        sb.append(" text not null);");
+        sb.append(" integer not null);");
         return sb.toString();
     }
 
