@@ -149,6 +149,7 @@
     <string name="validation_location_empty">לצורך שמירת שיתוף נדרש לציין מיקום מאיפה לעסוף. תבחר אחד מכתובות שחיפוש מציע, תסמן מיקום נוכחי או תבחר אחד מכתובות שהשתמשת בהם בעבר</string>
     <string name="progress_waiting_for_location">מקבל מיקום הנוכחי</string>
     <string name="validation_cant_get_my_location">לא הצליח לקבל מיקום נוכחי, תצא למקום פתוח ותנסה שוב</string>
+    <string name="address_search">חיפוש כתובת</string>
 
     <!-- Publication details -->
 

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import upp.foodonet.R;
+
 public class PlaceArrayAdapter
         extends ArrayAdapter<PlaceArrayAdapter.PlaceAutocomplete> implements Filterable {
     private static final String TAG = "PlaceArrayAdapter";
@@ -78,10 +80,12 @@ public class PlaceArrayAdapter
                     .await(60, TimeUnit.SECONDS);
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
-                Toast.makeText(getContext(), "Error: " + status.toString(),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Error: " + status.toString(),
+//                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Error getting place predictions: " + status
                         .toString());
+                Toast.makeText(getContext(), getContext().getString(R.string.error_cant_perform_this_action_without_internet).replace("{0}",
+                        getContext().getString(R.string.address_search)), Toast.LENGTH_LONG).show();
                 autocompletePredictions.release();
                 return null;
             }

@@ -39,11 +39,15 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        location = locationManager.getLastKnownLocation( LocationManager.NETWORK_PROVIDER);
         if (location == null)
         {
-            Log.e(MY_TAG, "could not get location!");
-            return null;
+            location = locationManager.getLastKnownLocation( LocationManager.GPS_PROVIDER);
+            if (location == null)
+            {
+                Log.e(MY_TAG, "could not get location!");
+                return null;
+            }
         }
         Log.i(MY_TAG, "got location! " + location.getLatitude() + ":" + location.getLongitude());
         gotLocation = true;

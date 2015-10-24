@@ -79,6 +79,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import Adapters.PlaceArrayAdapter;
@@ -116,8 +117,8 @@ public class AddEditPublicationActivity extends FragmentActivity
     private TextView mAttTextView;
     private GoogleApiClient mGoogleApiClient;
     private PlaceArrayAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    private static final LatLngBounds BOUNDS_ISRAEL_VIEW = new LatLngBounds(
+            new LatLng(29.525670, 34.991455), new LatLng(33.252470, 35.897827));
 
     private Button btn_date_start;
     private Button btn_date_end;
@@ -245,7 +246,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         ArrangePublicationFromInput(publicationOldVersion);
 
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1,
-                BOUNDS_MOUNTAIN_VIEW, null);
+                BOUNDS_ISRAEL_VIEW, null);
         if (mGoogleApiClient == null)
             mGoogleApiClient = new GoogleApiClient.Builder(AddEditPublicationActivity.this)
                     .addApi(Places.GEO_DATA_API)
@@ -512,6 +513,31 @@ public class AddEditPublicationActivity extends FragmentActivity
             ex.printStackTrace();
         }
         return longitude;
+    }
+
+    public String GetCurrentAddress(double latitude, double longitude)
+    {
+        Geocoder geocoder;
+        List<Address> addresses = null;
+
+        geocoder = new Geocoder(this, Locale.getDefault());
+        try
+        {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        String postalCode = addresses.get(0).getPostalCode();
+        String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+
+        return address + "," + city;
     }
 
     @Override
@@ -928,8 +954,11 @@ public class AddEditPublicationActivity extends FragmentActivity
         if (location != null) {
             latitudeTmpForEdit = location.getLatitude();
             longitudeTmpForEdit = location.getLongitude();
+            String myCurrentAddress = GetCurrentAddress(latitudeTmpForEdit, longitudeTmpForEdit);
             isGoogleAddress = false;
             if (iv_address_dialog_location_validation != null) {
+                atv_address.setText(myCurrentAddress);
+                addressTmpForEdit = atv_address.getText().toString();
                 iv_address_dialog_location_validation.setImageDrawable(getResources().getDrawable(R.drawable.validation_ok));
                 iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
             }
