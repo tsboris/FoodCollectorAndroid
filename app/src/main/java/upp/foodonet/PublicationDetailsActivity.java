@@ -124,7 +124,7 @@ public class PublicationDetailsActivity
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
-    TextView tv_start_dateTime_details,tv_end_dateTime_details;
+    TextView tv_start_dateTime_details, tv_end_dateTime_details;
 
     LinearLayout ll_button_panel_my;
     LinearLayout ll_button_panel_others;
@@ -173,8 +173,8 @@ public class PublicationDetailsActivity
         ll_reports_panel = (LinearLayout) findViewById(R.id.ll_reports_list_pub_details);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
-        tv_start_dateTime_details = (TextView)findViewById(R.id.tv_start_time_pub_details);
-        tv_end_dateTime_details = (TextView)findViewById(R.id.tv_end_time_pub_details);
+        tv_start_dateTime_details = (TextView) findViewById(R.id.tv_start_time_pub_details);
+        tv_end_dateTime_details = (TextView) findViewById(R.id.tv_end_time_pub_details);
 
 
         tv_title.setText(publication.getTitle());
@@ -252,7 +252,7 @@ public class PublicationDetailsActivity
             btn_leave_report.setVisibility(View.GONE);
             btn_menu.setScaleType(ImageView.ScaleType.FIT_CENTER);
             btn_menu.setOnClickListener(this);
-            if(publication.getIsOnAir()){
+            if (publication.getIsOnAir()) {
                 btn_facebook_my.setOnClickListener(this);
                 btn_twitter_my.setOnClickListener(this);
                 btn_call_reg.setOnClickListener(this);
@@ -292,8 +292,7 @@ public class PublicationDetailsActivity
                         ? R.drawable.cancel_rishum_pub_det_btn
                         : R.drawable.rishum_pub_det_btn));
 
-       ;
-
+        ;
 
 
         btn_reg_unreg.setImageDrawable(image);
@@ -344,8 +343,8 @@ public class PublicationDetailsActivity
 
 
     private void SetReportsList() {
-        if(publication.getPublicationReports() == null
-                || publication.getPublicationReports().size() == 0){
+        if (publication.getPublicationReports() == null
+                || publication.getPublicationReports().size() == 0) {
             ll_reports_panel.setVisibility(View.GONE);
             return;
         }
@@ -373,23 +372,23 @@ public class PublicationDetailsActivity
         //facebookIntent.setType("text/plain");
 
         PackageManager packManager = getPackageManager();
-        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(facebookIntent,  PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(facebookIntent, PackageManager.MATCH_DEFAULT_ONLY);
 
         boolean resolved = false;
-        for(ResolveInfo resolveInfo: resolvedInfoList){
-            if(resolveInfo.activityInfo.packageName.startsWith("com.facebook.katana")){
+        for (ResolveInfo resolveInfo : resolvedInfoList) {
+            if (resolveInfo.activityInfo.packageName.startsWith("com.facebook.katana")) {
                 facebookIntent.setClassName(
                         resolveInfo.activityInfo.packageName,
-                        resolveInfo.activityInfo.name );
+                        resolveInfo.activityInfo.name);
                 resolved = true;
                 break;
             }
         }
-        if(resolved){
+        if (resolved) {
             startActivity(facebookIntent);
-        }else{
+        } else {
             Toast.makeText(this, "Facebook app isn't found", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.facebook.katana") );
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.facebook.katana"));
             startActivity(intent);
         }
 
@@ -414,23 +413,23 @@ public class PublicationDetailsActivity
         tweetIntent.setType("text/plain");
 
         PackageManager packManager = getPackageManager();
-        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent,  PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
 
         boolean resolved = false;
-        for(ResolveInfo resolveInfo: resolvedInfoList){
-            if(resolveInfo.activityInfo.packageName.startsWith("com.twitter.android")){
+        for (ResolveInfo resolveInfo : resolvedInfoList) {
+            if (resolveInfo.activityInfo.packageName.startsWith("com.twitter.android")) {
                 tweetIntent.setClassName(
                         resolveInfo.activityInfo.packageName,
-                        resolveInfo.activityInfo.name );
+                        resolveInfo.activityInfo.name);
                 resolved = true;
                 break;
             }
         }
-        if(resolved){
+        if (resolved) {
             startActivity(tweetIntent);
-        }else{
+        } else {
             Toast.makeText(this, "Twitter app isn't found", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android") );
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android"));
             startActivity(intent);
         }
     }
@@ -637,7 +636,7 @@ public class PublicationDetailsActivity
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL:
                 Log.i(MY_TAG, "failed to register to publication");
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = null;
                 Toast.makeText(getBaseContext(),
@@ -646,7 +645,7 @@ public class PublicationDetailsActivity
             case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_SUCCESS:
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL:
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = null;
                 Toast.makeText(getBaseContext(),
@@ -674,7 +673,7 @@ public class PublicationDetailsActivity
                 Log.i(MY_TAG, "successfully left report for publication!");
                 isRegisteredForCurrentPublication = false;
                 SetupRegisterUnregisterButton();
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = null;
                 RestartNumOfRegedLoader();
@@ -722,40 +721,37 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
-                if(!CheckInternetForAction(getString(R.string.action_leave_report)))
+                if (!CheckInternetForAction(getString(R.string.action_leave_report)))
                     return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
                 break;
             case R.id.btn_facebook_my_pub_details:
                 growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
-                if(!CheckInternetForAction(getString(R.string.action_facebook)))
+                if (!CheckInternetForAction(getString(R.string.action_facebook)))
                     return;
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
-                growAnim(R.drawable.navigate_green_xxh,R.drawable.navigate_pub_det_btn,btn_navigate);
-                try
-                {
+                growAnim(R.drawable.navigate_green_xxh, R.drawable.navigate_pub_det_btn, btn_navigate);
+                try {
                     String url = "waze://?ll=" + publication.getLatitude() + "," + publication.getLongitude();
-                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-                    startActivity( intent );
-                }
-                catch ( ActivityNotFoundException ex  )
-                {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                } catch (ActivityNotFoundException ex) {
                     Intent intent =
-                            new Intent( Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze") );
+                            new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
                     startActivity(intent);
                 }
                 break;
             case R.id.btn_tweet_my_pub_details:
                 growAnim(R.drawable.twitter_green_xxh, R.drawable.pub_det_twitter, btn_twitter_my);
-                if(!CheckInternetForAction(getString(R.string.action_tweet)))
+                if (!CheckInternetForAction(getString(R.string.action_tweet)))
                     return;
-                if(progressDialog != null){
+                if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
@@ -763,7 +759,7 @@ public class PublicationDetailsActivity
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
-                if(!CheckInternetForAction(isRegisteredForCurrentPublication
+                if (!CheckInternetForAction(isRegisteredForCurrentPublication
                         ? getString(R.string.action_unregister_from_pub)
                         : getString(R.string.action_register_to_pub)))
                     return;
@@ -784,15 +780,15 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_call_owner_pub_details:
-                growAnim(R.drawable.call_green_xxh,R.drawable.pub_det_call,btn_call_reg);
+                growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
-            }
+                }
                 break;
             case R.id.btn_message_owner_pub_details:
-                growAnim(R.drawable.sms_green_xxh,R.drawable.pub_det_sms,btn_sms_reg);
+                growAnim(R.drawable.sms_green_xxh, R.drawable.pub_det_sms, btn_sms_reg);
                 Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
                 intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
                 intentSMS.setData(Uri.parse("smsto:" + publication.getContactInfo()));// + publication.getContactInfo()));  // This ensures only SMS apps respond
@@ -819,7 +815,7 @@ public class PublicationDetailsActivity
                 Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
                         CommonUtil.GetFileNameByPublication(publication),
                         getString(R.string.image_folder_path), width, height);
-                Intent intentFullSizeActivity = new Intent (PublicationDetailsActivity.this, FullSizeImgActivity.class);
+                Intent intentFullSizeActivity = new Intent(PublicationDetailsActivity.this, FullSizeImgActivity.class);
                 intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(intentFullSizeActivity);
                 break;
@@ -858,7 +854,7 @@ public class PublicationDetailsActivity
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.pub_det_menu_item_edit:
-                if(!CheckInternetForAction(getString(R.string.action_edit_publication)))
+                if (!CheckInternetForAction(getString(R.string.action_edit_publication)))
                     return false;
                 Intent intent = new Intent(this, AddEditPublicationActivity.class);
                 intent.putExtra(AddEditPublicationActivity.PUBLICATION_KEY, publication);
@@ -866,9 +862,9 @@ public class PublicationDetailsActivity
 
                 break;
             case R.id.pub_det_menu_item_deactivate:
-                if(!CheckInternetForAction(getString(R.string.action_take_off_air)))
+                if (!CheckInternetForAction(getString(R.string.action_take_off_air)))
                     return false;
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_taking_pub_off_air));
                 publication.setIsOnAir(false);
@@ -883,17 +879,18 @@ public class PublicationDetailsActivity
                 connector1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir1);
                 break;
             case R.id.pub_det_menu_item_delete:
-//                if(!CheckInternetForAction(getString(R.string.action_delete)))
-//                    return false;
-//                if(progressDialog != null)
-//                    progressDialog.dismiss();
-//                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
-//                HttpServerConnectorAsync connector2
-//                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
-//                String subPath1 = getString(R.string.server_edit_publication_path);
-//                subPath = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
-                //TODO: implement
-                Toast.makeText(this, "delete publication not implemented for now", Toast.LENGTH_LONG).show();
+                if (!CheckInternetForAction(getString(R.string.action_delete)))
+                    return false;
+                if (progressDialog != null)
+                    progressDialog.dismiss();
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
+                HttpServerConnectorAsync connector2
+                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+                String subPath1 = getString(R.string.server_edit_publication_path);
+                subPath1 = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
+                InternalRequest ir2 = new InternalRequest(InternalRequest.ACTION_DELETE_PUBLICATION, subPath1);
+                connector2.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir2);
+                //Toast.makeText(this, "delete publication not implemented for now", Toast.LENGTH_LONG).show();
                 break;
         }
         //Toast.makeText(getBaseContext(), "You selected the action : " + item.getTitle(), Toast.LENGTH_SHORT).show();
@@ -902,13 +899,25 @@ public class PublicationDetailsActivity
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-        publication.setIsOnAir(response.Status == InternalRequest.STATUS_FAIL);
-        if(response.Status == InternalRequest.STATUS_OK){
-            getContentResolver().update(Uri.parse(
-                    FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()),
-                    publication.GetContentValuesRow(), null, null);
+        switch (response.ActionCommand) {
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                if (response.Status == InternalRequest.STATUS_OK) {
+                    Toast.makeText(this, getString(R.string.action_succeeded).replace("{0}",
+                            getString(R.string.action_delete)), Toast.LENGTH_LONG).show();
+                    //todo implement delete from db
+                }
+                break;
+            case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
+                if (response.Status == InternalRequest.STATUS_OK) {
+                    publication.setIsOnAir(response.Status == InternalRequest.STATUS_FAIL);
+                    getContentResolver().update(Uri.parse(
+                                    FooDoNetSQLProvider.CONTENT_URI + "/" + publication.getUniqueId()),
+                            publication.GetContentValuesRow(), null, null);
+                } else
+                    Toast.makeText(this, getString(R.string.action_failed).replace("{0}", getString(R.string.action_delete)), Toast.LENGTH_LONG).show();
+                break;
         }
-        if(progressDialog != null)
+        if (progressDialog != null)
             progressDialog.dismiss();
     }
 
@@ -1015,7 +1024,7 @@ public class PublicationDetailsActivity
         }
     }
 
-    public void growAnim(final int iconGreen, final int iconBlue, final ImageButton btn){
+    public void growAnim(final int iconGreen, final int iconBlue, final ImageButton btn) {
         ScaleAnimation grow = new ScaleAnimation(1, 1.2f, 1, 1.2f,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
@@ -1041,7 +1050,7 @@ public class PublicationDetailsActivity
 
     }
 
-    private void startEndTimeSet(){
+    private void startEndTimeSet() {
         tv_start_dateTime_details.setText(tv_start_dateTime_details.getText() + " "
                 + CommonUtil.GetDateTimeStringFromGate(publication.getStartingDate()));
         tv_end_dateTime_details.setText(tv_end_dateTime_details.getText() + " "

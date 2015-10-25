@@ -24,7 +24,7 @@
     <string name="free_pickup_string">איסוף חופשי</string>
     <string name="side_menu_activity_center_title">מרכז פעילות</string>
     <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
-    <string name="side_menu_my_active_pubs_part">שיתופים פעילים שלי</string>
+    <string name="side_menu_my_active_pubs_part">השיתופים הפעילים שלי</string>
     <string name="publication_details_title">פרטי שיתוף</string>
     <string name="title_activity_entrance">EntranceActivity</string>
     <string name="welcome_string">ברוכים הבאים</string>
@@ -32,7 +32,7 @@
     <string name="pickup">לאסוף מזון</string>
     <string name="ask_food">לבקש מזון</string>
     <string name="title_my_publications">השיתופים שלי</string>
-    <string name="title_all_publications">שיתופים של אחרים</string>
+    <string name="title_all_publications">שיתופים פעילים</string>
     <string name="share_btn">שיתוף</string>
     <string name="pickup_btn">איסוף</string>
     <string name="filter_ending_btn_text">מסתיים</string>
@@ -40,11 +40,11 @@
     <string name="filter_not_active_btn_text">לא פעיל</string>
     <string name="filter_closest_btn_text">קרובים</string>
     <string name="filter_newest_btn_text">חדשים</string>
-    <string name="filter_less_regs_btn_text">פחות נרשמו</string>
+    <string name="filter_less_regs_btn_text">הכי זמין</string>
     <string name="leave_report_pub_details">דווח</string>
-    <string name="start_date_time_picker_dialog_title">תבחר תאריך ושעה מ:</string>
-    <string name="end_date_time_picker_dialog_title">תבחר תאריך ושעה עד:</string>
-    <string name="my_pubs_list_end_date_base_string">מועד סיום: {0}</string>
+    <string name="start_date_time_picker_dialog_title">מתאריך‫:‬</string>
+    <string name="end_date_time_picker_dialog_title">ועד תאריך‫:‬</string>
+    <string name="my_pubs_list_end_date_base_string">מסתיים‫:‬ {0}</string>
 
     <!-- Common - check if needed -->
 
@@ -60,7 +60,7 @@
     <string name="pub_det_metr_from_you">מטרים ממקומך</string>
     <string name="pub_det_calculating_distance">מחשב מרחק...</string>
     <string name="pub_det_cant_get_distance">מרחק לא ידוע</string>
-    <string name="pub_det_reports_for_pub">דיווחים על איסוף:</string>
+    <string name="pub_det_reports_for_pub">דיווחים:</string>
     <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
     <string name="participants_report">Report on participants</string>
     <string name="going_to_collect">persons are going to collect</string>
@@ -71,9 +71,9 @@
     <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
-    <string name="pub_det_menu_item_delete">למחוק שיתוף</string>
+    <string name="pub_det_menu_item_delete">מחק שיתוף</string>
     <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
-    <string name="pub_list_search_hint">חיפוש בשיתופים</string>
+    <string name="pub_list_search_hint">חיפוש</string>
 
     <!-- Report dialog -->
     <string name="report_dialog_whole_btn_text">נשאר עוד</string>
@@ -129,12 +129,12 @@
     <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
     <string name="file_name_part_just_shot">justShot</string>
 
-    <string name="validation_title_empty">שם שיתוף לא יכול להיות ריק</string>
-    <string name="validation_title_too_long">שם שיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
-    <string name="validation_address_empty">כתובת לא יכול להיות ריק</string>
-    <string name="validation_phone_number_empty">מספר טלפון לא יכול להיות ריק</string>
-    <string name="validation_phone_number_invalid">מספר טלפון אינו תקין</string>
-    <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות גדול מתאריך התחלה</string>
+    <string name="validation_title_empty">שם השיתוף לא יכול להיות ריק</string>
+    <string name="validation_title_too_long">שם השיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
+    <string name="validation_address_empty">חובה למלא כתובת</string>
+    <string name="validation_phone_number_empty">חובה למלא טלפון</string>
+    <string name="validation_phone_number_invalid">מספר הטלפון אינו תקין</string>
+    <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות רחוק יותר מתאריך הסיום</string>
 
     <string name="title_begin_pub_details">התחלה:</string>
     <string name="title_end_pub_details">סיום:</string>
@@ -146,43 +146,45 @@
     <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
     <string name="address_dialog_btn_ok">שמירה</string>
     <string name="address_dialog_btn_cancel">חזרה</string>
-    <string name="validation_location_empty">לצורך שמירת שיתוף נדרש לציין מיקום מאיפה לעסוף. תבחר אחד מכתובות שחיפוש מציע, תסמן מיקום נוכחי או תבחר אחד מכתובות שהשתמשת בהם בעבר</string>
-    <string name="progress_waiting_for_location">מקבל מיקום הנוכחי</string>
-    <string name="validation_cant_get_my_location">לא הצליח לקבל מיקום נוכחי, תצא למקום פתוח ותנסה שוב</string>
+    <string name="validation_location_empty">לצורך יצירת שיתוף יש לציין את מיקומו‫.‬ ניתן ללהקליד כתובת‫,‬ לבחור מההיסטוריה או להשתמש במיקום הנוכחי‫.‬</string>
+    <string name="progress_waiting_for_location">מקבל מיקום נוכחי</string>
+    <string name="validation_cant_get_my_location">אופס‫..‬ המיקום לא התקבל‫.‬ נסה שוב</string>
 
     <!-- Publication details -->
 
-    <string name="progress_taking_pub_off_air">מעדכן שיתוף...</string>
-    <string name="progress_registration_to_pub">הרשמה...</string>
-    <string name="progress_unregistering_from_pub">ביטול הרשמה...</string>
-    <string name="progress_leaving_report">שומר תגובה...</string>
+    <string name="progress_taking_pub_off_air">מעדכן שיתוף</string>
+    <string name="progress_registration_to_pub">הרשמה</string>
+    <string name="progress_unregistering_from_pub">ביטול הרשמה</string>
+    <string name="progress_leaving_report">שומר תגובה</string>
     <string name="progress_delete_pub">מוחק שיתוף</string>
     <string name="error_cant_perform_this_action_without_internet">לא ניתן לבצע {0} ללא חיבור לאינטרנט</string>
     <string name="action_leave_report">השארת תגובה</string>
     <string name="action_register_to_pub">הרשמה לשיתוף</string>
     <string name="action_unregister_from_pub">ביטול הרשמה לשיתוף</string>
     <string name="action_tweet">שיתוף בטוויטר</string>
-    <string name="action_facebook">שיטוף בפייסבוק</string>
+    <string name="action_facebook">שיתוף בפייסבוק</string>
     <string name="action_add_new_publication">יצירת שיתוף חדש</string>
-    <string name="action_edit_publication">עריכה של שיתוף</string>
-    <string name="action_take_off_air">הפיכה ללא פעיל</string>
+    <string name="action_edit_publication">עריכת שיתוף</string>
+    <string name="action_take_off_air">הפוך ללא פעיל</string>
     <string name="action_delete">מחיקה של שיתוף</string>
+    <string name="action_failed">שעולה נכשלה: {0}</string>
+    <string name="action_succeeded">{0} בוצע בהצלחה!</string>
 
     <!-- All publications list -->
 
     <!-- My publications list -->
 
-    <string name="progress_saving">שמירה...</string>
+    <string name="progress_saving">שמירה</string>
 
     <!-- Entrance activity -->
 
     <string name="progress_loading">טוען..</string>
-    <string name="no_internet_connection_available_error_message">לא נמצא חיבור לאינטרנט, רוב הפונקציות של אפליקציה לא יהיו זמינות</string>
+    <string name="no_internet_connection_available_error_message">לא נמצא חיבור לאינטרנט‫.‬ חלק מתכונות האפליקציה לא יהיו זמינות</string>
 
     <!-- SplashScreen -->
 
-    <string name="progress_foodonet_loading">טעינת אפליקציה..</string>
-    <string name="progress_first_load">טעינה ראשונה..</string>
+    <string name="progress_foodonet_loading">טוען..</string>
+    <string name="progress_first_load">טעינה ראשונה.</string>
 
     <!-- -->
     <string name="title_activity_web_view">WebViewActivity</string>

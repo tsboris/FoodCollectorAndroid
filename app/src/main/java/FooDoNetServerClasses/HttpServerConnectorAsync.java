@@ -275,8 +275,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 return "";
             //endregion
             //region delete publication
-            case InternalRequest.ACTION_POST_DELETE_PUBLICATION:
-                //todo: not implemented in api
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, null, false);
                 return "";
             //endregion
             default:
@@ -420,6 +420,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 Log.i(MY_TAG, "take publication off air: " + (isSuccess ? "ok" : "fail"));
                 InternalRequest irOffAir = new InternalRequest(Action_Command_ID, isSuccess);
                 callbackListener.OnServerRespondedCallback(irOffAir);
+                break;
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                Log.i(MY_TAG, "delete publication: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irDelete = new InternalRequest(Action_Command_ID, isSuccess);
+                callbackListener.OnServerRespondedCallback(irDelete);
                 break;
         }
     }
