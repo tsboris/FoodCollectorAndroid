@@ -44,6 +44,7 @@ public class InternalRequest {
     public static final int ACTION_SQL_SAVE_EDITED_PUBLICATION = 20;
     public static final int ACTION_PUT_TAKE_PUBLICATION_OFF_AIR = 21;
     public static final int ACTION_DELETE_PUBLICATION = 22;
+    public static final int ACTION_NO_ACTION = 23;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -88,6 +89,7 @@ public class InternalRequest {
             case ACTION_SQL_SAVE_NEW_PUBLICATION:
             case ACTION_SQL_SAVE_EDITED_PUBLICATION:
             case ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
+            case ACTION_DELETE_PUBLICATION:
                 publicationForSaving = newPublication;
                 break;
             case ACTION_POST_NEW_PUBLICATION:

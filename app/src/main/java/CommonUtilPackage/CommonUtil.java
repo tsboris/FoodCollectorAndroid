@@ -413,4 +413,11 @@ public class CommonUtil {
                 context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
         return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_key), false);
     }
+
+    public static boolean RemoveImageByPublication(FCPublication publication, Context context){
+        File img = new File(Environment.getExternalStorageDirectory()
+                + context.getString(R.string.image_folder_path), GetFileNameByPublication(publication));
+        if(!img.exists()) return true;
+        return img.delete();
+    }
 }

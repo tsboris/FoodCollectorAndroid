@@ -289,6 +289,10 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 }
                 int rowsAffected = contentResolver.update(FooDoNetSQLProvider.URI_UPDATE_IMAGES, cv, null, null);
                 break;
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                FCPublication publicationToDelete = params[0].publicationForSaving;
+                DeletePublicationFromDB(contentResolver, publicationToDelete);
+                break;
         }
         return null;
     }
@@ -371,6 +375,10 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 InternalRequest res = new InternalRequest(incomingRequest.ActionCommand, true);
                 res.publicationForSaving = incomingRequest.publicationForSaving;
                 callbackHandler.OnSQLTaskComplete(res);
+                break;
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                InternalRequest irDelete = new InternalRequest(incomingRequest.ActionCommand, true);
+                callbackHandler.OnSQLTaskComplete(irDelete);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

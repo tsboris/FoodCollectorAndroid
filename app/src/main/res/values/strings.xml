@@ -187,6 +187,12 @@
     <string name="progress_foodonet_loading">טוען..</string>
     <string name="progress_first_load">טעינה ראשונה.</string>
 
+    <!-- Common hebrew -->
+
+    <string name="confirmAction">בטוח?</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+
     <!-- -->
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="title_activity_share_to_twitter">ShareToTwitterActivity</string>

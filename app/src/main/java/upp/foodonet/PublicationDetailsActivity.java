@@ -80,6 +80,8 @@ import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
+import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
@@ -89,10 +91,11 @@ import UIUtil.RoundedImageView;
 
 public class PublicationDetailsActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback {
+        implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetServerCallback, IFooDoNetSQLCallback {
     public static final String PUBLICATION_PARAM = "publication";
     public static final String IS_OWN_PUBLICATION_PARAM = "is_own";
     private static final String MY_TAG = "food_PubDetails";
+    public static final String DETAILS_ACTIVITY_RESULT_KEY = "details_result";
 
     public static final int REQUEST_CODE_EDIT_PUBLICATION = 1;
     private static final String PERMISSION = "publish_actions";
@@ -230,7 +233,9 @@ public class PublicationDetailsActivity
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_OK);
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(DETAILS_ACTIVITY_RESULT_KEY, InternalRequest.ACTION_NO_ACTION);
+        setResult(RESULT_OK, resultIntent);
         finish();
     }
 
@@ -881,15 +886,24 @@ public class PublicationDetailsActivity
             case R.id.pub_det_menu_item_delete:
                 if (!CheckInternetForAction(getString(R.string.action_delete)))
                     return false;
-                if (progressDialog != null)
-                    progressDialog.dismiss();
-                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
-                HttpServerConnectorAsync connector2
-                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
-                String subPath1 = getString(R.string.server_edit_publication_path);
-                subPath1 = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
-                InternalRequest ir2 = new InternalRequest(InternalRequest.ACTION_DELETE_PUBLICATION, subPath1);
-                connector2.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir2);
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                DeletePublication();
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                return;
+                        }
+                    }
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.confirmAction))
+                        .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                        .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+
+
                 //Toast.makeText(this, "delete publication not implemented for now", Toast.LENGTH_LONG).show();
                 break;
         }
@@ -897,15 +911,30 @@ public class PublicationDetailsActivity
         return true;
     }
 
+    private void DeletePublication(){
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
+        HttpServerConnectorAsync connector2
+                = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
+        String subPath1 = getString(R.string.server_edit_publication_path);
+        subPath1 = subPath1.replace("{0}", String.valueOf(publication.getUniqueId()));
+        InternalRequest ir2 = new InternalRequest(InternalRequest.ACTION_DELETE_PUBLICATION, subPath1);
+        connector2.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir2);
+    }
+
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         switch (response.ActionCommand) {
             case InternalRequest.ACTION_DELETE_PUBLICATION:
-                if (response.Status == InternalRequest.STATUS_OK) {
-                    Toast.makeText(this, getString(R.string.action_succeeded).replace("{0}",
-                            getString(R.string.action_delete)), Toast.LENGTH_LONG).show();
-                    //todo implement delete from db
-                }
+                Toast.makeText(this, (response.Status == InternalRequest.STATUS_OK
+                        ? getString(R.string.action_succeeded)
+                        : getString(R.string.action_failed)).replace("{0}",
+                        getString(R.string.action_delete)), Toast.LENGTH_LONG).show();
+                FooDoNetSQLExecuterAsync sqlExecutor
+                        = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                sqlExecutor.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        new InternalRequest(response.ActionCommand, publication));
                 break;
             case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
                 if (response.Status == InternalRequest.STATUS_OK) {
@@ -915,10 +944,10 @@ public class PublicationDetailsActivity
                             publication.GetContentValuesRow(), null, null);
                 } else
                     Toast.makeText(this, getString(R.string.action_failed).replace("{0}", getString(R.string.action_delete)), Toast.LENGTH_LONG).show();
+                if (progressDialog != null)
+                    progressDialog.dismiss();
                 break;
         }
-        if (progressDialog != null)
-            progressDialog.dismiss();
     }
 
     //endregion
@@ -993,6 +1022,21 @@ public class PublicationDetailsActivity
         report.setDate_reported(new Date());
 
         RegisterUnregisterReportService.startActionReportForPublication(this, report);
+    }
+
+    @Override
+    public void OnSQLTaskComplete(InternalRequest request) {
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_DELETE_PUBLICATION:
+                CommonUtil.RemoveImageByPublication(publication, this);
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(DETAILS_ACTIVITY_RESULT_KEY, InternalRequest.ACTION_DELETE_PUBLICATION);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+                break;
+        }
     }
 
     class ReportButtonListener implements View.OnClickListener {

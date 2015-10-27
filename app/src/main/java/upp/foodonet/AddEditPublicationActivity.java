@@ -87,6 +87,7 @@ import Adapters.PreviousAddressesHashMapAdapter;
 import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.GetMyLocationAsync;
 import CommonUtilPackage.IGotMyLocationCallback;
+import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
 import DataModel.FCTypeOfCollecting;
 
@@ -313,8 +314,9 @@ public class AddEditPublicationActivity extends FragmentActivity
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();
+            builder.setMessage(getString(R.string.confirmAction))
+                    .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                    .setNegativeButton(getString(R.string.no), dialogClickListener).show();
         } else {
             ForceReturn();
         }
@@ -825,6 +827,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     private void ReturnPublication() {
         Intent dataPublicationIntent = new Intent();
+        dataPublicationIntent.putExtra(PublicationDetailsActivity.DETAILS_ACTIVITY_RESULT_KEY, InternalRequest.ACTION_POST_NEW_PUBLICATION);
         dataPublicationIntent.putExtra(PUBLICATION_KEY, publication);
         // return data Intent and finish
         setResult(RESULT_OK, dataPublicationIntent);

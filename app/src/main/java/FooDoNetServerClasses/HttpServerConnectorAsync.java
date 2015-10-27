@@ -270,8 +270,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //endregion
             //region take pub off air
             case InternalRequest.ACTION_PUT_TAKE_PUBLICATION_OFF_AIR:
-                publicationForSaving = params[0].publicationForSaving;
-                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, publicationForSaving, false);
+                //publicationForSaving = params[0].publicationForSaving;
+                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, ForDisabling, false);
                 return "";
             //endregion
             //region delete publication
@@ -443,6 +443,32 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             }
         }
         return publications;
+    }
+
+    private FCPublicationForDisabling ForDisabling = new FCPublicationForDisabling();
+
+    class FCPublicationForDisabling implements ICanWriteSelfToJSONWriter{
+
+        @Override
+        public void WriteSelfToJSONWriter(JsonWriter writer) {
+
+        }
+
+        @Override
+        public Map<String, Object> GetJsonMapStringObject() {
+            return null;
+        }
+
+        @Override
+        public org.json.simple.JSONObject GetJsonObjectForPost() {
+            Map<String, Object> publicationData = new HashMap<String, Object>();
+            publicationData.put(FCPublication.PUBLICATION_IS_ON_AIR_KEY, false);//getIsOnAir());
+            Map<String, Object> dataToSend = new HashMap<String, Object>();
+            dataToSend.put(FCPublication.PUBLICATION_JSON_ITEM_KEY, publicationData);
+            org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+            json.putAll(dataToSend);
+            return json;
+        }
     }
 
 /*

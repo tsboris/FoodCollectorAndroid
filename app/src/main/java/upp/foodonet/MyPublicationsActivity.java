@@ -124,7 +124,7 @@ public class MyPublicationsActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(progressDialog != null){
+        if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
             StartLoadingCursorForList(currentFilterID);
@@ -134,7 +134,7 @@ public class MyPublicationsActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
         }
@@ -174,7 +174,7 @@ public class MyPublicationsActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_add_new_myPubsLst:
-                if(!CheckInternetForAction(getString(R.string.action_add_new_publication)))
+                if (!CheckInternetForAction(getString(R.string.action_add_new_publication)))
                     return;
                 Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
                 startActivityForResult(addNewPubIntent, 1);
@@ -191,7 +191,7 @@ public class MyPublicationsActivity
                 btn_not_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
                 btn_active_pub.setEnabled(true);
                 btn_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
-                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON)
+                if (currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_ENDING_SOON)
                     RestartLoadingCursorForList();
                 else {
                     adapter.swapCursor(null);
@@ -206,7 +206,7 @@ public class MyPublicationsActivity
                 btn_not_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
                 btn_active_pub.setEnabled(false);
                 btn_active_pub.setTextColor(getResources().getColor(R.color.inactive_blue));
-                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC)
+                if (currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_ACTIVE_ID_DESC)
                     RestartLoadingCursorForList();
                 else {
                     adapter.swapCursor(null);
@@ -221,7 +221,7 @@ public class MyPublicationsActivity
                 btn_not_active_pub.setTextColor(getResources().getColor(R.color.inactive_blue));
                 btn_active_pub.setEnabled(true);
                 btn_active_pub.setTextColor(getResources().getColor(R.color.basic_blue));
-                if(currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC)
+                if (currentFilterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC)
                     RestartLoadingCursorForList();
                 else {
                     adapter.swapCursor(null);
@@ -236,7 +236,7 @@ public class MyPublicationsActivity
         getSupportLoaderManager().initLoader(filterTypeID, null, this);
     }
 
-    private void RestartLoadingCursorForList(){//int filterTypeID) {
+    private void RestartLoadingCursorForList() {//int filterTypeID) {
         getSupportLoaderManager().restartLoader(currentFilterID, null, this);
 //        onLoaderReset(null);
 //        StartLoadingCursorForList(filterTypeID);
@@ -254,7 +254,7 @@ public class MyPublicationsActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data != null && adapter != null){
+        if (data != null && adapter != null) {
             adapter.swapCursor(data);
             adapter.notifyDataSetChanged();
         }
@@ -262,25 +262,41 @@ public class MyPublicationsActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(adapter != null)
+        if (adapter != null)
             adapter.swapCursor(null);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data == null)
+        if (data == null)
             return;
         switch (resultCode) {
             case AddEditPublicationActivity.RESULT_OK:
-                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_saving));
-                FCPublication publication
-                        = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
-                if (publication == null) {
-                    Log.i(MY_TAG, "got no pub from AddNew");
-                    return;
+                int action = data.getIntExtra(PublicationDetailsActivity.DETAILS_ACTIVITY_RESULT_KEY, -1);
+                switch (action) {
+                    case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_saving));
+                        FCPublication publication
+                                = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
+                        if (publication == null) {
+                            Log.i(MY_TAG, "got no pub from AddNew");
+                            return;
+                        }
+                        //=============>
+                        AddEditPublicationService.StartSaveNewPublication(getApplicationContext(), publication);
+                        break;
+                    case InternalRequest.ACTION_DELETE_PUBLICATION:
+                    case InternalRequest.ACTION_NO_ACTION:
+                    default:
+                        if(adapter != null){
+                            //adapter.swapCursor(null);
+                            RestartLoadingCursorForList();
+                        }
+                        break;
+
                 }
-                //=============>
-                AddEditPublicationService.StartSaveNewPublication(getApplicationContext(), publication);
+
+
                 break;
         }
     }
@@ -296,23 +312,27 @@ public class MyPublicationsActivity
                     Log.e(MY_TAG, "got null location extra from broadcast");
                     return;
                 }
+                break;
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE:
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS:
-                if(progressDialog != null){
+                if (progressDialog != null) {
                     progressDialog.dismiss();
                     progressDialog = null;
                 }
             default:
-                if(adapter != null)
+                if (adapter != null){
+                    //adapter.swapCursor(null);
                     RestartLoadingCursorForList();
+                }
                 break;
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = id;
@@ -324,7 +344,7 @@ public class MyPublicationsActivity
         switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
-                if(result == null)
+                if (result == null)
                     Log.e(MY_TAG, "OnSQLTaskComplete got null request.publicationForDetails");
                 String myIMEI = CommonUtil.GetIMEI(this);
                 if (result.getPublisherUID() != null)
@@ -332,6 +352,10 @@ public class MyPublicationsActivity
                 Intent intent = new Intent(getApplicationContext(), PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
+                if(progressDialog != null){
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
                 break;
         }
     }

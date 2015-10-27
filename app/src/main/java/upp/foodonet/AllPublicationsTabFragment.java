@@ -192,10 +192,7 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-/*
-        Intent intent = new Intent(context, PublicationDetailsActivity.class);
-        intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, )
-*/
+        progressDialog = CommonUtil.ShowProgressDialog(context, getString(R.string.progress_loading));
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, context.getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = id;
@@ -216,6 +213,10 @@ public class AllPublicationsTabFragment
                 Intent intent = new Intent(context, PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
+                if(progressDialog != null){
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
                 break;
             default:
                 Log.e(MY_TAG, "can't get publication for details!");
