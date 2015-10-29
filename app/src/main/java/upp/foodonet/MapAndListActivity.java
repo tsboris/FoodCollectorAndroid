@@ -71,6 +71,7 @@ public class MapAndListActivity
         LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback {
 
     private static final String MY_TAG = "food_mapAndList";
+    public static final String PUBLICATION_NUMBER = "pubnumber";
 
     //region Variables
 
@@ -118,6 +119,20 @@ public class MapAndListActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_and_list);
+
+        int id = 0;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            id = (int) extras.get(PUBLICATION_NUMBER);
+        }
+        if(id != 0)
+        {
+            //progressDialog = CommonUtil.ShowProgressDialog(getApplicationContext(), getString(R.string.progress_loading));
+            FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+            InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
+            ir.PublicationID = id;
+            sqlGetPubAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+        }
 
         btn_navigate_share = (Button) findViewById(R.id.btn_navigate_share);
         btn_navigate_take = (Button) findViewById(R.id.btn_navigate_take);

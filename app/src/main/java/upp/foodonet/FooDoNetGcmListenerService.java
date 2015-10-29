@@ -12,10 +12,13 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import java.util.Map;
+
 // Service listenining for  push notifications
 public class FooDoNetGcmListenerService extends GcmListenerService
 {
     private static final String TAG = "food_gcmListener";
+    public static final String PUBLICATION_NUMBER = "pubnumber";
     /**
      * Called when message is received.
      *
@@ -59,7 +62,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService
      * @param message GCM message received.
      */
     private void sendNotification(String message) {
-        Intent intent = new Intent(this, SplashScreenActivity.class);
+        Intent intent = new Intent(this, MapAndListActivity.class);
+        intent.putExtra(PUBLICATION_NUMBER, 562);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
