@@ -39,6 +39,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String MY_TAG = "food_contentProvider";
 
     private static final int PUBLICATIONS = 10;
+    private static final int PUBLICATION_DELETE_COMPLETELY = 11;
     private static final int PUBLICATION_ID = 20;
     private static final int PUBLICATION_ID_NEGATIVE = 21;
     private static final int PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC = 30;
@@ -98,6 +99,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
 
     private static final String EXT_REPORTS_LIST_FOR_PUB = "/ReportsListForPublication";
 
+    private static final String EXT_PUBLICATION_REMOVE_COMPLETELY = "/RemovePublicationCompletely";
+
     public static final String BASE_STRING_FOR_URI = "content://" + AUTHORITY + "/" + BASE_PATH;
 
     public static final Uri CONTENT_URI = Uri.parse(BASE_STRING_FOR_URI);
@@ -142,6 +145,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PREVIOUS_ADDRESSES);
     public static final Uri URI_REPORTS_LIST_FOR_PUB_DETAILS
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REPORTS_LIST_FOR_PUB);
+    public static final Uri URI_REMOVE_PUBLICATION_COMPLETELY
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REMOVE_COMPLETELY);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
@@ -173,6 +178,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REPORT_NEW_NEGATIVE_ID, REPORT_NEW_NEGATIVE_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PREVIOUS_ADDRESSES, PREVIOUS_ADDRESSES);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REPORTS_LIST_FOR_PUB + "/#", REPORTS_LIST_FOR_PUBLICATION);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REMOVE_COMPLETELY + "/#", PUBLICATION_DELETE_COMPLETELY);
     }
 
     @Override
@@ -359,6 +365,20 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                         selection, null);
                 break;
+            case PUBLICATION_DELETE_COMPLETELY:
+                id = uri.getLastPathSegment();
+                if(TextUtils.isEmpty(id)){
+                    Log.e(MY_TAG, "empty id");
+                    return -1;
+                }
+                rowsDeleted = 0;
+                rowsDeleted += db.delete(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME,
+                                        PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID + "=" + id, null);
+                rowsDeleted += db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
+                                        RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id, null);
+                rowsDeleted += db.delete(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
+                                        FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + id, null);
+                return rowsDeleted;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

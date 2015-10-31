@@ -975,6 +975,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         Map.Entry<String, LatLng> selectedAddress = prevAddressAdapter.getItem(position);
         if (selectedAddress != null) {
             addressTmpForEdit = selectedAddress.getKey();
@@ -986,6 +987,10 @@ public class AddEditPublicationActivity extends FragmentActivity
                 SetEditTextIsValid(atv_address, true);
             if (iv_address_dialog_location_validation != null)
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
+            if(progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
         }
     }
 

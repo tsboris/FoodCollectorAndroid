@@ -2,7 +2,9 @@ package FooDoNetServerClasses;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.JsonWriter;
 import android.util.Log;
 
@@ -69,6 +71,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private FCPublication publicationForSaving;
     private RegisteredUserForPublication registrationToPublicationToPost;
     private PublicationReport publicationReport;
+    private FCPublication publication;
 
     private int Action_Command_ID;
 
@@ -279,6 +282,70 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_DELETE, server_sub_path, null, false);
                 return "";
             //endregion
+            //region REPORT_LOCATION
+            case InternalRequest.ACTION_REPORT_LOCATION:
+                MyLocationForReport locationForReport
+                        = new MyLocationForReport(params[0].imei, params[0].location);
+                MakeServerRequest(REQUEST_METHOD_PUT, server_sub_path, locationForReport, false);
+                return "";
+            //endregion
+            //region FROM PUSH
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
+                if(!isSuccess){
+                    Log.e(MY_TAG, "cant get publication by id (from push)");
+                    return "";
+                }
+                isSuccess = false;
+                publication = null;
+                    try {
+                        publication = FCPublication.ParseSinglePublicationFromJSON(new JSONObject(responseString));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                if(publication == null){
+                    Log.e(MY_TAG, "publication null");
+                    return "";
+                }
+                responseString = "";
+                MakeServerRequest(REQUEST_METHOD_GET,
+                        params[1].ServerSubPath.replace("{0}",
+                                String.valueOf(publication.getUniqueId())), null, true);
+                if(!isSuccess){
+                    Log.e(MY_TAG, "can't get reged users (from push)");
+                    return "";
+                }
+                isSuccess = false;
+                ArrayList<RegisteredUserForPublication> regedUsers1 = new ArrayList<>();
+                try {
+                    regedUsers1 = RegisteredUserForPublication.
+                            GetArrayListOfRegisteredForPublicationsFromJSON(
+                                    new JSONArray(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    responseString = "";
+                }
+                publication.setRegisteredForThisPublication(regedUsers1);
+                MakeServerRequest(REQUEST_METHOD_GET,
+                        params[2].ServerSubPath.replace("{0}", String.valueOf(publication.getUniqueId())), null, true);
+                if(!isSuccess){
+                    Log.e(MY_TAG, "cant get reports! (from push)");
+                    return "";
+                }
+                ArrayList<PublicationReport> reports = new ArrayList<>();
+                try{
+                    reports = PublicationReport.GetArrayListOfPublicationReportsFromJSON(new JSONArray(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(reports.size() > 0)
+                    publication.setPublicationReports(reports);
+                return "";
+            case InternalRequest.ACTION_PUSH_REG:
+
+                return "";
+            //endregion
             default:
                 return "";
         }
@@ -426,6 +493,15 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 InternalRequest irDelete = new InternalRequest(Action_Command_ID, isSuccess);
                 callbackListener.OnServerRespondedCallback(irDelete);
                 break;
+            case InternalRequest.ACTION_REPORT_LOCATION:
+                Log.i(MY_TAG, "report location: " + (isSuccess ? "ok" : "fail"));
+                break;
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                Log.i(MY_TAG, "get new pub (from push): " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irNewPubFromPush = new InternalRequest(Action_Command_ID, isSuccess);
+                irNewPubFromPush.publicationForSaving = publication;
+                callbackListener.OnServerRespondedCallback(irNewPubFromPush);
+                break;
         }
     }
 
@@ -469,6 +545,39 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             json.putAll(dataToSend);
             return json;
         }
+    }
+
+    class MyLocationForReport implements ICanWriteSelfToJSONWriter{
+
+        private String imei;
+        private Location location;
+
+        public MyLocationForReport(String imei, Location location){
+            this.imei = imei;
+            this.location = location;
+        }
+
+        @Override
+        public void WriteSelfToJSONWriter(JsonWriter writer) {
+
+        }
+
+        @Override
+        public Map<String, Object> GetJsonMapStringObject() {
+            return null;
+        }
+
+        @Override
+        public org.json.simple.JSONObject GetJsonObjectForPost() {
+            Map<String, Object> publicationData = new HashMap<String, Object>();
+            publicationData.put(UserRegisterData.USER_DATA_DEV_UUID_FIELD_NAME, imei);
+            publicationData.put("last_location_latitude", location.getLatitude());
+            publicationData.put("last_location_longitude", location.getLongitude());
+            Map<String, Object> dataToSend = new HashMap<String, Object>();
+            dataToSend.put("active_device", publicationData);
+            org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+            json.putAll(dataToSend);
+            return json;        }
     }
 
 /*

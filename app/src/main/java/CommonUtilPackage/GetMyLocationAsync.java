@@ -11,7 +11,9 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
+import upp.foodonet.R;
 
 /**
  * Created by Asher on 04.09.2015.
@@ -25,6 +27,8 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
     boolean gotLocation;
     Context context;
     IGotMyLocationCallback callback;
+    boolean isReportLocationMode = false;
+    String imei;
 
     private static final String MY_TAG = "food_myLocationAsync";
 
@@ -35,6 +39,14 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
 
     public void setGotLocationCallback(IGotMyLocationCallback gotLocationCallback){
         callback = gotLocationCallback;
+    }
+
+    public void switchToReportLocationMode(boolean flag){
+        isReportLocationMode = flag;
+    }
+
+    public void setIMEI(String imei){
+        this.imei = imei;
     }
 
     @Override
@@ -56,16 +68,26 @@ public class GetMyLocationAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if(context != null) {
-            Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
-            if (gotLocation) {
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS);
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY, location);
-            } else
-                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
-            context.sendBroadcast(intent);
+        if(isReportLocationMode){
+            HttpServerConnectorAsync serverAsync
+                    = new HttpServerConnectorAsync(context.getString(R.string.server_base_url), context);
+            InternalRequest ir = new InternalRequest(InternalRequest.ACTION_REPORT_LOCATION,
+                    "/ActiveDevices/");
+            ir.location = this.location;
+            ir.imei = this.imei;
+            serverAsync.execute(ir);
+        } else {
+            if(context != null) {
+                Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
+                if (gotLocation) {
+                    intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_SUCCESS);
+                    intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_LOCATION_KEY, location);
+                } else
+                    intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL);
+                context.sendBroadcast(intent);
+            }
+            if(callback != null)
+                callback.OnGotMyLocationCallback(location);
         }
-        if(callback != null)
-            callback.OnGotMyLocationCallback(location);
     }
 }

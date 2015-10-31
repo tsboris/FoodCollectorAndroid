@@ -293,6 +293,36 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 FCPublication publicationToDelete = params[0].publicationForSaving;
                 DeletePublicationFromDB(contentResolver, publicationToDelete);
                 break;
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                FCPublication newPubToSave = params[0].publicationForSaving;
+                InsertPublicationToDB(contentResolver, newPubToSave);
+                break;
+            case InternalRequest.ACTION_PUSH_PUB_DELETED:
+                Cursor c = contentResolver.query(
+                        Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(params[0].newNegativeID)),
+                        FCPublication.GetColumnNamesArray(), null, null, null);
+                if(c.moveToFirst())
+                    publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(c, false);
+                else{
+                    Log.e(MY_TAG, "publication to delete not found in db, nothing to delete");
+                    return null;
+                }
+                int rowsDeletedFromPush = contentResolver.delete(
+                        Uri.parse(FooDoNetSQLProvider.URI_REMOVE_PUBLICATION_COMPLETELY
+                                + "/" + params[0].newNegativeID), null, null);
+                break;
+            case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
+                Cursor c1 = contentResolver.query(
+                        Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(params[0].PublicationID)),
+                        FCPublication.GetColumnNamesArray(), null, null, null);
+                if(c1.moveToFirst())
+                    publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(c1, false);
+                else{
+                    Log.e(MY_TAG, "publication to add report not found in db, nothing to delete");
+                    return null;
+                }
+                contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, params[0].publicationReport.GetContentValuesRow());
+                break;
         }
         return null;
     }
@@ -379,6 +409,19 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
             case InternalRequest.ACTION_DELETE_PUBLICATION:
                 InternalRequest irDelete = new InternalRequest(incomingRequest.ActionCommand, true);
                 callbackHandler.OnSQLTaskComplete(irDelete);
+                break;
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                InternalRequest irNewPubFromPush = new InternalRequest(incomingRequest.ActionCommand, true);
+                irNewPubFromPush.publicationForSaving = incomingRequest.publicationForSaving;
+                callbackHandler.OnSQLTaskComplete(irNewPubFromPush);
+                break;
+            case InternalRequest.ACTION_PUSH_PUB_DELETED:
+                InternalRequest irDeletedPub = new InternalRequest(incomingRequest.ActionCommand, publicationsFromDB.get(0));
+                callbackHandler.OnSQLTaskComplete(irDeletedPub);
+                break;
+            case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
+                InternalRequest irReportFromPush = new InternalRequest(incomingRequest.ActionCommand, publicationsFromDB.get(0));
+                callbackHandler.OnSQLTaskComplete(irReportFromPush);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

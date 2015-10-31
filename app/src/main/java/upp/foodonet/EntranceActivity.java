@@ -1,12 +1,9 @@
 package upp.foodonet;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,19 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
-import DataModel.FCTypeOfCollecting;
+import DataModel.PublicationReport;
+import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
-import FooDoNetServerClasses.GcmSenderTest;
+import CodeWeDontUse.GcmSenderTest;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
-import DataModel.RegisteredUserForPublication;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -174,33 +169,6 @@ public class EntranceActivity
                 startActivity(myPubsIntent);
                 break;
             case R.id.btn_ask_welcomeScreen:
-                GcmSenderTest sender = new GcmSenderTest();
-                sender.execute();
-//                Intent addNewPubIntent = new Intent(this, AddEditPublicationActivity.class);
-//                startActivityForResult(addNewPubIntent, REQUEST_ADD_NEW_PUBLICATION);
-//                TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-//                String imei = tm.getDeviceId();
-//                Date sDate = new Date();
-//                Date eDate;
-//                Calendar c = Calendar.getInstance();
-//                c.setTime(sDate);
-//                c.add(Calendar.DATE, 5);
-//                eDate = c.getTime();
-//                FCPublication newPublication
-//                        = new FCPublication(0, imei, "test pub title", "", "some address",
-//                                                FCTypeOfCollecting.ContactPublisher, 0, 0,
-//                                                sDate, eDate, "", "", true);
-//
-//                //FooDoNetSQLExecuterAsync saveNewTask = new FooDoNetSQLExecuterAsync(this, getContentResolver());
-//                //saveNewTask.execute(new InternalRequest(InternalRequest.ACTION_SQL_SAVE_NEW_PUBLICATION, newPublication));
-//
-//                HttpServerConnectorAsync postNewPubTask
-//                        = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
-//                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, newPublication);
-//                ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
-//                postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
-
-
                 break;
         }
     }
@@ -224,8 +192,20 @@ public class EntranceActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        Toast.makeText(getBaseContext(), "this code should not be reached", Toast.LENGTH_LONG);
-/*
+        switch (request.ActionCommand){
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                Log.i(MY_TAG, "fetched single pub from server: " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                break;
+            case InternalRequest.ACTION_PUSH_PUB_DELETED:
+                Log.i(MY_TAG, "deleted pub from db: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                break;
+            case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
+                Log.i(MY_TAG, "new report added: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                break;
+        }
+
+/*        Toast.makeText(getBaseContext(), "this code should not be reached", Toast.LENGTH_LONG);
+
         if(request.publicationForSaving == null){
             Log.e(MY_TAG, "got null request.publicationForSaving");
             return;
@@ -240,6 +220,13 @@ public class EntranceActivity
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-
+        switch (response.ActionCommand){
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                if(response.Status == InternalRequest.STATUS_OK){
+                    FooDoNetSQLExecuterAsync sqlExecuterAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
+                    sqlExecuterAsync.execute(response);
+                }
+                break;
+        }
     }
 }

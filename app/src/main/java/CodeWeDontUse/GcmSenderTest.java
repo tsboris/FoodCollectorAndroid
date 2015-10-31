@@ -1,4 +1,4 @@
-package FooDoNetServerClasses;
+package CodeWeDontUse;
 
 import android.os.AsyncTask;
 

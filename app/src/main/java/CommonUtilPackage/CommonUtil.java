@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -420,4 +421,13 @@ public class CommonUtil {
         if(!img.exists()) return true;
         return img.delete();
     }
+
+    public static void ReportLocationToServer(Context context){
+        GetMyLocationAsync locationAsync = new GetMyLocationAsync(
+                (LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+        locationAsync.switchToReportLocationMode(true);
+        locationAsync.setIMEI(GetIMEI(context));
+        locationAsync.execute();
+    }
+
 }

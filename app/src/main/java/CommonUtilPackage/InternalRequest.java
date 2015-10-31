@@ -1,5 +1,6 @@
 package CommonUtilPackage;
 
+import android.location.Location;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -45,6 +46,11 @@ public class InternalRequest {
     public static final int ACTION_PUT_TAKE_PUBLICATION_OFF_AIR = 21;
     public static final int ACTION_DELETE_PUBLICATION = 22;
     public static final int ACTION_NO_ACTION = 23;
+    public static final int ACTION_REPORT_LOCATION = 24;
+    public static final int ACTION_PUSH_NEW_PUB = 25;
+    public static final int ACTION_PUSH_PUB_DELETED = 26;
+    public static final int ACTION_PUSH_REPORT_FOR_PUB = 27;
+    public static final int ACTION_PUSH_REG = 28;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -65,6 +71,8 @@ public class InternalRequest {
     public Map<Integer, byte[]> publicationImageMap;
     public RegisteredUserForPublication myRegisterToPublication;
     public PublicationReport publicationReport;
+    public Location location;
+    public String imei;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;
@@ -90,6 +98,8 @@ public class InternalRequest {
             case ACTION_SQL_SAVE_EDITED_PUBLICATION:
             case ACTION_SQL_UPDATE_ID_OF_PUB_AFTER_SAVING_ON_SERVER:
             case ACTION_DELETE_PUBLICATION:
+            case ACTION_PUSH_PUB_DELETED:
+            case ACTION_PUSH_REPORT_FOR_PUB:
                 publicationForSaving = newPublication;
                 break;
             case ACTION_POST_NEW_PUBLICATION:
