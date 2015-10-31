@@ -23,11 +23,22 @@ import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.PushObject;
 
+import java.util.Map;
+
 // Service listenining for  push notifications
 public class FooDoNetGcmListenerService extends GcmListenerService implements IFooDoNetServerCallback, IFooDoNetSQLCallback {
     private static final String TAG = "food_gcmListener";
     private PushObject pushObject;
 
+    public static final String PUBLICATION_NUMBER = "pubnumber";
+    /**
+     * Called when message is received.
+     *
+     * @param from SenderID of the sender.
+     * @param data Data bundle containing message data as key/value pairs.
+     *             For Set of keys use data.keySet().
+     */
+    // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
@@ -81,7 +92,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     }
 
     private void sendNotification(String message) {
-        Intent intent = new Intent(this, SplashScreenActivity.class);
+        Intent intent = new Intent(this, MapAndListActivity.class);
+        //intent.putExtra(PUBLICATION_NUMBER, 562);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
