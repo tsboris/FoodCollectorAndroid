@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.drive.realtime.internal.BeginCompoundOperationRequest;
@@ -65,6 +66,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     }
 
     private void HandleMessage(PushObject pushObject) {
+        if(pushObject == null || pushObject.PushObjectType == null || TextUtils.isEmpty(pushObject.PushObjectType))
+            return;
         switch (pushObject.PushObjectType) {
             case PushObject.PUSH_OBJECT_VALUE_NEW:
                 String basePath = getString(R.string.server_base_url);

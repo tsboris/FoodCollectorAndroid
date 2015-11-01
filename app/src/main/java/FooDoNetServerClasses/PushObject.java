@@ -32,13 +32,16 @@ public class PushObject {
     public Date DateOfReport;
     public int Report;
 
-    public static PushObject DecodePushObject(Bundle data){
+    public static PushObject DecodePushObject(Bundle data) {
         //try {
-            PushObject result = new PushObject();
+        PushObject result = new PushObject();
+
+        try {
+
             //JSONObject jo = new JSONObject(jsonString);
             result.PushObjectType = data.getString(PUSH_OBJECT_KEY_TYPE);
             //JSONObject joInner = jo.getJSONObject(PUSH_OBJECT_KEY_DATA);
-            switch (result.PushObjectType){
+            switch (result.PushObjectType) {
                 case PUSH_OBJECT_VALUE_NEW:
                 case PUSH_OBJECT_VALUE_DELETE:
                 case PUSH_OBJECT_VALUE_REG:
@@ -50,8 +53,13 @@ public class PushObject {
                     result.DateOfReport = new Date(data.getLong(PUSH_OBJECT_KEY_DATE_OF_REPORT));
                     result.Report = data.getInt(PUSH_OBJECT_KEY_DATE_OF_REPORT);
                     break;
+
             }
-            return result;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return result;
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }
