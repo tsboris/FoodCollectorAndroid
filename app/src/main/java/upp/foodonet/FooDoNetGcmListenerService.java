@@ -28,6 +28,15 @@ import java.util.Map;
 // Service listenining for  push notifications
 public class FooDoNetGcmListenerService extends GcmListenerService implements IFooDoNetServerCallback, IFooDoNetSQLCallback {
     private static final String TAG = "food_gcmListener";
+    //public static final String PUBLICATION_NUMBER = "pubnumber";
+    /**
+     * Called when message is received.
+     *
+     * @param from SenderID of the sender.
+     * @param data Data bundle containing message data as key/value pairs.
+     *             For Set of keys use data.keySet().
+     */
+    // [START receive_message]
     private PushObject pushObject;
 
     public static final String PUBLICATION_NUMBER = "pubnumber";
@@ -41,16 +50,16 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        //String message = data.getString("message");
+        //Log.d(TAG, "From: " + from);
+        //Log.d(TAG, "Message: " + message);
 
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {
             // normal downstream message.
         }
-        pushObject = PushObject.DecodePushObject(message);
+        pushObject = PushObject.DecodePushObject(data);
         HandleMessage(pushObject);
         //sendNotification(message);
     }
