@@ -341,8 +341,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(reports.size() > 0)
-                    publication.setPublicationReports(reports);
+                ArrayList<PublicationReport> matchingReports = new ArrayList<>();
+                for (PublicationReport pr: reports)
+                    if(pr.getPublication_id() == publication.getUniqueId())
+                        matchingReports.add(pr);
+                if(matchingReports.size() > 0)
+                    publication.setPublicationReports(matchingReports);
                 return "";
             case InternalRequest.ACTION_PUSH_REG:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);

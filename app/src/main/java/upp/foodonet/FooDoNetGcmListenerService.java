@@ -140,7 +140,7 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
                             getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
                             getResources().getString(R.string.image_folder_path));
                     Map<Integer,Integer> map = new HashMap<>();
-                    map.put(request.publicationForDetails.getUniqueId(), request.publicationForDetails.getVersion());
+                    map.put(request.publicationForSaving.getUniqueId(), request.publicationForSaving.getVersion());
                     imageTask.execute(map);
                 }
                 break;
