@@ -20,35 +20,25 @@ import DataModel.FCPublication;
 import DataModel.PublicationReport;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServerClasses.PushObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 // Service listenining for  push notifications
-public class FooDoNetGcmListenerService extends GcmListenerService implements IFooDoNetServerCallback, IFooDoNetSQLCallback {
+public class FooDoNetGcmListenerService extends GcmListenerService implements IFooDoNetServerCallback, IFooDoNetSQLCallback, IDownloadImageCallBack {
     private static final String TAG = "food_gcmListener";
-    //public static final String PUBLICATION_NUMBER = "pubnumber";
-    /**
-     * Called when message is received.
-     *
-     * @param from SenderID of the sender.
-     * @param data Data bundle containing message data as key/value pairs.
-     *             For Set of keys use data.keySet().
-     */
-    // [START receive_message]
+
     private PushObject pushObject;
 
     public static final String PUBLICATION_NUMBER = "pubnumber";
-    /**
-     * Called when message is received.
-     *
-     * @param from SenderID of the sender.
-     * @param data Data bundle containing message data as key/value pairs.
-     *             For Set of keys use data.keySet().
-     */
-    // [START receive_message]
+
+    private FCPublication publication;
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
         //String message = data.getString("message");
@@ -141,8 +131,19 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     public void OnSQLTaskComplete(InternalRequest request) {
         switch (request.ActionCommand){
             case InternalRequest.ACTION_PUSH_NEW_PUB:
-                if(request.Status == InternalRequest.STATUS_OK)
-                    PublishNotificationNewPublication(request.publicationForSaving);
+                if(request.Status == InternalRequest.STATUS_OK){
+
+                    publication = request.publicationForSaving;
+                    int maxImageWidthHeight = getResources().getInteger(R.integer.max_image_width_height);
+                    DownloadImageTask imageTask
+                            = new DownloadImageTask(this,
+                            getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
+                            getResources().getString(R.string.image_folder_path));
+                    Map<Integer,Integer> map = new HashMap<>();
+                    map.put(request.publicationForDetails.getUniqueId(), request.publicationForDetails.getVersion());
+                    imageTask.execute(map);
+                }
+
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
                 if(request.Status == InternalRequest.STATUS_OK)
@@ -155,9 +156,15 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         }
     }
 
+    @Override
+    public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
+        PublishNotificationNewPublication(publication);
+    }
+
     private void PublishNotificationNewPublication(FCPublication publication){}
 
     private void PublishNotificationPublicationDeleted(String pubTitle){}
 
     private void PublishNotificationForNewReport(String pubTitle, int reportTypeID){}
+
 }

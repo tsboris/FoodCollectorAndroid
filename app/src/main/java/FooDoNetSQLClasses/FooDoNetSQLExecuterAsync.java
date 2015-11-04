@@ -294,6 +294,15 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 DeletePublicationFromDB(contentResolver, publicationToDelete);
                 break;
             case InternalRequest.ACTION_PUSH_NEW_PUB:
+                Cursor cPubSame = contentResolver.query(
+                        Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(params[0].PublicationID)),
+                        FCPublication.GetColumnNamesArray(), null, null, null);
+                if(cPubSame.moveToFirst()){
+                    FCPublication pubWithSameID
+                            = FCPublication.GetArrayListOfPublicationsFromCursor(cPubSame, false).get(0);
+                    if(pubWithSameID.getVersion() == params[0].publicationForSaving.getVersion())
+                        return null;
+                }
                 FCPublication newPubToSave = params[0].publicationForSaving;
                 InsertPublicationToDB(contentResolver, newPubToSave);
                 break;

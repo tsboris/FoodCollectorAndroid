@@ -2,7 +2,9 @@ package upp.foodonet;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +14,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
@@ -19,7 +23,9 @@ import DataModel.PublicationReport;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
 import CodeWeDontUse.GcmSenderTest;
+import FooDoNetServerClasses.DownloadImageTask;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IDownloadImageCallBack;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
@@ -27,7 +33,7 @@ import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 public class EntranceActivity
         extends FooDoNetCustomActivityConnectedToService
-        implements View.OnClickListener, IFooDoNetSQLCallback, IFooDoNetServerCallback{
+        implements View.OnClickListener, IFooDoNetSQLCallback, IFooDoNetServerCallback {
 
 
 
@@ -35,6 +41,8 @@ public class EntranceActivity
     Button btn_pick, btn_share, btn_ask;
     boolean isUIBlocked;
     ProgressDialog progressDialog;
+
+    private FCPublication publication;
 
     public static final int REQUEST_ADD_NEW_PUBLICATION = 1;
 
@@ -170,23 +178,6 @@ public class EntranceActivity
                 break;
             case R.id.btn_ask_welcomeScreen:
                 break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Log.i(MY_TAG, "Entered onActivityResult()");
-
-        FCPublication pub = new FCPublication();
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_ADD_NEW_PUBLICATION)
-            {
-                pub = (FCPublication) data.getExtras().get("publication");
-            }
-        }
-        if (resultCode == RESULT_CANCELED) {
-
         }
     }
 
