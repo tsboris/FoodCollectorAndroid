@@ -43,10 +43,6 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        //String message = data.getString("message");
-        //Log.d(TAG, "From: " + from);
-        //Log.d(TAG, "Message: " + message);
-
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {
@@ -135,8 +131,18 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     public void OnSQLTaskComplete(InternalRequest request) {
         switch (request.ActionCommand){
             case InternalRequest.ACTION_PUSH_NEW_PUB:
-                if(request.Status == InternalRequest.STATUS_OK)
-                    PublishNotificationNewPublication(request.publicationForSaving);
+                if(request.Status == InternalRequest.STATUS_OK){
+
+                    publication = request.publicationForSaving;
+                    int maxImageWidthHeight = getResources().getInteger(R.integer.max_image_width_height);
+                    DownloadImageTask imageTask
+                            = new DownloadImageTask(this,
+                            getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
+                            getResources().getString(R.string.image_folder_path));
+                    Map<Integer,Integer> map = new HashMap<>();
+                    map.put(request.publicationForDetails.getUniqueId(), request.publicationForDetails.getVersion());
+                    imageTask.execute(map);
+                }
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
                 if(request.Status == InternalRequest.STATUS_OK)
@@ -166,14 +172,11 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         Intent intent = new Intent();
         String title = publication.getTitle();
         String message = "";
-
         switch (action){
             case InternalRequest.ACTION_PUSH_NEW_PUB:
                 intent = new Intent(this, MapAndListActivity.class);
                 intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
                 message = "New publication near you";
-
-    private void PublishNotificationForNewReport(String pubTitle, int reportTypeID){}
 
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
@@ -189,10 +192,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
                 intent = new Intent(this, MapAndListActivity.class);
                 intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
                 message = "New user was registered to publication";
-
                 break;
         }
-
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -213,18 +214,9 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
-//    private void PublishNotificationNewPublication(FCPublication publication)
-//    {
-//        sendNotification(publication.getUniqueId(), publication.getTitle(), "New publication near you");
-//    }
-//
-//    private void PublishNotificationPublicationDeleted(String pubTitle)
-//    {
-//        sendNotification(-1, pubTitle, "Publication was deleted");
-//    }
-//
-//    private void PublishNotificationForNewReport(String pubTitle, int reportTypeID)
-//    {
-//        sendNotification(-1, pubTitle, reportTypeID, "Report for publication");
-//    }
+
+    @Override
+    public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
+        SendNotification(publication, InternalRequest.ACTION_PUSH_NEW_PUB);
+    }
 }
