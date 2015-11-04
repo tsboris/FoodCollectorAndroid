@@ -299,7 +299,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
                 Cursor c = contentResolver.query(
-                        Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(params[0].newNegativeID)),
+                        Uri.parse(FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(params[0].PublicationID)),
                         FCPublication.GetColumnNamesArray(), null, null, null);
                 if(c.moveToFirst())
                     publicationsFromDB = FCPublication.GetArrayListOfPublicationsFromCursor(c, false);
@@ -309,7 +309,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 }
                 int rowsDeletedFromPush = contentResolver.delete(
                         Uri.parse(FooDoNetSQLProvider.URI_REMOVE_PUBLICATION_COMPLETELY
-                                + "/" + params[0].newNegativeID), null, null);
+                                + "/" + params[0].PublicationID), null, null);
                 break;
             case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
                 Cursor c1 = contentResolver.query(
@@ -322,6 +322,9 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     return null;
                 }
                 contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, params[0].publicationReport.GetContentValuesRow());
+                break;
+            case InternalRequest.ACTION_PUSH_REG:
+                UpdateRegs(contentResolver, incomingRequest.PublicationID, incomingRequest.registeredUsers);
                 break;
         }
         return null;
@@ -360,6 +363,12 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
         for (PublicationReport pr : publication.getPublicationReports()) {
             contentResolver.insert(FooDoNetSQLProvider.URI_GET_ALL_REPORTS, pr.GetContentValuesRow());
         }
+    }
+
+    private void UpdateRegs(ContentResolver contentResolver, long publicationId, ArrayList<RegisteredUserForPublication> registeredUsers) {
+        contentResolver.delete(Uri.parse(FooDoNetSQLProvider.URI_DELETE_REGISTERED_USER_BY_PUBLICATION_ID + "/" + publicationId), null, null);
+        for (RegisteredUserForPublication reg : registeredUsers)
+            contentResolver.insert(FooDoNetSQLProvider.URI_INSERT_REGISTERED_FOR_PUBLICATION, reg.GetContentValuesRow());
     }
 
     @Override
@@ -417,11 +426,17 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
                 InternalRequest irDeletedPub = new InternalRequest(incomingRequest.ActionCommand, publicationsFromDB.get(0));
+                irDeletedPub.Status = InternalRequest.STATUS_OK;
                 callbackHandler.OnSQLTaskComplete(irDeletedPub);
                 break;
             case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
                 InternalRequest irReportFromPush = new InternalRequest(incomingRequest.ActionCommand, publicationsFromDB.get(0));
                 callbackHandler.OnSQLTaskComplete(irReportFromPush);
+                break;
+            case InternalRequest.ACTION_PUSH_REG:
+                InternalRequest irNewRegisteredUser = new InternalRequest(incomingRequest.ActionCommand, true);
+                irNewRegisteredUser.publicationForSaving = incomingRequest.publicationForSaving;
+                callbackHandler.OnSQLTaskComplete(irNewRegisteredUser);
                 break;
 /*  not needed
             case InternalRequest.ACTION_SQL_GET_NEW_NEGATIVE_ID:

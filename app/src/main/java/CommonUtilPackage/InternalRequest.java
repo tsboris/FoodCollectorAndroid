@@ -156,4 +156,9 @@ public class InternalRequest {
         publicationReport = report;
     }
 
+    public InternalRequest(int com, long pubId){
+        ActionCommand = com;
+        PublicationID = pubId;
+    }
+
 }
