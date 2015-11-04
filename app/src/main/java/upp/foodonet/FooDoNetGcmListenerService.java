@@ -164,10 +164,9 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
 
     @Override
     public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
-        PublishNotificationNewPublication(publication);
+        SendNotification(publication, InternalRequest.ACTION_PUSH_NEW_PUB);
     }
 
-    private void PublishNotificationNewPublication(FCPublication publication){}
     private void SendNotification(FCPublication publication, int action) {
         Intent intent = new Intent();
         String title = publication.getTitle();
@@ -215,8 +214,4 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     }
 
 
-    @Override
-    public void OnImageDownloaded(Map<Integer, byte[]> imagesMap) {
-        SendNotification(publication, InternalRequest.ACTION_PUSH_NEW_PUB);
-    }
 }
