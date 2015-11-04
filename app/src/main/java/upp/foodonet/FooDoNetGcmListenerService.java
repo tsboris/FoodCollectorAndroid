@@ -53,13 +53,16 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         } else {
             // normal downstream message.
         }
+        //region structure of notifications
+//        message = "{\"type\":\"new_publication\",\"data\":{ id:579}}";
+//        message = "{\"type\":\"deleted_publication\",\"data\":{ id:561}}";
+//        message = "{\"type\":\"publication_report\",\"data\":{ publication_id : 542, publication_version : 1, date_of_report :11111112, report :5}}";
+//        message = "{\"type\":\"registeration_for_publication\",\"data\":{ id:574}}";
+//        PushObject pushObject = new PushObject();
+//        pushObject.PushObjectType = "registeration_for_publication";
+//        pushObject.ID = 574;
+        //end region
 
-        //message = "{\"type\":\"new_publication\",\"data\":{ id:579}}";
-        //message = "{\"type\":\"deleted_publication\",\"data\":{ id:561}}";//561 - mashu meuhad 562- mapal maim  542
-        //message = "{\"type\":\"publication_report\",\"data\":{ publication_id : 542, publication_version : 1, date_of_report :11111112, report :5}}";
-        //message = "{\"type\":\"registeration_for_publication\",\"data\":{ id:574}}";
-
-        //pushObject = PushObject.DecodePushObject(message);
         pushObject = PushObject.DecodePushObject(data);
         HandleMessage(pushObject);
         //sendNotification(message);
@@ -110,53 +113,6 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         }
     }
 
-    private void SendNotification(FCPublication publication, int action) {
-        Intent intent = new Intent();
-        String title = publication.getTitle();
-        String message = "";
-
-        switch (action){
-            case InternalRequest.ACTION_PUSH_NEW_PUB:
-                intent = new Intent(this, MapAndListActivity.class);
-                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
-                message = "New publication near you";
-
-                break;
-            case InternalRequest.ACTION_PUSH_PUB_DELETED:
-                intent = new Intent(this, SplashScreenActivity.class);
-                message = "Publication was deleted";
-                break;
-            case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
-                intent = new Intent(this, MapAndListActivity.class);
-                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
-                intent.putExtra(PUBLICATION_NUMBER, pushObject.Report);
-                message = "Report for publication";
-            case InternalRequest.ACTION_PUSH_REG:
-                intent = new Intent(this, MapAndListActivity.class);
-                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
-                message = "New user was registered to publication";
-
-                break;
-        }
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.side_menu_collect_icon)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-    }
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
@@ -200,6 +156,55 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
                 //PublishNot
                 break;
         }
+    }
+
+    private void SendNotification(FCPublication publication, int action) {
+        Intent intent = new Intent();
+        String title = publication.getTitle();
+        String message = "";
+
+        switch (action){
+            case InternalRequest.ACTION_PUSH_NEW_PUB:
+                intent = new Intent(this, MapAndListActivity.class);
+                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
+                message = "New publication near you";
+
+                break;
+            case InternalRequest.ACTION_PUSH_PUB_DELETED:
+                intent = new Intent(this, SplashScreenActivity.class);
+                message = "Publication was deleted";
+                break;
+            case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
+                intent = new Intent(this, MapAndListActivity.class);
+                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
+                intent.putExtra(PUBLICATION_NUMBER, pushObject.Report);
+                message = "Report for publication";
+            case InternalRequest.ACTION_PUSH_REG:
+                intent = new Intent(this, MapAndListActivity.class);
+                intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
+                message = "New user was registered to publication";
+
+                break;
+        }
+
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.side_menu_collect_icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
 //    private void PublishNotificationNewPublication(FCPublication publication)

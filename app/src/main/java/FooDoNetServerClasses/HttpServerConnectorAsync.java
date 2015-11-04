@@ -367,7 +367,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 publicationID = params[2].PublicationID;
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[1].ServerSubPath.replace("{0}",
-                                String.valueOf(params[2].PublicationID)), null, true);
+                                String.valueOf(publicationID)), null, true);
                 if(!isSuccess){
                     Log.e(MY_TAG, "can't get reged users (from push)");
                     return "";
