@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.drive.realtime.internal.BeginCompoundOperationRequest;
@@ -43,9 +44,9 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        //String message = data.getString("message");
+        //Log.d(TAG, "From: " + from);
+        //Log.d(TAG, "Message: " + message);
 
         if (from.startsWith("/topics/")) {
             // message received from some topic.
@@ -56,14 +57,17 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         //message = "{\"type\":\"new_publication\",\"data\":{ id:579}}";
         //message = "{\"type\":\"deleted_publication\",\"data\":{ id:561}}";//561 - mashu meuhad 562- mapal maim  542
         //message = "{\"type\":\"publication_report\",\"data\":{ publication_id : 542, publication_version : 1, date_of_report :11111112, report :5}}";
-        message = "{\"type\":\"registeration_for_publication\",\"data\":{ id:574}}";
+        //message = "{\"type\":\"registeration_for_publication\",\"data\":{ id:574}}";
 
-        pushObject = PushObject.DecodePushObject(message);
+        //pushObject = PushObject.DecodePushObject(message);
+        pushObject = PushObject.DecodePushObject(data);
         HandleMessage(pushObject);
         //sendNotification(message);
     }
 
     private void HandleMessage(PushObject pushObject) {
+        if(pushObject == null || pushObject.PushObjectType == null || TextUtils.isEmpty(pushObject.PushObjectType))
+            return;
         switch (pushObject.PushObjectType) {
             case PushObject.PUSH_OBJECT_VALUE_NEW:
                 String basePath = getString(R.string.server_base_url);

@@ -160,6 +160,7 @@ public class AddEditPublicationActivity extends FragmentActivity
     private double longitudeTmpForEdit = -1000;
     private String address = "";
     private String addressTmpForEdit = "";
+    Context context = this;
 
     //endregion
 
@@ -436,6 +437,9 @@ public class AddEditPublicationActivity extends FragmentActivity
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(progressDialog != null)
+                progressDialog.dismiss();
+            progressDialog = CommonUtil.ShowProgressDialog(context, getString(R.string.progress_loading));
             final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
             final String placeId = String.valueOf(item.placeId);
             Log.i(MY_TAG, "Selected: " + item.description);
@@ -471,7 +475,8 @@ public class AddEditPublicationActivity extends FragmentActivity
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
 
             addressTmpForEdit = atv_address.getText().toString();
-
+            if(progressDialog != null)
+                progressDialog.dismiss();
 //            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
 //            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
 //            mWebTextView.setText(place.getWebsiteUri() + "");

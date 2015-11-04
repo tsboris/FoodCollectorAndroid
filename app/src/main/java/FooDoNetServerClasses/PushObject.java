@@ -1,6 +1,8 @@
 package FooDoNetServerClasses;
 
 
+import android.os.Bundle;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,29 +32,37 @@ public class PushObject {
     public Date DateOfReport;
     public int Report;
 
-    public static PushObject DecodePushObject(String jsonString){
+    public static PushObject DecodePushObject(Bundle data) {
+        //try {
+        PushObject result = new PushObject();
+
         try {
-            PushObject result = new PushObject();
-            JSONObject jo = new JSONObject(jsonString);
-            result.PushObjectType = jo.getString(PUSH_OBJECT_KEY_TYPE);
-            JSONObject joInner = jo.getJSONObject(PUSH_OBJECT_KEY_DATA);
-            switch (result.PushObjectType){
+
+            //JSONObject jo = new JSONObject(jsonString);
+            result.PushObjectType = data.getString(PUSH_OBJECT_KEY_TYPE);
+            //JSONObject joInner = jo.getJSONObject(PUSH_OBJECT_KEY_DATA);
+            switch (result.PushObjectType) {
                 case PUSH_OBJECT_VALUE_NEW:
                 case PUSH_OBJECT_VALUE_DELETE:
                 case PUSH_OBJECT_VALUE_REG:
-                    result.ID = joInner.getInt(PUSH_OBJECT_KEY_ID);
+                    result.ID = data.getInt(PUSH_OBJECT_KEY_ID);
                     break;
                 case PUSH_OBJECT_VALUE_REPORT:
-                    result.PublicationID = joInner.getInt(PUSH_OBJECT_KEY_PUBLICATION_ID);
-                    result.PublicationVersion = joInner.getInt(PUSH_OBJECT_KEY_PUBLICATION_VERSION);
-                    result.DateOfReport = new Date(joInner.getLong(PUSH_OBJECT_KEY_DATE_OF_REPORT));
-                    result.Report = joInner.getInt(PUSH_OBJECT_KEY_DATE_OF_REPORT);
+                    result.PublicationID = data.getInt(PUSH_OBJECT_KEY_PUBLICATION_ID);
+                    result.PublicationVersion = data.getInt(PUSH_OBJECT_KEY_PUBLICATION_VERSION);
+                    result.DateOfReport = new Date(data.getLong(PUSH_OBJECT_KEY_DATE_OF_REPORT));
+                    result.Report = data.getInt(PUSH_OBJECT_KEY_DATE_OF_REPORT);
                     break;
+
             }
-            return result;
-        } catch (JSONException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return result;
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 }
