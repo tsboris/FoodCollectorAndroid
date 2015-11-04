@@ -72,8 +72,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private RegisteredUserForPublication registrationToPublicationToPost;
     private PublicationReport publicationReport;
     private FCPublication publication;
+    public ArrayList<RegisteredUserForPublication> registeredUsers;
 
     private int Action_Command_ID;
+    private long publicationID;
 
     private boolean isSuccess = false;
 
@@ -343,7 +345,42 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     publication.setPublicationReports(reports);
                 return "";
             case InternalRequest.ACTION_PUSH_REG:
+                MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
+                if(!isSuccess){
+                    Log.e(MY_TAG, "cant get publication by id (from push)");
+                    return "";
+                }
+                isSuccess = false;
+                publication = null;
+                try {
+                    publication = FCPublication.ParseSinglePublicationFromJSON(new JSONObject(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(publication == null){
+                    Log.e(MY_TAG, "publication null");
+                    return "";
+                }
+                publicationForSaving = publication;
 
+                responseString = "";
+                publicationID = params[2].PublicationID;
+                MakeServerRequest(REQUEST_METHOD_GET,
+                        params[1].ServerSubPath.replace("{0}",
+                                String.valueOf(publicationID)), null, true);
+                if(!isSuccess){
+                    Log.e(MY_TAG, "can't get reged users (from push)");
+                    return "";
+                }
+                try {
+                    registeredUsers = RegisteredUserForPublication.
+                            GetArrayListOfRegisteredForPublicationsFromJSON(
+                                    new JSONArray(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    responseString = "";
+                }
                 return "";
             //endregion
             default:
@@ -501,6 +538,14 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 InternalRequest irNewPubFromPush = new InternalRequest(Action_Command_ID, isSuccess);
                 irNewPubFromPush.publicationForSaving = publication;
                 callbackListener.OnServerRespondedCallback(irNewPubFromPush);
+                break;
+            case InternalRequest.ACTION_PUSH_REG:
+                Log.i(MY_TAG, "update list of registered users for pub (from push): " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irUpdateListRegUsersFromPush = new InternalRequest(Action_Command_ID, isSuccess);
+                irUpdateListRegUsersFromPush.registeredUsers = registeredUsers;
+                irUpdateListRegUsersFromPush.PublicationID = publicationID;
+                irUpdateListRegUsersFromPush.publicationForSaving = publicationForSaving;
+                callbackListener.OnServerRespondedCallback(irUpdateListRegUsersFromPush);
                 break;
         }
     }

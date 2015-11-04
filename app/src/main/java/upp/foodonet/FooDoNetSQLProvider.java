@@ -53,6 +53,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int REGS_FOR_PUBLICATION_BY_PUB_NEG_ID = 45;
     private static final int REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID = 46;
     private static final int REGS_FOR_PUBLICATION_REMOVE_MYSELF = 47;
+    private static final int DELETE_REG_USER_BY_PUB_ID = 48;
     private static final int PUBLICATION_REPORT = 50;
     private static final int PUBLICATION_REPORT_ID = 51;
     private static final int PUBLICATION_REPORTS_BY_ID = 52;
@@ -80,6 +81,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_INSERT_REG = "/InsertRegisteredForPublication";
 
     private static final String EXT_DELETE_REG = "/DeleteRegisteredForPublication";
+
+    private static final String EXT_DELETE_REG_USER_BY_PUB_ID = "/DeleteRegisteredUserByPubId";
 
     private static final String EXT_REGS_FOR_PUBLICATION_BY_ID = "/RegisteredByPublicationID";
 
@@ -121,6 +124,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_INSERT_REG);
     public static final Uri URI_DELETE_REGISTERED_FOR_PUBLICATION
             = Uri.parse(BASE_STRING_FOR_URI + EXT_DELETE_REG);
+
+    public static final Uri URI_DELETE_REGISTERED_USER_BY_PUBLICATION_ID
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_DELETE_REG_USER_BY_PUB_ID);
+
     public static final Uri URI_GET_NEW_NEGATIVE_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_GET_NEW_NEGATIVE_ID);
     public static final Uri URI_GET_REGISTERED_BY_PUBLICATION_ID
@@ -164,6 +171,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_ALL_REGS, REGS_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_INSERT_REG, INSERT_REG_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_DELETE_REG + "/#", DELETE_REG_FOR_PUBLICATION);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_DELETE_REG_USER_BY_PUB_ID + "/#", DELETE_REG_USER_BY_PUB_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GET_NEW_NEGATIVE_ID, GET_NEW_NEGATIVE_ID_CODE);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_BY_ID + "/#", REGS_FOR_PUBLICATION_BY_PUB_ID);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REGS_FOR_PUBLICATION_BY_ID + EXT_NEGATIVE_ID + "/#", REGS_FOR_PUBLICATION_BY_PUB_NEG_ID);
@@ -349,6 +357,17 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 }else {
                     rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                             RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + "=" + id + selection, selectionArgs);
+                }
+                break;
+            case DELETE_REG_USER_BY_PUB_ID:
+                id = uri.getLastPathSegment();
+                if(TextUtils.isEmpty(selection)){
+                    rowsDeleted
+                            = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
+                            RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id, null);
+                }else {
+                    rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
+                            RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id + selection, selectionArgs);
                 }
                 break;
             case PUBLICATION_REPORT_ID:

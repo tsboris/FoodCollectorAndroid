@@ -13,6 +13,7 @@ import java.util.Date;
  */
 public class PushObject {
 
+    public static final String PUSH_OBJECT_MSG = "message";
     public static final String PUSH_OBJECT_KEY_TYPE = "type";
     public static final String PUSH_OBJECT_KEY_DATA = "data";
     public static final String PUSH_OBJECT_KEY_ID = "id";
@@ -38,24 +39,26 @@ public class PushObject {
 
         try {
 
-            //JSONObject jo = new JSONObject(jsonString);
-            result.PushObjectType = data.getString(PUSH_OBJECT_KEY_TYPE);
-            //JSONObject joInner = jo.getJSONObject(PUSH_OBJECT_KEY_DATA);
+            String msg = data.getString(PUSH_OBJECT_MSG);
+            JSONObject jo = new JSONObject(msg);
+            result.PushObjectType = jo.getString(PUSH_OBJECT_KEY_TYPE);
+
+
             switch (result.PushObjectType) {
                 case PUSH_OBJECT_VALUE_NEW:
                 case PUSH_OBJECT_VALUE_DELETE:
                 case PUSH_OBJECT_VALUE_REG:
-                    result.ID = data.getInt(PUSH_OBJECT_KEY_ID);
+                    result.ID = jo.getInt(PUSH_OBJECT_KEY_ID);
                     break;
                 case PUSH_OBJECT_VALUE_REPORT:
-                    result.PublicationID = data.getInt(PUSH_OBJECT_KEY_PUBLICATION_ID);
-                    result.PublicationVersion = data.getInt(PUSH_OBJECT_KEY_PUBLICATION_VERSION);
-                    result.DateOfReport = new Date(data.getLong(PUSH_OBJECT_KEY_DATE_OF_REPORT));
-                    result.Report = data.getInt(PUSH_OBJECT_KEY_DATE_OF_REPORT);
+                    result.PublicationID = jo.getInt(PUSH_OBJECT_KEY_PUBLICATION_ID);
+                    result.PublicationVersion = jo.getInt(PUSH_OBJECT_KEY_PUBLICATION_VERSION);
+                    result.DateOfReport = new Date(jo.getLong(PUSH_OBJECT_KEY_DATE_OF_REPORT));
+                    result.Report = jo.getInt(PUSH_OBJECT_KEY_DATE_OF_REPORT);
                     break;
 
             }
-        } catch (NullPointerException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
 

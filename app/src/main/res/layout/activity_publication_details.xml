@@ -21,7 +21,8 @@
             android:gravity="center"
             android:text="@string/publication_details_title"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="20dp"
+            android:textStyle="bold"/>
 
         <ImageButton
             android:id="@+id/btn_menu_pub_details"
