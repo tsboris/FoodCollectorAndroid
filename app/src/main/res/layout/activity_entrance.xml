@@ -53,6 +53,6 @@
         android:layout_below="@+id/btn_share_welcomeScreen"
         android:layout_alignLeft="@+id/btn_share_welcomeScreen"
         android:layout_alignStart="@+id/btn_share_welcomeScreen"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 </RelativeLayout>

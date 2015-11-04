@@ -136,7 +136,8 @@ public class PublicationDetailsActivity
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
-    //ProgressDialog progressDialog;
+
+    public static final String SHARED_PREF_PENDING_BROADCAST_KEY = "pending_broadcast";
 
     //region Activity
     @Override
@@ -237,6 +238,20 @@ public class PublicationDetailsActivity
         resultIntent.putExtra(DETAILS_ACTIVITY_RESULT_KEY, InternalRequest.ACTION_NO_ACTION);
         setResult(RESULT_OK, resultIntent);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(progressDialog != null && progressDialog.isShowing()){
+            SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
+            if(!sp.contains(getString(R.string.shared_preferences_pending_broadcast_value)))
+                Log.e(MY_TAG, "progress bar showing, but no pending broadcast");
+            Intent intent = new Intent();
+            intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
+                    sp.getInt(getString(R.string.shared_preferences_pending_broadcast_value), -1));
+            onBroadcastReceived(intent);
+        }
     }
 
     //region new: My methods
@@ -684,6 +699,10 @@ public class PublicationDetailsActivity
                 RestartNumOfRegedLoader();
                 break;
         }
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(getString(R.string.shared_preferences_pending_broadcast_value));
+        editor.commit();
     }
 
     //endregion

@@ -3,6 +3,7 @@ package upp.foodonet;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -117,7 +118,7 @@ public class RegisterUnregisterReportService
                         ServicesBroadcastReceiver.ACTION_CODE_REPORT_TO_PUBLICATION_FAIL);
                 break;
         }
-        sendBroadcast(intentResponse);
+        SendBroadcastAndSavePending(intentResponse);
     }
 
     private void handleActionRegisterToPublication(RegisteredUserForPublication rufp) {
@@ -168,7 +169,7 @@ public class RegisterUnregisterReportService
                     Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                     intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                             ServicesBroadcastReceiver.ACTION_CODE_REGISTER_TO_PUBLICATION_FAIL);
-                    sendBroadcast(intent);
+                    SendBroadcastAndSavePending(intent);
                     return;
                 }
                 FooDoNetSQLExecuterAsync sqlExecutor = new FooDoNetSQLExecuterAsync(this, getContentResolver());
@@ -181,7 +182,7 @@ public class RegisterUnregisterReportService
                     Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                     intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                             ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_FAIL);
-                    sendBroadcast(intent);
+                    SendBroadcastAndSavePending(intent);
                     return;
                 }
                 FooDoNetSQLExecuterAsync sqlExecuter = new FooDoNetSQLExecuterAsync(this, getContentResolver());
@@ -231,7 +232,7 @@ public class RegisterUnregisterReportService
                         Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                         intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                                 ServicesBroadcastReceiver.ACTION_CODE_ADD_MYSELF_TO_REGS_FOR_PUBLICATION);
-                        sendBroadcast(intent);
+                        SendBroadcastAndSavePending(intent);
                         break;
                     default:
                         break;
@@ -242,9 +243,21 @@ public class RegisterUnregisterReportService
                     Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                     intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                             ServicesBroadcastReceiver.ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION);
-                    sendBroadcast(intent);
+                    SendBroadcastAndSavePending(intent);
                 }
                 break;
         }
+    }
+
+    private void SendBroadcastAndSavePending(Intent intent){
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = sp.edit();
+        if(sp.contains(getString(R.string.shared_preferences_pending_broadcast_value)))
+            editor.remove(getString(R.string.shared_preferences_pending_broadcast_value));
+        editor.putInt(getString(R.string.shared_preferences_pending_broadcast_value),
+                intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, -1));
+        editor.commit();
+        sendBroadcast(intent);
     }
 }
