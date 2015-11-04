@@ -36,7 +36,8 @@
             android:text="@string/title_all_publications"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="20dp"
+            android:textStyle="bold"/>
 
         <ImageButton
             android:id="@+id/btn_show_list_allPubs"

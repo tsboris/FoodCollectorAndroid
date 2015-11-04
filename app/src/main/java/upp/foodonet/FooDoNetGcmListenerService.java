@@ -48,6 +48,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
         //Log.d(TAG, "From: " + from);
         //Log.d(TAG, "Message: " + message);
 
+        if(true) return; // turn off notifications
+
         if (from.startsWith("/topics/")) {
             // message received from some topic.
         } else {

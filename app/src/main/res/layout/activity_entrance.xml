@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/top_panel_height"
         android:gravity="center"
-        android:textSize="30sp"
+        android:textSize="20dp"
+        android:textStyle="bold"
         android:textColor="@color/list_background"
         android:background="@color/basic_blue"
         android:text="@string/welcome_string"
@@ -18,9 +19,10 @@
 
     <Button
         android:id="@+id/btn_share_welcomeScreen"
-        android:layout_width="300dp"
+        android:layout_width="150dp"
         android:layout_height="130dp"
-        android:textSize="30sp"
+        android:textSize="20dp"
+        android:textStyle="bold"
         android:textColor="@color/basic_blue"
         android:drawingCacheQuality="high"
         android:text="@string/publish"
@@ -29,9 +31,10 @@
         android:layout_centerHorizontal="true" />
     <Button
         android:id="@+id/btn_pick_welcomeScreen"
-        android:layout_width="300dp"
+        android:layout_width="150dp"
         android:layout_height="130dp"
-        android:textSize="30sp"
+        android:textSize="20dp"
+        android:textStyle="bold"
         android:textColor="@color/basic_blue"
         android:drawingCacheQuality="high"
         android:text="@string/pickup"
