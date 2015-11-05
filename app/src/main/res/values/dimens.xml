@@ -108,4 +108,18 @@
 
     <!-- ============== -->
 
+    <!-- Report dialog -->
+
+    <dimen name="report_dialog_padding_right">13dp</dimen>
+    <dimen name="report_dialog_height">48dp</dimen>
+
+    <!-- ============== -->
+    <!-- Collector details dialog -->
+
+    <dimen name="collector_dialog_margin">13dp</dimen>
+    <dimen name="collector_dialog_height">48dp</dimen>
+
+
+    <!-- ============== -->
+
 </resources>

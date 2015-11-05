@@ -726,10 +726,12 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
+
                 if (!CheckInternetForAction(getString(R.string.action_leave_report)))
                     return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
+
                 break;
             case R.id.btn_facebook_my_pub_details:
                 growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
@@ -764,7 +766,9 @@ public class PublicationDetailsActivity
                 break;
             case R.id.btn_register_unregister_pub_details:
                 //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
-                if (!CheckInternetForAction(isRegisteredForCurrentPublication
+
+
+                /*if (!CheckInternetForAction(isRegisteredForCurrentPublication
                         ? getString(R.string.action_unregister_from_pub)
                         : getString(R.string.action_register_to_pub)))
                     return;
@@ -782,7 +786,31 @@ public class PublicationDetailsActivity
                     RegisterUnregisterReportService.startActionUnRegisterFromPub(this, newRegistrationForPub);
                 } else {
                     RegisterUnregisterReportService.startActionRegisterToPub(this, newRegistrationForPub);
-                }
+                }*/
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.collector_details_dialog);
+                Button cancel = (Button) dialog.findViewById(R.id.btn_cancel_dialog_collector);
+                Button register = (Button) dialog.findViewById(R.id.btn_sign_dialog_collector);
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                register.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                dialog.show();
+
+
+
                 break;
             case R.id.btn_call_owner_pub_details:
                 growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
@@ -997,16 +1025,20 @@ public class PublicationDetailsActivity
     private void ShowReportDialog() {
         final Dialog reportDialog = new Dialog(this);
         reportDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        reportDialog.setContentView(R.layout.select_report_dialog);
+        reportDialog.setContentView(R.layout.report_dialog);
 
-        Button btn_whole = (Button) reportDialog.findViewById(R.id.btn_whole_report_dialog);
-        Button btn_half = (Button) reportDialog.findViewById(R.id.btn_half_report_dialog);
-        Button btn_few = (Button) reportDialog.findViewById(R.id.btn_few_report_dialog);
+        Button btn_whole = (Button) reportDialog.findViewById(R.id.btn_report_dialog_collected_part);
+        Button btn_half = (Button) reportDialog.findViewById(R.id.btn_report_dialog_collected_all);
+        Button btn_nothing = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
+        Button btn_cancel = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
+        Button btn_report = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
 
         ReportButtonListener listener = new ReportButtonListener(reportDialog, this);
         btn_whole.setOnClickListener(listener);
         btn_half.setOnClickListener(listener);
-        btn_few.setOnClickListener(listener);
+        btn_nothing.setOnClickListener(listener);
+        btn_cancel.setOnClickListener(listener);
+        btn_report.setOnClickListener(listener);
 
         reportDialog.show();
 
@@ -1053,14 +1085,20 @@ public class PublicationDetailsActivity
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.btn_whole_report_dialog:
+                case R.id.btn_report_dialog_collected_part:
                     reportId = 1;
                     break;
-                case R.id.btn_half_report_dialog:
+                case R.id.btn_report_dialog_collected_all:
                     reportId = 3;
                     break;
-                case R.id.btn_few_report_dialog:
-                    reportId = 5;
+                case R.id.btn_report_dialog_found_nothing:
+                    //reportId = 5;
+                    break;
+                case R.id.btn_report_dialog_cancel:
+                        dialog.dismiss();
+                    break;
+                case R.id.btn_report_dialog_report:
+
                     break;
             }
             dialog.dismiss();
