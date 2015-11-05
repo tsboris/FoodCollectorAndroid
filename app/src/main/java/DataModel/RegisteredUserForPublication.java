@@ -160,6 +160,8 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
         deviceData.put("date_of_registration", getDate_registered_unix_time());
         deviceData.put("active_device_dev_uuid", getDevice_registered_uuid());
         deviceData.put("publication_version", getPublication_version());
+        deviceData.put("collector_contact_info", "0545454543");
+        deviceData.put("collector_name", "vitaly");
         Map<String, Object> dataToSend = new HashMap<String, Object>();
         dataToSend.put("registered_user_for_publication", deviceData);
 

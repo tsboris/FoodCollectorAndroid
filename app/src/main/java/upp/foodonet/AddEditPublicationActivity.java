@@ -769,7 +769,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 ReturnPublication();
                 break;
             case R.id.et_title_new_publication:
-                RemoveValidationFromEditText(et_publication_title);
+                CommonUtil.RemoveValidationFromEditText(this, et_publication_title);
                 break;
             case R.id.et_address_edit_add_pub:
 //                et_publication_title.getBackground()
@@ -778,7 +778,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 //ShowAddressDialog();
                 break;
             case R.id.actv_address_new_publication:
-                RemoveValidationFromEditText(atv_address);
+                CommonUtil.RemoveValidationFromEditText(this, atv_address);
                 break;
             case R.id.btn_address_dialog_ok:
                 if (!ValidateAddressLineAndLocationData()) return;
@@ -849,39 +849,39 @@ public class AddEditPublicationActivity extends FragmentActivity
     private boolean ValidateTitle() {
         //check title
         if (et_publication_title.getText().toString().length() == 0) {
-            SetEditTextIsValid(et_publication_title, false);
+            CommonUtil.SetEditTextIsValid(this, et_publication_title, false);
             Toast.makeText(this, getString(R.string.validation_title_empty), Toast.LENGTH_LONG).show();
             return false;
         }
         //todo: check max lenght of title
         if (et_publication_title.getText().toString().length() >= 10000) {//HARDCODE!!!
-            SetEditTextIsValid(et_publication_title, false);
+            CommonUtil.SetEditTextIsValid(this, et_publication_title, false);
             Toast.makeText(this, getString(
                             R.string.validation_title_too_long).replace("{0}", String.valueOf(10000)),
                     Toast.LENGTH_LONG).show();
             return false;
         }
-        SetEditTextIsValid(et_publication_title, true);
+        CommonUtil.SetEditTextIsValid(this, et_publication_title, true);
         return true;
     }
 
     private boolean ValidateAddress() {
         if (et_address.getText().toString().length() == 0) {
-            SetEditTextIsValid(et_address, false);
+            CommonUtil.SetEditTextIsValid(this, et_address, false);
             Toast.makeText(this, getString(R.string.validation_address_empty), Toast.LENGTH_LONG).show();
             return false;
         }
-        SetEditTextIsValid(et_address, true);
+        CommonUtil.SetEditTextIsValid(this, et_address, true);
         return true;
     }
 
     private boolean ValidateAddressLineAndLocationData() {
         if (atv_address.getText().toString().length() == 0) {
-            SetEditTextIsValid(atv_address, false);
+            CommonUtil.SetEditTextIsValid(this, atv_address, false);
             Toast.makeText(this, getString(R.string.validation_address_empty), Toast.LENGTH_LONG).show();
             return false;
         } else
-            SetEditTextIsValid(atv_address, true);
+            CommonUtil.SetEditTextIsValid(this, atv_address, true);
         if (latitudeTmpForEdit == -1000 || longitudeTmpForEdit == -1000) {
             iv_address_dialog_location_validation.setImageDrawable(
                     getResources().getDrawable(R.drawable.validation_wrong));
@@ -889,22 +889,22 @@ public class AddEditPublicationActivity extends FragmentActivity
             Toast.makeText(this, getString(R.string.validation_location_empty), Toast.LENGTH_LONG).show();
             return false;
         }
-        SetEditTextIsValid(atv_address, true);
+        CommonUtil.SetEditTextIsValid(this, atv_address, true);
         return true;
     }
 
     private boolean ValidateAdditionalInfoField() {
         if (et_additional_info.getText().length() == 0) {
-            SetEditTextIsValid(et_additional_info, false);
+            CommonUtil.SetEditTextIsValid(this, et_additional_info, false);
             Toast.makeText(this, getString(R.string.validation_phone_number_empty), Toast.LENGTH_LONG).show();
             return false;
         }
-        if (!CheckPhoneNumberString(et_additional_info.getText().toString())) {
-            SetEditTextIsValid(et_additional_info, false);
+        if (!CommonUtil.CheckPhoneNumberString(this, et_additional_info.getText().toString())) {
+            CommonUtil.SetEditTextIsValid(this, et_additional_info, false);
             Toast.makeText(this, getString(R.string.validation_phone_number_invalid), Toast.LENGTH_LONG).show();
             return false;
         }
-        SetEditTextIsValid(et_additional_info, true);
+        CommonUtil.SetEditTextIsValid(this, et_additional_info, true);
         return true;
     }
 
@@ -920,34 +920,11 @@ public class AddEditPublicationActivity extends FragmentActivity
         return true;
     }
 
-    private void SetEditTextIsValid(EditText field, boolean isValid) {
-        field.getBackground()
-                .setColorFilter(isValid ? getResources().getColor(R.color.validation_green_text_color) :
-                        getResources().getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
-        Bitmap validationBitmap = CommonUtil.decodeScaledBitmapFromDrawableResource(getResources(),
-                isValid ? R.drawable.validation_ok : R.drawable.validation_wrong,
-                getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size),
-                getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size));
-        Drawable validationDrawable = new BitmapDrawable(validationBitmap);
-        field.setCompoundDrawablesWithIntrinsicBounds(validationDrawable, null, null, null);
-    }
-
-    private void RemoveValidationFromEditText(EditText field) {
-        field.getBackground().setColorFilter(getResources()
-                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
-        field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-    }
-
-    private boolean CheckPhoneNumberString(String phoneNumber) {
-        String phonePattern = getString(R.string.regex_israel_phone_number);
-        return phoneNumber.matches(phonePattern);
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (v.getId()) {
             case R.id.et_address_edit_add_pub:
-                RemoveValidationFromEditText(et_publication_title);
+                CommonUtil.RemoveValidationFromEditText(this, et_publication_title);
                 if (!addressDialogStarted)
                     ShowAddressDialog();
                 break;
@@ -989,7 +966,7 @@ public class AddEditPublicationActivity extends FragmentActivity
             longitudeTmpForEdit = selectedAddress.getValue().longitude;
             isGoogleAddress = true;
             if (atv_address != null)
-                SetEditTextIsValid(atv_address, true);
+                CommonUtil.SetEditTextIsValid(this, atv_address, true);
             if (iv_address_dialog_location_validation != null)
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
             if(progressDialog != null){

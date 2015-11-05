@@ -13,6 +13,7 @@
         android:layout_height="@dimen/top_panel_height">
 
         <TextView
+            android:id="@+id/tv_title_pub_details"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
@@ -21,7 +22,8 @@
             android:gravity="center"
             android:text="@string/publication_details_title"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="20dp"
+            android:textStyle="bold"/>
 
         <ImageButton
             android:id="@+id/btn_menu_pub_details"
@@ -54,13 +56,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_title_pub_details"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/pub_details_pub_title_height"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"

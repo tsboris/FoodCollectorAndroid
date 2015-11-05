@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amazonaws.util.IOUtils;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
@@ -32,10 +35,12 @@ import upp.foodonet.R;
 public class SideMenuCursorAdapter extends CursorAdapter {
 
     Context context;
+    private Map<Integer, Drawable> imageDictionary;
 
     public SideMenuCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, 0);
         this.context = context;
+        imageDictionary = new HashMap<>();
     }
 
     // The newView method is used to inflate a new view and return it,
@@ -65,7 +70,9 @@ public class SideMenuCursorAdapter extends CursorAdapter {
         //this can be used to programmaticaly change score background
         View score_sircle = (View) view.findViewById(R.id.v_oval_score_background);
 
+        SetPublicationImage(cursor, riv_image, context.getResources().getInteger(R.integer.pub_list_item_image_size_side_menu));
 
+/*
         riv_image.setImageDrawable(context.getResources().getDrawable(R.drawable.default_publication_icon_side_menu));
         final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
         final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
@@ -83,6 +90,7 @@ public class SideMenuCursorAdapter extends CursorAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
 
 /*
         byte[] imageBytes = cursor.getBlob(cursor.getColumnIndex(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY));
@@ -106,4 +114,21 @@ public class SideMenuCursorAdapter extends CursorAdapter {
         tv_score.setBackground(shapeDrawable);
 */
     }
+
+    private void SetPublicationImage(Cursor cursor, ImageView publicationImage, int imageSize) {
+        final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
+        final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
+        Drawable imageDrawable;
+        if (imageDictionary.containsKey(id))
+            publicationImage.setImageDrawable(imageDictionary.get(id));
+        else {
+            imageDrawable = CommonUtil.GetImageFromFileForPublicationCursor(context, cursor, imageSize);
+            if (imageDrawable != null) {
+                publicationImage.setImageDrawable(imageDrawable);
+                imageDictionary.put(id, imageDrawable);
+            } else
+                publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
+        }
+    }
+
 }

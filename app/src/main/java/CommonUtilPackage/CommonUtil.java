@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.provider.Settings.Secure;
+import android.widget.EditText;
 
 import DataModel.FCPublication;
 import upp.foodonet.R;
@@ -429,5 +431,30 @@ public class CommonUtil {
         locationAsync.setIMEI(GetIMEI(context));
         locationAsync.execute();
     }
+
+    public static boolean CheckPhoneNumberString(Context context, String phoneNumber) {
+        String phonePattern = context.getString(R.string.regex_israel_phone_number);
+        return phoneNumber.matches(phonePattern);
+    }
+
+    public static void SetEditTextIsValid(Context context, EditText field, boolean isValid) {
+        field.getBackground()
+                .setColorFilter(isValid ? context.getResources().getColor(R.color.validation_green_text_color) :
+                        context.getResources().getColor(R.color.validation_red_text_color), PorterDuff.Mode.SRC_ATOP);
+        Bitmap validationBitmap = CommonUtil.decodeScaledBitmapFromDrawableResource(context.getResources(),
+                isValid ? R.drawable.validation_ok : R.drawable.validation_wrong,
+                context.getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size),
+                context.getResources().getDimensionPixelSize(R.dimen.address_dialog_validation_img_size));
+        Drawable validationDrawable = new BitmapDrawable(validationBitmap);
+        field.setCompoundDrawablesWithIntrinsicBounds(validationDrawable, null, null, null);
+    }
+
+    public static void RemoveValidationFromEditText(Context context, EditText field) {
+        field.getBackground().setColorFilter(context.getResources()
+                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+        field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+    }
+
+
 
 }
