@@ -157,6 +157,29 @@
     <string name="validation_cant_get_my_location">אופס‫..‬ המיקום לא התקבל‫.‬ נסה שוב</string>
     <string name="address_search">חיפוש כתובת</string>
 
+    <!-- Collector dialog details -->
+
+    <string name="collector_dialog_sign_title">רישום לאיסוף</string>
+    <string name="collector_dialog_register_text">יש למלא פרטי התקשרות כדי להצתרף לאיסוף</string>
+    <string name="collector_dialog_name_et">שם</string>
+    <string name="collector_dialog_phone_et">טלפון</string>
+    <string name="collector_dialog_sign_btn">הרשם</string>
+    <string name="collector_dialog_cancel_btn">בטל</string>
+
+    <!-- Collector details -->
+    <string name="collector_details_name_too_short">השם אמור להכיל לפחות שני אותיות</string>
+    <string name="collector_details_phone_too_short">מספר הטל׳ אמור להכיל לפחות שני מספרים</string>
+    <string name="collector_details_phone_incorrect">מספר הטלפון לא תקין</string>
+
+    <!-- Report dialog details -->
+
+    <string name="report_dialog_report_title">דווח על איסוף</string>
+    <string name="report_dialog_collected_part_btn">אספתי חלק</string>
+    <string name="report_dialog_collected_all_btn">אספתי הכל</string>
+    <string name="report_dialog_found_nothing_btn">לא נמצא כלום</string>
+    <string name="report_dialog_report_btn">דווח</string>
+    <string name="report_dialog_cancel_btn">בטל</string>
+
     <!-- Publication details -->
 
     <string name="progress_taking_pub_off_air">מעדכן שיתוף</string>

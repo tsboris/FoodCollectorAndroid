@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -745,10 +746,12 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
+
                 if (!CheckInternetForAction(getString(R.string.action_leave_report)))
                     return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
+
                 break;
             case R.id.btn_facebook_my_pub_details:
                 growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
@@ -782,26 +785,57 @@ public class PublicationDetailsActivity
                 SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
-                //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
-                if (!CheckInternetForAction(isRegisteredForCurrentPublication
-                        ? getString(R.string.action_unregister_from_pub)
-                        : getString(R.string.action_register_to_pub)))
-                    return;
-                progressDialog = CommonUtil.ShowProgressDialog(this,
-                        isRegisteredForCurrentPublication
-                                ? getString(R.string.progress_unregistering_from_pub)
-                                : getString(R.string.progress_registration_to_pub));
-                RegisteredUserForPublication newRegistrationForPub
-                        = new RegisteredUserForPublication();
-                newRegistrationForPub.setDate_registered(new Date());
-                newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
-                newRegistrationForPub.setPublication_id(publication.getUniqueId());
-                newRegistrationForPub.setPublication_version(publication.getVersion());
-                if (isRegisteredForCurrentPublication) {
-                    RegisterUnregisterReportService.startActionUnRegisterFromPub(this, newRegistrationForPub);
-                } else {
-                    RegisterUnregisterReportService.startActionRegisterToPub(this, newRegistrationForPub);
-                }
+                growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.collector_details_dialog);
+                Button cancel = (Button)dialog.findViewById(R.id.btn_cancel_dialog_collector);
+                Button register = (Button)dialog.findViewById(R.id.btn_sign_dialog_collector);
+                final EditText collectorName = (EditText)dialog.findViewById(R.id.et_name_dialog_collector);
+                final EditText collectorPhone = (EditText)dialog.findViewById(R.id.et_phone_dialog_collector);
+                collectorName.setText(GetContactInfoNameFromSharedPreferences());
+                collectorPhone.setText(GetContactInfoPhoneFromSharedPreferences());
+
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                register.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        collectorNameAndPhonePutter(collectorName, collectorPhone);
+
+                        if(collectorNameAndPhonevalidate){
+                            if (!CheckInternetForAction(isRegisteredForCurrentPublication
+                                    ? getString(R.string.action_unregister_from_pub)
+                                    : getString(R.string.action_register_to_pub)))
+                                return;
+                            progressDialog = CommonUtil.ShowProgressDialog(PublicationDetailsActivity.this,
+                                    isRegisteredForCurrentPublication
+                                            ? getString(R.string.progress_unregistering_from_pub)
+                                            : getString(R.string.progress_registration_to_pub));
+                            RegisteredUserForPublication newRegistrationForPub
+                                    = new RegisteredUserForPublication();
+                            newRegistrationForPub.setDate_registered(new Date());
+                            newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(PublicationDetailsActivity.this));
+                            newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                            newRegistrationForPub.setPublication_version(publication.getVersion());
+                            if (isRegisteredForCurrentPublication) {
+                                RegisterUnregisterReportService.startActionUnRegisterFromPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                            } else {
+                                RegisterUnregisterReportService.startActionRegisterToPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                            }
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+                dialog.show();
                 break;
             case R.id.btn_call_owner_pub_details:
                 growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
@@ -842,6 +876,41 @@ public class PublicationDetailsActivity
                 startActivity(intentFullSizeActivity);
                 break;
         }
+    }
+public boolean collectorNameAndPhonevalidate = false;
+public void collectorNameAndPhonePutter(EditText name,EditText phone){
+    if(collectorNameValidate(name)&&collectorPhoneValidate(phone)){
+        PutNameAndPhoneToSharedPreferences(name.getText().toString(),phone.getText().toString());
+        collectorNameAndPhonevalidate = true;
+    }
+    else {collectorNameAndPhonevalidate = false;}
+}
+
+public boolean collectorNameValidate(EditText collectorName){
+    if (collectorName.getText().toString().length() < 2) {
+        CommonUtil.SetEditTextIsValid(this, collectorName, false);
+        Toast.makeText(this, getString(R.string.collector_details_name_too_short), Toast.LENGTH_LONG).show();
+    return false;}
+    else{
+        CommonUtil.SetEditTextIsValid(this, collectorName, true);
+        return true;
+    }
+}
+    public boolean collectorPhoneValidate(EditText collectorPhone){
+        if (collectorPhone.getText().toString().length() < 10) {
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, false);
+            Toast.makeText(this, getString(R.string.collector_details_phone_too_short), Toast.LENGTH_LONG).show();
+            return false;
+        }
+       /* else if(!CommonUtil.CheckPhoneNumberString(this,collectorPhone.toString())){
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, false);
+            Toast.makeText(this, getString(R.string.collector_details_phone_incorrect), Toast.LENGTH_LONG).show();
+            return false;
+        }*/
+        else{
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, true);
+
+        return true;}
     }
 
     private void PutNameAndPhoneToSharedPreferences(String name, String phoneNum){
@@ -1035,16 +1104,20 @@ public class PublicationDetailsActivity
     private void ShowReportDialog() {
         final Dialog reportDialog = new Dialog(this);
         reportDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        reportDialog.setContentView(R.layout.select_report_dialog);
+        reportDialog.setContentView(R.layout.report_dialog);
 
-        Button btn_whole = (Button) reportDialog.findViewById(R.id.btn_whole_report_dialog);
-        Button btn_half = (Button) reportDialog.findViewById(R.id.btn_half_report_dialog);
-        Button btn_few = (Button) reportDialog.findViewById(R.id.btn_few_report_dialog);
+        Button btn_whole = (Button) reportDialog.findViewById(R.id.btn_report_dialog_collected_part);
+        Button btn_half = (Button) reportDialog.findViewById(R.id.btn_report_dialog_collected_all);
+        Button btn_nothing = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
+        Button btn_cancel = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
+        Button btn_report = (Button) reportDialog.findViewById(R.id.btn_report_dialog_found_nothing);
 
         ReportButtonListener listener = new ReportButtonListener(reportDialog, this);
         btn_whole.setOnClickListener(listener);
         btn_half.setOnClickListener(listener);
-        btn_few.setOnClickListener(listener);
+        btn_nothing.setOnClickListener(listener);
+        btn_cancel.setOnClickListener(listener);
+        btn_report.setOnClickListener(listener);
 
         reportDialog.show();
 
@@ -1091,14 +1164,20 @@ public class PublicationDetailsActivity
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.btn_whole_report_dialog:
+                case R.id.btn_report_dialog_collected_part:
                     reportId = 1;
                     break;
-                case R.id.btn_half_report_dialog:
+                case R.id.btn_report_dialog_collected_all:
                     reportId = 3;
                     break;
-                case R.id.btn_few_report_dialog:
-                    reportId = 5;
+                case R.id.btn_report_dialog_found_nothing:
+                    //reportId = 5;
+                    break;
+                case R.id.btn_report_dialog_cancel:
+                        dialog.dismiss();
+                    break;
+                case R.id.btn_report_dialog_report:
+
                     break;
             }
             dialog.dismiss();

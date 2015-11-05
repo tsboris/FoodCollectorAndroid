@@ -250,7 +250,7 @@ public class SplashScreenActivity
         switch (regResult){
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL:
                 Toast.makeText(getBaseContext(), "problem registering device!", Toast.LENGTH_LONG);
-                return;
+               // return;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
                 // if register succeed
                 // start scheduler service
