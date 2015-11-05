@@ -113,7 +113,11 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
     public void OnServerRespondedCallback(InternalRequest response) {
         switch (response.ActionCommand){
             case InternalRequest.ACTION_PUSH_NEW_PUB:
-                if(response.Status == InternalRequest.STATUS_OK){
+                if(response.Status == InternalRequest.STATUS_OK
+                        && response.publicationForSaving != null){
+                    if(response.publicationForSaving.getPublisherUID().compareTo(CommonUtil.GetIMEI(this)) == 0)
+                        return;
+
                     FooDoNetSQLExecuterAsync sqlExecuterAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                     sqlExecuterAsync.execute(response);
                 }

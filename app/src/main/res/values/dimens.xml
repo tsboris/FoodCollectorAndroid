@@ -73,6 +73,7 @@
     <dimen name="pub_list_item_image_top_bottom_margin">10dp</dimen>
     <integer name="pub_list_item_image_size_others">100</integer>
     <integer name="pub_list_item_image_size_my">90</integer>
+    <integer name="pub_list_item_image_size_side_menu">42</integer>
     <dimen name="my_pub_list_item_title_text_size">16dp</dimen>
     <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
     <dimen name="my_pub_list_text_block_height">40dp</dimen>

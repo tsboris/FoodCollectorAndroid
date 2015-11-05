@@ -834,8 +834,6 @@ public class PublicationDetailsActivity
                     width = point.x;
                     height = point.y;
                 }
-
-
                 Drawable imageD = CommonUtil.GetBitmapDrawableFromFile(
                         CommonUtil.GetFileNameByPublication(publication),
                         getString(R.string.image_folder_path), width, height);
@@ -843,8 +841,29 @@ public class PublicationDetailsActivity
                 intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(intentFullSizeActivity);
                 break;
-
         }
+    }
+
+    private void PutNameAndPhoneToSharedPreferences(String name, String phoneNum){
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        if(sp.contains(getString(R.string.shared_preferences_contact_info_name)))
+            editor.remove(getString(R.string.shared_preferences_contact_info_name));
+        if(sp.contains(getString(R.string.shared_preferences_contact_info_phone)))
+            editor.remove(getString(R.string.shared_preferences_contact_info_phone));
+        editor.putString(getString(R.string.shared_preferences_contact_info_name), name);
+        editor.putString(getString(R.string.shared_preferences_contact_info_phone), phoneNum);
+        editor.commit();
+    }
+
+    private String GetContactInfoNameFromSharedPreferences(){
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
+        return sp.getString(getString(R.string.shared_preferences_contact_info_name), "");
+    }
+
+    private String GetContactInfoPhoneFromSharedPreferences(){
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
+        return sp.getString(getString(R.string.shared_preferences_contact_info_phone), "");
     }
 
     private boolean CheckIfMyLocationAvailableAndAskReportConfirmation() {

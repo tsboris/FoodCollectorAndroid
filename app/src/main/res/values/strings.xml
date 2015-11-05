@@ -118,6 +118,9 @@
     <string name="shared_preferences_is_registered_key">is_registered_key</string>
     <string name="shared_preferences_pending_broadcast">pending_broadcast</string>
     <string name="shared_preferences_pending_broadcast_value">pending_broadcast_value</string>
+    <string name="shared_preferences_contact_info">contact_info</string>
+    <string name="shared_preferences_contact_info_name">contact_info_name</string>
+    <string name="shared_preferences_contact_info_phone">contact_info_phone</string>
 
     <!-- Amazon base url for pictures -->
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
