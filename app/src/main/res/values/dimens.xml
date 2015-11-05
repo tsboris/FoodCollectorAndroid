@@ -48,7 +48,7 @@
     <color name="list_item_title">#333300</color>
     <color name="event_list_item_background_onair">#99FF33</color>
     <color name="event_list_item_background_expired">#FF8080</color>
-    <color name="basic_blue">#0079FF</color>
+    <color name="basic_blue">#3197d3</color>
     <color name="inactive_blue">#66AFFF</color>
     <color name="transparent">#00000000</color>
     <!-- ====================== -->
@@ -76,6 +76,7 @@
     <integer name="pub_list_item_image_size_side_menu">42</integer>
     <dimen name="my_pub_list_item_title_text_size">16dp</dimen>
     <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
+    <dimen name="my_pub_list_item_distance_text_size">12dp</dimen>
     <dimen name="my_pub_list_text_block_height">40dp</dimen>
 
     <!-- ============================ -->
