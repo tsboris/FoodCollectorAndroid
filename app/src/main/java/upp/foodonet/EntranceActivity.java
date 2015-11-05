@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -39,6 +40,7 @@ public class EntranceActivity
 
     private static final String MY_TAG = "food_EntanceActivity";
     Button btn_pick, btn_share, btn_ask;
+    TextView tv_pick, tv_share;
     boolean isUIBlocked;
     ProgressDialog progressDialog;
 
@@ -59,18 +61,22 @@ public class EntranceActivity
         //=====
 
         btn_share = (Button)findViewById(R.id.btn_share_welcomeScreen);
+        tv_share = (TextView)findViewById(R.id.tv_share_welcomeScreen);
         btn_pick = (Button)findViewById(R.id.btn_pick_welcomeScreen);
+        tv_pick = (TextView)findViewById(R.id.tv_pick_welcomeScreen);
         btn_ask = (Button)findViewById(R.id.btn_ask_welcomeScreen);
         btn_pick.setOnClickListener(this);
+        tv_pick.setOnClickListener(this);
         btn_share.setOnClickListener(this);
+        tv_share.setOnClickListener(this);
 
         btn_ask.setOnClickListener(this);
 
-        Drawable img_give = getResources().getDrawable( R.drawable.donate_v6_3x );
-        Drawable img_take = getResources().getDrawable( R.drawable.collect_v6_3x);
+        Drawable img_give = getResources().getDrawable( R.drawable.first_screen_collect_xxh );
+        Drawable img_take = getResources().getDrawable( R.drawable.first_screen_donate_xxh);
         Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
-        img_give.setBounds(0, 0, 90, 90);
-        img_take.setBounds(0, 0, 90, 90);
+        img_give.setBounds(0, 0, 250, 250);
+        img_take.setBounds(0, 0, 250, 250);
         img_ask.setBounds(0, 0, 90, 90);
         btn_share.setCompoundDrawables(null, null, img_give, null);
             btn_share.setCompoundDrawablePadding(10);
@@ -167,11 +173,13 @@ public class EntranceActivity
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         switch (v.getId()){
             case R.id.btn_pick_welcomeScreen:
+            case R.id.tv_pick_welcomeScreen:
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);
                 //mapListIntent.putExtra("service", boundedService);
                 startActivity(mapListIntent);
                 break;
             case R.id.btn_share_welcomeScreen:
+            case R.id.tv_share_welcomeScreen:
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 //myPubsIntent.putExtra("service", boundedService);
                 startActivity(myPubsIntent);

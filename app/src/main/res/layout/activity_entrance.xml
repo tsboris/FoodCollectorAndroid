@@ -17,31 +17,67 @@
         android:text="@string/welcome_string"
         android:layout_weight="0.10" />
 
-    <Button
-        android:id="@+id/btn_share_welcomeScreen"
-        android:layout_width="150dp"
-        android:layout_height="130dp"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="@color/basic_blue"
-        android:drawingCacheQuality="high"
-        android:text="@string/publish"
-        android:background="@color/transparent"
-        android:layout_below="@+id/btn_pick_welcomeScreen"
-        android:layout_centerHorizontal="true" />
-    <Button
-        android:id="@+id/btn_pick_welcomeScreen"
-        android:layout_width="150dp"
-        android:layout_height="130dp"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="@color/basic_blue"
-        android:drawingCacheQuality="high"
-        android:text="@string/pickup"
-        android:background="@color/transparent"
-        android:layout_below="@+id/welcome"
-        android:layout_alignLeft="@+id/btn_share_welcomeScreen"
-        android:layout_alignStart="@+id/btn_share_welcomeScreen" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/tv_share_welcomeScreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/publish"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/basic_blue"/>
+        <Button
+            android:id="@+id/btn_share_welcomeScreen"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            android:textColor="@color/basic_blue"
+            android:drawingCacheQuality="high"
+            android:background="@color/transparent"
+            android:layout_below="@+id/btn_pick_welcomeScreen"
+            android:layout_centerHorizontal="true" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/tv_pick_welcomeScreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pickup"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/basic_blue"/>
+       <Button
+            android:id="@+id/btn_pick_welcomeScreen"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            android:textColor="@color/basic_blue"
+            android:drawingCacheQuality="high"
+            android:background="@color/transparent"
+            android:layout_below="@+id/welcome"
+            android:layout_alignLeft="@+id/btn_share_welcomeScreen"
+            android:layout_alignStart="@+id/btn_share_welcomeScreen" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <Button
         android:id="@+id/btn_ask_welcomeScreen"
         android:layout_width="300dp"
@@ -54,5 +90,6 @@
         android:layout_alignLeft="@+id/btn_share_welcomeScreen"
         android:layout_alignStart="@+id/btn_share_welcomeScreen"
         android:visibility="gone"/>
-
+    </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

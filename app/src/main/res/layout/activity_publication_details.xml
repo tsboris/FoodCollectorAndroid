@@ -67,6 +67,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="-40dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -100,7 +102,8 @@
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
                     android:text="@string/pub_det_on_the_way_to_take"
-                    android:textSize="14dp" />
+                    android:textSize="14dp"
+                    android:textColor="@color/edit_text_input_default_color"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -115,8 +118,9 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="8dp"
-                    android:layout_marginTop="10dp"
-                    android:textSize="14dp" />
+                    android:layout_marginTop="15dp"
+                    android:textSize="14dp"
+                    android:textColor="@color/edit_text_input_default_color"/>
 
                 <TextView
                     android:id="@+id/tv_distance_pub_details"
@@ -125,12 +129,12 @@
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/tv_address_pub_details"
                     android:layout_marginRight="8dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="0dp"
                     android:fontFamily="Arial"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:textSize="14dp"
-                    android:textStyle="italic" />
+                    android:textSize="12dp"
+                    android:textColor="@color/edit_text_input_default_color"/>
             </RelativeLayout>
 
         </LinearLayout>
@@ -161,9 +165,9 @@
         <ImageButton
             android:id="@+id/btn_register_unregister_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -172,9 +176,9 @@
         <ImageButton
             android:id="@+id/btn_navigate_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -183,9 +187,9 @@
         <ImageButton
             android:id="@+id/btn_message_owner_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -194,10 +198,10 @@
         <ImageButton
             android:id="@+id/btn_call_owner_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -213,9 +217,9 @@
         <ImageButton
             android:id="@+id/btn_facebook_my_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -224,9 +228,9 @@
         <ImageButton
             android:id="@+id/btn_tweet_my_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -235,9 +239,9 @@
         <ImageButton
             android:id="@+id/btn_message_reged_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -246,10 +250,10 @@
         <ImageButton
             android:id="@+id/btn_call_reged_pub_details"
             android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_height="56dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="17dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"

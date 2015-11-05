@@ -50,8 +50,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="24dp"
+            android:layout_marginRight="17dp"
             android:gravity="right|center_vertical"
+            android:textColor="@color/edit_text_input_default_color"
             android:textSize="@dimen/my_pub_list_item_end_date_text_size" />
 
     </RelativeLayout>

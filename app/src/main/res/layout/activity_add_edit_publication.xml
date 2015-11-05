@@ -54,7 +54,8 @@
         android:layout_below="@+id/imgAddPicture"
         android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
         android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
-        android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub">
+        android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub"
+        android:textColorHighlight="@color/basic_blue">
         <!--<requestFocus />-->
     </EditText>
     
@@ -65,7 +66,8 @@
         android:layout_below="@+id/et_title_new_publication"
         android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
         android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:textColorHighlight="@color/basic_blue"/>
 
 
     <!--<AutoCompleteTextView-->
@@ -166,7 +168,8 @@
         android:hint="@string/add_phoneNumber_string"
         android:ems="10"
         android:inputType="phone"
-        android:layout_below="@+id/btn_end_date_time_add_pub" />
+        android:layout_below="@+id/btn_end_date_time_add_pub"
+        android:textColorHighlight="@color/basic_blue"/>
 
     <EditText
         android:id="@+id/et_subtitle_add_edit_pub"
@@ -174,7 +177,8 @@
         android:layout_height="48dp"
         android:hint="@string/another_details_string"
         android:ems="10"
-        android:layout_below="@+id/et_additional_info_add_edit_pub"/>
+        android:layout_below="@+id/et_additional_info_add_edit_pub"
+        android:textColorHighlight="@color/basic_blue"/>
 
     <ImageButton
         android:layout_width="45dp"
