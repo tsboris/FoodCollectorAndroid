@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -784,33 +785,17 @@ public class PublicationDetailsActivity
                 SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
-                //growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
+                growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
 
-
-                /*if (!CheckInternetForAction(isRegisteredForCurrentPublication
-                        ? getString(R.string.action_unregister_from_pub)
-                        : getString(R.string.action_register_to_pub)))
-                    return;
-                progressDialog = CommonUtil.ShowProgressDialog(this,
-                        isRegisteredForCurrentPublication
-                                ? getString(R.string.progress_unregistering_from_pub)
-                                : getString(R.string.progress_registration_to_pub));
-                RegisteredUserForPublication newRegistrationForPub
-                        = new RegisteredUserForPublication();
-                newRegistrationForPub.setDate_registered(new Date());
-                newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
-                newRegistrationForPub.setPublication_id(publication.getUniqueId());
-                newRegistrationForPub.setPublication_version(publication.getVersion());
-                if (isRegisteredForCurrentPublication) {
-                    RegisterUnregisterReportService.startActionUnRegisterFromPub(this, newRegistrationForPub);
-                } else {
-                    RegisterUnregisterReportService.startActionRegisterToPub(this, newRegistrationForPub);
-                }*/
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.collector_details_dialog);
-                Button cancel = (Button) dialog.findViewById(R.id.btn_cancel_dialog_collector);
-                Button register = (Button) dialog.findViewById(R.id.btn_sign_dialog_collector);
+                Button cancel = (Button)dialog.findViewById(R.id.btn_cancel_dialog_collector);
+                Button register = (Button)dialog.findViewById(R.id.btn_sign_dialog_collector);
+                final EditText collectorName = (EditText)dialog.findViewById(R.id.et_name_dialog_collector);
+                final EditText collectorPhone = (EditText)dialog.findViewById(R.id.et_phone_dialog_collector);
+                collectorName.setText(GetContactInfoNameFromSharedPreferences());
+                collectorPhone.setText(GetContactInfoPhoneFromSharedPreferences());
 
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -823,13 +808,34 @@ public class PublicationDetailsActivity
                     @Override
                     public void onClick(View v) {
 
+                        collectorNameAndPhonePutter(collectorName, collectorPhone);
+
+                        if(collectorNameAndPhonevalidate){
+                            if (!CheckInternetForAction(isRegisteredForCurrentPublication
+                                    ? getString(R.string.action_unregister_from_pub)
+                                    : getString(R.string.action_register_to_pub)))
+                                return;
+                            progressDialog = CommonUtil.ShowProgressDialog(PublicationDetailsActivity.this,
+                                    isRegisteredForCurrentPublication
+                                            ? getString(R.string.progress_unregistering_from_pub)
+                                            : getString(R.string.progress_registration_to_pub));
+                            RegisteredUserForPublication newRegistrationForPub
+                                    = new RegisteredUserForPublication();
+                            newRegistrationForPub.setDate_registered(new Date());
+                            newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(PublicationDetailsActivity.this));
+                            newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                            newRegistrationForPub.setPublication_version(publication.getVersion());
+                            if (isRegisteredForCurrentPublication) {
+                                RegisterUnregisterReportService.startActionUnRegisterFromPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                            } else {
+                                RegisterUnregisterReportService.startActionRegisterToPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                            }
+                            dialog.dismiss();
+                        }
                     }
                 });
 
                 dialog.show();
-
-
-
                 break;
             case R.id.btn_call_owner_pub_details:
                 growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
@@ -870,6 +876,41 @@ public class PublicationDetailsActivity
                 startActivity(intentFullSizeActivity);
                 break;
         }
+    }
+public boolean collectorNameAndPhonevalidate = false;
+public void collectorNameAndPhonePutter(EditText name,EditText phone){
+    if(collectorNameValidate(name)&&collectorPhoneValidate(phone)){
+        PutNameAndPhoneToSharedPreferences(name.getText().toString(),phone.getText().toString());
+        collectorNameAndPhonevalidate = true;
+    }
+    else {collectorNameAndPhonevalidate = false;}
+}
+
+public boolean collectorNameValidate(EditText collectorName){
+    if (collectorName.getText().toString().length() < 2) {
+        CommonUtil.SetEditTextIsValid(this, collectorName, false);
+        Toast.makeText(this, getString(R.string.collector_details_name_too_short), Toast.LENGTH_LONG).show();
+    return false;}
+    else{
+        CommonUtil.SetEditTextIsValid(this, collectorName, true);
+        return true;
+    }
+}
+    public boolean collectorPhoneValidate(EditText collectorPhone){
+        if (collectorPhone.getText().toString().length() < 10) {
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, false);
+            Toast.makeText(this, getString(R.string.collector_details_phone_too_short), Toast.LENGTH_LONG).show();
+            return false;
+        }
+       /* else if(!CommonUtil.CheckPhoneNumberString(this,collectorPhone.toString())){
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, false);
+            Toast.makeText(this, getString(R.string.collector_details_phone_incorrect), Toast.LENGTH_LONG).show();
+            return false;
+        }*/
+        else{
+            CommonUtil.SetEditTextIsValid(this, collectorPhone, true);
+
+        return true;}
     }
 
     private void PutNameAndPhoneToSharedPreferences(String name, String phoneNum){

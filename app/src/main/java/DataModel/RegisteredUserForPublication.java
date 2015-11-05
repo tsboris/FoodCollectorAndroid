@@ -73,6 +73,22 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
         device_registered_uuid = val;
     }
 
+    private String collectorName;
+    public String getCollectorName(){
+        return collectorName;
+    }
+    public void setCollectorName(String name){
+        collectorName = name;
+    }
+
+    private String collectorPhone;
+    public String getCollectorphone(){
+        return collectorPhone;
+    }
+    public void setCollectorphone(String phone){
+        collectorPhone = phone;
+    }
+
     public static String[] GetColumnNamesArray() {
         return
                 new String[]{
@@ -160,8 +176,8 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
         deviceData.put("date_of_registration", getDate_registered_unix_time());
         deviceData.put("active_device_dev_uuid", getDevice_registered_uuid());
         deviceData.put("publication_version", getPublication_version());
-        deviceData.put("collector_contact_info", "0545454543");
-        deviceData.put("collector_name", "vitaly");
+        deviceData.put("collector_contact_info", getCollectorphone());
+        deviceData.put("collector_name", getCollectorName());
         Map<String, Object> dataToSend = new HashMap<String, Object>();
         dataToSend.put("registered_user_for_publication", deviceData);
 

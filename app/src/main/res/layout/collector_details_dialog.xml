@@ -28,7 +28,9 @@
             android:layout_gravity="center_horizontal" />
 
     <EditText
+        android:singleLine="true"
         android:id="@+id/et_name_dialog_collector"
+        android:inputType="textShortMessage"
         android:layout_width="match_parent"
         android:layout_height="@dimen/collector_dialog_height"
         android:textColorHighlight="@color/basic_blue"

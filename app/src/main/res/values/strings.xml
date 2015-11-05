@@ -166,6 +166,11 @@
     <string name="collector_dialog_sign_btn">הרשם</string>
     <string name="collector_dialog_cancel_btn">בטל</string>
 
+    <!-- Collector details -->
+    <string name="collector_details_name_too_short">השם אמור להכיל לפחות שני אותיות</string>
+    <string name="collector_details_phone_too_short">מספר הטל׳ אמור להכיל לפחות שני מספרים</string>
+    <string name="collector_details_phone_incorrect">מספר הטלפון לא תקין</string>
+
     <!-- Report dialog details -->
 
     <string name="report_dialog_report_title">דווח על איסוף</string>

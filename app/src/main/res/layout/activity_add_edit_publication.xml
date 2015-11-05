@@ -165,6 +165,7 @@
         android:layout_height="48dp"
         android:hint="@string/add_phoneNumber_string"
         android:ems="10"
+        android:inputType="phone"
         android:layout_below="@+id/btn_end_date_time_add_pub" />
 
     <EditText
