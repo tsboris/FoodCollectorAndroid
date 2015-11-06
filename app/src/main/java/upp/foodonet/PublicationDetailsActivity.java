@@ -316,8 +316,6 @@ public class PublicationDetailsActivity
                         ? R.drawable.cancel_rishum_pub_det_btn
                         : R.drawable.rishum_pub_det_btn));
 
-        ;
-
 
         btn_reg_unreg.setImageDrawable(image);
 
