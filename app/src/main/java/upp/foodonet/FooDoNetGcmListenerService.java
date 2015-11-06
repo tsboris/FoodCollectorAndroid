@@ -179,22 +179,22 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
             case InternalRequest.ACTION_PUSH_NEW_PUB:
                 intent = new Intent(this, MapAndListActivity.class);
                 intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
-                message = "New publication near you";
+                message = getString(R.string.notif_new_pub);
 
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
                 intent = new Intent(this, SplashScreenActivity.class);
-                message = "Publication was deleted";
+                message = getString(R.string.notif_was_deleted);
                 break;
             case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
                 intent = new Intent(this, MapAndListActivity.class);
                 intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
                 intent.putExtra(PUBLICATION_NUMBER, pushObject.Report);
-                message = "Report for publication";
+                message = getString(R.string.notif_report);
             case InternalRequest.ACTION_PUSH_REG:
                 intent = new Intent(this, MapAndListActivity.class);
                 intent.putExtra(PUBLICATION_NUMBER, publication.getUniqueId());
-                message = "New user was registered to publication";
+                message = getString(R.string.notif_new_registered_user);
                 break;
         }
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
