@@ -60,7 +60,8 @@
     <string name="pub_det_metr_from_you">מטרים ממקומך</string>
     <string name="pub_det_calculating_distance">מחשב מרחק...</string>
     <string name="pub_det_cant_get_distance">מרחק לא ידוע</string>
-    <string name="pub_det_reports_for_pub">דיווחים:</string>
+    <string name="pub_det_reports_for_pub">דיווחי משתמשים</string>
+    <string name="pub_det_no_reports_for_pub">אין דיווחים</string>
     <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
     <string name="participants_report">Report on participants</string>
     <string name="going_to_collect">persons are going to collect</string>

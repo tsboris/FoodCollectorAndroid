@@ -51,6 +51,8 @@
     <color name="basic_blue">#3197d3</color>
     <color name="inactive_blue">#66AFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="number_of_reged_users_blue">#0099FF</color>
+    <color name="number_of_reged_users_green">#009933</color>
     <!-- ====================== -->
 
     <!-- === Map constants == -->

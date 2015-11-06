@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -128,6 +129,7 @@ public class PublicationDetailsActivity
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
     ListView lv_reports;
+    TextView tv_no_reports;
     TextView tv_start_dateTime_details, tv_end_dateTime_details;
 
     LinearLayout ll_button_panel_my;
@@ -180,6 +182,7 @@ public class PublicationDetailsActivity
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
         tv_start_dateTime_details = (TextView) findViewById(R.id.tv_start_time_pub_details);
         tv_end_dateTime_details = (TextView) findViewById(R.id.tv_end_time_pub_details);
+        tv_no_reports = (TextView)findViewById(R.id.tv_no_reports_for_pub);
 
 
         tv_title.setText(publication.getTitle());
@@ -322,6 +325,9 @@ public class PublicationDetailsActivity
         iv_num_of_reged.setImageDrawable(isRegisteredForCurrentPublication
                 ? getResources().getDrawable(R.drawable.user_icon_green)
                 : getResources().getDrawable(R.drawable.user_icon_blue));
+        tv_num_of_reged.setTextColor(isRegisteredForCurrentPublication
+                ? getResources().getColor(R.color.number_of_reged_users_green)
+                : getResources().getColor(R.color.number_of_reged_users_blue));
         btn_leave_report.setVisibility(isRegisteredForCurrentPublication ? View.VISIBLE : View.GONE);
     }
 
@@ -366,9 +372,14 @@ public class PublicationDetailsActivity
     private void SetReportsList() {
         if (publication.getPublicationReports() == null
                 || publication.getPublicationReports().size() == 0) {
-            ll_reports_panel.setVisibility(View.GONE);
+            tv_no_reports.setVisibility(View.VISIBLE);
+            lv_reports.setVisibility(View.GONE);
             return;
         }
+        else
+            tv_no_reports.setVisibility(View.GONE);
+
+
         adapter = new PublicationDetailsReportsAdapter(this,
                 R.layout.pub_details_report_item, publication.getPublicationReports());
         lv_reports.setAdapter(adapter);
