@@ -224,8 +224,12 @@
     <string name="no">לא</string>
 
     <!-- -->
-    <string name="title_activity_web_view">WebViewActivity</string>
-    <string name="title_activity_share_to_twitter">ShareToTwitterActivity</string>
 
+    <!-- Notification messages -->
+
+    <string name="notif_new_pub">שיתוף חדש בקרבתך</string>
+    <string name="notif_was_deleted">שיתוף נמחק</string>
+    <string name="notif_report">התקבל דיווח חדש על השיתוף</string>
+    <string name="notif_new_registered_user">משתמש חדש נרשם לשיתוף</string>
 
 </resources>
