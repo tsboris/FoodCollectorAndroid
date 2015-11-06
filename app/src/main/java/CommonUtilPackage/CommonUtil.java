@@ -330,7 +330,7 @@ public class CommonUtil {
         String hours = (calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
         String minutes = (calendar.get(Calendar.MINUTE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MINUTE));
         String days = (calendar.get(Calendar.DATE) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.DATE));
-        String month = (calendar.get(Calendar.MONTH) < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH));
+        String month = (calendar.get(Calendar.MONTH) + 1 < 10 ? "0" : "") + String.valueOf(calendar.get(Calendar.MONTH) + 1);
         String years = String.valueOf(calendar.get(Calendar.YEAR));
         return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
     }

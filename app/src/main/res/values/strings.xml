@@ -199,12 +199,16 @@
     <string name="action_delete">מחיקה של שיתוף</string>
     <string name="action_failed">שעולה נכשלה: {0}</string>
     <string name="action_succeeded">{0} בוצע בהצלחה!</string>
+    <string name="validation_register_name_empty">שדה שם לא יכול להיות ריק</string>
+    <string name="validation_register_phone_invalid">מספר טלפון לא תקין</string>
 
     <!-- All publications list -->
 
     <!-- My publications list -->
 
     <string name="progress_saving">שמירה</string>
+    <string name="new_pub_waiting_for_save_on_server">שיתוף תרם נשמר בשרת, נה להמתין</string>
+    <string name="progress_saving_on_server">בתהליך שמירה בשרת</string>
 
     <!-- Entrance activity -->
 

@@ -37,7 +37,6 @@ public class EntranceActivity
         implements View.OnClickListener, IFooDoNetSQLCallback, IFooDoNetServerCallback {
 
 
-
     private static final String MY_TAG = "food_EntanceActivity";
     Button btn_pick, btn_share, btn_ask;
     TextView tv_pick, tv_share;
@@ -60,11 +59,11 @@ public class EntranceActivity
         //welcomeView.setBackgroundColor(Color.BLUE);
         //=====
 
-        btn_share = (Button)findViewById(R.id.btn_share_welcomeScreen);
-        tv_share = (TextView)findViewById(R.id.tv_share_welcomeScreen);
-        btn_pick = (Button)findViewById(R.id.btn_pick_welcomeScreen);
-        tv_pick = (TextView)findViewById(R.id.tv_pick_welcomeScreen);
-        btn_ask = (Button)findViewById(R.id.btn_ask_welcomeScreen);
+        btn_share = (Button) findViewById(R.id.btn_share_welcomeScreen);
+        tv_share = (TextView) findViewById(R.id.tv_share_welcomeScreen);
+        btn_pick = (Button) findViewById(R.id.btn_pick_welcomeScreen);
+        tv_pick = (TextView) findViewById(R.id.tv_pick_welcomeScreen);
+        btn_ask = (Button) findViewById(R.id.btn_ask_welcomeScreen);
         btn_pick.setOnClickListener(this);
         tv_pick.setOnClickListener(this);
         btn_share.setOnClickListener(this);
@@ -72,14 +71,14 @@ public class EntranceActivity
 
         btn_ask.setOnClickListener(this);
 
-        Drawable img_give = getResources().getDrawable( R.drawable.first_screen_collect_xxh );
-        Drawable img_take = getResources().getDrawable( R.drawable.first_screen_donate_xxh);
-        Drawable img_ask = getResources().getDrawable( R.drawable.collect_v6_3x);
-        img_give.setBounds(0, 0, 250, 250);
-        img_take.setBounds(0, 0, 250, 250);
-        img_ask.setBounds(0, 0, 90, 90);
+        Drawable img_give = getResources().getDrawable(R.drawable.first_screen_collect_xxh);
+        Drawable img_take = getResources().getDrawable(R.drawable.first_screen_donate_xxh);
+        Drawable img_ask = getResources().getDrawable(R.drawable.collect_v6_3x);
+        img_give.setBounds(0, 0, 80, 80);
+        img_take.setBounds(0, 0, 80, 80);
+        //img_ask.setBounds(0, 0, 90, 90);
         btn_share.setCompoundDrawables(null, null, img_give, null);
-            btn_share.setCompoundDrawablePadding(10);
+        //btn_share.setCompoundDrawablePadding(10);
         btn_pick.setCompoundDrawables(null, null, img_take, null);
         btn_ask.setCompoundDrawables(null, null, img_ask, null);
 
@@ -115,7 +114,7 @@ public class EntranceActivity
 
     @Override
     protected void onPause() {
-        if(progressDialog != null)
+        if (progressDialog != null)
             progressDialog.dismiss();
         super.onPause();
     }
@@ -167,11 +166,11 @@ public class EntranceActivity
 
     @Override
     public void onClick(View v) {
-        if(isUIBlocked)
+        if (isUIBlocked)
             return;
         isUIBlocked = true;
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_pick_welcomeScreen:
             case R.id.tv_pick_welcomeScreen:
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);
@@ -191,15 +190,15 @@ public class EntranceActivity
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        switch (request.ActionCommand){
+        switch (request.ActionCommand) {
             case InternalRequest.ACTION_PUSH_NEW_PUB:
-                Log.i(MY_TAG, "fetched single pub from server: " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                Log.i(MY_TAG, "fetched single pub from server: " + (request.Status == InternalRequest.STATUS_OK ? "ok" : "fail"));
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:
-                Log.i(MY_TAG, "deleted pub from db: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                Log.i(MY_TAG, "deleted pub from db: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK ? "ok" : "fail"));
                 break;
             case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
-                Log.i(MY_TAG, "new report added: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK? "ok":"fail"));
+                Log.i(MY_TAG, "new report added: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK ? "ok" : "fail"));
                 break;
         }
 
@@ -219,9 +218,9 @@ public class EntranceActivity
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
-        switch (response.ActionCommand){
+        switch (response.ActionCommand) {
             case InternalRequest.ACTION_PUSH_NEW_PUB:
-                if(response.Status == InternalRequest.STATUS_OK){
+                if (response.Status == InternalRequest.STATUS_OK) {
                     FooDoNetSQLExecuterAsync sqlExecuterAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                     sqlExecuterAsync.execute(response);
                 }

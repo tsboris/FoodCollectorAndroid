@@ -138,6 +138,10 @@ public class PublicationDetailsActivity
 
     PopupMenu popup;
 
+    Dialog registerDialog;
+    EditText et_registerContactName, et_registerContactPhone;
+    Button btn_registerOk, btn_registerCancel;
+
     public static final String SHARED_PREF_PENDING_BROADCAST_KEY = "pending_broadcast";
 
     //region Activity
@@ -244,9 +248,9 @@ public class PublicationDetailsActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(progressDialog != null && progressDialog.isShowing()){
+        if (progressDialog != null && progressDialog.isShowing()) {
             SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
-            if(!sp.contains(getString(R.string.shared_preferences_pending_broadcast_value)))
+            if (!sp.contains(getString(R.string.shared_preferences_pending_broadcast_value)))
                 Log.e(MY_TAG, "progress bar showing, but no pending broadcast");
             Intent intent = new Intent();
             intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
@@ -412,7 +416,8 @@ public class PublicationDetailsActivity
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.facebook.katana"));
             startActivity(intent);
         }
-
+        if (progressDialog != null)
+            progressDialog.dismiss();
     }
     // endregion
 
@@ -787,55 +792,88 @@ public class PublicationDetailsActivity
             case R.id.btn_register_unregister_pub_details:
                 growAnim(R.drawable.cancel_rishum_pub_det_btn, R.drawable.rishum_pub_det_btn, btn_reg_unreg);
 
-                final Dialog dialog = new Dialog(this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.collector_details_dialog);
-                Button cancel = (Button)dialog.findViewById(R.id.btn_cancel_dialog_collector);
-                Button register = (Button)dialog.findViewById(R.id.btn_sign_dialog_collector);
-                final EditText collectorName = (EditText)dialog.findViewById(R.id.et_name_dialog_collector);
-                final EditText collectorPhone = (EditText)dialog.findViewById(R.id.et_phone_dialog_collector);
-                collectorName.setText(GetContactInfoNameFromSharedPreferences());
-                collectorPhone.setText(GetContactInfoPhoneFromSharedPreferences());
+                if (!CheckInternetForAction(isRegisteredForCurrentPublication
+                        ? getString(R.string.action_unregister_from_pub)
+                        : getString(R.string.action_register_to_pub)))
+                    return;
 
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                register.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        collectorNameAndPhonePutter(collectorName, collectorPhone);
-
-                        if(collectorNameAndPhonevalidate){
-                            if (!CheckInternetForAction(isRegisteredForCurrentPublication
-                                    ? getString(R.string.action_unregister_from_pub)
-                                    : getString(R.string.action_register_to_pub)))
-                                return;
-                            progressDialog = CommonUtil.ShowProgressDialog(PublicationDetailsActivity.this,
-                                    isRegisteredForCurrentPublication
-                                            ? getString(R.string.progress_unregistering_from_pub)
-                                            : getString(R.string.progress_registration_to_pub));
-                            RegisteredUserForPublication newRegistrationForPub
-                                    = new RegisteredUserForPublication();
-                            newRegistrationForPub.setDate_registered(new Date());
-                            newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(PublicationDetailsActivity.this));
-                            newRegistrationForPub.setPublication_id(publication.getUniqueId());
-                            newRegistrationForPub.setPublication_version(publication.getVersion());
-                            if (isRegisteredForCurrentPublication) {
-                                RegisterUnregisterReportService.startActionUnRegisterFromPub(PublicationDetailsActivity.this, newRegistrationForPub);
-                            } else {
-                                RegisterUnregisterReportService.startActionRegisterToPub(PublicationDetailsActivity.this, newRegistrationForPub);
-                            }
-                            dialog.dismiss();
-                        }
-                    }
-                });
-
-                dialog.show();
+                if (!isRegisteredForCurrentPublication) {
+                    registerDialog = new Dialog(this);
+                    registerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    registerDialog.setContentView(R.layout.collector_details_dialog);
+                    btn_registerCancel = (Button) registerDialog.findViewById(R.id.btn_cancel_dialog_collector);
+                    btn_registerCancel.setOnClickListener(this);
+                    btn_registerOk = (Button) registerDialog.findViewById(R.id.btn_sign_dialog_collector);
+                    btn_registerOk.setOnClickListener(this);
+                    et_registerContactName = (EditText) registerDialog.findViewById(R.id.et_name_dialog_collector);
+                    et_registerContactPhone = (EditText) registerDialog.findViewById(R.id.et_phone_dialog_collector);
+                    et_registerContactName.setText(GetContactInfoNameFromSharedPreferences());
+                    et_registerContactPhone.setText(GetContactInfoPhoneFromSharedPreferences());
+                    et_registerContactName.setOnClickListener(this);
+                    et_registerContactPhone.setOnClickListener(this);
+                    registerDialog.show();
+                } else {
+                    progressDialog
+                            = CommonUtil.ShowProgressDialog(PublicationDetailsActivity.this,
+                            getString(R.string.progress_unregistering_from_pub));
+                    RegisteredUserForPublication newRegistrationForPub
+                            = new RegisteredUserForPublication();
+                    newRegistrationForPub.setDate_registered(new Date());
+                    newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(PublicationDetailsActivity.this));
+                    newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                    newRegistrationForPub.setPublication_version(publication.getVersion());
+                    newRegistrationForPub.setCollectorName("");
+                    newRegistrationForPub.setCollectorphone("");
+                    RegisterUnregisterReportService.startActionUnRegisterFromPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                }
+                break;
+            case R.id.btn_cancel_dialog_collector:
+                if (registerDialog != null)
+                    registerDialog.dismiss();
+                et_registerContactName = null;
+                et_registerContactPhone = null;
+                btn_registerOk = null;
+                btn_registerCancel = null;
+                break;
+            case R.id.btn_sign_dialog_collector:
+                String name = et_registerContactName.getText().toString();
+                String phone = et_registerContactPhone.getText().toString();
+                if (name.length() == 0) {
+                    CommonUtil.SetEditTextIsValid(this, et_registerContactName, false);
+                    Toast.makeText(this, getString(R.string.validation_register_name_empty), Toast.LENGTH_LONG).show();
+                    return;
+                } else
+                    CommonUtil.SetEditTextIsValid(this, et_registerContactName, true);
+                if (!CommonUtil.CheckPhoneNumberString(this, phone)) {
+                    CommonUtil.SetEditTextIsValid(this, et_registerContactPhone, false);
+                    Toast.makeText(this, getString(R.string.validation_register_phone_invalid), Toast.LENGTH_LONG).show();
+                    return;
+                } else
+                    CommonUtil.SetEditTextIsValid(this, et_registerContactPhone, true);
+                PutNameAndPhoneToSharedPreferences(name, phone);
+                registerDialog.dismiss();
+                et_registerContactName = null;
+                et_registerContactPhone = null;
+                btn_registerOk = null;
+                btn_registerCancel = null;
+                progressDialog
+                        = CommonUtil.ShowProgressDialog(PublicationDetailsActivity.this,
+                        getString(R.string.progress_registration_to_pub));
+                RegisteredUserForPublication newRegistrationForPub
+                        = new RegisteredUserForPublication();
+                newRegistrationForPub.setDate_registered(new Date());
+                newRegistrationForPub.setDevice_registered_uuid(CommonUtil.GetIMEI(PublicationDetailsActivity.this));
+                newRegistrationForPub.setPublication_id(publication.getUniqueId());
+                newRegistrationForPub.setPublication_version(publication.getVersion());
+                newRegistrationForPub.setCollectorName(name);
+                newRegistrationForPub.setCollectorphone(phone);
+                RegisterUnregisterReportService.startActionRegisterToPub(PublicationDetailsActivity.this, newRegistrationForPub);
+                break;
+            case R.id.et_name_dialog_collector:
+                CommonUtil.RemoveValidationFromEditText(this, et_registerContactName);
+                break;
+            case R.id.et_phone_dialog_collector:
+                CommonUtil.RemoveValidationFromEditText(this, et_registerContactPhone);
                 break;
             case R.id.btn_call_owner_pub_details:
                 growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
@@ -877,26 +915,19 @@ public class PublicationDetailsActivity
                 break;
         }
     }
-public boolean collectorNameAndPhonevalidate = false;
-public void collectorNameAndPhonePutter(EditText name,EditText phone){
-    if(collectorNameValidate(name)&&collectorPhoneValidate(phone)){
-        PutNameAndPhoneToSharedPreferences(name.getText().toString(),phone.getText().toString());
-        collectorNameAndPhonevalidate = true;
-    }
-    else {collectorNameAndPhonevalidate = false;}
-}
 
-public boolean collectorNameValidate(EditText collectorName){
-    if (collectorName.getText().toString().length() < 2) {
-        CommonUtil.SetEditTextIsValid(this, collectorName, false);
-        Toast.makeText(this, getString(R.string.collector_details_name_too_short), Toast.LENGTH_LONG).show();
-    return false;}
-    else{
-        CommonUtil.SetEditTextIsValid(this, collectorName, true);
-        return true;
+    public boolean collectorNameValidate(EditText collectorName) {
+        if (collectorName.getText().toString().length() < 2) {
+            CommonUtil.SetEditTextIsValid(this, collectorName, false);
+            Toast.makeText(this, getString(R.string.collector_details_name_too_short), Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            CommonUtil.SetEditTextIsValid(this, collectorName, true);
+            return true;
+        }
     }
-}
-    public boolean collectorPhoneValidate(EditText collectorPhone){
+
+    public boolean collectorPhoneValidate(EditText collectorPhone) {
         if (collectorPhone.getText().toString().length() < 10) {
             CommonUtil.SetEditTextIsValid(this, collectorPhone, false);
             Toast.makeText(this, getString(R.string.collector_details_phone_too_short), Toast.LENGTH_LONG).show();
@@ -907,30 +938,31 @@ public boolean collectorNameValidate(EditText collectorName){
             Toast.makeText(this, getString(R.string.collector_details_phone_incorrect), Toast.LENGTH_LONG).show();
             return false;
         }*/
-        else{
+        else {
             CommonUtil.SetEditTextIsValid(this, collectorPhone, true);
 
-        return true;}
+            return true;
+        }
     }
 
-    private void PutNameAndPhoneToSharedPreferences(String name, String phoneNum){
+    private void PutNameAndPhoneToSharedPreferences(String name, String phoneNum) {
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        if(sp.contains(getString(R.string.shared_preferences_contact_info_name)))
+        if (sp.contains(getString(R.string.shared_preferences_contact_info_name)))
             editor.remove(getString(R.string.shared_preferences_contact_info_name));
-        if(sp.contains(getString(R.string.shared_preferences_contact_info_phone)))
+        if (sp.contains(getString(R.string.shared_preferences_contact_info_phone)))
             editor.remove(getString(R.string.shared_preferences_contact_info_phone));
         editor.putString(getString(R.string.shared_preferences_contact_info_name), name);
         editor.putString(getString(R.string.shared_preferences_contact_info_phone), phoneNum);
         editor.commit();
     }
 
-    private String GetContactInfoNameFromSharedPreferences(){
+    private String GetContactInfoNameFromSharedPreferences() {
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
         return sp.getString(getString(R.string.shared_preferences_contact_info_name), "");
     }
 
-    private String GetContactInfoPhoneFromSharedPreferences(){
+    private String GetContactInfoPhoneFromSharedPreferences() {
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE);
         return sp.getString(getString(R.string.shared_preferences_contact_info_phone), "");
     }
@@ -1018,7 +1050,7 @@ public boolean collectorNameValidate(EditText collectorName){
         return true;
     }
 
-    private void DeletePublication(){
+    private void DeletePublication() {
         if (progressDialog != null)
             progressDialog.dismiss();
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_delete_pub));
@@ -1137,10 +1169,10 @@ public boolean collectorNameValidate(EditText collectorName){
 
     @Override
     public void OnSQLTaskComplete(InternalRequest request) {
-        switch (request.ActionCommand){
+        switch (request.ActionCommand) {
             case InternalRequest.ACTION_DELETE_PUBLICATION:
                 CommonUtil.RemoveImageByPublication(publication, this);
-                if(progressDialog != null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(DETAILS_ACTIVITY_RESULT_KEY, InternalRequest.ACTION_DELETE_PUBLICATION);
@@ -1174,7 +1206,7 @@ public boolean collectorNameValidate(EditText collectorName){
                     //reportId = 5;
                     break;
                 case R.id.btn_report_dialog_cancel:
-                        dialog.dismiss();
+                    dialog.dismiss();
                     break;
                 case R.id.btn_report_dialog_report:
 

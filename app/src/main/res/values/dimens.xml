@@ -77,7 +77,7 @@
     <dimen name="my_pub_list_item_title_text_size">16dp</dimen>
     <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
     <dimen name="my_pub_list_item_distance_text_size">12dp</dimen>
-    <dimen name="my_pub_list_text_block_height">40dp</dimen>
+    <dimen name="my_pub_list_text_block_height">60dp</dimen>
 
     <!-- ============================ -->
 

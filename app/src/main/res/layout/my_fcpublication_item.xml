@@ -32,20 +32,31 @@
             android:gravity="right|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="@dimen/my_pub_list_item_title_text_size"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <View
             android:id="@+id/v_dot_my_pubs_list"
             android:layout_width="@dimen/dot_size_my_pubs_list"
             android:layout_height="@dimen/dot_size_my_pubs_list"
-            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/green_rounded_dot_my_pubs"
-            android:gravity="right|center_vertical"
-            android:layout_marginBottom="4dp"/>
+            android:gravity="right|center_vertical" />
 
         <TextView
             android:id="@+id/tv_end_date_my_pubs_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="17dp"
+            android:gravity="right|center_vertical"
+            android:textColor="@color/edit_text_input_default_color"
+            android:textSize="@dimen/my_pub_list_item_end_date_text_size" />
+
+        <TextView
+            android:id="@+id/tv_warning_my_pub_list_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

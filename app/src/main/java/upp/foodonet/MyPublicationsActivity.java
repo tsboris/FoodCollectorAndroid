@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
@@ -332,6 +333,10 @@ public class MyPublicationsActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(id<0){
+            Toast.makeText(this, getString(R.string.new_pub_waiting_for_save_on_server), Toast.LENGTH_LONG).show();
+            return;
+        }
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);

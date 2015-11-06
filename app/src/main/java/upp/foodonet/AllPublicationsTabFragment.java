@@ -291,7 +291,7 @@ public class AllPublicationsTabFragment
         //sv_search_in_all_pubs.onActionViewCollapsed();
         et_search_in_all_pubs.removeTextChangedListener(this);
         et_search_in_all_pubs.setText("");
-        et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.collect_v6_30x30, 0, 0, 0);
+        et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.toolbar_find, 0, 0, 0);
         InputMethodManager inputManager = (InputMethodManager)
                 context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(et_search_in_all_pubs.getWindowToken(),
@@ -392,7 +392,7 @@ public class AllPublicationsTabFragment
             et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         } else {
             //Assign your image again to the view, otherwise it will always be gone even if the text is 0 again.
-            et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.collect_v6_30x30, 0, 0, 0);
+            et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.toolbar_find, 0, 0, 0);
         }
     }
 

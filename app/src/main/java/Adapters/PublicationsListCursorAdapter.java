@@ -96,6 +96,8 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
         View dotIsActive = (View) view.findViewById(R.id.v_dot_my_pubs_list);
         TextView publicationTitle = (TextView) view.findViewById(R.id.tv_my_pub_list_item_title);
         TextView publicationEndDate = (TextView) view.findViewById(R.id.tv_end_date_my_pubs_list);
+        TextView publicationWarning = (TextView) view.findViewById(R.id.tv_warning_my_pub_list_item);
+        publicationWarning.setVisibility(View.GONE);
 
         String title = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_TITLE_KEY));
         publicationTitle.setText(title);
@@ -111,15 +113,28 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
 
         SetPublicationImage(cursor, publicationImage);
 
-        int isActiveInt = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_IS_ON_AIR_KEY));
-        switch (isActiveInt) {
-            case 1:
-                dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.green_rounded_dot_my_pubs));
-                break;
-            default:
-                dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.red_rounded_dot_my_pubs));
-                break;
+        boolean isActive = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_IS_ON_AIR_KEY)) == 1
+                && cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)) > 0;
+
+        if(isActive)
+            dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.green_rounded_dot_my_pubs));
+        else
+            dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.red_rounded_dot_my_pubs));
+
+        if(cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)) < 0){
+            publicationWarning.setVisibility(View.VISIBLE);
+            publicationWarning.setText(context.getString(R.string.progress_saving_on_server));
         }
+
+//        int isActiveInt = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_IS_ON_AIR_KEY));
+//        switch (isActiveInt) {
+//            case 1:
+//                dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.green_rounded_dot_my_pubs));
+//                break;
+//            default:
+//                dotIsActive.setBackground(context.getResources().getDrawable(R.drawable.red_rounded_dot_my_pubs));
+//                break;
+//        }
     }
 
     private void bindViewForOthersPublication(View view, Cursor cursor) {

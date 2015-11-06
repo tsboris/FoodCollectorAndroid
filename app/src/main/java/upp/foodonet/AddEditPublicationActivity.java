@@ -606,7 +606,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         final DatePicker dp = (DatePicker) dtpDialog.findViewById(R.id.dp_date_time_dialog);
         final TimePicker tp = (TimePicker) dtpDialog.findViewById(R.id.tp_date_time_dialog);
         Button btnOk = (Button) dtpDialog.findViewById(R.id.btn_ok_date_time_dialog);
-        Button btnCancel = (Button)findViewById(R.id.btn_cancel_date_time_dialog);
+        Button btnCancel = (Button)dtpDialog.findViewById(R.id.btn_cancel_date_time_dialog);
         TextView tvTitle = (TextView) dtpDialog.findViewById(R.id.tv_date_time_picker_title);
 
         final Calendar calendar = Calendar.getInstance();
