@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +39,9 @@ public class EntranceActivity
 
 
     private static final String MY_TAG = "food_EntanceActivity";
-    Button btn_pick, btn_share, btn_ask;
-    TextView tv_pick, tv_share;
+    //Button btn_pick, btn_share, btn_ask;
+    //TextView tv_pick, tv_share;
+    RelativeLayout rl_btn_pick, rl_btn_share;
     boolean isUIBlocked;
     ProgressDialog progressDialog;
 
@@ -59,6 +61,7 @@ public class EntranceActivity
         //welcomeView.setBackgroundColor(Color.BLUE);
         //=====
 
+/*
         btn_share = (Button) findViewById(R.id.btn_share_welcomeScreen);
         tv_share = (TextView) findViewById(R.id.tv_share_welcomeScreen);
         btn_pick = (Button) findViewById(R.id.btn_pick_welcomeScreen);
@@ -68,48 +71,22 @@ public class EntranceActivity
         tv_pick.setOnClickListener(this);
         btn_share.setOnClickListener(this);
         tv_share.setOnClickListener(this);
-
         btn_ask.setOnClickListener(this);
-
         Drawable img_give = getResources().getDrawable(R.drawable.first_screen_collect_xxh);
         Drawable img_take = getResources().getDrawable(R.drawable.first_screen_donate_xxh);
         Drawable img_ask = getResources().getDrawable(R.drawable.collect_v6_3x);
         img_give.setBounds(0, 0, 80, 80);
         img_take.setBounds(0, 0, 80, 80);
-        //img_ask.setBounds(0, 0, 90, 90);
         btn_share.setCompoundDrawables(null, null, img_give, null);
-        //btn_share.setCompoundDrawablePadding(10);
         btn_pick.setCompoundDrawables(null, null, img_take, null);
         btn_ask.setCompoundDrawables(null, null, img_ask, null);
+*/
 
-        //Bidi bidi = new Bidi(btn_give.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-        //Log.i("food", "bidi.getBaseLevel() = " + bidi.getBaseLevel());
+        rl_btn_share = (RelativeLayout)findViewById(R.id.rl_btn_give_entrance_screen);
+        rl_btn_share.setOnClickListener(this);
+        rl_btn_pick = (RelativeLayout)findViewById(R.id.rl_btn_take_entrance_screen);
+        rl_btn_pick.setOnClickListener(this);
 
-
-
-/*
-        TextView publishTextView = (TextView) findViewById(R.id.publishText);
-        publishTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EntranceActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-            });
-
-        RoundedImageView publishImageView = (RoundedImageView) findViewById(R.id.publishImage);
-        //publishImageView.setBackgroundColor(Color.BLUE);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.first_screen_collect);
-        publishImageView.setImageBitmap(icon);
-
-        publishImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EntranceActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        */
     }
 
     @Override
@@ -171,20 +148,20 @@ public class EntranceActivity
         isUIBlocked = true;
         progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         switch (v.getId()) {
-            case R.id.btn_pick_welcomeScreen:
-            case R.id.tv_pick_welcomeScreen:
+//            case R.id.btn_pick_welcomeScreen:
+//            case R.id.tv_pick_welcomeScreen:
+            case R.id.rl_btn_take_entrance_screen:
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);
-                //mapListIntent.putExtra("service", boundedService);
                 startActivity(mapListIntent);
                 break;
-            case R.id.btn_share_welcomeScreen:
-            case R.id.tv_share_welcomeScreen:
+//            case R.id.btn_share_welcomeScreen:
+//            case R.id.tv_share_welcomeScreen:
+            case R.id.rl_btn_give_entrance_screen:
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
-                //myPubsIntent.putExtra("service", boundedService);
                 startActivity(myPubsIntent);
                 break;
-            case R.id.btn_ask_welcomeScreen:
-                break;
+//            case R.id.btn_ask_welcomeScreen:
+//                break;
         }
     }
 

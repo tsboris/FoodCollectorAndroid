@@ -89,18 +89,24 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             case FILTER_ID_LIST_MY_BY_ENDING_SOON:
                 return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
+                        + " AND PUBS." + FCPublication.PUBLICATION_STARTING_DATE_KEY + " < " + UNIX_TIME_NOW
+                        + " AND PUBS." + FCPublication.PUBLICATION_ENDING_DATE_KEY + " > " + UNIX_TIME_NOW
                         //+ RAW_FOR_LIST_GROUP
                         + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_ENDING_DATE_KEY, true);
             case FILTER_ID_LIST_MY_ACTIVE_ID_DESC:
                 return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
                         + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
+                        + " AND PUBS." + FCPublication.PUBLICATION_STARTING_DATE_KEY + " < " + UNIX_TIME_NOW
+                        + " AND PUBS." + FCPublication.PUBLICATION_ENDING_DATE_KEY + " > " + UNIX_TIME_NOW + " "
                         //+ RAW_FOR_LIST_GROUP
                         + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, true);
             case FILTER_ID_LIST_MY_NOT_ACTIVE_ID_ASC:
                 return RAW_FOR_LIST_SELECT_MY + RAW_FOR_LIST_FROM_MY
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "=", params[0], false)
-                        + " AND PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 0 "
+                        + " AND (PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 0 "
+                        + " OR PUBS." + FCPublication.PUBLICATION_STARTING_DATE_KEY + " > " + UNIX_TIME_NOW
+                        + " OR PUBS." + FCPublication.PUBLICATION_ENDING_DATE_KEY + " < " + UNIX_TIME_NOW + ") "
                         //+ RAW_FOR_LIST_GROUP
                         + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
             //endregion
@@ -210,6 +216,8 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME
             + " WHERE " + FCPublication.PUBLICATION_PUBLISHER_UUID_KEY + " = '{0}' "
             + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " DESC ";
+
+    private static final String UNIX_TIME_NOW = "STRFTIME('%s','now')";
 
 //    public static final String RAW_SELECT_REPORTS_FOR_PUB_DETAILS
 //            = "SELECT " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_REPORT + ", "

@@ -451,7 +451,7 @@ public class CommonUtil {
 
     public static void RemoveValidationFromEditText(Context context, EditText field) {
         field.getBackground().setColorFilter(context.getResources()
-                .getColor(R.color.edit_text_input_default_color), PorterDuff.Mode.SRC_ATOP);
+                .getColor(R.color.basic_blue), PorterDuff.Mode.SRC_ATOP);
         field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 

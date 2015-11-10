@@ -61,7 +61,6 @@ public class AllPublicationsTabFragment
     private int currentFilterID;
 
     //FCPublicationListAdapter mAdapter;
-    private Context context;
     //SimpleCursorAdapter adapter;
     PublicationsListCursorAdapter adapter;
     //Animation animZoomIn;
@@ -118,16 +117,12 @@ public class AllPublicationsTabFragment
 
         currentFilterID = FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST;
         GetMyLocationAsync locationAsync
-                = new GetMyLocationAsync((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
+                = new GetMyLocationAsync((LocationManager) getActivity().getApplicationContext().getSystemService(Context.LOCATION_SERVICE), getActivity().getApplicationContext());
         locationAsync.setGotLocationCallback(this);
         isFirstLoad = true;
         locationAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return view;
-    }
-
-    public void SetContext(Context context) {
-        this.context = context;
     }
 
     @Override
@@ -155,7 +150,7 @@ public class AllPublicationsTabFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = FCPublication.GetColumnNamesForListArray();
         android.support.v4.content.CursorLoader cursorLoader
-                = new android.support.v4.content.CursorLoader(context,
+                = new android.support.v4.content.CursorLoader(getActivity().getApplicationContext(),
                 Uri.parse(FooDoNetSQLProvider.URI_GET_PUBS_FOR_LIST_BY_FILTER_ID + "/" + id),
                 projection, null, null, null);
         return cursorLoader;
@@ -192,8 +187,8 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        progressDialog = CommonUtil.ShowProgressDialog(context, getString(R.string.progress_loading));
-        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, context.getContentResolver());
+        progressDialog = CommonUtil.ShowProgressDialog(getActivity(), getString(R.string.progress_loading));
+        FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getActivity().getApplicationContext().getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = id;
         sqlGetPubAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
@@ -208,9 +203,9 @@ public class AllPublicationsTabFragment
         switch (request.ActionCommand) {
             case InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID:
                 FCPublication result = request.publicationForDetails;
-                String myIMEI = CommonUtil.GetIMEI(context);
+                String myIMEI = CommonUtil.GetIMEI(getActivity().getApplicationContext());
                 result.isOwnPublication = result.getPublisherUID().compareTo(myIMEI) == 0;
-                Intent intent = new Intent(context, PublicationDetailsActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
                 if(progressDialog != null){
@@ -228,12 +223,12 @@ public class AllPublicationsTabFragment
     public void OnGotMyLocationCallback(Location location) {
         LatLng locationData = location == null ? null : new LatLng(location.getLatitude(), location.getLongitude());
         if (locationData != null)
-            CommonUtil.UpdateFilterMyLocationPreferences(context, locationData);
+            CommonUtil.UpdateFilterMyLocationPreferences(getActivity().getApplicationContext(), locationData);
         Log.i(MY_TAG, "list got location from map");
         if (isFirstLoad) {
             Log.i(MY_TAG, "location got first time");
             isFirstLoad = false;
-            adapter = new PublicationsListCursorAdapter(context, null, 0, locationData, false);
+            adapter = new PublicationsListCursorAdapter(getActivity().getApplicationContext(), null, 0, locationData, false);
             lv_my_publications.setAdapter(adapter);
             lv_my_publications.setOnItemClickListener(this);
             StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_NEWEST);
@@ -293,7 +288,7 @@ public class AllPublicationsTabFragment
         et_search_in_all_pubs.setText("");
         et_search_in_all_pubs.setCompoundDrawablesWithIntrinsicBounds(R.drawable.toolbar_find, 0, 0, 0);
         InputMethodManager inputManager = (InputMethodManager)
-                context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(et_search_in_all_pubs.getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
         et_search_in_all_pubs.addTextChangedListener(this);
@@ -358,13 +353,13 @@ public class AllPublicationsTabFragment
     }
 
     private void CheckIfMyLocationSavedInPreferencesAndLoad() {
-        LatLng myLocationFromPreferences = CommonUtil.GetFilterLocationFromPreferences(context);
+        LatLng myLocationFromPreferences = CommonUtil.GetFilterLocationFromPreferences(getActivity().getApplicationContext());
         if (myLocationFromPreferences.latitude == -1000
                 || myLocationFromPreferences.longitude == -1000) {
             String progressMessage = getString(R.string.progress_waiting_for_location);
-            progressDialog = CommonUtil.ShowProgressDialog(context, progressMessage);
+            progressDialog = CommonUtil.ShowProgressDialog(getActivity(), progressMessage);
             GetMyLocationAsync locationTask
-                    = new GetMyLocationAsync((LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
+                    = new GetMyLocationAsync((LocationManager) getActivity().getApplicationContext().getSystemService(Context.LOCATION_SERVICE), getActivity().getApplicationContext());
             locationTask.setGotLocationCallback(this);
             waitingForMyLocationForList = true;
             locationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -382,7 +377,7 @@ public class AllPublicationsTabFragment
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (TextUtils.isEmpty(et_search_in_all_pubs.getText().toString()))
             onClick(btn_filter_newest);
-        FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(context, et_search_in_all_pubs.getText().toString());
+        FooDoNetCustomActivityConnectedToService.UpdateFilterTextPreferences(getActivity().getApplicationContext(), et_search_in_all_pubs.getText().toString());
         StartLoaderByFilterID(FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER);
     }
 

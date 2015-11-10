@@ -2,8 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="upp.foodonet"
-    android:versionCode="1"
-    android:versionName="0.01"> <!-- todo check if this uses-sdk can be removed -->
+    android:versionCode="2"
+    android:versionName="0.02"> <!-- todo check if this uses-sdk can be removed -->
+
+    <!-- for google play -->
+    <!--<uses-configuration
+        android:reqFiveWayNav="false"
+        android:reqHardKeyboard="false"
+        android:reqKeyboardType="undefined"
+        android:reqNavigation="undefined"
+        android:reqTouchScreen="undefined"/>-->
+
     <uses-sdk tools:overrideLibrary="android.support.v17.leanback" />
 
     <!-- For internet -->

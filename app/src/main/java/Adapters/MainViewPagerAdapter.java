@@ -24,15 +24,11 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     SupportMapFragment mapFragment;
     AllPublicationsTabFragment allPublicationsTabFragment;
-    Context parentContext;
     final int NUM_ITEMS = 2;
 
-    public MainViewPagerAdapter(Context context, FragmentManager fragmentManager){
+    public MainViewPagerAdapter(FragmentManager fragmentManager){
         super(fragmentManager);
-        parentContext = context;
         allPublicationsTabFragment = new AllPublicationsTabFragment();
-        allPublicationsTabFragment.SetContext(parentContext);
-        //eventsTabFragment = new ListOfEventsTabFragment();
     }
 
     public void SetMapFragment(OnMapReadyCallback mapReadyCallback){

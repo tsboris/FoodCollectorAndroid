@@ -280,7 +280,9 @@ public class PublicationDetailsActivity
             btn_leave_report.setVisibility(View.GONE);
             btn_menu.setScaleType(ImageView.ScaleType.FIT_CENTER);
             btn_menu.setOnClickListener(this);
-            if (publication.getIsOnAir()) {
+            if (publication.getIsOnAir()
+                    && publication.getStartingDate().getTime() > new Date().getTime()
+                    && publication.getEndingDate().getTime() < new Date().getTime()) {
                 btn_facebook_my.setOnClickListener(this);
                 btn_twitter_my.setOnClickListener(this);
                 btn_call_reg.setOnClickListener(this);
@@ -467,6 +469,8 @@ public class PublicationDetailsActivity
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android"));
             startActivity(intent);
         }
+        if(progressDialog != null)
+            progressDialog.dismiss();
     }
     // endregion
 
