@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,10 +90,24 @@ public class MyPublicationsActivity
         btn_navigate_take.setOnClickListener(this);
         //animZoomIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_in);
 
+        int dimenID = 0;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        switch (metrics.densityDpi){
+            case DisplayMetrics.DENSITY_LOW:
+                dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
+                break;
+            case DisplayMetrics.DENSITY_HIGH:
+                dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);
+                break;
+            default:
+                dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
+                break;
+        }
         Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);
         Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);
-        navigate_share.setBounds(0, 0, 60, 60);
-        navigate_take.setBounds(0, 0, 60, 60);
+        navigate_share.setBounds(0, 0, dimenID, dimenID);
+        navigate_take.setBounds(0, 0, dimenID, dimenID);
         btn_navigate_share.setCompoundDrawables(null, navigate_share, null, null);
         //  btn_navigate_share.setCompoundDrawablePadding(10);
         btn_navigate_take.setCompoundDrawables(null, navigate_take, null, null);

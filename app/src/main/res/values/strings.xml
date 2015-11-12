@@ -161,7 +161,7 @@
     <!-- Collector dialog details -->
 
     <string name="collector_dialog_sign_title">רישום לאיסוף</string>
-    <string name="collector_dialog_register_text">יש למלא פרטי התקשרות כדי להצתרף לאיסוף</string>
+    <string name="collector_dialog_register_text">יש למלא פרטי התקשרות כדי להצטרף לאיסוף</string>
     <string name="collector_dialog_name_et">שם</string>
     <string name="collector_dialog_phone_et">טלפון</string>
     <string name="collector_dialog_sign_btn">הרשם</string>

@@ -11,11 +11,11 @@
         android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.22"
+            android:layout_weight="0.25"
             android:layout_height="wrap_content"></RelativeLayout>
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.56"
+            android:layout_weight="0.50"
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                         android:layout_alignParentLeft="true"
                         android:text="@string/publish"
                         android:textColor="@color/basic_blue"
-                        android:textSize="20dp"
+                        android:textSize="@dimen/top_panel_text_size_hdpi"
                         android:textStyle="bold"/>
                 </RelativeLayout>
                 <RelativeLayout android:id="@+id/rl_btn_take_entrance_screen"
@@ -60,26 +60,26 @@
                         android:layout_alignParentLeft="true"
                         android:text="@string/pickup"
                         android:textColor="@color/basic_blue"
-                        android:textSize="20dp"
+                        android:textSize="@dimen/top_panel_text_size_hdpi"
                         android:textStyle="bold"/>
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.22"
+            android:layout_weight="0.25"
             android:layout_height="wrap_content"></RelativeLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/welcome"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/top_panel_height"
+        android:layout_height="@dimen/top_panel_height_hdpi"
         android:background="@color/basic_blue"
         android:gravity="center"
         android:text="@string/welcome_string"
         android:textColor="@color/list_background"
-        android:textSize="20dp"
+        android:textSize="@dimen/top_panel_text_size_hdpi"
         android:textStyle="bold" />
 
 <!--

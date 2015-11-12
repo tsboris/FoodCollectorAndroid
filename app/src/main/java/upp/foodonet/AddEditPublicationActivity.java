@@ -527,7 +527,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         Geocoder geocoder;
         List<Address> addresses = null;
 
-        geocoder = new Geocoder(this, Locale.getDefault());
+        geocoder = new Geocoder(this, new Locale("he"));
         try
         {
             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5

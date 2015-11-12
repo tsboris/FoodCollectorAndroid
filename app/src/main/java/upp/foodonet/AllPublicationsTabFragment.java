@@ -346,9 +346,14 @@ public class AllPublicationsTabFragment
         if (currentFilterID == filterID)
             RestartLoadingCursorForList();
         else {
-            adapter.swapCursor(null);
-            currentFilterID = filterID;
-            StartLoadingCursorForList(currentFilterID);
+            if(adapter == null){
+                getActivity().finish();
+                getActivity().startActivity(getActivity().getIntent());
+            } else {
+                adapter.swapCursor(null);
+                currentFilterID = filterID;
+                StartLoadingCursorForList(currentFilterID);
+            }
         }
     }
 

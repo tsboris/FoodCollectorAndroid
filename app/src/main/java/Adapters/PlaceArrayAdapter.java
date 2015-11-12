@@ -29,7 +29,7 @@ import upp.foodonet.R;
 
 public class PlaceArrayAdapter
         extends ArrayAdapter<PlaceArrayAdapter.PlaceAutocomplete> implements Filterable {
-    private static final String TAG = "PlaceArrayAdapter";
+    private static final String MY_TAG = "food_PlacesAdapter";
     private GoogleApiClient mGoogleApiClient;
     private AutocompleteFilter mPlaceFilter;
     private LatLngBounds mBounds;
@@ -70,7 +70,7 @@ public class PlaceArrayAdapter
 
     private ArrayList<PlaceAutocomplete> getPredictions(CharSequence constraint) {
         if (mGoogleApiClient != null) {
-            Log.i(TAG, "Executing autocomplete query for: " + constraint);
+            Log.i(MY_TAG, "Executing autocomplete query for: " + constraint);
             PendingResult<AutocompletePredictionBuffer> results =
                     Places.GeoDataApi
                             .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
@@ -82,15 +82,15 @@ public class PlaceArrayAdapter
             if (!status.isSuccess()) {
 //                Toast.makeText(getContext(), "Error: " + status.toString(),
 //                        Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Error getting place predictions: " + status
+                Log.e(MY_TAG, "Error getting place predictions: " + status
                         .toString());
-                Toast.makeText(getContext(), getContext().getString(R.string.error_cant_perform_this_action_without_internet).replace("{0}",
-                        getContext().getString(R.string.address_search)), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getContext(), getContext().getString(R.string.error_cant_perform_this_action_without_internet).replace("{0}",
+//                        getContext().getString(R.string.address_search)), Toast.LENGTH_LONG).show();
                 autocompletePredictions.release();
                 return null;
             }
 
-            Log.i(TAG, "Query completed. Received " + autocompletePredictions.getCount()
+            Log.i(MY_TAG, "Query completed. Received " + autocompletePredictions.getCount()
                     + " predictions.");
             Iterator<AutocompletePrediction> iterator = autocompletePredictions.iterator();
             ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
@@ -103,7 +103,7 @@ public class PlaceArrayAdapter
             autocompletePredictions.release();
             return resultList;
         }
-        Log.e(TAG, "Google API client is not connected.");
+        Log.e(MY_TAG, "Google API client is not connected.");
         return null;
     }
 

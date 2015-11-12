@@ -9,6 +9,17 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="top_panel_height">56dp</dimen>
+    <dimen name="top_panel_height_hdpi">42dp</dimen>
+    <dimen name="top_panel_height_ldpi">36dp</dimen>
+    <dimen name="top_panel_text_size">20dp</dimen>
+    <dimen name="top_panel_text_size_ldpi">16dp</dimen>
+    <dimen name="top_panel_text_size_hdpi">18dp</dimen>
+    <dimen name="top_panel_add_pub_plus_size">36dp</dimen>
+    <dimen name="top_panel_add_pub_plus_size_ldpi">24dp</dimen>
+    <dimen name="top_panel_add_pub_plus_size_hdpi">26dp</dimen>
+    <dimen name="bottom_nav_btn_img_size">50dp</dimen>
+    <dimen name="bottom_nav_btn_img_size_hdpi">42dp</dimen>
+    <dimen name="bottom_nav_btn_img_size_ldpi">36dp</dimen>
     <dimen name="side_menu_panel_width">280dp</dimen>
     <dimen name="side_menu_text_size">17sp</dimen>
     <dimen name="side_menu_item_icon_margin_right">24dp</dimen>
