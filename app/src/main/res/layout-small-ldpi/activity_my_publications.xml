@@ -15,7 +15,7 @@
         android:id="@+id/tv_my_pubs_title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textSize="@dimen/top_panel_text_size_ldpi"
+        android:textSize="@dimen/top_panel_text_size"
         android:textStyle="bold"/>
     <!-- android:layout_alignBottom="@+id/btn_add_new_myPubsLst" -->
 
@@ -50,7 +50,8 @@
             android:layout_alignLeft="@+id/textView"
             android:layout_alignStart="@+id/textView"
             android:background="@color/transparent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="@dimen/filter_btns_text_size"/>
         <Button android:id="@+id/btn_publication_active"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -60,7 +61,8 @@
             android:layout_below="@+id/textView"
             android:layout_toRightOf="@+id/button2"
             android:layout_toEndOf="@+id/button2"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="@dimen/filter_btns_text_size"/>
         <Button android:id="@+id/btn_publication_notActive"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,7 +72,8 @@
             android:layout_below="@+id/textView"
             android:layout_toRightOf="@+id/button"
             android:layout_toEndOf="@+id/button"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="@dimen/filter_btns_text_size"/>
     </LinearLayout>
     <!--<SearchView
         android:id="@+id/searchView1"

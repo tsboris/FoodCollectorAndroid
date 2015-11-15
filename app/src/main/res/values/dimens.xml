@@ -11,9 +11,9 @@
     <dimen name="top_panel_height">56dp</dimen>
     <dimen name="top_panel_height_hdpi">42dp</dimen>
     <dimen name="top_panel_height_ldpi">36dp</dimen>
-    <dimen name="top_panel_text_size">20dp</dimen>
-    <dimen name="top_panel_text_size_ldpi">16dp</dimen>
-    <dimen name="top_panel_text_size_hdpi">18dp</dimen>
+    <dimen name="top_panel_text_size">18sp</dimen>
+    <!--<dimen name="top_panel_text_size_ldpi">16dp</dimen>-->
+    <!--<dimen name="top_panel_text_size_hdpi">18dp</dimen>-->
     <dimen name="top_panel_add_pub_plus_size">36dp</dimen>
     <dimen name="top_panel_add_pub_plus_size_ldpi">24dp</dimen>
     <dimen name="top_panel_add_pub_plus_size_hdpi">26dp</dimen>
@@ -91,6 +91,7 @@
     <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
     <dimen name="my_pub_list_item_distance_text_size">12dp</dimen>
     <dimen name="my_pub_list_text_block_height">60dp</dimen>
+    <dimen name="filter_btns_text_size">16sp</dimen>
 
     <!-- ============================ -->
 
