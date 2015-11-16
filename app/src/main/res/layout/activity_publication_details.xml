@@ -22,37 +22,37 @@
             android:gravity="center"
             android:text="@string/publication_details_title"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="@dimen/top_panel_text_size"
             android:textStyle="bold"/>
 
         <ImageButton
             android:id="@+id/btn_menu_pub_details"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/pub_details_menu_width"
+            android:layout_height="@dimen/pub_details_menu_height"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="14dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginRight="@dimen/pub_details_menu_marginRight"
+            android:layout_marginTop="@dimen/pub_details_menu_marginTop"
             android:background="@color/basic_blue"
             android:scaleType="fitCenter"
             android:src="@drawable/menu_header_button"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="27sp" />
+            android:textSize="@dimen/pub_details_menu_text_size" />
 
         <Button
             android:id="@+id/btn_leave_report_pub_details"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/pub_details_btn_leave_report_width"
+            android:layout_height="@dimen/pub_details_btn_leave_report_height"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="14dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginRight="@dimen/pub_details_btn_leave_report_marginRight"
+            android:layout_marginTop="@dimen/pub_details_btn_leave_report_marginTop"
             android:background="@color/basic_blue"
             android:text="@string/leave_report_pub_details"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="17sp" />
+            android:textSize="@dimen/pub_details_top_panel_right_text_size" />
 
     </RelativeLayout>
 
@@ -64,51 +64,51 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="@dimen/pub_details_pub_props_ll_width"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="-40dp"
+            android:layout_marginLeft="@dimen/pub_details_pub_props_ll_marginLeft"
+            android:layout_marginRight="@dimen/pub_details_pub_props_ll_marginRight"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/pub_details_pub_props_rl_height"
                 android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/iv_user_reg_icon_pub_details"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="@dimen/pub_details_iv_user_reg_icon_height_width"
+                    android:layout_height="@dimen/pub_details_iv_user_reg_icon_height_width"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="22dp"
+                    android:layout_marginRight="@dimen/pub_details_iv_user_reg_icon_marginRight"
                     android:scaleType="fitCenter"
                     android:src="@drawable/user_icon_blue" />
 
                 <TextView
                     android:id="@+id/tv_num_of_reged_pub_details"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/pub_details_tv_num_of_reged_height"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
                     android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
-                    android:textSize="25dp" />
+                    android:textSize="@dimen/pub_details_tv_num_of_reged_text_size" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
                     android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
                     android:text="@string/pub_det_on_the_way_to_take"
-                    android:textSize="14dp"
+                    android:textSize="@dimen/pub_details_on_the_way_to_take_text_size"
                     android:textColor="@color/edit_text_input_default_color"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/pub_details_pub_props_rl_height"
                 android:layout_weight="1">
 
                 <TextView
@@ -117,9 +117,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="15dp"
-                    android:textSize="14dp"
+                    android:layout_marginRight="@dimen/pub_details_tv_address_marginRight"
+                    android:layout_marginTop="@dimen/pub_details_tv_address_marginTop"
+                    android:textSize="@dimen/pub_details_address_text_size"
                     android:textColor="@color/edit_text_input_default_color"/>
 
                 <TextView
@@ -128,19 +128,19 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/tv_address_pub_details"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginRight="@dimen/pub_details_tv_address_marginRight"
+                    android:layout_marginTop="@dimen/pub_details_tv_distance_marginTop"
                     android:fontFamily="Arial"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:textSize="12dp"
+                    android:textSize="@dimen/pub_details_distance_text_size"
                     android:textColor="@color/edit_text_input_default_color"/>
             </RelativeLayout>
 
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="@dimen/pub_details_riv_image_rl_width"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
@@ -164,10 +164,10 @@
 
         <ImageButton
             android:id="@+id/btn_register_unregister_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -175,10 +175,10 @@
 
         <ImageButton
             android:id="@+id/btn_navigate_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -186,10 +186,10 @@
 
         <ImageButton
             android:id="@+id/btn_message_owner_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -197,11 +197,11 @@
 
         <ImageButton
             android:id="@+id/btn_call_owner_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginRight="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -216,10 +216,10 @@
 
         <ImageButton
             android:id="@+id/btn_facebook_my_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -227,10 +227,10 @@
 
         <ImageButton
             android:id="@+id/btn_tweet_my_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -238,10 +238,10 @@
 
         <ImageButton
             android:id="@+id/btn_message_reged_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -249,11 +249,11 @@
 
         <ImageButton
             android:id="@+id/btn_call_reged_pub_details"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="17dp"
+            android:layout_width="@dimen/pub_details_btn_in_panel_width"
+            android:layout_height="@dimen/pub_details_btn_in_panel_height"
+            android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginRight="@dimen/pub_details_btn_in_panel_marginLeft"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_marginTop"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -265,10 +265,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp">
+        android:paddingBottom="@dimen/pub_details_subtitle_paddingBottomTop"
+        android:paddingLeft="@dimen/pub_details_subtitle_paddingLeftRight"
+        android:paddingRight="@dimen/pub_details_subtitle_paddingLeftRight"
+        android:paddingTop="@dimen/pub_details_subtitle_paddingBottomTop">
 
         <TextView
             android:id="@+id/tv_subtitle_pub_details"
@@ -283,34 +283,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:paddingBottom="@dimen/pub_details_time_paddingBottomTopRight"
+        android:paddingRight="@dimen/pub_details_time_paddingBottomTopRight"
+        android:paddingTop="@dimen/pub_details_time_paddingBottomTopRight">
 
         <TextView
             android:id="@+id/tv_start_time_pub_details"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/pub_details_tv_time_height"
             android:layout_gravity="right"
             android:layout_weight="1"
-            android:text="@string/title_begin_pub_details" />
+            android:text="@string/title_begin_pub_details"
+            android:textColor="@color/edit_text_input_default_color"/>
 
         <TextView
             android:id="@+id/tv_end_time_pub_details"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/pub_details_tv_time_height"
             android:layout_gravity="right"
             android:layout_weight="1"
-            android:text="@string/title_end_pub_details" />
+            android:text="@string/title_end_pub_details"
+            android:textColor="@color/edit_text_input_default_color"/>
     </LinearLayout>
 
     <LinearLayout android:id="@+id/ll_reports_list_pub_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:paddingLeft="@dimen/pub_details_reports_paddingLeftRightTop"
+        android:paddingRight="@dimen/pub_details_reports_paddingLeftRightTop"
+        android:paddingTop="@dimen/pub_details_reports_paddingLeftRightTop">
 
         <TextView
             android:layout_width="wrap_content"
@@ -332,7 +334,7 @@
             android:id="@+id/lv_list_of_reports_pub_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="@dimen/pub_details_lv_list_of_reports_marginTop"/>
 
     </LinearLayout>
     <!--
