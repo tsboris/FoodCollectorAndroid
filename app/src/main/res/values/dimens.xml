@@ -29,6 +29,7 @@
     <dimen name="side_menu_item_score_circle_size">40dp</dimen>
     <dimen name="side_menu_item_icon_size">42dp</dimen>
 
+
     <color name="white">#FFFFFF</color>
     <color name="side_menu_score_circle_red">#B80000</color>
 
@@ -38,11 +39,48 @@
     <!-- pub details screen -->
 
     <dimen name="pub_details_pub_title_height">42dp</dimen>
+    <dimen name="pub_details_menu_width">30dp</dimen>
+    <dimen name="pub_details_menu_height">30dp</dimen>
+    <dimen name="pub_details_menu_marginRight">14dp</dimen>
+    <dimen name="pub_details_menu_marginTop">14dp</dimen>
+    <dimen name="pub_details_menu_text_size">27sp</dimen>
+    <dimen name="pub_details_btn_leave_report_width">40dp</dimen>
+    <dimen name="pub_details_btn_leave_report_height">30dp</dimen>
+    <dimen name="pub_details_btn_leave_report_marginRight">14dp</dimen>
+    <dimen name="pub_details_btn_leave_report_marginTop">14dp</dimen>
+
     <dimen name="pub_details_image_size">100dp</dimen>
     <dimen name="pub_details_pub_props_panel_height">180dp</dimen>
-    <dimen name="pub_details_btns_panel_height">90dp</dimen>
-    <dimen name="pub_details_btn_height">56dp</dimen>
+    <dimen name="pub_details_pub_props_ll_width">0dp</dimen>
+    <dimen name="pub_details_pub_props_ll_marginLeft">16dp</dimen>
+    <dimen name="pub_details_pub_props_ll_marginRight">-40dp</dimen>
+    <dimen name="pub_details_pub_props_rl_height">0dp</dimen>
+    <dimen name="pub_details_iv_user_reg_icon_height_width">25dp</dimen>
+    <dimen name="pub_details_iv_user_reg_icon_marginRight">22dp</dimen>
+    <dimen name="pub_details_tv_num_of_reged_height">30dp</dimen>
+    <dimen name="pub_details_tv_num_of_reged_marginRight">5dp</dimen>
+    <dimen name="pub_details_tv_num_of_reged_text_size">25sp</dimen>
+    <dimen name="pub_details_tv_address_marginRight">8dp</dimen>
+    <dimen name="pub_details_tv_address_marginTop">15dp</dimen>
+    <dimen name="pub_details_tv_distance_marginTop">0dp</dimen>
+    <dimen name="pub_details_riv_image_rl_width">0dp</dimen>
 
+    <dimen name="pub_details_btns_panel_height">90dp</dimen>
+    <dimen name="pub_details_btn_in_panel_width">0dp</dimen>
+    <dimen name="pub_details_btn_in_panel_height">56dp</dimen>
+    <dimen name="pub_details_btn_in_panel_marginLeft">10dp</dimen>
+    <dimen name="pub_details_btn_in_panel_marginTop">17dp</dimen>
+    <dimen name="pub_details_subtitle_paddingBottomTop">8dp</dimen>
+    <dimen name="pub_details_subtitle_paddingLeftRight">16dp</dimen>
+    <dimen name="pub_details_time_paddingBottomTopRight">16dp</dimen>
+    <dimen name="pub_details_tv_time_height">0dp</dimen>
+    <dimen name="pub_details_reports_paddingLeftRightTop">16dp</dimen>
+    <dimen name="pub_details_lv_list_of_reports_marginTop">16dp</dimen>
+
+    <dimen name="pub_details_top_panel_right_text_size">17sp</dimen>
+    <dimen name="pub_details_on_the_way_to_take_text_size">14sp</dimen>
+    <dimen name="pub_details_address_text_size">14sp</dimen>
+    <dimen name="pub_details_distance_text_size">12sp</dimen>
     <!-- colors -->
     
     <color name="side_menu_item_background">#555555</color>
