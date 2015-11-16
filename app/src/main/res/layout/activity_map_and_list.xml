@@ -111,10 +111,23 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="240dp"
             android:src="@drawable/map_my_location_button"
             android:scaleType="fitCenter"
             android:visibility="gone"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="120dp"
+            android:visibility="gone">
+
+            <LinearLayout android:id="@+id/ll_image_btns_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"/>
+
+        </HorizontalScrollView>
 
     </RelativeLayout>
 
