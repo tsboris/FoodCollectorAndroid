@@ -113,6 +113,15 @@
     
     <!-- ==================== -->
 
+    <!-- === Map and list == -->
+
+    <dimen name="gallery_panel_bootom_margin_xhdpi">100dp</dimen>
+    <dimen name="gallery_image_btn_height_xhdpi">90dp</dimen>
+    
+
+    <!-- ==================== -->
+
+    
     <!-- My/other's publications list -->
 
     <color name="red_for_dot_my_pubs_list">#FF0000</color>

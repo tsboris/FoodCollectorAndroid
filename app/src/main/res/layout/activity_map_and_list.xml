@@ -119,13 +119,15 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="120dp"
-            android:visibility="gone">
+            android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible">
 
             <LinearLayout android:id="@+id/ll_image_btns_gallery"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal"
+                android:visibility="gone"/>
 
         </HorizontalScrollView>
 

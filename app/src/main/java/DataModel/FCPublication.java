@@ -674,6 +674,9 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return byteArray;
     }
 
+    public String GetImageFileName(){
+        return String.valueOf(getUniqueId()) + "." + String.valueOf(getVersion()) + ".jpg";
+    }
     //endregion
 }
 

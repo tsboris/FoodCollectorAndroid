@@ -93,6 +93,13 @@ public class MyPublicationsActivity
         int dimenID = 0;
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if(metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
+        else if(metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);
+        else
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
+/*
         switch (metrics.densityDpi){
             case DisplayMetrics.DENSITY_LOW:
                 dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
@@ -104,6 +111,7 @@ public class MyPublicationsActivity
                 dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
                 break;
         }
+*/
         Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);
         Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);
         navigate_share.setBounds(0, 0, dimenID, dimenID);

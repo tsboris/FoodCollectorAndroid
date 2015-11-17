@@ -1,5 +1,6 @@
 package upp.foodonet;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -29,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -50,6 +52,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import Adapters.MainViewPagerAdapter;
 import Adapters.SideMenuCursorAdapter;
@@ -95,6 +98,7 @@ public class MapAndListActivity
     Button btn_navigate_share, btn_navigate_take;
     ImageButton btn_show_M, btn_show_L;
     ImageButton btn_focus_on_my_location;
+    LinearLayout gallery_pubs;
 //    Button btn_side_menu_coll_exp_all;
 //    Button btn_side_menu_coll_exp_my;
     boolean is_smenu_lv_my_expanded = true;
@@ -147,6 +151,13 @@ public class MapAndListActivity
         int dimenID = 0;
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if(metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
+        else if(metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);
+        else
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
+/*
         switch (metrics.densityDpi){
             case DisplayMetrics.DENSITY_LOW:
                 dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
@@ -158,6 +169,7 @@ public class MapAndListActivity
                 dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
                 break;
         }
+*/
         Drawable navigate_share = getResources().getDrawable(R.drawable.donate_v62x_60x60);//new BitmapDrawable(CommonUtil.decodeScaledBitmapFromDrawableResource(getResources(), R.drawable.donate_v62x_60x60, dimenID, dimenID));
         Drawable navigate_take = getResources().getDrawable(R.drawable.collect_v6_60x60);//new BitmapDrawable(CommonUtil.decodeScaledBitmapFromDrawableResource(getResources(), R.drawable.collect_v6_60x60, dimenID, dimenID));
         navigate_share.setBounds(0, 0, dimenID, dimenID);
@@ -243,6 +255,8 @@ public class MapAndListActivity
                 }
             }
         });
+
+        gallery_pubs = (LinearLayout)findViewById(R.id.ll_image_btns_gallery);
     }
 
     @Override
@@ -591,7 +605,11 @@ public class MapAndListActivity
             average = myLocation;
             Log.i(MY_TAG, "center coordinades (by my location): " + average.latitude + ":" + average.longitude);
         }
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(average), width, height, 0);// new LatLngBounds(southWest, northEast)
+        AnimateCameraFocusOnLatLng(average);
+    }
+
+    private void AnimateCameraFocusOnLatLng(LatLng latLng){
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(latLng), width, height, 0);
         googleMap.animateCamera(cu);
     }
 
@@ -685,6 +703,9 @@ public class MapAndListActivity
                             m.remove();
                         myMarkers.clear();
                     }
+                    gallery_pubs.setVisibility(View.GONE);
+                    gallery_pubs.removeAllViews();
+
                     for (FCPublication publication : publications) {
                         Bitmap markerIcon;
 
@@ -709,7 +730,10 @@ public class MapAndListActivity
                         myMarkers.put(AddMarker(publication.getLatitude().floatValue(),
                                 publication.getLongitude().floatValue(),
                                 publication.getTitle(), icon), publication.getUniqueId());
+                        AddImageToGallery(publication);
                     }
+
+                    gallery_pubs.setVisibility(View.VISIBLE);
 
                     if (isMapLoaded)
                         SetCamera();
@@ -722,6 +746,37 @@ public class MapAndListActivity
                 adapter_reg.swapCursor(data);
                 break;
         }
+    }
+
+    public void AddImageToGallery(final FCPublication publication){
+        int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height_xhdpi);
+        ImageButton imageButton = new ImageButton(getApplicationContext());
+        imageButton.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+        imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        Drawable drawable
+                = CommonUtil.GetBitmapDrawableFromFile(
+                    publication.GetImageFileName(), getString(R.string.image_folder_path), size, size);
+        if(drawable == null)
+            drawable = getResources().getDrawable(R.drawable.foodonet_logo_200_200);
+        imageButton.setImageDrawable(drawable);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            int id = publication.getUniqueId();
+            @Override
+            public void onClick(View v) {
+                ImageBtnFromGallerySelected(id);
+            }
+        });
+        gallery_pubs.addView(imageButton);
+    }
+
+    public void ImageBtnFromGallerySelected(int id){
+        for(Map.Entry<Marker, Integer> e : myMarkers.entrySet()){
+            if(e.getValue().intValue() == id){
+                AnimateCameraFocusOnLatLng(e.getKey().getPosition());
+                e.getKey().showInfoWindow();
+            }
+        }
+        //Toast.makeText(this, "selected image id: " + String.valueOf(id), Toast.LENGTH_SHORT).show();
     }
 
     @Override
