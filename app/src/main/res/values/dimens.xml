@@ -152,21 +152,34 @@
     <dimen name="edit_text_height_add_edit_pub">56dp</dimen>
     <dimen name="edit_text_side_margin_add_edit_pub">13dp</dimen>
 
+    <dimen name="add_pub_et_hint_text_size">16sp</dimen>
+    <dimen name="add_pub_et_date_text_size">16sp</dimen>
+    <dimen name="add_pub_pub_btn_size">30dp</dimen>
+    <dimen name="add_pub_pub_btn_size_ldpi">30dp</dimen>
+
+    <dimen name="add_pub_img_height">160dp</dimen>
+
     <!-- ==================== -->
 
     <!-- Address dialog -->
 
     <dimen name="address_dialog_height">340dp</dimen>
     <dimen name="address_dialog_width">320dp</dimen>
+    <dimen name="address_dialog_height_ldpi">300dp</dimen>
+    <dimen name="address_dialog_width_ldpi">230dp</dimen>
     <dimen name="address_dialog_ll_side_padding">8dp</dimen>
     <dimen name="address_dialog_ll_top_bottom_padding">8dp</dimen>
     <dimen name="address_dialog_edit_field_height">52dp</dimen>
+    <dimen name="address_dialog_edit_field_height_ldpi">46dp</dimen>
     <dimen name="address_dialog_get_curr_location_height">48dp</dimen>
+    <dimen name="address_dialog_get_curr_location_height_ldpi">40dp</dimen>
     <dimen name="address_dialog_history_list_height">144dp</dimen>
+    <dimen name="address_dialog_history_list_height_ldpi">120dp</dimen>
     <dimen name="address_dialog_history_item_height">48dp</dimen>
+    <dimen name="address_dialog_history_item_height_ldpi">40dp</dimen>
     <dimen name="address_dialog_divider_height">12dp</dimen>
     <dimen name="address_dialog_validation_img_size">18dp</dimen>
-    <dimen name="address_dialog_history_item_text_size">20dp</dimen>
+    <dimen name="address_dialog_history_item_text_size">18sp</dimen>
     <dimen name="address_dialog_history_item_right_margin">16dp</dimen>
 
     <!-- ============== -->

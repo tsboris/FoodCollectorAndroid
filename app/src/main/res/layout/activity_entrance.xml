@@ -79,7 +79,7 @@
         android:gravity="center"
         android:text="@string/welcome_string"
         android:textColor="@color/list_background"
-        android:textSize="20dp"
+        android:textSize="@dimen/top_panel_text_size"
         android:textStyle="bold" />
 
 <!--

@@ -259,7 +259,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     protected void onPause() {
-        if(progressDialog != null)
+        if (progressDialog != null)
             progressDialog.dismiss();
         super.onPause();
     }
@@ -437,7 +437,7 @@ public class AddEditPublicationActivity extends FragmentActivity
             = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(progressDialog != null)
+            if (progressDialog != null)
                 progressDialog.dismiss();
             progressDialog = CommonUtil.ShowProgressDialog(context, getString(R.string.progress_loading));
             final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
@@ -475,7 +475,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
 
             addressTmpForEdit = atv_address.getText().toString();
-            if(progressDialog != null)
+            if (progressDialog != null)
                 progressDialog.dismiss();
 //            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
 //            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
@@ -522,17 +522,14 @@ public class AddEditPublicationActivity extends FragmentActivity
         return longitude;
     }
 
-    public String GetCurrentAddress(double latitude, double longitude)
-    {
+    public String GetCurrentAddress(double latitude, double longitude) {
         Geocoder geocoder;
         List<Address> addresses = null;
 
         geocoder = new Geocoder(this, new Locale("he"));
-        try
-        {
+        try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -606,7 +603,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         final DatePicker dp = (DatePicker) dtpDialog.findViewById(R.id.dp_date_time_dialog);
         final TimePicker tp = (TimePicker) dtpDialog.findViewById(R.id.tp_date_time_dialog);
         Button btnOk = (Button) dtpDialog.findViewById(R.id.btn_ok_date_time_dialog);
-        Button btnCancel = (Button)dtpDialog.findViewById(R.id.btn_cancel_date_time_dialog);
+        Button btnCancel = (Button) dtpDialog.findViewById(R.id.btn_cancel_date_time_dialog);
         TextView tvTitle = (TextView) dtpDialog.findViewById(R.id.tv_date_time_picker_title);
 
         final Calendar calendar = Calendar.getInstance();
@@ -745,6 +742,7 @@ public class AddEditPublicationActivity extends FragmentActivity
         switch (view.getId()) {
             case R.id.btn_start_date_time_add_pub:
             case R.id.btn_end_date_time_add_pub:
+                SetDatesButtonsValid(true);
                 showDatePickerDialog(view.getId());
                 break;
             case R.id.btn_camera_add_pub:
@@ -908,16 +906,23 @@ public class AddEditPublicationActivity extends FragmentActivity
         return true;
     }
 
-    private boolean ValidateDates(){
-        if(startDate.getTime() > endDate.getTime()){
-            btn_date_start.setTextColor(getResources().getColor(R.color.validation_red_text_color));
-            btn_date_end.setTextColor(getResources().getColor(R.color.validation_red_text_color));
-            Toast.makeText(this, getString(R.string.validation_phone_number_invalid), Toast.LENGTH_LONG).show();
+    private boolean ValidateDates() {
+        if (startDate.getTime() > endDate.getTime()) {
+            SetDatesButtonsValid(false);
+//            btn_date_start.setTextColor(getResources().getColor(R.color.validation_red_text_color));
+//            btn_date_end.setTextColor(getResources().getColor(R.color.validation_red_text_color));
+            Toast.makeText(this, getString(R.string.validation_start_date_after_end_date), Toast.LENGTH_LONG).show();
             return false;
         }
-        btn_date_start.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
-        btn_date_end.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
+        SetDatesButtonsValid(true);
+//        btn_date_start.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
+//        btn_date_end.setTextColor(getResources().getColor(R.color.edit_text_input_default_color));
         return true;
+    }
+
+    private void SetDatesButtonsValid(boolean isValid) {
+        btn_date_start.setTextColor(getResources().getColor(isValid ? R.color.edit_text_input_default_color : R.color.validation_red_text_color));
+        btn_date_end.setTextColor(getResources().getColor(isValid ? R.color.edit_text_input_default_color : R.color.validation_red_text_color));
     }
 
     @Override
@@ -969,7 +974,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 CommonUtil.SetEditTextIsValid(this, atv_address, true);
             if (iv_address_dialog_location_validation != null)
                 iv_address_dialog_location_validation.setVisibility(View.GONE);
-            if(progressDialog != null){
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -987,7 +992,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
     @Override
     public void afterTextChanged(Editable s) {
-        if(isGoogleAddress){
+        if (isGoogleAddress) {
             latitudeTmpForEdit = -1000;
             longitudeTmpForEdit = -1000;
             isGoogleAddress = false;
