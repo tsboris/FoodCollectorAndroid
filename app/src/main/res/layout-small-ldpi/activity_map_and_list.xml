@@ -28,7 +28,7 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/top_panel_height"
+            android:layout_height="@dimen/top_panel_height_ldpi"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@color/basic_blue"
@@ -45,8 +45,8 @@
             android:layout_height="@dimen/top_panel_btn_size"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="@dimen/top_panel_btn_margin"
-            android:layout_marginTop="@dimen/top_panel_btn_margin"
+            android:layout_marginRight="@dimen/top_panel_btn_margin_ldpi"
+            android:layout_marginTop="@dimen/top_panel_btn_margin_ldpi"
             android:background="@color/basic_blue"
             android:scaleType="fitCenter"
             android:src="@drawable/menu_header_button"
@@ -58,8 +58,8 @@
             android:layout_width="@dimen/top_panel_btn_size"
             android:layout_height="@dimen/top_panel_btn_size"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="@dimen/top_panel_btn_margin"
-            android:layout_marginTop="@dimen/top_panel_btn_margin"
+            android:layout_marginLeft="@dimen/top_panel_btn_margin_ldpi"
+            android:layout_marginTop="@dimen/top_panel_btn_margin_ldpi"
             android:background="@color/basic_blue"
             android:scaleType="fitCenter"
             android:src="@drawable/location_header_btn"
@@ -133,7 +133,7 @@
 
     <LinearLayout
         android:id="@+id/ll_sideMenuPanel"
-        android:layout_width="@dimen/side_menu_panel_width"
+        android:layout_width="@dimen/side_menu_panel_width_ldpi"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/side_menu_item_background"
@@ -169,7 +169,7 @@
                 android:scaleType="fitCenter"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right_ldpi"
                 android:src="@drawable/side_menu_collect_icon" />
 
             <TextView
@@ -221,7 +221,7 @@
                 android:scaleType="fitCenter"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right_ldpi"
                 android:src="@drawable/side_menu_donate_icon" />
 
             <TextView

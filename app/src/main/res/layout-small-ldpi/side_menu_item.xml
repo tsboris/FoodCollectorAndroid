@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/side_menu_item_height">
+    android:layout_height="@dimen/side_menu_item_height_ldpi">
 
     <UIUtil.RoundedImageView android:id="@+id/riv_side_menu_pub_icon"
         android:layout_width="@dimen/side_menu_item_icon_size"
         android:layout_height="@dimen/side_menu_item_icon_size"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+        android:layout_marginRight="@dimen/side_menu_item_icon_margin_right_ldpi"
         android:src="@drawable/default_publication_icon_side_menu"/>
 
 
@@ -24,24 +24,24 @@
 -->
 
     <TextView android:id="@+id/tv_side_menu_item_title"
-        android:layout_width="@dimen/side_menu_item_pub_title_width"
+        android:layout_width="@dimen/side_menu_item_pub_title_width_ldpi"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:textSize="@dimen/side_menu_text_size"
-        android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+        android:layout_marginRight="@dimen/side_menu_item_title_margin_right_ldpi"
         android:textColor="@color/white"/>
 
     <View android:id="@+id/v_oval_score_background"
-        android:layout_width="@dimen/side_menu_item_score_circle_size"
-        android:layout_height="@dimen/side_menu_item_score_circle_size"
+        android:layout_width="@dimen/side_menu_item_score_circle_size_ldpi"
+        android:layout_height="@dimen/side_menu_item_score_circle_size_ldpi"
         android:background="@drawable/side_menu_score_circle_dark"
-        android:layout_marginTop="@dimen/side_menu_item_score_circle_margin"
-        android:layout_marginLeft="@dimen/side_menu_item_score_circle_margin"/>
+        android:layout_marginTop="@dimen/side_menu_item_score_circle_margin_ldpi"
+        android:layout_marginLeft="@dimen/side_menu_item_score_circle_margin_ldpi"/>
 
     <TextView android:id="@+id/tv_side_menu_item_score"
-        android:layout_width="@dimen/side_menu_item_score_circle_size"
-        android:layout_height="@dimen/side_menu_item_score_circle_size"
+        android:layout_width="@dimen/side_menu_item_score_circle_size_ldpi"
+        android:layout_height="@dimen/side_menu_item_score_circle_size_ldpi"
         android:layout_centerVertical="true"
         android:layout_alignStart="@+id/v_oval_score_background"
         android:layout_alignLeft="@id/v_oval_score_background"

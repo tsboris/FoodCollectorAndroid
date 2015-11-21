@@ -29,6 +29,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,6 +60,7 @@ import Adapters.SideMenuCursorAdapter;
 import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
+import DataModel.PublicationReport;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
@@ -98,6 +100,7 @@ public class MapAndListActivity
     Button btn_navigate_share, btn_navigate_take;
     ImageButton btn_show_M, btn_show_L;
     ImageButton btn_focus_on_my_location;
+    HorizontalScrollView hsv_gallery;
     LinearLayout gallery_pubs;
 //    Button btn_side_menu_coll_exp_all;
 //    Button btn_side_menu_coll_exp_my;
@@ -207,6 +210,7 @@ public class MapAndListActivity
 
         btn_focus_on_my_location = (ImageButton) findViewById(R.id.btn_center_on_my_location_map);
         btn_focus_on_my_location.setOnClickListener(this);
+        hsv_gallery = (HorizontalScrollView)findViewById(R.id.hsv_image_gallery);
 
         lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
@@ -459,6 +463,8 @@ public class MapAndListActivity
 
         if (btn_focus_on_my_location != null)
             btn_focus_on_my_location.setVisibility(View.VISIBLE);
+        if(hsv_gallery != null)
+            hsv_gallery.setVisibility(View.VISIBLE);
 
         SetCamera();
     }
@@ -537,6 +543,8 @@ public class MapAndListActivity
         currentPageIndex = position;
         if (btn_focus_on_my_location != null)
             btn_focus_on_my_location.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+        if(hsv_gallery != null)
+            hsv_gallery.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -667,7 +675,7 @@ public class MapAndListActivity
         switch (id) {
             case 0:
                 projection = FCPublication.GetColumnNamesArray();
-                cursorLoader = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.CONTENT_URI,
+                cursorLoader = new android.support.v4.content.CursorLoader(this, FooDoNetSQLProvider.URI_GET_PUBS_FOR_MAP_MARKERS,
                         projection, null, null, null);
                 break;
             case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
@@ -690,7 +698,7 @@ public class MapAndListActivity
             case 0:
                 if (data != null && data.moveToFirst()) {
                     //Log.i(MY_TAG, "num of rows in adapter: " + data.getCount());
-                    ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsFromCursor(data, false);
+                    ArrayList<FCPublication> publications = FCPublication.GetArrayListOfPublicationsForMapFromCursor(data);
                     if (publications == null) {
                         Log.e(MY_TAG, "error getting publications from sql");
                         return;
@@ -708,25 +716,27 @@ public class MapAndListActivity
 
                     for (FCPublication publication : publications) {
                         Bitmap markerIcon;
-
                         BitmapDescriptor icon = null;
-                        switch (publication.getUniqueId() % 3) {
-                            case 0:
-                                markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
-                                        getResources(), R.drawable.map_marker_few, 13, 13);
-                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
-                                break;
-                            case 1:
+
+                        if(publication.getNumberOfRegistered() == 0){
+                            markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
+                                    getResources(), R.drawable.map_marker_whole, 13, 13);
+                            icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
+                        }else {
+                            if(publication.getNumberOfRegistered() >0
+                                    && publication.getNumberOfRegistered() <3)
                                 markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
                                         getResources(), R.drawable.map_marker_half, 13, 13);
-                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
-                                break;
-                            case 2:
+                            else if(publication.getNumberOfRegistered() >= 3)
+                                markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
+                                        getResources(), R.drawable.map_marker_few, 13, 13);
+                            else
                                 markerIcon = CommonUtil.decodeScaledBitmapFromDrawableResource(
                                         getResources(), R.drawable.map_marker_whole, 13, 13);
-                                icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
-                                break;
+
+                            icon = BitmapDescriptorFactory.fromBitmap(markerIcon);
                         }
+
                         myMarkers.put(AddMarker(publication.getLatitude().floatValue(),
                                 publication.getLongitude().floatValue(),
                                 publication.getTitle(), icon), publication.getUniqueId());

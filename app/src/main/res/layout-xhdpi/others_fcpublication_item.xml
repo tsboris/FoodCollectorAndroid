@@ -50,6 +50,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/pub_list_item_image_left_margin"
+        android:layout_marginTop="@dimen/pub_list_item_image_top_bottom_margin"
+        android:layout_marginBottom="@dimen/pub_list_item_image_top_bottom_margin"
         android:src="@drawable/foodonet_logo_200_200"
         android:scaleType="fitCenter"/>
     <!--android:layout_marginTop="@dimen/pub_list_item_image_top_bottom_margin"-->

@@ -18,7 +18,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     private static final String MY_TAG = "food_SQLHelper";
 
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
-    public static final int FC_DATABASE_VERSION = 10;
+    public static final int FC_DATABASE_VERSION = 11;
 
     public static final int FILTER_ID_LIST_ALL_BY_CLOSEST = 0;
     public static final int FILTER_ID_LIST_ALL_BY_NEWEST = 1;
@@ -51,10 +51,10 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
         PublicationReportsTable.onUpgrade(db);
     }
 
-    public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params){
+    public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params) {
         String androidId = "";
         Log.i(MY_TAG, "selected filter: " + filterID);
-        switch (filterID){
+        switch (filterID) {
             //region other's list
             case FILTER_ID_LIST_ALL_BY_CLOSEST:
                 androidId = params[0];
@@ -74,7 +74,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             case FILTER_ID_LIST_ALL_BY_TEXT_FILTER:
                 androidId = params[0];
                 String filterString = params[1];
-                if(TextUtils.isEmpty(filterString))
+                if (TextUtils.isEmpty(filterString))
                     return GetRawSelectPublicationsForListByFilterID(FILTER_ID_LIST_ALL_BY_NEWEST);
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", androidId, false)
@@ -171,11 +171,11 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             //+ "PUBS." + FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_PHOTO_URL;/**/
 
-    private static final String getRawForListOrderBy(String tableName, String fieldName, boolean isDesc){
-        return " ORDER BY " + tableName + "." + fieldName + (isDesc? " DESC": " ASC");
+    private static final String getRawForListOrderBy(String tableName, String fieldName, boolean isDesc) {
+        return " ORDER BY " + tableName + "." + fieldName + (isDesc ? " DESC" : " ASC");
     }
 
-    private static final String getRawForListOrderByDistance(String latitude, String longitude){
+    private static final String getRawForListOrderByDistance(String latitude, String longitude) {
         return " ORDER BY (PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + " - " + latitude
                 + ")*(PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + " - " + latitude
                 + ") + (PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + " - " + longitude
@@ -183,12 +183,12 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
                 + ") ASC";
     }
 
-    private static final String getRawForListOrderByLessRegs(){
+    private static final String getRawForListOrderByLessRegs() {
         return " ORDER BY COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") ASC ";
     }
 
-    private static final String getRawForListWhere(String tableName, String fieldName, String operator, String value, boolean isAdditional){
-        return (isAdditional? " ":" WHERE ") + tableName + "." + fieldName + " " + operator + " '" + value + "'";
+    private static final String getRawForListWhere(String tableName, String fieldName, String operator, String value, boolean isAdditional) {
+        return (isAdditional ? " " : " WHERE ") + tableName + "." + fieldName + " " + operator + " '" + value + "'";
     }
 
     public static final String RAW_SELECT_NEW_NEGATIVE_ID
@@ -218,6 +218,25 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " ORDER BY " + FCPublication.PUBLICATION_UNIQUE_ID_KEY + " DESC ";
 
     private static final String UNIX_TIME_NOW = "STRFTIME('%s','now')";
+
+    public static final String RAW_SELECT_ALL_PUBS_FOR_MAP_MARKERS
+            = "SELECT "
+            + " PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
+            + " PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
+            + " PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
+            + " PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + ", "
+            + "COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") "
+            + FCPublication.PUBLICATION_NUMBER_OF_REGISTERED
+            + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS "
+            + "LEFT JOIN " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME + " REGS "
+            + "ON PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
+            + " = REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
+            + " GROUP BY "
+            + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY;
+
 
 //    public static final String RAW_SELECT_REPORTS_FOR_PUB_DETAILS
 //            = "SELECT " + PublicationReport.PUBLICATION_REPORT_FIELD_KEY_REPORT + ", "

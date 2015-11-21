@@ -127,8 +127,9 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onResume() {
-
         super.onResume();
+        if(et_search_in_all_pubs != null)
+            et_search_in_all_pubs.clearFocus();
     }
 
     @Override
@@ -283,6 +284,8 @@ public class AllPublicationsTabFragment
 
     @Override
     public void onClick(View v) {
+        if(v.getId() != R.id.et_search_in_all_pubs && et_search_in_all_pubs != null)
+            et_search_in_all_pubs.clearFocus();
         //sv_search_in_all_pubs.onActionViewCollapsed();
         et_search_in_all_pubs.removeTextChangedListener(this);
         et_search_in_all_pubs.setText("");

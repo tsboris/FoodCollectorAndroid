@@ -29,6 +29,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
     public static final String PUBLICATION_REPORT_FIELD_KEY_REPORT = "report";
     public static final String PUBLICATION_REPORT_FIELD_KEY_DATE = "date_of_report";
     public static final String PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID = "active_device_dev_uuid";
+    public static final String PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME = "report_user_name";
+    public static final String PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO = "report_contact_info";
 
     public static final String PUBLICATION_REPORT_FIELD_KEY_NEG_ID = "neg_id";
 
@@ -91,6 +93,14 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         report = val;
     }
 
+    private String report_user_name;
+    public String getReportUserName() {return report_user_name;}
+    public void setReportUserName(String value) {report_user_name = value;}
+
+    private String report_contact_info;
+    public String getReportContactInfo() {return report_contact_info;}
+    public void setReportContactInfo(String value){report_contact_info = value;}
+
     public static String[] GetColumnNamesArray() {
         return
                 new String[]{
@@ -99,7 +109,9 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
                         PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_VERSION,
                         PUBLICATION_REPORT_FIELD_KEY_DATE,
                         PUBLICATION_REPORT_FIELD_KEY_REPORT,
-                        PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID
+                        PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID,
+                        PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME,
+                        PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO
                 };
     }
 
@@ -115,6 +127,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
                 pr.setDate_reported(cursor.getLong(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DATE)));
                 pr.setDevice_uuid(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID)));
                 pr.setReport(cursor.getInt(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT)));
+                pr.setReportUserName(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME)));
+                pr.setReportContactInfo(cursor.getString(cursor.getColumnIndex(PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO)));
                 result.add(pr);
             } while (cursor.moveToNext());
         }
@@ -145,6 +159,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
             pr.setDate_reported(jo.getLong(PUBLICATION_REPORT_FIELD_KEY_DATE));
             pr.setDevice_uuid(jo.getString(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID));
             pr.setReport(jo.getInt(PUBLICATION_REPORT_FIELD_KEY_REPORT));
+            pr.setReportUserName(jo.getString(PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME));
+            pr.setReportContactInfo(jo.getString(PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO));
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(MY_TAG, e.getMessage());
@@ -161,6 +177,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         cv.put(PUBLICATION_REPORT_FIELD_KEY_DATE, getDate_reported_unix_time());
         cv.put(PUBLICATION_REPORT_FIELD_KEY_DEVICE_UID, getDevice_uuid());
         cv.put(PUBLICATION_REPORT_FIELD_KEY_REPORT, getReport());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME, getReportUserName());
+        cv.put(PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO, getReportContactInfo());
         return cv;
     }
 
@@ -201,6 +219,8 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
         deviceData.put("active_device_dev_uuid", getDevice_uuid());
         deviceData.put("report", getReport());
         deviceData.put("publication_version", getPublication_version());
+        deviceData.put(PUBLICATION_REPORT_FIELD_KEY_REPORT_USER_NAME, getReportUserName());
+        deviceData.put(PUBLICATION_REPORT_FIELD_KEY_REPORT_CONTACT_INFO, getReportContactInfo());
         Map<String, Object> dataToSend = new HashMap<String, Object>();
         dataToSend.put("publication_report", deviceData);
 

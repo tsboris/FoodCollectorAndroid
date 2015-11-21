@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="upp.foodonet"
-    android:versionCode="5"
-    android:versionName="1.05"> <!-- todo check if this uses-sdk can be removed -->
+    android:versionCode="7"
+    android:versionName="1.07"> <!-- todo check if this uses-sdk can be removed -->
 
     <!-- for google play -->
     <!--<uses-configuration

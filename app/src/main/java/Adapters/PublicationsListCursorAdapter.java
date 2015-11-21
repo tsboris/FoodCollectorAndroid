@@ -147,19 +147,14 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
 
         SetPublicationImage(cursor, publicationImage);
 
-        // tmp switch, todo implement - need spec
-        switch (cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY)) % 3) {
-            case 0:
-                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_few));
-                break;
-            case 1:
-                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_half));
-                break;
-            case 2:
-            default:
-                publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_whole));
-                break;
-        }
+        int numOfReged = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_NUMBER_OF_REGISTERED));
+        if(numOfReged > 0
+                && numOfReged < 3)
+            publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_half));
+            else if (numOfReged >= 3)
+            publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_few));
+        else
+            publicationIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_whole));
 
         String title = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_TITLE_KEY));
         publicationTitle.setText(title);

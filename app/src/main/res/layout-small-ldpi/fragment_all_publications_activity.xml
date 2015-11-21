@@ -24,7 +24,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/top_panel_btn_size"
-        android:layout_marginTop="@dimen/all_pubs_filter_btns_margin_top"
+        android:layout_marginTop="@dimen/all_pubs_filter_btns_margin_top_ldpi"
         android:layout_alignParentTop="true"
         android:divider="@drawable/filter_btns_ll_divider_vertical"
         android:showDividers="middle">
@@ -73,13 +73,13 @@
 
     <EditText android:id="@+id/et_search_in_all_pubs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/top_panel_height_ldpi"
         android:layout_below="@+id/ll_filters"
         android:hint="@string/pub_list_search_hint"
         android:imeOptions="actionSearch"
         android:drawableLeft="@drawable/toolbar_find"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:singleLine="true"
         android:windowSoftInputMode="stateAlwaysHidden"/>
 

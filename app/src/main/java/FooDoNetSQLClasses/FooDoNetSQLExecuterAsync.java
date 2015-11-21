@@ -227,8 +227,8 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                     resultPublication.setRegisteredForThisPublication(regsById);
 
                 Uri getRepUri = params[0].PublicationID < 0
-                        ? FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID
-                        : FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_NEG_ID;
+                        ? FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_NEG_ID
+                        : FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID;
                 Cursor cReports = contentResolver.query(Uri.parse(getRepUri + "/" + pubID),
                         PublicationReport.GetColumnNamesArray(), null, null, null);
                 ArrayList<PublicationReport> reports

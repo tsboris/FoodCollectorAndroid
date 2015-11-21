@@ -9,8 +9,8 @@ android {
         applicationId "upp.foodonet"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 5
-        versionName "1.05"
+        versionCode 7
+        versionName "1.07"
     }
     buildTypes {
         release {

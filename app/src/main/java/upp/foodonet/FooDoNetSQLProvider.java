@@ -45,6 +45,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC = 30;
     private static final int PUBLICATIONS_MY_FOR_LIST_SORTED_ID_DESC = 31;
     private static final int PUBLICATIONS_FOR_LIST_BY_FILTER_ID = 32;
+    private static final int PUBLICATIONS_FOR_MAP_MARKERS = 33;
     private static final int REGS_FOR_PUBLICATION = 40;
     private static final int INSERT_REG_FOR_PUBLICATION = 41;
     private static final int DELETE_REG_FOR_PUBLICATION = 42;
@@ -73,6 +74,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_MY_PUBS_FOR_LIST_ID_DESC_PATH = "/Pubs_MY_for_list_id_desc";
 
     private static final String EXT_PUBS_FOR_LIST_BY_FILTER_ID = "/Pubs_for_list_by_filter";
+
+    private static final String EXT_PUBS_FOR_MAP_MARKERS = "/Pubs_for_map_markers";
 
     private static final String EXT_ALL_REGS = "/AllRegisteredForPublications";
 
@@ -118,6 +121,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
 
     public static final Uri URI_GET_PUBS_FOR_LIST_BY_FILTER_ID
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBS_FOR_LIST_BY_FILTER_ID);
+
+    public static final Uri URI_GET_PUBS_FOR_MAP_MARKERS
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBS_FOR_MAP_MARKERS);
 
     public static final Uri URI_GET_ALL_REGS = Uri.parse(BASE_STRING_FOR_URI + EXT_ALL_REGS);
     public static final Uri URI_INSERT_REGISTERED_FOR_PUBLICATION
@@ -187,6 +193,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PREVIOUS_ADDRESSES, PREVIOUS_ADDRESSES);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REPORTS_LIST_FOR_PUB + "/#", REPORTS_LIST_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REMOVE_COMPLETELY + "/#", PUBLICATION_DELETE_COMPLETELY);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBS_FOR_MAP_MARKERS, PUBLICATIONS_FOR_MAP_MARKERS);
     }
 
     @Override
@@ -283,6 +290,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PREVIOUS_ADDRESSES:
                 return database.getReadableDatabase()
                         .rawQuery(FooDoNetSQLHelper.RAW_SELECT_PREVIOUS_ADDRESSES.replace("{0}", CommonUtil.GetIMEI(getContext())), null);
+            case PUBLICATIONS_FOR_MAP_MARKERS:
+                return database.getReadableDatabase()
+                        .rawQuery(FooDoNetSQLHelper.RAW_SELECT_ALL_PUBS_FOR_MAP_MARKERS, null);
 //            case REPORTS_LIST_FOR_PUBLICATION:
 //                return database.getReadableDatabase()
 //                        .rawQuery(FooDoNetSQLHelper.RAW_SELECT_REPORTS_FOR_PUB_DETAILS.replace("{0}", String.valueOf(uri.getLastPathSegment())), null);
@@ -457,6 +467,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PUBLICATION_ID:
             case PUBLICATION_ID_NEGATIVE:
             case UPDATE_IMAGES_FOR_PUBLICATIONS:
+            case PUBLICATIONS_FOR_MAP_MARKERS:
                 available = FCPublication.GetColumnNamesArray();
                 break;
             case PUBLICATIONS_ALL_FOR_LIST_SORTED_ID_DESC:

@@ -1216,7 +1216,7 @@ public class PublicationDetailsActivity
                     reportId = 3;
                     break;
                 case R.id.btn_report_dialog_found_nothing:
-                    //reportId = 5;
+                    reportId = 5;
                     break;
                 case R.id.btn_report_dialog_cancel:
                     dialog.dismiss();

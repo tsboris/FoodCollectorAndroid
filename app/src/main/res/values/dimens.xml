@@ -21,14 +21,24 @@
     <dimen name="bottom_nav_btn_img_size_hdpi">42dp</dimen>
     <dimen name="bottom_nav_btn_img_size_ldpi">36dp</dimen>
     <dimen name="side_menu_panel_width">280dp</dimen>
-    <dimen name="side_menu_text_size">17sp</dimen>
+    <dimen name="side_menu_panel_width_ldpi">240dp</dimen>
+    <dimen name="side_menu_item_pub_title_width">120dp</dimen>
+    <dimen name="side_menu_item_pub_title_width_ldpi">120dp</dimen>
+
+    <dimen name="side_menu_text_size">13sp</dimen>
     <dimen name="side_menu_item_icon_margin_right">24dp</dimen>
+    <dimen name="side_menu_item_icon_margin_right_ldpi">18dp</dimen>
     <dimen name="side_menu_item_title_margin_right">96dp</dimen>
+    <dimen name="side_menu_item_title_margin_right_ldpi">70dp</dimen>
     <dimen name="side_menu_item_score_margin_left">24dp</dimen>
     <dimen name="side_menu_item_height">70dp</dimen>
+    <dimen name="side_menu_item_height_ldpi">60dp</dimen>
     <dimen name="side_menu_item_score_circle_size">40dp</dimen>
+    <dimen name="side_menu_item_score_circle_size_ldpi">36dp</dimen>
     <dimen name="side_menu_item_icon_size">42dp</dimen>
-
+    <dimen name="side_menu_item_icon_size_ldpi">36dp</dimen>
+    <dimen name="side_menu_item_score_circle_margin">15dp</dimen>
+    <dimen name="side_menu_item_score_circle_margin_ldpi">10dp</dimen>
 
     <color name="white">#FFFFFF</color>
     <color name="side_menu_score_circle_red">#B80000</color>
@@ -117,7 +127,12 @@
 
     <dimen name="gallery_panel_bootom_margin_xhdpi">100dp</dimen>
     <dimen name="gallery_image_btn_height_xhdpi">90dp</dimen>
-    
+    <dimen name="nav_buttons_text_size">13sp</dimen>
+    <dimen name="top_panel_btn_size">30dp</dimen>
+    <dimen name="top_panel_btn_margin">14dp</dimen>
+    <dimen name="top_panel_btn_margin_ldpi">3dp</dimen>
+    <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
+    <dimen name="all_pubs_filter_btns_margin_top_ldpi">40dp</dimen>
 
     <!-- ==================== -->
 
@@ -129,16 +144,22 @@
     <dimen name="dot_size_my_pubs_list">7dp</dimen>
     <dimen name="my_pubs_list_item_right_left_padding">16dp</dimen>
     <dimen name="pub_list_item_image_size">90dp</dimen>
+    <dimen name="pub_list_item_image_size_ldpi">80dp</dimen>
     <dimen name="pub_list_item_image_left_margin">16dp</dimen>
     <dimen name="pub_list_item_image_top_bottom_margin">10dp</dimen>
     <integer name="pub_list_item_image_size_others">100</integer>
+    <integer name="pub_list_item_image_size_others_ldpi">90</integer>
     <integer name="pub_list_item_image_size_my">90</integer>
+    <integer name="pub_list_item_image_size_my_ldpi">80</integer>
     <integer name="pub_list_item_image_size_side_menu">42</integer>
-    <dimen name="my_pub_list_item_title_text_size">16dp</dimen>
-    <dimen name="my_pub_list_item_end_date_text_size">14dp</dimen>
-    <dimen name="my_pub_list_item_distance_text_size">12dp</dimen>
+    <dimen name="my_pub_list_item_title_text_size">14sp</dimen>
+    <dimen name="my_pub_list_item_end_date_text_size">13sp</dimen>
+    <dimen name="my_pub_list_item_distance_text_size">12sp</dimen>
     <dimen name="my_pub_list_text_block_height">60dp</dimen>
     <dimen name="filter_btns_text_size">16sp</dimen>
+    <dimen name="others_list_item_height">110dp</dimen>
+    <dimen name="others_list_item_height_ldpi">90dp</dimen>
+
 
     <!-- ============================ -->
 

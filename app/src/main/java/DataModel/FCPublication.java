@@ -495,6 +495,22 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         return result;
     }
 
+    public static ArrayList<FCPublication> GetArrayListOfPublicationsForMapFromCursor(Cursor cursor) {
+        ArrayList<FCPublication> result = new ArrayList<FCPublication>();
+        if(cursor != null && cursor.moveToFirst()) {
+            do {
+                FCPublication publication = new FCPublication();
+                publication.setUniqueId(cursor.getInt(cursor.getColumnIndex(PUBLICATION_UNIQUE_ID_KEY)));
+                publication.setTitle(cursor.getString(cursor.getColumnIndex(PUBLICATION_TITLE_KEY)));
+                publication.setLatitude(cursor.getDouble(cursor.getColumnIndex(PUBLICATION_LATITUDE_KEY)));
+                publication.setLongitude(cursor.getDouble(cursor.getColumnIndex(PUBLICATION_LONGITUDE_KEY)));
+                publication.setNumberOfRegistered(cursor.getInt(cursor.getColumnIndex(PUBLICATION_NUMBER_OF_REGISTERED)));
+                result.add(publication);
+            } while (cursor.moveToNext());
+        }
+        return result;
+    }
+
     public static ArrayList<FCPublication> GetArrayListOfPublicationsFromJSON(JSONArray ja) {
         ArrayList<FCPublication> result = new ArrayList<FCPublication>();
         for (int i = 0; i < ja.length(); i++) {
