@@ -31,6 +31,7 @@
     <string name="publish">לשתף מזון</string>
     <string name="pickup">לאסוף מזון</string>
     <string name="ask_food">לבקש מזון</string>
+    <string name="test_btn_text">TEST</string>
     <string name="title_my_publications">שיתופים שלי</string>
     <string name="title_all_publications">שיתופים פעילים</string>
     <string name="share_btn">שיתוף</string>
@@ -96,6 +97,7 @@
     <string name="server_post_unregister_from_publication_old">/publications/{0}/registered_user_for_publications/5</string>
     <string name="server_post_unregister_from_publication">/publications/{0}/registered_user_for_publications/1?publication_version={1}&amp;active_device_dev_uuid={2}</string>
     <string name="server_post_report_to_publication">/publications/{0}/publication_reports.json</string>
+    <string name="server_post_report_feedback">/feedbacks</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
@@ -235,5 +237,17 @@
     <string name="notif_was_deleted">שיתוף נמחק</string>
     <string name="notif_report">התקבל דיווח חדש על השיתוף</string>
     <string name="notif_new_registered_user">משתמש חדש נרשם לשיתוף</string>
+    
+    <!-- -->
+    
+    <!-- Feedback Dialog -->
+    
+    <string name="feedback_dialog_title">תשאיר תגובה</string>
+    <string name="feedback_name_hint">שם שלך</string>
+    <string name="feedback_report_hint">טקסט תגובה</string>
+    <string name="feedback_btn_ok">שלח</string>
+    <string name="feedback_btn_cancel">ביטול</string>
+    
+    <!-- -->
 
 </resources>

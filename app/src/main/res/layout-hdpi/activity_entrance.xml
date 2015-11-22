@@ -63,6 +63,7 @@
                         android:textSize="@dimen/top_panel_text_size"
                         android:textStyle="bold"/>
                 </RelativeLayout>
+
             </LinearLayout>
         </RelativeLayout>
         <RelativeLayout

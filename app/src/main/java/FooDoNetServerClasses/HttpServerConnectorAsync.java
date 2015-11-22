@@ -120,7 +120,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region case get all pubs
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
-                if(!isSuccess)
+                if (!isSuccess)
                     return "";
                 isSuccess = false;
                 ArrayList<FCPublication> publications = new ArrayList<>();
@@ -136,7 +136,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     MakeServerRequest(REQUEST_METHOD_GET,
                             params[1].ServerSubPath.replace("{0}",
                                     String.valueOf(pub.getUniqueId())), null, true);
-                    if(!isSuccess)
+                    if (!isSuccess)
                         return "";
                     isSuccess = false;
                     try {
@@ -178,7 +178,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[2].ServerSubPath.replace("{0}",
                                 String.valueOf(0)), null, true);
-                if(!isSuccess)
+                if (!isSuccess)
                     return "";
                 try {
                     pubReports = PublicationReport.
@@ -294,18 +294,18 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             //region FROM PUSH
             case InternalRequest.ACTION_PUSH_NEW_PUB:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
-                if(!isSuccess){
+                if (!isSuccess) {
                     Log.e(MY_TAG, "cant get publication by id (from push)");
                     return "";
                 }
                 isSuccess = false;
                 publication = null;
-                    try {
-                        publication = FCPublication.ParseSinglePublicationFromJSON(new JSONObject(responseString));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                if(publication == null){
+                try {
+                    publication = FCPublication.ParseSinglePublicationFromJSON(new JSONObject(responseString));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (publication == null) {
                     Log.e(MY_TAG, "publication null");
                     return "";
                 }
@@ -313,7 +313,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[1].ServerSubPath.replace("{0}",
                                 String.valueOf(publication.getUniqueId())), null, true);
-                if(!isSuccess){
+                if (!isSuccess) {
                     Log.e(MY_TAG, "can't get reged users (from push)");
                     return "";
                 }
@@ -331,26 +331,26 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 publication.setRegisteredForThisPublication(regedUsers1);
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[2].ServerSubPath.replace("{0}", String.valueOf(publication.getUniqueId())), null, true);
-                if(!isSuccess){
+                if (!isSuccess) {
                     Log.e(MY_TAG, "cant get reports! (from push)");
                     return "";
                 }
                 ArrayList<PublicationReport> reports = new ArrayList<>();
-                try{
+                try {
                     reports = PublicationReport.GetArrayListOfPublicationReportsFromJSON(new JSONArray(responseString));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 ArrayList<PublicationReport> matchingReports = new ArrayList<>();
-                for (PublicationReport pr: reports)
-                    if(pr.getPublication_id() == publication.getUniqueId())
+                for (PublicationReport pr : reports)
+                    if (pr.getPublication_id() == publication.getUniqueId())
                         matchingReports.add(pr);
-                if(matchingReports.size() > 0)
+                if (matchingReports.size() > 0)
                     publication.setPublicationReports(matchingReports);
                 return "";
             case InternalRequest.ACTION_PUSH_REG:
                 MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
-                if(!isSuccess){
+                if (!isSuccess) {
                     Log.e(MY_TAG, "cant get publication by id (from push)");
                     return "";
                 }
@@ -361,7 +361,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(publication == null){
+                if (publication == null) {
                     Log.e(MY_TAG, "publication null");
                     return "";
                 }
@@ -372,7 +372,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 MakeServerRequest(REQUEST_METHOD_GET,
                         params[1].ServerSubPath.replace("{0}",
                                 String.valueOf(publicationID)), null, true);
-                if(!isSuccess){
+                if (!isSuccess) {
                     Log.e(MY_TAG, "can't get reged users (from push)");
                     return "";
                 }
@@ -387,6 +387,14 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 return "";
             //endregion
+            case InternalRequest.ACTION_POST_FEEDBACK:
+                FeedbackReport fr
+                        = new FeedbackReport(
+                        params[0].publicationReport.getReportUserName(),
+                        params[0].publicationReport.getReportContactInfo(),
+                        params[0].publicationReport.getDevice_uuid());
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, fr, false);
+                return "";
             default:
                 return "";
         }
@@ -463,7 +471,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }  finally {
+        } finally {
             if (connection != null) {
                 try {
                     connection.disconnect();
@@ -482,7 +490,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         switch (Action_Command_ID) {
             case InternalRequest.ACTION_GET_ALL_PUBLICATIONS:
                 InternalRequest irLoadData;
-                if(isSuccess) {
+                if (isSuccess) {
                     Log.i(MY_TAG, "data loaded from http, calling callback");
                     irLoadData = new InternalRequest(InternalRequest.ACTION_GET_ALL_PUBLICATIONS, resultPublications, null);
                     irLoadData.Status = InternalRequest.STATUS_OK;
@@ -572,7 +580,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     private FCPublicationForDisabling ForDisabling = new FCPublicationForDisabling();
 
-    class FCPublicationForDisabling implements ICanWriteSelfToJSONWriter{
+    class FCPublicationForDisabling implements ICanWriteSelfToJSONWriter {
 
         @Override
         public void WriteSelfToJSONWriter(JsonWriter writer) {
@@ -596,12 +604,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
-    class MyLocationForReport implements ICanWriteSelfToJSONWriter{
+    class MyLocationForReport implements ICanWriteSelfToJSONWriter {
 
         private String imei;
         private Location location;
 
-        public MyLocationForReport(String imei, Location location){
+        public MyLocationForReport(String imei, Location location) {
             this.imei = imei;
             this.location = location;
         }
@@ -626,7 +634,42 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             dataToSend.put("active_device", publicationData);
             org.json.simple.JSONObject json = new org.json.simple.JSONObject();
             json.putAll(dataToSend);
-            return json;        }
+            return json;
+        }
+    }
+
+    class FeedbackReport implements ICanWriteSelfToJSONWriter {
+
+        String ReporterName, Feedback, Imei;
+
+        public FeedbackReport(String reporterName, String feedback, String imei) {
+            ReporterName = reporterName;
+            Feedback = feedback;
+            Imei = imei;
+        }
+
+        @Override
+        public void WriteSelfToJSONWriter(JsonWriter writer) {
+
+        }
+
+        @Override
+        public Map<String, Object> GetJsonMapStringObject() {
+            return null;
+        }
+
+        @Override
+        public org.json.simple.JSONObject GetJsonObjectForPost() {
+            Map<String, Object> publicationData = new HashMap<String, Object>();
+            publicationData.put(FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, Imei);
+            publicationData.put("reporter_name", ReporterName);
+            publicationData.put(PublicationReport.PUBLICATION_REPORT_FIELD_KEY_REPORT, Feedback);
+            Map<String, Object> dataToSend = new HashMap<String, Object>();
+            dataToSend.put("feedback", publicationData);
+            org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+            json.putAll(dataToSend);
+            return json;
+        }
     }
 
 /*
@@ -785,7 +828,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 //        dataToSend.put("registered_user_for_publication", registrationData);
 
 
-        // convert dataToSend to a valid json object
+    // convert dataToSend to a valid json object
 //        org.json.simple.JSONObject json = new org.json.simple.JSONObject();
 //        json.putAll(dataToSend);
 //        System.out.println(json);

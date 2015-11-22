@@ -51,6 +51,7 @@ public class InternalRequest {
     public static final int ACTION_PUSH_PUB_DELETED = 26;
     public static final int ACTION_PUSH_REPORT_FOR_PUB = 27;
     public static final int ACTION_PUSH_REG = 28;
+    public static final int ACTION_POST_FEEDBACK = 99;
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;

@@ -1,6 +1,7 @@
 package upp.foodonet;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -160,9 +161,14 @@ public class EntranceActivity
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
-//            case R.id.btn_ask_welcomeScreen:
-//                break;
+            case R.id.rl_btn_test:
+
+                break;
         }
+    }
+
+    public void StartFeedbackPopup(Context context){
+
     }
 
     @Override

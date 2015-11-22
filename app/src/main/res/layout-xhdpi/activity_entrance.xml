@@ -63,6 +63,27 @@
                         android:textSize="@dimen/top_panel_text_size"
                         android:textStyle="bold"/>
                 </RelativeLayout>
+                <RelativeLayout android:id="@+id/rl_btn_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/first_screen_collect_xxh"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/test_btn_text"
+                        android:textColor="@color/basic_blue"
+                        android:textSize="@dimen/top_panel_text_size"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
         <RelativeLayout
