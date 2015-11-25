@@ -130,6 +130,7 @@ public class AllPublicationsTabFragment
         super.onResume();
         if(et_search_in_all_pubs != null)
             et_search_in_all_pubs.clearFocus();
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getActivity().getApplicationContext(), "all pubs list");
     }
 
     @Override

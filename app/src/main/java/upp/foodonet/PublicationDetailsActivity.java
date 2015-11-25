@@ -56,6 +56,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.protocol.HTTP;
@@ -159,7 +160,7 @@ public class PublicationDetailsActivity
             Log.e(MY_TAG, "no publication found in extras!");
             finish();
         }
-
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), publication.isOwnPublication? "my pub details": "other's pub details");
 
         isRegisteredForCurrentPublication = checkIfRegisteredForThisPublication();
 
@@ -281,8 +282,8 @@ public class PublicationDetailsActivity
             btn_menu.setScaleType(ImageView.ScaleType.FIT_CENTER);
             btn_menu.setOnClickListener(this);
             if (publication.getIsOnAir()
-                    && publication.getStartingDate().getTime() > new Date().getTime()
-                    && publication.getEndingDate().getTime() < new Date().getTime()) {
+                    && publication.getStartingDate().getTime() <= new Date().getTime()
+                    && publication.getEndingDate().getTime() >= new Date().getTime()) {
                 btn_facebook_my.setOnClickListener(this);
                 btn_twitter_my.setOnClickListener(this);
                 btn_call_reg.setOnClickListener(this);
@@ -764,12 +765,11 @@ public class PublicationDetailsActivity
                 popup.show();
                 break;
             case R.id.btn_leave_report_pub_details:
-
+                PostAnalyticsBlueBtnPressed("leave report");
                 if (!CheckInternetForAction(getString(R.string.action_leave_report)))
                     return;
                 if (CheckIfMyLocationAvailableAndAskReportConfirmation())
                     ShowReportDialog();
-
                 break;
             case R.id.btn_facebook_my_pub_details:
                 growAnim(R.drawable.facebook_green_xxh, R.drawable.pub_det_facebook, btn_facebook_my);
@@ -778,6 +778,7 @@ public class PublicationDetailsActivity
                 if (progressDialog != null)
                     progressDialog.dismiss();
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
+                PostAnalyticsBlueBtnPressed("Facebook btn");
                 PostOnFacebook();
                 break;
             case R.id.btn_navigate_pub_details:
@@ -791,6 +792,7 @@ public class PublicationDetailsActivity
                             new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
                     startActivity(intent);
                 }
+                PostAnalyticsBlueBtnPressed("Waze btn");
                 break;
             case R.id.btn_tweet_my_pub_details:
                 growAnim(R.drawable.twitter_green_xxh, R.drawable.pub_det_twitter, btn_twitter_my);
@@ -800,6 +802,7 @@ public class PublicationDetailsActivity
                     progressDialog.dismiss();
                 }
                 progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
+                PostAnalyticsBlueBtnPressed("Tweet btn");
                 SendTweet();
                 break;
             case R.id.btn_register_unregister_pub_details:
@@ -889,6 +892,7 @@ public class PublicationDetailsActivity
                 CommonUtil.RemoveValidationFromEditText(this, et_registerContactPhone);
                 break;
             case R.id.btn_call_owner_pub_details:
+                PostAnalyticsBlueBtnPressed("call btn");
                 growAnim(R.drawable.call_green_xxh, R.drawable.pub_det_call, btn_call_reg);
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + publication.getContactInfo()));
@@ -897,6 +901,7 @@ public class PublicationDetailsActivity
                 }
                 break;
             case R.id.btn_message_owner_pub_details:
+                PostAnalyticsBlueBtnPressed("sms btn");
                 growAnim(R.drawable.sms_green_xxh, R.drawable.pub_det_sms, btn_sms_reg);
                 Intent intentSMS = new Intent(Intent.ACTION_SENDTO);
                 intentSMS.setType(HTTP.PLAIN_TEXT_TYPE);
@@ -927,6 +932,10 @@ public class PublicationDetailsActivity
                 startActivity(intentFullSizeActivity);
                 break;
         }
+    }
+
+    private void PostAnalyticsBlueBtnPressed(String btnName){
+        CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "pub details", btnName, "btn pressed");
     }
 
     public boolean collectorNameValidate(EditText collectorName) {

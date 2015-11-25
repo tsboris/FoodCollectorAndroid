@@ -200,6 +200,7 @@ public class MapAndListActivity
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
                 isSideMenuOpened = true;
+                CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "Map and list", "Side menu", "Open menu");
             }
         };
 
@@ -774,6 +775,7 @@ public class MapAndListActivity
             @Override
             public void onClick(View v) {
                 ImageBtnFromGallerySelected(id);
+                CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "Map and list", "Gallery item", "item pressed");
             }
         });
         gallery_pubs.addView(imageButton);

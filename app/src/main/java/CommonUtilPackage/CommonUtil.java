@@ -16,6 +16,9 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.amazonaws.util.IOUtils;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
@@ -455,6 +458,19 @@ public class CommonUtil {
         field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 
+    private static Tracker GetGoogleAnalyticsTracker(Context context){
+        return GoogleAnalytics.getInstance(context).newTracker(context.getString(R.string.google_analytics_id));
+    }
 
+    public static void PostGoogleAnalyticsUIEvent(Context context, String screenName, String uiControlName, String uiEventType){
+        Tracker tracker = GetGoogleAnalyticsTracker(context);
+        tracker.setScreenName(screenName);
+        tracker.send(new HitBuilders.EventBuilder().setCategory("UI").setAction(uiEventType).setLabel(uiControlName).build());
+    }
 
+    public static void PostGoogleAnalyticsActivityOpened(Context context, String screenName){
+        Tracker tracker = GetGoogleAnalyticsTracker(context);
+        tracker.setScreenName(screenName);
+        tracker.send(new HitBuilders.EventBuilder().setCategory("ActivityOpened").build());
+    }
 }

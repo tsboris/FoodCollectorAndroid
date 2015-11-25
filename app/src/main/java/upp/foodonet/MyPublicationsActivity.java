@@ -132,7 +132,7 @@ public class MyPublicationsActivity
         lv_my_publications_list.setAdapter(adapter);
         lv_my_publications_list.setOnItemClickListener(this);
         onClick(btn_active_pub);
-
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), "my pubs");
     }
 
 
@@ -148,6 +148,7 @@ public class MyPublicationsActivity
     @Override
     protected void onResume() {
         super.onResume();
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), "my pubs list");
         if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;

@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,19 +154,27 @@ public class EntranceActivity
 //            case R.id.btn_pick_welcomeScreen:
 //            case R.id.tv_pick_welcomeScreen:
             case R.id.rl_btn_take_entrance_screen:
+                PostGoogleAnalyticsBtnPressed("Collect button");
                 Intent mapListIntent = new Intent(this, MapAndListActivity.class);
                 startActivity(mapListIntent);
                 break;
 //            case R.id.btn_share_welcomeScreen:
 //            case R.id.tv_share_welcomeScreen:
             case R.id.rl_btn_give_entrance_screen:
+                PostGoogleAnalyticsBtnPressed("Share button");
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
+/*
             case R.id.rl_btn_test:
 
                 break;
+*/
         }
+    }
+
+    private void PostGoogleAnalyticsBtnPressed(String btnName){
+        CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "EntranceActivity", btnName, "button pressed");
     }
 
     public void StartFeedbackPopup(Context context){

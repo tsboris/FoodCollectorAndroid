@@ -307,6 +307,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
+                            CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "add edit pub", "back btn", "exit without saving");
                             ForceReturn();
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
@@ -319,6 +320,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                     .setPositiveButton(getString(R.string.yes), dialogClickListener)
                     .setNegativeButton(getString(R.string.no), dialogClickListener).show();
         } else {
+            CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "add edit pub", "back btn", "exit without saving");
             ForceReturn();
         }
     }

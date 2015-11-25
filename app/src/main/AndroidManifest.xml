@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="upp.foodonet"
-    android:versionCode="7"
-    android:versionName="1.07"> <!-- todo check if this uses-sdk can be removed -->
+    android:versionCode="8"
+    android:versionName="1.071"> <!-- todo check if this uses-sdk can be removed -->
 
     <!-- for google play -->
     <!--<uses-configuration
@@ -39,6 +39,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".FoodonetApplication"
         android:allowBackup="true"
         android:icon="@drawable/foodonet_logo_200_200"
         android:label="@string/app_name"
@@ -92,6 +93,10 @@
         <meta-data
             android:name="Sender.ID"
             android:value="776321412578" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".EntranceActivity"
