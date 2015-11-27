@@ -73,7 +73,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp" />
 
-        <LinearLayout
+        <LinearLayout android:id="@+id/ll_nav_btns_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -117,9 +117,11 @@
         <HorizontalScrollView android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"
-            android:layout_alignParentBottom="true"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:layout_above="@+id/ll_nav_btns_panel"
+            android:layout_marginBottom="6dp">
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"-->
 
             <LinearLayout android:id="@+id/ll_image_btns_gallery"
                 android:layout_width="match_parent"

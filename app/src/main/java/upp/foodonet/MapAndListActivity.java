@@ -1,13 +1,17 @@
 package upp.foodonet;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -247,6 +252,7 @@ public class MapAndListActivity
         mainPager.addOnPageChangeListener(this);
 
         final View activityRootView = findViewById(R.id.drawer_layout);
+/*
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -260,6 +266,7 @@ public class MapAndListActivity
                 }
             }
         });
+*/
 
         gallery_pubs = (LinearLayout)findViewById(R.id.ll_image_btns_gallery);
     }
@@ -293,6 +300,16 @@ public class MapAndListActivity
         btn_navigate_share.setEnabled(true);
         //   btn_navigate_take.setChecked(true);
         btn_navigate_take.setEnabled(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -382,6 +399,11 @@ public class MapAndListActivity
                     drawerLayout.openDrawer(ll_sideMenu);
                 }
                 if (currentPageIndex == PAGE_LIST) {
+                    View view = this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     mainPager.setCurrentItem(0);
                 }
                 break;
@@ -466,6 +488,10 @@ public class MapAndListActivity
             btn_focus_on_my_location.setVisibility(View.VISIBLE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(View.VISIBLE);
+        if(btn_navigate_share != null)
+            btn_navigate_share.setVisibility(View.VISIBLE);
+        if(btn_navigate_take != null)
+            btn_navigate_take.setVisibility(View.VISIBLE);
 
         SetCamera();
     }
@@ -546,6 +572,10 @@ public class MapAndListActivity
             btn_focus_on_my_location.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+        if(btn_navigate_share != null)
+            btn_navigate_share.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+        if(btn_navigate_take != null)
+            btn_navigate_take.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -778,6 +808,10 @@ public class MapAndListActivity
                 CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "Map and list", "Gallery item", "item pressed");
             }
         });
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] { android.R.attr.state_pressed }, new ColorDrawable(0xD900a3cc));
+        states.addState(new int[]{}, new ColorDrawable(0x8066e0ff));
+        imageButton.setBackgroundDrawable(states);
         gallery_pubs.addView(imageButton);
     }
 

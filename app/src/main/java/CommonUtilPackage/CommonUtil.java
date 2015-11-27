@@ -176,17 +176,18 @@ public class CommonUtil {
         if (!photo.exists())
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
         if (!photo.exists()) return null;
+        BitmapDrawable result = null;
         try {
             FileInputStream fis = new FileInputStream(photo.getPath());
             byte[] imageBytes = IOUtils.toByteArray(fis);
             Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, width, heigth);
-            return new BitmapDrawable(bImage);
+            result = new BitmapDrawable(bImage);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     public static void CopyFile(File src, File dst) throws IOException {
