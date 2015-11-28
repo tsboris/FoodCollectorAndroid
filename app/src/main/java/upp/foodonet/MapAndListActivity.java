@@ -1,6 +1,7 @@
 package upp.foodonet;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -30,10 +31,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -69,6 +72,8 @@ import DataModel.PublicationReport;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -80,7 +85,10 @@ public class MapAndListActivity
         AdapterView.OnItemClickListener,
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback, GoogleMap.OnInfoWindowClickListener {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        IFooDoNetSQLCallback,
+        IFooDoNetServerCallback,
+        GoogleMap.OnInfoWindowClickListener {
 
     private static final String MY_TAG = "food_mapAndList";
     public static final String PUBLICATION_NUMBER = "pubnumber";
@@ -114,6 +122,9 @@ public class MapAndListActivity
 
     int currentPageIndex;
 
+    ImageButton btn_feedback_dialog;
+    EditText et_feedbackText;
+    Dialog feedbackDialog;
     ListView lv_side_menu_reg;
     ListView lv_side_menu_my;
     SideMenuCursorAdapter adapter_my;
@@ -218,6 +229,8 @@ public class MapAndListActivity
         btn_focus_on_my_location.setOnClickListener(this);
         hsv_gallery = (HorizontalScrollView)findViewById(R.id.hsv_image_gallery);
 
+        btn_feedback_dialog = (ImageButton)findViewById(R.id.btn_side_menu_feedback);
+        btn_feedback_dialog.setOnClickListener(this);
         lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
         adapter_my = new SideMenuCursorAdapter(this, null, 0);
@@ -413,6 +426,42 @@ public class MapAndListActivity
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(myLocation), width, height, 0);
                 googleMap.animateCamera(cu);
                 break;
+            case R.id.btn_side_menu_feedback:
+                feedbackDialog = new Dialog(this);
+                feedbackDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                feedbackDialog.setContentView(R.layout.dialog_send_feedback);
+                final Button btn_dialog_ok = (Button)feedbackDialog.findViewById(R.id.btn_feedback_ok);
+                final Button btn_dialog_cancel = (Button)feedbackDialog.findViewById(R.id.btn_feedback_cancel);
+                btn_dialog_ok.setOnClickListener(this);
+                btn_dialog_cancel.setOnClickListener(this);
+                et_feedbackText = (EditText)feedbackDialog.findViewById(R.id.et_feedback_text);
+                et_feedbackText.setText("");
+                feedbackDialog.show();
+                break;
+            case R.id.btn_feedback_ok:
+                if(et_feedbackText.getText().toString().length() == 0){
+                    CommonUtil.SetEditTextIsValid(this, et_feedbackText, false);
+                    Toast.makeText(this, getString(R.string.feedback_validation_text_null), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.feedback_progress_sending));
+                HttpServerConnectorAsync serverConnector = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
+                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_FEEDBACK);
+                ir.publicationReport = new PublicationReport();
+                ir.publicationReport.setReportContactInfo(et_feedbackText.getText().toString());
+                ir.publicationReport.setReportUserName(
+                        getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE)
+                                .getString(getString(R.string.shared_preferences_contact_info_name), ""));
+                ir.publicationReport.setDevice_uuid(CommonUtil.GetIMEI(this));
+                ir.ServerSubPath = getString(R.string.server_post_report_feedback);
+                serverConnector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+
+
+            case R.id.btn_feedback_cancel:
+                if(feedbackDialog != null)
+                    feedbackDialog.dismiss();
+                break;
+
             /*
             case R.id.btn_collapse_expand_ll_my:
                 if (is_smenu_lv_my_expanded) {
@@ -940,6 +989,17 @@ public class MapAndListActivity
         // 1dp/ms
         a.setDuration(200);//((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
+    }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        if(progressDialog != null)
+            progressDialog.dismiss();
+        switch (response.ActionCommand){
+            case InternalRequest.ACTION_POST_FEEDBACK:
+                Toast.makeText(this, getString(R.string.feedback_uimessage_thanks), Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     //endregion

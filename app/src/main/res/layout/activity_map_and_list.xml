@@ -157,6 +157,15 @@
                 android:textSize="@dimen/side_menu_text_size"
                 android:textStyle="bold" />
 
+            <ImageButton android:id="@+id/btn_side_menu_feedback"
+                android:layout_width="@dimen/top_panel_btn_size"
+                android:layout_height="@dimen/top_panel_btn_size"
+                android:layout_marginLeft="@dimen/top_panel_btn_margin"
+                android:layout_centerVertical="true"
+                android:src="@drawable/mail_button"
+                android:scaleType="fitCenter"
+                android:background="@color/transparent"/>
+
         </RelativeLayout>
 
         <RelativeLayout
