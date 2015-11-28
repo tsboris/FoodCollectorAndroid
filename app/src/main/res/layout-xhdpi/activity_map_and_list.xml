@@ -104,15 +104,16 @@
         </LinearLayout>
 
         <ImageButton android:id="@+id/btn_center_on_my_location_map"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="240dp"
+            android:layout_marginBottom="200dp"
             android:src="@drawable/map_my_location_button"
             android:scaleType="fitCenter"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:background="@drawable/map_my_location_btn_selector" android:padding="10dp"/>
 
         <HorizontalScrollView android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"

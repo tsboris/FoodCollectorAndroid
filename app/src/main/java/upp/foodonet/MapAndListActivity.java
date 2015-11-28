@@ -80,7 +80,7 @@ public class MapAndListActivity
         AdapterView.OnItemClickListener,
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback {
+        LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final String MY_TAG = "food_mapAndList";
     public static final String PUBLICATION_NUMBER = "pubnumber";
@@ -455,6 +455,7 @@ public class MapAndListActivity
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnInfoWindowClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
 /*
         Location myLocationLoc = googleMap.getMyLocation();
@@ -484,7 +485,7 @@ public class MapAndListActivity
         StartLoadingForMarkers();
         //getSupportLoaderManager().initLoader(0, null, this);
 
-        if (btn_focus_on_my_location != null)
+        if (btn_focus_on_my_location != null && googleMap != null)
             btn_focus_on_my_location.setVisibility(View.VISIBLE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(View.VISIBLE);
@@ -500,6 +501,11 @@ public class MapAndListActivity
     public boolean onMarkerClick(Marker marker) {
         OnPublicationSelected(myMarkers.get(marker));
         return false;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        OnPublicationSelected(myMarkers.get(marker));
     }
 
     @Override
@@ -569,7 +575,7 @@ public class MapAndListActivity
     public void onPageSelected(int position) {
         currentPageIndex = position;
         if (btn_focus_on_my_location != null)
-            btn_focus_on_my_location.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+            btn_focus_on_my_location.setVisibility(position == PAGE_MAP && googleMap != null ? View.VISIBLE : View.GONE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
         if(btn_navigate_share != null)
@@ -588,6 +594,7 @@ public class MapAndListActivity
     //region My methods
 
     private void OnPublicationSelected(long publicationID) {
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = publicationID;
@@ -792,7 +799,9 @@ public class MapAndListActivity
     public void AddImageToGallery(final FCPublication publication){
         int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height_xhdpi);
         ImageButton imageButton = new ImageButton(getApplicationContext());
-        imageButton.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
+        lp.setMargins(4, 0, 0, 0);
+        imageButton.setLayoutParams(lp);
         imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
         Drawable drawable
                 = CommonUtil.GetBitmapDrawableFromFile(
@@ -802,6 +811,7 @@ public class MapAndListActivity
         imageButton.setImageDrawable(drawable);
         imageButton.setOnClickListener(new View.OnClickListener() {
             int id = publication.getUniqueId();
+
             @Override
             public void onClick(View v) {
                 ImageBtnFromGallerySelected(id);
@@ -809,8 +819,8 @@ public class MapAndListActivity
             }
         });
         StateListDrawable states = new StateListDrawable();
-        states.addState(new int[] { android.R.attr.state_pressed }, new ColorDrawable(0xD900a3cc));
-        states.addState(new int[]{}, new ColorDrawable(0x8066e0ff));
+        states.addState(new int[] { android.R.attr.state_pressed }, getResources().getDrawable(R.drawable.map_my_location_bg_pressed));
+        states.addState(new int[]{}, getResources().getDrawable(R.drawable.map_my_location_bg_normal));
         imageButton.setBackgroundDrawable(states);
         gallery_pubs.addView(imageButton);
     }
@@ -862,6 +872,8 @@ public class MapAndListActivity
                 Intent intent = new Intent(this, PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
+                if(progressDialog != null)
+                    progressDialog.dismiss();
                 break;
             default:
                 Log.e(MY_TAG, "can't get publication for details!");
@@ -929,5 +941,6 @@ public class MapAndListActivity
         a.setDuration(200);//((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
     }
+
     //endregion
 }

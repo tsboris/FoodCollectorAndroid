@@ -17,9 +17,9 @@
     <dimen name="top_panel_add_pub_plus_size">36dp</dimen>
     <dimen name="top_panel_add_pub_plus_size_ldpi">24dp</dimen>
     <dimen name="top_panel_add_pub_plus_size_hdpi">26dp</dimen>
-    <dimen name="bottom_nav_btn_img_size">50dp</dimen>
-    <dimen name="bottom_nav_btn_img_size_hdpi">42dp</dimen>
-    <dimen name="bottom_nav_btn_img_size_ldpi">36dp</dimen>
+    <dimen name="bottom_nav_btn_img_size">42dp</dimen>
+    <dimen name="bottom_nav_btn_img_size_hdpi">36dp</dimen>
+    <dimen name="bottom_nav_btn_img_size_ldpi">24dp</dimen>
     <dimen name="side_menu_panel_width">280dp</dimen>
     <dimen name="side_menu_panel_width_ldpi">240dp</dimen>
     <dimen name="side_menu_item_pub_title_width">120dp</dimen>
@@ -133,6 +133,10 @@
     <dimen name="top_panel_btn_margin_ldpi">3dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top_ldpi">40dp</dimen>
+    <color name="buttons_and_gallery_pressed">#D900a3cc</color>
+    <drawable name="buttons_and_gallery_pressed">#D900a3cc</drawable>
+    <color name="buttons_and_gallery_normal">#8066e0ff</color>
+    <drawable name="buttons_and_gallery_normal">#8066e0ff</drawable>
 
     <!-- ==================== -->
 
