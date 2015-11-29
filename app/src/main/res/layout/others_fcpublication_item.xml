@@ -78,6 +78,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="@dimen/my_pub_list_item_title_text_size"
         android:textStyle="bold"
+        android:singleLine="true"
         android:textColor="@color/edit_text_input_default_color"/>
 
 

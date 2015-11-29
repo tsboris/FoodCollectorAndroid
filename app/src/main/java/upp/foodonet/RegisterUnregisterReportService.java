@@ -207,6 +207,7 @@ public class RegisterUnregisterReportService
                 Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
                 intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
                         ServicesBroadcastReceiver.ACTION_CODE_REPORT_TO_PUBLICATION_SUCCESS);
+                sendBroadcast(intent);
                 RegisteredUserForPublication regToDelete = new RegisteredUserForPublication();
                 regToDelete.setDevice_registered_uuid(CommonUtil.GetIMEI(this));
                 regToDelete.setPublication_id(myReportToPublication.getPublication_id());

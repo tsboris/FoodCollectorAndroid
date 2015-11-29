@@ -160,7 +160,7 @@ public class PublicationDetailsActivity
             Log.e(MY_TAG, "no publication found in extras!");
             finish();
         }
-        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), publication.isOwnPublication? "my pub details": "other's pub details");
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), publication.isOwnPublication ? "my pub details" : "other's pub details");
 
         isRegisteredForCurrentPublication = checkIfRegisteredForThisPublication();
 
@@ -187,7 +187,7 @@ public class PublicationDetailsActivity
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
         tv_start_dateTime_details = (TextView) findViewById(R.id.tv_start_time_pub_details);
         tv_end_dateTime_details = (TextView) findViewById(R.id.tv_end_time_pub_details);
-        tv_no_reports = (TextView)findViewById(R.id.tv_no_reports_for_pub);
+        tv_no_reports = (TextView) findViewById(R.id.tv_no_reports_for_pub);
 
 
         tv_title.setText(publication.getTitle());
@@ -377,17 +377,21 @@ public class PublicationDetailsActivity
     private void SetReportsList() {
         if (publication.getPublicationReports() == null
                 || publication.getPublicationReports().size() == 0) {
-            tv_no_reports.setVisibility(View.VISIBLE);
-            lv_reports.setVisibility(View.GONE);
+            if (tv_no_reports != null)
+                tv_no_reports.setVisibility(View.VISIBLE);
+            if (lv_reports != null)
+                lv_reports.setVisibility(View.GONE);
             return;
+        } else {
+            if (tv_no_reports != null)
+                tv_no_reports.setVisibility(View.GONE);
+            if (lv_reports != null) {
+                adapter = new PublicationDetailsReportsAdapter(this,
+                        R.layout.pub_details_report_item, publication.getPublicationReports());
+                lv_reports.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
         }
-        else
-            tv_no_reports.setVisibility(View.GONE);
-
-
-        adapter = new PublicationDetailsReportsAdapter(this,
-                R.layout.pub_details_report_item, publication.getPublicationReports());
-        lv_reports.setAdapter(adapter);
     }
 
     //endregion
@@ -470,7 +474,7 @@ public class PublicationDetailsActivity
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.twitter.android"));
             startActivity(intent);
         }
-        if(progressDialog != null)
+        if (progressDialog != null)
             progressDialog.dismiss();
     }
     // endregion
@@ -717,12 +721,25 @@ public class PublicationDetailsActivity
                     progressDialog.dismiss();
                 progressDialog = null;
                 RestartNumOfRegedLoader();
+                ReloadReports();
                 break;
         }
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.remove(getString(R.string.shared_preferences_pending_broadcast_value));
         editor.commit();
+    }
+
+    private void ReloadReports() {
+        Cursor cursor = getContentResolver().query(
+                Uri.parse(FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID + "/" + publication.getUniqueId()),
+                PublicationReport.GetColumnNamesArray(), null, null, null);
+        ArrayList<PublicationReport> reports = PublicationReport.GetArrayListOfPublicationReportsFromCursor(cursor);
+        if(reports != null && reports.size() > 0){
+            publication.getPublicationReports().clear();
+            publication.setPublicationReports(reports);
+        }
+        SetReportsList();
     }
 
     //endregion
@@ -934,7 +951,7 @@ public class PublicationDetailsActivity
         }
     }
 
-    private void PostAnalyticsBlueBtnPressed(String btnName){
+    private void PostAnalyticsBlueBtnPressed(String btnName) {
         CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "pub details", btnName, "btn pressed");
     }
 
