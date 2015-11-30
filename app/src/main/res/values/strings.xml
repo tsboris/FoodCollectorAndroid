@@ -187,6 +187,11 @@
     <string name="report_dialog_report_btn">דווח</string>
     <string name="report_dialog_cancel_btn">בטל</string>
 
+    <!-- Dialog publication reports -->
+
+    <string name="dialog_pub_reports_title">דיווחי משתמשים</string>
+    <string name="dialog_pub_reports_back_btn">חזרה</string>
+
     <!-- Publication details -->
 
     <string name="progress_taking_pub_off_air">מעדכן שיתוף</string>
