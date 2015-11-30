@@ -225,6 +225,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + " PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
             + " PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
             + " PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + ", "
+            + " PUBS." + FCPublication.PUBLICATION_VERSION_KEY + ", "
             + "COUNT (REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + ") "
             + FCPublication.PUBLICATION_NUMBER_OF_REGISTERED
             + " FROM " + FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME + " PUBS "
@@ -235,7 +236,8 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_LATITUDE_KEY + ", "
-            + "PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY;
+            + "PUBS." + FCPublication.PUBLICATION_LONGITUDE_KEY + ", "
+            + "PUBS." + FCPublication.PUBLICATION_VERSION_KEY;
 
 
 //    public static final String RAW_SELECT_REPORTS_FOR_PUB_DETAILS

@@ -32,7 +32,8 @@
             android:gravity="right|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="@dimen/my_pub_list_item_title_text_size"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:singleLine="true"/>
 
         <View
             android:id="@+id/v_dot_my_pubs_list"

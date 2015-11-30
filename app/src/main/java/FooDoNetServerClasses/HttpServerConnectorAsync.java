@@ -559,6 +559,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 irUpdateListRegUsersFromPush.publicationForSaving = publicationForSaving;
                 callbackListener.OnServerRespondedCallback(irUpdateListRegUsersFromPush);
                 break;
+            case InternalRequest.ACTION_POST_FEEDBACK:
+                Log.i(MY_TAG, "send feedback complete: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irFeedback = new InternalRequest(Action_Command_ID, isSuccess);
+                callbackListener.OnServerRespondedCallback(irFeedback);
         }
     }
 

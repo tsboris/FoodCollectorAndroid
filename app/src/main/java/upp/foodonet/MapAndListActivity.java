@@ -1,13 +1,18 @@
 package upp.foodonet;
 
 import android.app.ActionBar;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,9 +31,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -64,6 +72,8 @@ import DataModel.PublicationReport;
 import FooDoNetSQLClasses.FooDoNetSQLExecuterAsync;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
 import FooDoNetSQLClasses.IFooDoNetSQLCallback;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
+import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 
 
@@ -75,7 +85,10 @@ public class MapAndListActivity
         AdapterView.OnItemClickListener,
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor>, IFooDoNetSQLCallback {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        IFooDoNetSQLCallback,
+        IFooDoNetServerCallback,
+        GoogleMap.OnInfoWindowClickListener {
 
     private static final String MY_TAG = "food_mapAndList";
     public static final String PUBLICATION_NUMBER = "pubnumber";
@@ -109,6 +122,9 @@ public class MapAndListActivity
 
     int currentPageIndex;
 
+    ImageButton btn_feedback_dialog;
+    EditText et_feedbackText;
+    Dialog feedbackDialog;
     ListView lv_side_menu_reg;
     ListView lv_side_menu_my;
     SideMenuCursorAdapter adapter_my;
@@ -213,6 +229,8 @@ public class MapAndListActivity
         btn_focus_on_my_location.setOnClickListener(this);
         hsv_gallery = (HorizontalScrollView)findViewById(R.id.hsv_image_gallery);
 
+        btn_feedback_dialog = (ImageButton)findViewById(R.id.btn_side_menu_feedback);
+        btn_feedback_dialog.setOnClickListener(this);
         lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
         adapter_my = new SideMenuCursorAdapter(this, null, 0);
@@ -247,6 +265,7 @@ public class MapAndListActivity
         mainPager.addOnPageChangeListener(this);
 
         final View activityRootView = findViewById(R.id.drawer_layout);
+/*
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -260,6 +279,7 @@ public class MapAndListActivity
                 }
             }
         });
+*/
 
         gallery_pubs = (LinearLayout)findViewById(R.id.ll_image_btns_gallery);
     }
@@ -293,6 +313,16 @@ public class MapAndListActivity
         btn_navigate_share.setEnabled(true);
         //   btn_navigate_take.setChecked(true);
         btn_navigate_take.setEnabled(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -382,6 +412,11 @@ public class MapAndListActivity
                     drawerLayout.openDrawer(ll_sideMenu);
                 }
                 if (currentPageIndex == PAGE_LIST) {
+                    View view = this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     mainPager.setCurrentItem(0);
                 }
                 break;
@@ -391,6 +426,42 @@ public class MapAndListActivity
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(myLocation), width, height, 0);
                 googleMap.animateCamera(cu);
                 break;
+            case R.id.btn_side_menu_feedback:
+                feedbackDialog = new Dialog(this);
+                feedbackDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                feedbackDialog.setContentView(R.layout.dialog_send_feedback);
+                final Button btn_dialog_ok = (Button)feedbackDialog.findViewById(R.id.btn_feedback_ok);
+                final Button btn_dialog_cancel = (Button)feedbackDialog.findViewById(R.id.btn_feedback_cancel);
+                btn_dialog_ok.setOnClickListener(this);
+                btn_dialog_cancel.setOnClickListener(this);
+                et_feedbackText = (EditText)feedbackDialog.findViewById(R.id.et_feedback_text);
+                et_feedbackText.setText("");
+                feedbackDialog.show();
+                break;
+            case R.id.btn_feedback_ok:
+                if(et_feedbackText.getText().toString().length() == 0){
+                    CommonUtil.SetEditTextIsValid(this, et_feedbackText, false);
+                    Toast.makeText(this, getString(R.string.feedback_validation_text_null), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.feedback_progress_sending));
+                HttpServerConnectorAsync serverConnector = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
+                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_FEEDBACK);
+                ir.publicationReport = new PublicationReport();
+                ir.publicationReport.setReportContactInfo(et_feedbackText.getText().toString());
+                ir.publicationReport.setReportUserName(
+                        getSharedPreferences(getString(R.string.shared_preferences_contact_info), MODE_PRIVATE)
+                                .getString(getString(R.string.shared_preferences_contact_info_name), ""));
+                ir.publicationReport.setDevice_uuid(CommonUtil.GetIMEI(this));
+                ir.ServerSubPath = getString(R.string.server_post_report_feedback);
+                serverConnector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+
+
+            case R.id.btn_feedback_cancel:
+                if(feedbackDialog != null)
+                    feedbackDialog.dismiss();
+                break;
+
             /*
             case R.id.btn_collapse_expand_ll_my:
                 if (is_smenu_lv_my_expanded) {
@@ -433,6 +504,7 @@ public class MapAndListActivity
         }
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnInfoWindowClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
 /*
         Location myLocationLoc = googleMap.getMyLocation();
@@ -462,10 +534,14 @@ public class MapAndListActivity
         StartLoadingForMarkers();
         //getSupportLoaderManager().initLoader(0, null, this);
 
-        if (btn_focus_on_my_location != null)
+        if (btn_focus_on_my_location != null && googleMap != null)
             btn_focus_on_my_location.setVisibility(View.VISIBLE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(View.VISIBLE);
+        if(btn_navigate_share != null)
+            btn_navigate_share.setVisibility(View.VISIBLE);
+        if(btn_navigate_take != null)
+            btn_navigate_take.setVisibility(View.VISIBLE);
 
         SetCamera();
     }
@@ -474,6 +550,11 @@ public class MapAndListActivity
     public boolean onMarkerClick(Marker marker) {
         OnPublicationSelected(myMarkers.get(marker));
         return false;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        OnPublicationSelected(myMarkers.get(marker));
     }
 
     @Override
@@ -543,9 +624,13 @@ public class MapAndListActivity
     public void onPageSelected(int position) {
         currentPageIndex = position;
         if (btn_focus_on_my_location != null)
-            btn_focus_on_my_location.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+            btn_focus_on_my_location.setVisibility(position == PAGE_MAP && googleMap != null ? View.VISIBLE : View.GONE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+        if(btn_navigate_share != null)
+            btn_navigate_share.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+        if(btn_navigate_take != null)
+            btn_navigate_take.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -558,6 +643,7 @@ public class MapAndListActivity
     //region My methods
 
     private void OnPublicationSelected(long publicationID) {
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
         FooDoNetSQLExecuterAsync sqlGetPubAsync = new FooDoNetSQLExecuterAsync(this, getContentResolver());
         InternalRequest ir = new InternalRequest(InternalRequest.ACTION_SQL_GET_SINGLE_PUBLICATION_BY_ID);
         ir.PublicationID = publicationID;
@@ -762,7 +848,9 @@ public class MapAndListActivity
     public void AddImageToGallery(final FCPublication publication){
         int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height_xhdpi);
         ImageButton imageButton = new ImageButton(getApplicationContext());
-        imageButton.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
+        lp.setMargins(4, 0, 0, 0);
+        imageButton.setLayoutParams(lp);
         imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
         Drawable drawable
                 = CommonUtil.GetBitmapDrawableFromFile(
@@ -772,12 +860,17 @@ public class MapAndListActivity
         imageButton.setImageDrawable(drawable);
         imageButton.setOnClickListener(new View.OnClickListener() {
             int id = publication.getUniqueId();
+
             @Override
             public void onClick(View v) {
                 ImageBtnFromGallerySelected(id);
                 CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "Map and list", "Gallery item", "item pressed");
             }
         });
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] { android.R.attr.state_pressed }, getResources().getDrawable(R.drawable.map_my_location_bg_pressed));
+        states.addState(new int[]{}, getResources().getDrawable(R.drawable.map_my_location_bg_normal));
+        imageButton.setBackgroundDrawable(states);
         gallery_pubs.addView(imageButton);
     }
 
@@ -828,6 +921,8 @@ public class MapAndListActivity
                 Intent intent = new Intent(this, PublicationDetailsActivity.class);
                 intent.putExtra(PublicationDetailsActivity.PUBLICATION_PARAM, result);
                 startActivityForResult(intent, 1);
+                if(progressDialog != null)
+                    progressDialog.dismiss();
                 break;
             default:
                 Log.e(MY_TAG, "can't get publication for details!");
@@ -895,5 +990,17 @@ public class MapAndListActivity
         a.setDuration(200);//((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
     }
+
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        if(progressDialog != null)
+            progressDialog.dismiss();
+        switch (response.ActionCommand){
+            case InternalRequest.ACTION_POST_FEEDBACK:
+                Toast.makeText(this, getString(R.string.feedback_uimessage_thanks), Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
     //endregion
 }

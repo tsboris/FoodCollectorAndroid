@@ -11,11 +11,11 @@
         android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.25"
+            android:layout_weight="0.20"
             android:layout_height="wrap_content"></RelativeLayout>
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.50"
+            android:layout_weight="0.60"
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,7 +68,7 @@
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="0.25"
+            android:layout_weight="0.20"
             android:layout_height="wrap_content"></RelativeLayout>
     </LinearLayout>
 

@@ -73,7 +73,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp" />
 
-        <LinearLayout
+        <LinearLayout android:id="@+id/ll_nav_btns_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -104,22 +104,25 @@
         </LinearLayout>
 
         <ImageButton android:id="@+id/btn_center_on_my_location_map"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="240dp"
+            android:layout_marginBottom="200dp"
             android:src="@drawable/map_my_location_button"
             android:scaleType="fitCenter"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:background="@drawable/map_my_location_btn_selector" android:padding="10dp"/>
 
         <HorizontalScrollView android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"
-            android:layout_alignParentBottom="true"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:layout_above="@+id/ll_nav_btns_panel"
+            android:layout_marginBottom="6dp">
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"-->
 
             <LinearLayout android:id="@+id/ll_image_btns_gallery"
                 android:layout_width="match_parent"
@@ -155,6 +158,15 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size"
                 android:textStyle="bold" />
+
+            <ImageButton android:id="@+id/btn_side_menu_feedback"
+                android:layout_width="@dimen/top_panel_btn_size"
+                android:layout_height="@dimen/top_panel_btn_size"
+                android:layout_marginLeft="@dimen/top_panel_btn_margin"
+                android:layout_centerVertical="true"
+                android:src="@drawable/mail_button"
+                android:scaleType="fitCenter"
+                android:background="@color/transparent"/>
 
         </RelativeLayout>
 
