@@ -145,7 +145,8 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
                             getResources().getString(R.string.image_folder_path));
                     Map<Integer,Integer> map = new HashMap<>();
                     map.put(request.publicationForSaving.getUniqueId(), request.publicationForSaving.getVersion());
-                    imageTask.execute(map);
+                    imageTask.setRequestHashMap(map);
+                    imageTask.execute();
                 }
                 break;
             case InternalRequest.ACTION_PUSH_PUB_DELETED:

@@ -29,7 +29,7 @@ import CommonUtilPackage.CommonUtil;
 /**
  * Created by ah on 31/08/15.
  */
-public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Void> {
+public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     private static final String MY_TAG = "DownloadImageTask";
 
@@ -39,6 +39,7 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
     private int maxImageWidthHeight;
     private String imageFolderPath;
 
+    Map<Integer, Integer> request;
     Map<Integer, byte[]> resultImages;
 
     public DownloadImageTask(IDownloadImageCallBack callBack, String baseUrlImages, int maxImageWidthHeight, String imageFolderPath) {
@@ -49,14 +50,25 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
         this.imageFolderPath = imageFolderPath;
     }
 
-    protected Void doInBackground(Map<Integer, Integer>... urls) {
+    public synchronized void setRequestHashMap(Map<Integer, Integer> urls){
+        if(urls == null || urls.size() == 0)
+            return;
+        if(request == null)
+            request = new HashMap<>();
+        Set<Integer> set = urls.keySet();
+        for(int i : set)
+            request.put(i, urls.get(i));
+    }
+
+    protected Void doInBackground(Void... params) {
         resultImages = new HashMap<>();
-        if(urls == null || urls.length == 0)
+        if(request == null || request.size() == 0)
             return null;
-        Set<Integer> pubIDs = urls[0].keySet();
+        Set<Integer> pubIDs = request.keySet();
         for (int id : pubIDs) {
-            String url = baseUrl + "/" + String.valueOf(id)
-                    + "." + String.valueOf(urls[0].get(id)) + ".jpg";
+            String fileName = String.valueOf(id)
+                    + "." + String.valueOf(request.get(id)) + ".jpg";
+            String url = baseUrl + "/" + fileName;
             InputStream is = null;
             try {
 
@@ -69,7 +81,6 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
                 connection.setUseCaches(false);
                 is = connection.getInputStream();
 
-                String fileName = id + "." + urls[0].get(id) + ".jpg";
                 //is = new java.net.URL(url).openStream();
                 byte[] result = IOUtils.toByteArray(is);
                 result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
@@ -96,7 +107,7 @@ public class DownloadImageTask extends AsyncTask<Map<Integer, Integer>, Void, Vo
                 e.printStackTrace();
             } catch (IOException e) {
                 //e.printStackTrace();
-                Log.e(MY_TAG, "cant load image for: " + id + "." + urls[0].get(id));
+                Log.e(MY_TAG, "cant load image for: " + fileName);
             } finally {
                 if (is != null) try {
                     is.close();

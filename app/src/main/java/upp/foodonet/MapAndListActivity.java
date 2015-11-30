@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Adapters.MainViewPagerAdapter;
+import Adapters.MapMarkerInfoWindowAdapter;
 import Adapters.SideMenuCursorAdapter;
 import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
@@ -506,6 +507,7 @@ public class MapAndListActivity
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnInfoWindowClickListener(this);
         googleMap.setOnMyLocationChangeListener(this);
+        googleMap.setInfoWindowAdapter(new MapMarkerInfoWindowAdapter(getLayoutInflater()));
 /*
         Location myLocationLoc = googleMap.getMyLocation();
         if(myLocationLoc != null)
@@ -838,9 +840,11 @@ public class MapAndListActivity
                 break;
             case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_MY_ACTIVE:
                 adapter_my.swapCursor(data);
+                adapter_my.notifyDataSetChanged();
                 break;
             case FooDoNetSQLHelper.FILTER_ID_SIDEMENU_OTHERS_I_REGISTERED:
                 adapter_reg.swapCursor(data);
+                adapter_reg.notifyDataSetChanged();
                 break;
         }
     }
@@ -933,7 +937,8 @@ public class MapAndListActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        RestartLoadingSideMenuMy();
+        RestartLoadingSideMenuReg();
     }
     //endregion
 

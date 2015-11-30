@@ -197,6 +197,8 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                                             CommonUtil.GetFileNameByPublication(request.publicationForSaving));
                 if (imgFile.exists())
                     UploadImageToAmazon(imgFile);
+                else
+                    NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
                 //NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
                 break;
             case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
