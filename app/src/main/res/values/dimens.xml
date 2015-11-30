@@ -61,6 +61,7 @@
 
     <dimen name="pub_details_image_size">100dp</dimen>
     <dimen name="pub_details_pub_props_panel_height">180dp</dimen>
+    <dimen name="pub_details_pub_props_panel_height_ldpi">110dp</dimen>
     <dimen name="pub_details_pub_props_ll_width">0dp</dimen>
     <dimen name="pub_details_pub_props_ll_marginLeft">16dp</dimen>
     <dimen name="pub_details_pub_props_ll_marginRight">-40dp</dimen>
@@ -76,13 +77,17 @@
     <dimen name="pub_details_riv_image_rl_width">0dp</dimen>
 
     <dimen name="pub_details_btns_panel_height">90dp</dimen>
+    <dimen name="pub_details_btns_panel_height_ldpi">70dp</dimen>
     <dimen name="pub_details_btn_in_panel_width">0dp</dimen>
     <dimen name="pub_details_btn_in_panel_height">56dp</dimen>
     <dimen name="pub_details_btn_in_panel_marginLeft">10dp</dimen>
     <dimen name="pub_details_btn_in_panel_marginTop">17dp</dimen>
+    <dimen name="pub_details_btn_in_panel_marginTop_ldpi">8dp</dimen>
     <dimen name="pub_details_subtitle_paddingBottomTop">8dp</dimen>
     <dimen name="pub_details_subtitle_paddingLeftRight">16dp</dimen>
     <dimen name="pub_details_time_paddingBottomTopRight">16dp</dimen>
+    <dimen name="pub_details_time_paddingRight_ldpi">16dp</dimen>
+    <dimen name="pub_details_time_paddingBottomTop_ldpi">8dp</dimen>
     <dimen name="pub_details_tv_time_height">0dp</dimen>
     <dimen name="pub_details_reports_paddingLeftRightTop">16dp</dimen>
     <dimen name="pub_details_lv_list_of_reports_marginTop">16dp</dimen>

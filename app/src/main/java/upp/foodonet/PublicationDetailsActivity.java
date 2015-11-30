@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,8 +30,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
@@ -53,6 +56,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +94,8 @@ import FooDoNetServerClasses.IFooDoNetServerCallback;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
 import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 import UIUtil.RoundedImageView;
+
+import static upp.foodonet.R.layout.item_publication_report_dialog;
 
 
 public class PublicationDetailsActivity
@@ -129,7 +135,7 @@ public class PublicationDetailsActivity
     ImageButton btn_navigate;
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
-    ListView lv_reports;
+    ListView lv_reports,lv_reports_dialog;
     TextView tv_no_reports;
     TextView tv_start_dateTime_details, tv_end_dateTime_details;
 
@@ -137,11 +143,12 @@ public class PublicationDetailsActivity
     LinearLayout ll_button_panel_others;
     LinearLayout ll_reports_panel;
 
+
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
 
-    Dialog registerDialog;
+    Dialog registerDialog,reportsDialog;
     EditText et_registerContactName, et_registerContactPhone;
     Button btn_registerOk, btn_registerCancel;
 
@@ -160,7 +167,7 @@ public class PublicationDetailsActivity
             Log.e(MY_TAG, "no publication found in extras!");
             finish();
         }
-        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), publication.isOwnPublication? "my pub details": "other's pub details");
+        CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), publication.isOwnPublication ? "my pub details" : "other's pub details");
 
         isRegisteredForCurrentPublication = checkIfRegisteredForThisPublication();
 
@@ -183,6 +190,7 @@ public class PublicationDetailsActivity
         tv_subtitle = (TextView) findViewById(R.id.tv_subtitle_pub_details);
         lv_reports = (ListView) findViewById(R.id.lv_list_of_reports_pub_details);
         ll_reports_panel = (LinearLayout) findViewById(R.id.ll_reports_list_pub_details);
+        ll_reports_panel.setOnClickListener(this);
         ll_button_panel_my = (LinearLayout) findViewById(R.id.ll_my_pub_dets_buttons_panel);
         ll_button_panel_others = (LinearLayout) findViewById(R.id.ll_others_pub_dets_buttons_panel);
         tv_start_dateTime_details = (TextView) findViewById(R.id.tv_start_time_pub_details);
@@ -197,9 +205,37 @@ public class PublicationDetailsActivity
         StartNumOfRegedLoader();
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
-        SetReportsList();
 
+        screenMetrics(this);
         startEndTimeSet();
+    }
+
+
+        private void screenMetrics(Context context) {
+            int screenLayout = context.getResources().getConfiguration().screenLayout;
+            screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
+            switch (screenLayout) {
+                case Configuration.SCREENLAYOUT_SIZE_SMALL:
+
+                    setReportTextSmall();
+
+                    break;
+                case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+
+                    SetReportsListNormal();
+
+                    break;
+                case Configuration.SCREENLAYOUT_SIZE_LARGE:
+
+                    break;
+                case 4: // Configuration.SCREENLAYOUT_SIZE_XLARGE is API >= 9
+
+                    break;
+
+            }
+
+
     }
 
     @Override
@@ -373,8 +409,26 @@ public class PublicationDetailsActivity
 */
     }
 
+public void setReportTextSmall() {
 
-    private void SetReportsList() {
+    if (publication.getPublicationReports() == null
+            || publication.getPublicationReports().size() == 0) {
+        tv_no_reports.setVisibility(View.VISIBLE);
+        lv_reports.setVisibility(View.GONE);
+    } else{
+
+        tv_no_reports.setVisibility(View.GONE);
+        ll_reports_panel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reportsDialogShow();
+            }
+        });
+}
+
+
+}
+    private void SetReportsListNormal() {
         if (publication.getPublicationReports() == null
                 || publication.getPublicationReports().size() == 0) {
             tv_no_reports.setVisibility(View.VISIBLE);
@@ -386,7 +440,7 @@ public class PublicationDetailsActivity
 
 
         adapter = new PublicationDetailsReportsAdapter(this,
-                R.layout.pub_details_report_item, publication.getPublicationReports());
+                R.layout.pub_details_report_item, publication.getPublicationReports(),R.layout.pub_details_report_item);
         lv_reports.setAdapter(adapter);
     }
 
@@ -931,6 +985,13 @@ public class PublicationDetailsActivity
                 intentFullSizeActivity.putExtra("fileName", publication.getUniqueId() + "." + publication.getVersion() + ".jpg");
                 startActivity(intentFullSizeActivity);
                 break;
+
+            case R.id.btn_cancel_dialog_report:
+
+                reportsDialog.dismiss();
+
+                break;
+
         }
     }
 
@@ -1233,10 +1294,29 @@ public class PublicationDetailsActivity
                 case R.id.btn_report_dialog_report:
 
                     break;
+
             }
             dialog.dismiss();
             callback.ReportMade(reportId);
         }
+    }
+
+    public void reportsDialogShow() {
+
+        reportsDialog = new Dialog(this);
+        reportsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        reportsDialog.setContentView(R.layout.dialog_publication_report);
+        lv_reports_dialog = (ListView)reportsDialog.findViewById(R.id.lv_list_of_reports_pub_details_dilog);
+
+        adapter = new PublicationDetailsReportsAdapter(this,
+                item_publication_report_dialog, publication.getPublicationReports(),R.layout.item_publication_report_dialog);
+        lv_reports_dialog.setAdapter(adapter);
+
+        Button btn_cancel_dialog_reports = (Button) reportsDialog.findViewById(R.id.btn_cancel_dialog_report);
+        btn_cancel_dialog_reports.setOnClickListener(this);
+
+        reportsDialog.show();
+
     }
 
     public void growAnim(final int iconGreen, final int iconBlue, final ImageButton btn) {
