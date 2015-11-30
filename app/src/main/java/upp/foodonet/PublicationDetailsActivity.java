@@ -441,18 +441,11 @@ public void setReportTextSmall() {
                 tv_no_reports.setVisibility(View.GONE);
             if (lv_reports != null) {
                 adapter = new PublicationDetailsReportsAdapter(this,
-                        R.layout.pub_details_report_item, publication.getPublicationReports());
+                        R.layout.pub_details_report_item, publication.getPublicationReports(),R.layout.pub_details_report_item);
                 lv_reports.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
         }
-        else
-            tv_no_reports.setVisibility(View.GONE);
-
-
-        adapter = new PublicationDetailsReportsAdapter(this,
-                R.layout.pub_details_report_item, publication.getPublicationReports(),R.layout.pub_details_report_item);
-        lv_reports.setAdapter(adapter);
     }
 
     //endregion
@@ -800,7 +793,7 @@ public void setReportTextSmall() {
             publication.getPublicationReports().clear();
             publication.setPublicationReports(reports);
         }
-        SetReportsList();
+        SetReportsListNormal();
     }
 
     //endregion
