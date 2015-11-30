@@ -334,7 +334,9 @@
             android:id="@+id/lv_list_of_reports_pub_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pub_details_lv_list_of_reports_marginTop"/>
+            android:layout_marginTop="@dimen/pub_details_lv_list_of_reports_marginTop"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"/>
 
     </LinearLayout>
     <!--

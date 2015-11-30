@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -22,11 +24,13 @@ import upp.foodonet.R;
 public class PublicationDetailsReportsAdapter extends ArrayAdapter<PublicationReport> {
     List<PublicationReport> itemSourse;
     Context context;
+    int v;
 
-    public PublicationDetailsReportsAdapter(Context context, int resource, List<PublicationReport> objects) {
+    public PublicationDetailsReportsAdapter(Context context, int resource, List<PublicationReport> objects,int v) {
         super(context, resource, objects);
         itemSourse = objects;
         this.context = context;
+        this.v = v;
     }
 
     @Override
@@ -34,7 +38,7 @@ public class PublicationDetailsReportsAdapter extends ArrayAdapter<PublicationRe
         final View result;
 
         if (convertView == null) {
-            result = LayoutInflater.from(parent.getContext()).inflate(R.layout.pub_details_report_item, parent, false);
+            result = LayoutInflater.from(parent.getContext()).inflate(v, parent, false);
         } else {
             result = convertView;
         }
