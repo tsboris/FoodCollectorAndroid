@@ -7,7 +7,13 @@
     android:orientation="vertical"
     android:showDividers="middle"
     tools:context="upp.foodonet.MyPublicationDetailsActivity">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/top_panel_height_ldpi">
@@ -376,5 +382,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     -->
-
+</LinearLayout>
+</ScrollView>
 </LinearLayout>
