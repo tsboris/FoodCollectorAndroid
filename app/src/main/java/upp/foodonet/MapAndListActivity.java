@@ -1,16 +1,12 @@
 package upp.foodonet;
 
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.location.Location;
@@ -30,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -42,9 +37,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -872,8 +865,8 @@ public class MapAndListActivity
             }
         });
         StateListDrawable states = new StateListDrawable();
-        states.addState(new int[] { android.R.attr.state_pressed }, getResources().getDrawable(R.drawable.map_my_location_bg_pressed));
-        states.addState(new int[]{}, getResources().getDrawable(R.drawable.map_my_location_bg_normal));
+        states.addState(new int[] { android.R.attr.state_pressed }, getResources().getDrawable(R.drawable.map_my_location_button_pressed));
+        states.addState(new int[]{}, getResources().getDrawable(R.drawable.map_my_location_button_normal));
         imageButton.setBackgroundDrawable(states);
         gallery_pubs.addView(imageButton);
     }

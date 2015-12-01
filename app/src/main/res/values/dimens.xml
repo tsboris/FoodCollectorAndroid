@@ -142,10 +142,14 @@
     <dimen name="top_panel_btn_margin_ldpi">3dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top_ldpi">40dp</dimen>
-    <color name="buttons_and_gallery_pressed">#D900a3cc</color>
-    <drawable name="buttons_and_gallery_pressed">#D900a3cc</drawable>
-    <color name="buttons_and_gallery_normal">#8066e0ff</color>
-    <drawable name="buttons_and_gallery_normal">#8066e0ff</drawable>
+    <color name="buttons_pressed">#D900a3cc</color>
+    <color name="gallery_pressed">#D900a3cc</color>
+    <drawable name="buttons_pressed">#D900a3cc</drawable>
+    <drawable name="gallery_pressed">#D900a3cc</drawable>
+    <color name="buttons_normal">#8066e0ff</color>
+    <drawable name="buttons_normal">#8066e0ff</drawable>
+    <color name="gallery_normal">#99a6df51</color>
+    <drawable name="gallery_normal">#99a6df51</drawable>
 
     <!-- ==================== -->
 
