@@ -99,7 +99,7 @@
             android:layout_below="@+id/searchView1" />-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
@@ -113,13 +113,17 @@
             android:layout_height="wrap_content"
             android:text="@string/pickup_btn"
             android:id="@+id/btn_take_mypubs"
-            android:textSize="16sp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/naivgate_btn_backgroung"
+            android:textSize="10sp"
             android:layout_weight="1" />
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/share_btn"
-            android:textSize="16sp"
+            android:textSize="10sp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/naivgate_btn_backgroung"
             android:id="@+id/btn_share_mypubs"
             android:layout_weight="1" />
     </LinearLayout>

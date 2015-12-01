@@ -76,9 +76,10 @@
         <LinearLayout
             android:id="@+id/ll_nav_btns_panel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:background="@color/white"
             android:orientation="horizontal">
             <!--
                         android:layout_marginBottom="20dp"
@@ -92,6 +93,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/pickup_btn"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/naivgate_btn_backgroung"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
             <Button
@@ -100,6 +103,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/share_btn"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/naivgate_btn_backgroung"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
         </LinearLayout>
@@ -110,24 +115,25 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="200dp"
-            android:src="@drawable/map_my_location_button"
-            android:scaleType="centerInside"
+            android:layout_marginBottom="250dp"
+            android:src="@drawable/location"
+            android:scaleType="fitCenter"
             android:visibility="gone"
-            android:background="@drawable/map_my_location_btn_selector"/>
+            android:background="@drawable/rounded_button"/>
 
         <HorizontalScrollView android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
             android:layout_above="@+id/ll_nav_btns_panel"
+            android:background="@drawable/map_my_location_btn_selector"
             android:layout_marginBottom="6dp">
 
             <LinearLayout android:id="@+id/ll_image_btns_gallery"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:background="@drawable/map_my_location_btn_selector"
+
                 android:visibility="gone"/>
 
         </HorizontalScrollView>

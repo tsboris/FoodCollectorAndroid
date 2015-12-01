@@ -165,11 +165,11 @@ public class MapAndListActivity
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if(metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);//24dp
         else if(metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);//36dp
         else
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);//42dp
 /*
         switch (metrics.densityDpi){
             case DisplayMetrics.DENSITY_LOW:
@@ -843,18 +843,27 @@ public class MapAndListActivity
     }
 
     public void AddImageToGallery(final FCPublication publication){
+
+        int screenLayout = this.getResources().getConfiguration().screenLayout;
+        screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
         int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height_xhdpi);
         ImageButton imageButton = new ImageButton(getApplicationContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
-        lp.setMargins(4, 0, 0, 0);
+        lp.setMargins(15, 30, 15, 30);
+
+        if(screenLayout == Configuration.SCREENLAYOUT_SIZE_SMALL) lp.setMargins(5, 10, 5, 10);
+
         imageButton.setLayoutParams(lp);
-        imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageButton.setBackgroundResource(R.drawable.map_gallery_border);
+
         Drawable drawable
                 = CommonUtil.GetBitmapDrawableFromFile(
                     publication.GetImageFileName(), getString(R.string.image_folder_path), size, size);
         if(drawable == null)
             drawable = getResources().getDrawable(R.drawable.foodonet_logo_200_200);
         imageButton.setImageDrawable(drawable);
+        imageButton.setScaleType(ImageView.ScaleType.FIT_XY);
         imageButton.setOnClickListener(new View.OnClickListener() {
             int id = publication.getUniqueId();
 

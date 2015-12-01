@@ -76,8 +76,9 @@
         <LinearLayout
             android:id="@+id/ll_nav_btns_panel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_alignParentBottom="true"
+            android:background="@color/white"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal">
             <!--
@@ -92,6 +93,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/pickup_btn"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/naivgate_btn_backgroung"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
             <Button
@@ -100,9 +103,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/share_btn"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/naivgate_btn_backgroung"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
         </LinearLayout>
+
 
         <ImageButton android:id="@+id/btn_center_on_my_location_map"
             android:layout_width="48dp"
@@ -110,16 +116,17 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="200dp"
-            android:src="@drawable/map_my_location_button"
+            android:layout_marginBottom="250dp"
+            android:src="@drawable/location"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:background="@drawable/map_my_location_btn_selector"/>
+            android:background="@drawable/rounded_button"/>
 
         <HorizontalScrollView android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
+            android:background="@color/gallery_normal"
             android:layout_above="@+id/ll_nav_btns_panel"
             android:layout_marginBottom="6dp">
 

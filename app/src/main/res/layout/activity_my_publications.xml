@@ -96,7 +96,7 @@
             android:layout_below="@+id/searchView1" />-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
@@ -106,6 +106,8 @@
         android:layout_alignStart="@+id/lv_my_publications_list"
 -->
         <Button
+            android:layout_marginTop="3dp"
+            android:background="@drawable/naivgate_btn_backgroung"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="@string/pickup_btn"
@@ -113,6 +115,8 @@
             android:textSize="@dimen/nav_buttons_text_size"
             android:layout_weight="1" />
         <Button
+            android:layout_marginTop="3dp"
+            android:background="@drawable/naivgate_btn_backgroung"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="@string/share_btn"
