@@ -252,7 +252,7 @@
     
     <!-- Feedback Dialog -->
     
-    <string name="feedback_dialog_title">תשאיר תגובה</string>
+    <string name="feedback_dialog_title">שתפו אותנו במחשבות, הצעות או כל מה שתירצו</string>
     <string name="feedback_name_hint">שם שלך</string>
     <string name="feedback_report_hint">טקסט תגובה</string>
     <string name="feedback_btn_ok">שלח</string>
