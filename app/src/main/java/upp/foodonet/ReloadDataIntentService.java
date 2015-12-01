@@ -111,7 +111,8 @@ public class ReloadDataIntentService
                         = new DownloadImageTask(this,
                         getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
                         getResources().getString(R.string.image_folder_path));
-                imageTask.execute(needToLoadImages);
+                imageTask.setRequestHashMap(needToLoadImages);
+                imageTask.execute();
                 break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);

@@ -65,6 +65,8 @@ public class MyPublicationsActivity
     Button btn_add_new_publication, btn_navigate_share, btn_navigate_take, btn_active_pub, btn_not_active_pub, btn_ending_pub;
     //Animation animZoomIn;
 
+    boolean loaderLaunchedInOnCreate = false;
+
     //ProgressDialog progressDialog;
 
 /*    ToggleButton tgl_btn_navigate_share;
@@ -132,6 +134,7 @@ public class MyPublicationsActivity
         lv_my_publications_list.setAdapter(adapter);
         lv_my_publications_list.setOnItemClickListener(this);
         onClick(btn_active_pub);
+        loaderLaunchedInOnCreate = true;
         CommonUtil.PostGoogleAnalyticsActivityOpened(getApplicationContext(), "my pubs");
     }
 
@@ -142,7 +145,7 @@ public class MyPublicationsActivity
         // btn_navigate_take.setChecked(false);
         btn_navigate_take.setEnabled(true);
         btn_navigate_share.setEnabled(false);
-        StartLoadingCursorForList(currentFilterID);
+        //StartLoadingCursorForList(currentFilterID);
     }
 
     @Override
@@ -152,8 +155,12 @@ public class MyPublicationsActivity
         if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
-            StartLoadingCursorForList(currentFilterID);
+            //StartLoadingCursorForList(currentFilterID);
         }
+        if(!loaderLaunchedInOnCreate){
+            RestartLoadingCursorForList();
+        } else
+            loaderLaunchedInOnCreate = false;
     }
 
     @Override
@@ -289,6 +296,7 @@ public class MyPublicationsActivity
     public void onLoaderReset(Loader<Cursor> loader) {
         if (adapter != null)
             adapter.swapCursor(null);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
