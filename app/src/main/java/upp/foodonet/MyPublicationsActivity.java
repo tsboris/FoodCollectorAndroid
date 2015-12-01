@@ -348,7 +348,11 @@ public class MyPublicationsActivity
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_GET_LOCATION_FAIL:
                 break;
-            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE:
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_FAIL:
+                Toast.makeText(this, getString(R.string.failed_to_save_new_pub), Toast.LENGTH_SHORT).show();
+                CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(),
+                        "my publications list", "save pub btn", "saving new pub fail");
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS:
             case ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS:
                 if (progressDialog != null) {
                     progressDialog.dismiss();

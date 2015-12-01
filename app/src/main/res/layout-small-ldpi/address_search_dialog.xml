@@ -14,7 +14,8 @@
         android:layout_height="@dimen/address_dialog_edit_field_height_ldpi"
         android:ems="10"
         android:hint="@string/address_string"
-        android:layout_below="@+id/et_title_new_publication"/>
+        android:layout_below="@+id/et_title_new_publication"
+        android:singleLine="true"/>
 
     <RelativeLayout android:id="@+id/rl_btn_get_location_address_dialog"
         android:layout_width="match_parent"

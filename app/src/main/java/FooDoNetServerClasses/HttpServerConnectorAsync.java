@@ -112,6 +112,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
     @Override
     protected String doInBackground(InternalRequest... params) {
+        responseString = "";
         if (params.length == 0 || params[0] == null)
             return "";
         Action_Command_ID = params[0].ActionCommand;
@@ -208,7 +209,13 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     return "";
                 }
                 publicationForSaving = params[0].publicationForSaving;
-                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                for(int i = 0; i < 3; i++){
+                    MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                    if(!TextUtils.isEmpty(responseString))
+                        i = 3;
+                }
+                if(TextUtils.isEmpty(responseString))
+                    return "";
                 try {
                     AbstractMap.SimpleEntry<Integer, Integer> responsePair = FCPublication.ParseServerResponseToNewPublication(new JSONObject(responseString));
                     if (responsePair != null) {
@@ -510,9 +517,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 context.sendBroadcast(intent);
                 break;
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
-                Log.i(MY_TAG, "successfully posted new publication to server");
-                callbackListener.OnServerRespondedCallback(
-                        new InternalRequest(Action_Command_ID, publicationForSaving));
+                Log.i(MY_TAG, "post new publication to server: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest response = new InternalRequest(Action_Command_ID, publicationForSaving);
+                response.Status = isSuccess ? InternalRequest.STATUS_OK : InternalRequest.STATUS_FAIL;
+                callbackListener.OnServerRespondedCallback(response);
+
                 break;
             case InternalRequest.ACTION_POST_REGISTER_TO_PUBLICATION:
                 Log.i(MY_TAG, "register to pub: " + (isSuccess ? "ok" : "fail"));

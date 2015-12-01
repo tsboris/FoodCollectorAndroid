@@ -4,10 +4,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -178,7 +180,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
 
 
                 Log.i(MY_TAG, "new pub successfully saved in db, sending to server");
-                NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS);
+                NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS);
                 HttpServerConnectorAsync connector
                         = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), (IFooDoNetServerCallback) this);
                 InternalRequest ir
@@ -198,7 +200,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 if (imgFile.exists())
                     UploadImageToAmazon(imgFile);
                 else
-                    NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
+                    NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS);
                 //NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
                 break;
             case InternalRequest.ACTION_SQL_SAVE_EDITED_PUBLICATION:
@@ -210,7 +212,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
         }
     }
 
-    private void NotifyToBListenerAboutPubSavedInDB(int eventCode) {
+    private void NotifyToBListenerAboutEvent(int eventCode) {
         Intent intent = new Intent(ServicesBroadcastReceiver.BROADCAST_REC_INTENT_FILTER);
         intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, eventCode);
         sendBroadcast(intent);
@@ -220,6 +222,15 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
     public void OnServerRespondedCallback(InternalRequest response) {
         switch (response.ActionCommand) {
             case InternalRequest.ACTION_POST_NEW_PUBLICATION:
+                if(response.Status == InternalRequest.STATUS_FAIL){
+                    int id = response.publicationForSaving.getUniqueId();
+                    Uri deleteUri = Uri.parse(id >= 0 ?
+                            FooDoNetSQLProvider.CONTENT_URI + "/" + String.valueOf(id):
+                            FooDoNetSQLProvider.URI_PUBLICATION_ID_NEGATIVE + "/" + String.valueOf(id*-1));
+                    getContentResolver().delete(deleteUri, null, null);
+                    NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_FAIL);
+                    return;
+                }
                 Log.i(MY_TAG, "succeeded saving pub to server, new id: "
                         + response.publicationForSaving.getNewIdFromServer());
                 File existingImageFile
@@ -323,7 +334,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 //Display percentage transfered to user
                 //Log.d(MY_TAG,"AMAZON PROGRESS OF UPLOAD PICTURE IS ---> " + percentage);
                 if (percentage >= 99)
-                    NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
+                    NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS);
             }
 
             @Override
