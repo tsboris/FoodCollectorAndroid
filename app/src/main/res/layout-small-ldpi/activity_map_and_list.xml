@@ -41,8 +41,8 @@
 
         <ImageButton
             android:id="@+id/btn_show_list_allPubs"
-            android:layout_width="@dimen/top_panel_btn_size"
-            android:layout_height="@dimen/top_panel_btn_size"
+            android:layout_width="@dimen/top_panel_btn_size_ldpi"
+            android:layout_height="@dimen/top_panel_btn_size_ldpi"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="@dimen/top_panel_btn_margin_ldpi"
@@ -55,8 +55,8 @@
 
         <ImageButton
             android:id="@+id/btn_show_map_allPubs"
-            android:layout_width="@dimen/top_panel_btn_size"
-            android:layout_height="@dimen/top_panel_btn_size"
+            android:layout_width="@dimen/top_panel_btn_size_ldpi"
+            android:layout_height="@dimen/top_panel_btn_size_ldpi"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/top_panel_btn_margin_ldpi"
             android:layout_marginTop="@dimen/top_panel_btn_margin_ldpi"
@@ -74,6 +74,7 @@
             android:layout_marginBottom="10dp" />
 
         <LinearLayout
+            android:id="@+id/ll_nav_btns_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -111,7 +112,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="200dp"
             android:src="@drawable/map_my_location_button"
-            android:scaleType="fitCenter"
+            android:scaleType="centerInside"
             android:visibility="gone"
             android:background="@drawable/map_my_location_btn_selector"/>
 

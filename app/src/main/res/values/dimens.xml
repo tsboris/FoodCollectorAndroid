@@ -138,14 +138,15 @@
     <dimen name="gallery_image_btn_height_xhdpi">90dp</dimen>
     <dimen name="nav_buttons_text_size">13sp</dimen>
     <dimen name="top_panel_btn_size">30dp</dimen>
+    <dimen name="top_panel_btn_size_ldpi">25dp</dimen>
     <dimen name="top_panel_btn_margin">14dp</dimen>
-    <dimen name="top_panel_btn_margin_ldpi">3dp</dimen>
+    <dimen name="top_panel_btn_margin_ldpi">5dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top_ldpi">40dp</dimen>
     <color name="buttons_and_gallery_pressed">#D900a3cc</color>
     <drawable name="buttons_and_gallery_pressed">#D900a3cc</drawable>
-    <color name="buttons_and_gallery_normal">#8066e0ff</color>
-    <drawable name="buttons_and_gallery_normal">#8066e0ff</drawable>
+    <color name="buttons_and_gallery_normal">#abdf51</color>
+    <drawable name="buttons_and_gallery_normal">#abdf51</drawable>
 
     <!-- ==================== -->
 
