@@ -213,7 +213,7 @@ public class RegisterUnregisterReportService
                 regToDelete.setPublication_id(myReportToPublication.getPublication_id());
                 FooDoNetSQLExecuterAsync sqlExecuter1 = new FooDoNetSQLExecuterAsync(this, getContentResolver());
                 InternalRequest irUnreg1 = new InternalRequest(InternalRequest.ACTION_SQL_REMOVE_MYSELF_FROM_REGISTERED_TO_PUB);
-                irUnreg1.myRegisterToPublication = myRegistrationToPublication;
+                irUnreg1.myRegisterToPublication = regToDelete;
                 sqlExecuter1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, irUnreg1);
 
                 //sendBroadcast(intent);

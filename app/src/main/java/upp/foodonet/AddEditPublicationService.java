@@ -198,7 +198,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 File imgFile = new File(Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path),
                                             CommonUtil.GetFileNameByPublication(request.publicationForSaving));
                 if (imgFile.exists())
-                    UploadImageToAmazon(imgFile);
+                    UploadImageToAmazon(imgFile, false);
                 else
                     NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS);
                 //NotifyToBListenerAboutPubSavedInDB(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_COMPLETE);
@@ -207,7 +207,9 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 File imgFile1 = new File(Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path),
                         CommonUtil.GetFileNameByPublication(request.publicationForSaving));
                 if (imgFile1.exists())
-                    UploadImageToAmazon(imgFile1);
+                    UploadImageToAmazon(imgFile1, true);
+                else
+                    NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_EDITED_PUB_SUCCESS);
                 break;
         }
     }
@@ -284,11 +286,11 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
         }
     }
 
-    private void UploadImageToAmazon(File imgFile) {
+    private void UploadImageToAmazon(File imgFile, boolean isEdit) {
         RegisterAWSS3();
         File imageToSave = imgFile;
         String imageName = imgFile.getName();
-        uploadPhotoForPublication(imageToSave, imageName);
+        uploadPhotoForPublication(imageToSave, imageName, isEdit);
     }
 
     public void RegisterAWSS3() {
@@ -305,7 +307,7 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
         Log.i(MY_TAG, "succesfully registered to amazon");
     }
 
-    private void uploadPhotoForPublication(File sourceFile, String fileName) {
+    private void uploadPhotoForPublication(File sourceFile, String fileName, final boolean isEdit) {
         // Create an S3 client
         AmazonS3 s3 = new AmazonS3Client(credentialsProvider);
 
@@ -334,7 +336,9 @@ public class AddEditPublicationService extends IntentService implements IFooDoNe
                 //Display percentage transfered to user
                 //Log.d(MY_TAG,"AMAZON PROGRESS OF UPLOAD PICTURE IS ---> " + percentage);
                 if (percentage >= 99)
-                    NotifyToBListenerAboutEvent(ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS);
+                    NotifyToBListenerAboutEvent(isEdit
+                            ? ServicesBroadcastReceiver.ACTION_CODE_SAVE_EDITED_PUB_SUCCESS
+                            : ServicesBroadcastReceiver.ACTION_CODE_SAVE_NEW_PUB_SUCCESS);
             }
 
             @Override

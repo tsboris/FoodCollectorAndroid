@@ -232,6 +232,9 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             + "LEFT JOIN " + RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME + " REGS "
             + "ON PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY
             + " = REGS." + RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID
+            + " WHERE PUBS." + FCPublication.PUBLICATION_IS_ON_AIR_KEY + " = 1 "
+            + " AND PUBS." + FCPublication.PUBLICATION_STARTING_DATE_KEY + " < " + UNIX_TIME_NOW
+            + " AND PUBS." + FCPublication.PUBLICATION_ENDING_DATE_KEY + " > " + UNIX_TIME_NOW
             + " GROUP BY "
             + "PUBS." + FCPublication.PUBLICATION_UNIQUE_ID_KEY + ", "
             + "PUBS." + FCPublication.PUBLICATION_TITLE_KEY + ", "

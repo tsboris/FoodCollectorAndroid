@@ -116,6 +116,7 @@ public class PublicationDetailsActivity
     private boolean isOwnPublication;
     private boolean isRegisteredForCurrentPublication = false;
     boolean isImageFitToScreen = false;
+    boolean isWaitingForNavigation = false;
 
     //new:
     ImageButton btn_menu;
@@ -135,7 +136,7 @@ public class PublicationDetailsActivity
     ImageButton btn_navigate;
     ImageButton btn_reg_unreg;
     TextView tv_subtitle;
-    ListView lv_reports,lv_reports_dialog;
+    ListView lv_reports, lv_reports_dialog;
     TextView tv_no_reports;
     TextView tv_start_dateTime_details, tv_end_dateTime_details;
 
@@ -143,12 +144,11 @@ public class PublicationDetailsActivity
     LinearLayout ll_button_panel_others;
     LinearLayout ll_reports_panel;
 
-
     PublicationDetailsReportsAdapter adapter;
 
     PopupMenu popup;
 
-    Dialog registerDialog,reportsDialog;
+    Dialog registerDialog, reportsDialog;
     EditText et_registerContactName, et_registerContactPhone;
     Button btn_registerOk, btn_registerCancel;
 
@@ -211,29 +211,29 @@ public class PublicationDetailsActivity
     }
 
 
-        private void screenMetrics(Context context) {
-            int screenLayout = context.getResources().getConfiguration().screenLayout;
-            screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
+    private void screenMetrics(Context context) {
+        int screenLayout = context.getResources().getConfiguration().screenLayout;
+        screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
 
-            switch (screenLayout) {
-                case Configuration.SCREENLAYOUT_SIZE_SMALL:
+        switch (screenLayout) {
+            case Configuration.SCREENLAYOUT_SIZE_SMALL:
 
-                    setReportTextSmall();
+                setReportTextSmall();
 
-                    break;
-                case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
 
-                    SetReportsListNormal();
+                SetReportsListNormal();
 
-                    break;
-                case Configuration.SCREENLAYOUT_SIZE_LARGE:
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_LARGE:
 
-                    break;
-                case 4: // Configuration.SCREENLAYOUT_SIZE_XLARGE is API >= 9
+                break;
+            case 4: // Configuration.SCREENLAYOUT_SIZE_XLARGE is API >= 9
 
-                    break;
+                break;
 
-            }
+        }
 
 
     }
@@ -288,6 +288,7 @@ public class PublicationDetailsActivity
     @Override
     protected void onResume() {
         super.onResume();
+        isWaitingForNavigation = false;
         if (progressDialog != null && progressDialog.isShowing()) {
             SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
             if (!sp.contains(getString(R.string.shared_preferences_pending_broadcast_value)))
@@ -409,25 +410,26 @@ public class PublicationDetailsActivity
 */
     }
 
-public void setReportTextSmall() {
+    public void setReportTextSmall() {
 
-    if (publication.getPublicationReports() == null
-            || publication.getPublicationReports().size() == 0) {
-        tv_no_reports.setVisibility(View.VISIBLE);
-        lv_reports.setVisibility(View.GONE);
-    } else{
+        if (publication.getPublicationReports() == null
+                || publication.getPublicationReports().size() == 0) {
+            tv_no_reports.setVisibility(View.VISIBLE);
+            lv_reports.setVisibility(View.GONE);
+        } else {
 
-        tv_no_reports.setVisibility(View.GONE);
-        ll_reports_panel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reportsDialogShow();
-            }
-        });
-}
+            tv_no_reports.setVisibility(View.GONE);
+            ll_reports_panel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    reportsDialogShow();
+                }
+            });
+        }
 
 
-}
+    }
+
     private void SetReportsListNormal() {
         if (publication.getPublicationReports() == null
                 || publication.getPublicationReports().size() == 0) {
@@ -441,7 +443,7 @@ public void setReportTextSmall() {
                 tv_no_reports.setVisibility(View.GONE);
             if (lv_reports != null) {
                 adapter = new PublicationDetailsReportsAdapter(this,
-                        R.layout.pub_details_report_item, publication.getPublicationReports(),R.layout.pub_details_report_item);
+                        R.layout.pub_details_report_item, publication.getPublicationReports(), R.layout.pub_details_report_item);
                 lv_reports.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
@@ -739,6 +741,7 @@ public void setReportTextSmall() {
                 progressDialog = null;
                 Toast.makeText(getBaseContext(),
                         getResources().getString(R.string.pub_det_uimessage_failed_register_to_pub), Toast.LENGTH_LONG).show();
+                isWaitingForNavigation = false;
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_UNREGISTER_FROM_PUBLICATION_SUCCESS:
                 break;
@@ -757,6 +760,10 @@ public void setReportTextSmall() {
                     progressDialog.dismiss();
                 progressDialog = null;
                 RestartNumOfRegedLoader();
+                if(isWaitingForNavigation){
+                    isWaitingForNavigation = false;
+                    onClick(btn_navigate);
+                }
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_REMOVE_MYSELF_FROM_REGS_FOR_PUBLICATION:
                 Log.i(MY_TAG, "successfully removed myself from regs! refreshing number");
@@ -789,7 +796,7 @@ public void setReportTextSmall() {
                 Uri.parse(FooDoNetSQLProvider.URI_GET_ALL_REPORTS_BY_PUB_ID + "/" + publication.getUniqueId()),
                 PublicationReport.GetColumnNamesArray(), null, null, null);
         ArrayList<PublicationReport> reports = PublicationReport.GetArrayListOfPublicationReportsFromCursor(cursor);
-        if(reports != null && reports.size() > 0){
+        if (reports != null && reports.size() > 0) {
             publication.getPublicationReports().clear();
             publication.setPublicationReports(reports);
         }
@@ -854,14 +861,20 @@ public void setReportTextSmall() {
                 break;
             case R.id.btn_navigate_pub_details:
                 growAnim(R.drawable.navigate_green_xxh, R.drawable.navigate_pub_det_btn, btn_navigate);
-                try {
-                    String url = "waze://?ll=" + publication.getLatitude() + "," + publication.getLongitude();
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(intent);
-                } catch (ActivityNotFoundException ex) {
-                    Intent intent =
-                            new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
-                    startActivity(intent);
+                if (isRegisteredForCurrentPublication) {
+                    try {
+                        String url = "waze://?ll=" + publication.getLatitude() + "," + publication.getLongitude();
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException ex) {
+                        Intent intent =
+                                new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.pub_det_must_register_before_waze), Toast.LENGTH_SHORT).show();
+                    isWaitingForNavigation = true;
+                    onClick(btn_reg_unreg);
                 }
                 PostAnalyticsBlueBtnPressed("Waze btn");
                 break;
@@ -1323,10 +1336,10 @@ public void setReportTextSmall() {
         reportsDialog = new Dialog(this);
         reportsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         reportsDialog.setContentView(R.layout.dialog_publication_report);
-        lv_reports_dialog = (ListView)reportsDialog.findViewById(R.id.lv_list_of_reports_pub_details_dilog);
+        lv_reports_dialog = (ListView) reportsDialog.findViewById(R.id.lv_list_of_reports_pub_details_dilog);
 
         adapter = new PublicationDetailsReportsAdapter(this,
-                item_publication_report_dialog, publication.getPublicationReports(),R.layout.item_publication_report_dialog);
+                item_publication_report_dialog, publication.getPublicationReports(), R.layout.item_publication_report_dialog);
         lv_reports_dialog.setAdapter(adapter);
 
         Button btn_cancel_dialog_reports = (Button) reportsDialog.findViewById(R.id.btn_cancel_dialog_report);

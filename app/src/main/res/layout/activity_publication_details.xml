@@ -76,34 +76,43 @@
                 android:layout_height="@dimen/pub_details_pub_props_rl_height"
                 android:layout_weight="1">
 
-                <ImageView
-                    android:id="@+id/iv_user_reg_icon_pub_details"
-                    android:layout_width="@dimen/pub_details_iv_user_reg_icon_height_width"
-                    android:layout_height="@dimen/pub_details_iv_user_reg_icon_height_width"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/pub_details_iv_user_reg_icon_marginRight"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/user_icon_blue" />
-
-                <TextView
-                    android:id="@+id/tv_num_of_reged_pub_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/pub_details_tv_num_of_reged_height"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
-                    android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
-                    android:textSize="@dimen/pub_details_tv_num_of_reged_text_size" />
-
-                <TextView
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
-                    android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
-                    android:text="@string/pub_det_on_the_way_to_take"
-                    android:textSize="@dimen/pub_details_on_the_way_to_take_text_size"
-                    android:textColor="@color/edit_text_input_default_color"/>
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:id="@+id/iv_user_reg_icon_pub_details"
+                        android:layout_width="@dimen/pub_details_iv_user_reg_icon_height_width"
+                        android:layout_height="@dimen/pub_details_iv_user_reg_icon_height_width"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/pub_details_iv_user_reg_icon_marginRight"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/user_icon_blue" />
+
+                    <TextView
+                        android:id="@+id/tv_num_of_reged_pub_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
+                        android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
+                        android:textSize="@dimen/pub_details_tv_num_of_reged_text_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
+                        android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
+                        android:text="@string/pub_det_on_the_way_to_take"
+                        android:textSize="@dimen/pub_details_on_the_way_to_take_text_size"
+                        android:textColor="@color/edit_text_input_default_color"/>
+
+                </RelativeLayout>
+
             </RelativeLayout>
 
             <RelativeLayout

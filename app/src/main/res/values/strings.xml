@@ -74,6 +74,7 @@
     <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
     <string name="pub_det_uimessage_failed_register_to_pub">הרשמה לשיתוף נכשלה</string>
     <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
+    <string name="pub_det_must_register_before_waze">חובה להרשם לשיתוף לפני ניווט אליו</string>
     <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
     <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
     <string name="pub_det_menu_item_delete">מחק שיתוף</string>

@@ -26,6 +26,8 @@ public class ServicesBroadcastReceiver extends BroadcastReceiver {
     public static final int ACTION_CODE_SAVE_NEW_PUB_SQL_SUCCESS = 21;
     public static final int ACTION_CODE_SAVE_NEW_PUB_SUCCESS = 22;
     public static final int ACTION_CODE_SAVE_NEW_PUB_FAIL = 23;
+    public static final int ACTION_CODE_SAVE_EDITED_PUB_SUCCESS = 24;
+    public static final int ACTION_CODE_SAVE_EDITED_PUB_FAIL = 25;
     public static final int ACTION_CODE_GET_LOCATION_SUCCESS = 31;
     public static final int ACTION_CODE_GET_LOCATION_FAIL = 32;
     public static final int ACTION_CODE_REGISTER_TO_PUBLICATION_SUCCESS = 41;

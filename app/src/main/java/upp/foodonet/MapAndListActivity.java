@@ -138,6 +138,7 @@ public class MapAndListActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_and_list);
+        progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_loading));
 
         int id = 0;
         Bundle extras = getIntent().getExtras();
@@ -538,6 +539,9 @@ public class MapAndListActivity
         if(btn_navigate_take != null)
             btn_navigate_take.setVisibility(View.VISIBLE);
 
+        if(progressDialog != null)
+            progressDialog.dismiss();
+
         SetCamera();
     }
 
@@ -622,10 +626,10 @@ public class MapAndListActivity
             btn_focus_on_my_location.setVisibility(position == PAGE_MAP && googleMap != null ? View.VISIBLE : View.GONE);
         if(hsv_gallery != null)
             hsv_gallery.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
-        if(btn_navigate_share != null)
-            btn_navigate_share.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
-        if(btn_navigate_take != null)
-            btn_navigate_take.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+//        if(btn_navigate_share != null)
+//            btn_navigate_share.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
+//        if(btn_navigate_take != null)
+//            btn_navigate_take.setVisibility(position == PAGE_MAP ? View.VISIBLE : View.GONE);
     }
 
     @Override
