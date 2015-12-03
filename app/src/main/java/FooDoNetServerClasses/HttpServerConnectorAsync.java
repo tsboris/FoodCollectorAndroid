@@ -209,10 +209,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     return "";
                 }
                 publicationForSaving = params[0].publicationForSaving;
-                for(int i = 0; i < 3; i++){
+                for(int i = 0; i < 1; i++){
                     MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
                     if(!TextUtils.isEmpty(responseString))
-                        i = 3;
+                        i = 1;
                 }
                 if(TextUtils.isEmpty(responseString))
                     return "";
