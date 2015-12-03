@@ -66,7 +66,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
             case FILTER_ID_LIST_ALL_BY_NEWEST:
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
-                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_UNIQUE_ID_KEY, false);
+                        + RAW_FOR_LIST_GROUP + getRawForListOrderBy("PUBS", FCPublication.PUBLICATION_STARTING_DATE_KEY, true);
             case FILTER_ID_LIST_ALL_BY_LESS_REGS:
                 return RAW_FOR_LIST_SELECT_OTHERS + RAW_FOR_LIST_FROM_OTHERS
                         + getRawForListWhere("PUBS", FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, "!=", params[0], false)
