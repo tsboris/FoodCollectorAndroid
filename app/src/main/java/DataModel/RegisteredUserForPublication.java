@@ -57,7 +57,7 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
 
     private Date date_registered;
     public Date getDate_registered(){return date_registered;}
-    public long getDate_registered_unix_time(){return date_registered.getTime();}
+    public long getDate_registered_unix_time(){return date_registered.getTime()/1000;}
     public void setDate_registered(Date val){
         date_registered = val;
     }

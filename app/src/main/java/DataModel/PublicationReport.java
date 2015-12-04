@@ -69,7 +69,7 @@ public class PublicationReport implements Serializable, ICanWriteSelfToJSONWrite
 
     private Date date_reported;
     public Date getDate_reported(){return date_reported;}
-    public long getDate_reported_unix_time(){return date_reported.getTime();}
+    public long getDate_reported_unix_time(){return date_reported.getTime()/1000;}
     public void setDate_reported(Date val){
         date_reported = val;
     }
