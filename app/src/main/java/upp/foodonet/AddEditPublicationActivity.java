@@ -786,6 +786,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 et_address.setText(publication.getAddress());
                 //SetEditTextIsValid(et_address, true);
                 onDismiss(addressDialog);
+                CommonUtil.SetEditTextIsValid(this, et_address, true);
                 break;
             case R.id.btn_address_dialog_cancel:
                 if (addressDialog != null)

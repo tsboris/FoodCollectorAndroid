@@ -750,7 +750,7 @@ public class MapAndListActivity
     }
 
     private void RestartLoadingForMarkers() {
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
 

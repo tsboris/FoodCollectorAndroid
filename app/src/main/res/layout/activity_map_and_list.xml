@@ -201,20 +201,6 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
-<!--
-            <Button
-                android:id="@+id/btn_collapse_expand_ll_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="A"
-                android:textSize="20sp" />
--->
-            <!--
-            -->
-
         </RelativeLayout>
 
 
@@ -276,7 +262,6 @@
             android:dividerHeight="1dp"
             android:listSelector="@drawable/list_selector" />
         <!--android:choiceMode="singleChoice"-->
-
 
         <!-- android:id="@+id/list_slidermenu" -->
     </LinearLayout>
