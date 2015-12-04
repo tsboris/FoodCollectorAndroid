@@ -121,6 +121,7 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         if(CheckIfStringsDiffer(getContactInfo(), otherPublication.getContactInfo())) return false;
         if(getIsOnAir() != otherPublication.getIsOnAir()) return false;
         if(CheckIfStringsDiffer(getPhotoUrl(), otherPublication.getPhotoUrl())) return false;
+        if(!TextUtils.isEmpty(otherPublication.getPhotoUrl())) return false;
         return true;
     }
 

@@ -945,6 +945,7 @@ public class MapAndListActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         RestartLoadingSideMenuMy();
         RestartLoadingSideMenuReg();
+        RestartLoadingForMarkers();
     }
     //endregion
 

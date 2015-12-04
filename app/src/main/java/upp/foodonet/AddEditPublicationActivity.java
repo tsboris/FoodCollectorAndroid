@@ -201,6 +201,10 @@ public class AddEditPublicationActivity extends FragmentActivity
             et_subtitle.setText(publication.getSubtitle());
             et_additional_info.setText(publication.getContactInfo());
             et_address.setText(publication.getAddress());
+//            String imagePath = CommonUtil.GetFileNameByPublication(publication);
+//            imagePath = Environment.getExternalStorageDirectory() + getString(R.string.image_folder_path) + "/" + imagePath;
+//            Bitmap bm = CommonUtil.decodeScaledBitmapFromSdCard(imagePath, 200, 200);
+//            mAddPicImageView.setImageBitmap(bm);
         }
 
         // OnClickListener for the Date button, calls showDatePickerDialog() to show the Date dialog
@@ -410,20 +414,8 @@ public class AddEditPublicationActivity extends FragmentActivity
                 String selectedImagePath = cursor.getString(column_index);
                 publication.setPhotoUrl(selectedImagePath);
                 Bitmap bm = CommonUtil.decodeScaledBitmapFromSdCard(selectedImagePath, 200, 200);
-/*
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                final int REQUIRED_SIZE = 200;
-                int scale = 1;
-                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-                    scale *= 2;
-                options.inSampleSize = scale;
-                options.inJustDecodeBounds = false;
-                bm = BitmapFactory.decodeFile(selectedImagePath, options);
-*/
-                publication.setImageByteArrayFromBitmap(bm);
                 mAddPicImageView.setImageBitmap(bm);
+                publication.setImageByteArrayFromBitmap(bm);
             }
         }
         if (resultCode == RESULT_CANCELED) {
@@ -764,6 +756,8 @@ public class AddEditPublicationActivity extends FragmentActivity
                 selectImage();
                 break;
             case R.id.publishButton:
+                if(publication.IsEqualTo(publicationOldVersion))
+                    onBackPressed();
                 if (!ValidateInputData()) return;
                 ArrangePublicationFromInput(publication);
                 ReturnPublication();

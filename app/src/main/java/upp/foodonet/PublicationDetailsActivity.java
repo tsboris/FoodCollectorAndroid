@@ -110,6 +110,7 @@ public class PublicationDetailsActivity
     private static final String PERMISSION = "publish_actions";
 
     private FCPublication publication;
+    private FCPublication editedPublication;
 
     private AlertDialog cancelPublicationDialog;
     private Bitmap photoBmp;
@@ -197,19 +198,21 @@ public class PublicationDetailsActivity
         tv_end_dateTime_details = (TextView) findViewById(R.id.tv_end_time_pub_details);
         tv_no_reports = (TextView) findViewById(R.id.tv_no_reports_for_pub);
 
+        SetPublicationPropertiesToControls();
 
+        StartNumOfRegedLoader();
+        screenMetrics(this);
+    }
+
+    private void SetPublicationPropertiesToControls(){
         tv_title.setText(publication.getTitle());
         tv_subtitle.setText(publication.getSubtitle());//publication.getSubtitle());
         tv_address.setText(publication.getAddress());
         SetImage();
-        StartNumOfRegedLoader();
+        startEndTimeSet();
         CalculateDistanceAndSetText();
         ChooseButtonPanel();
-
-        screenMetrics(this);
-        startEndTimeSet();
     }
-
 
     private void screenMetrics(Context context) {
         int screenLayout = context.getResources().getConfiguration().screenLayout;
@@ -261,15 +264,16 @@ public class PublicationDetailsActivity
         if (resultCode == RESULT_OK) {
 
             if (requestCode == REQUEST_CODE_EDIT_PUBLICATION) {
-
-                FCPublication publication
+                progressDialog = CommonUtil.ShowProgressDialog(this, getString(R.string.progress_saving_on_server));
+                editedPublication
                         = (FCPublication) data.getExtras().get(AddEditPublicationActivity.PUBLICATION_KEY);
-                if (publication == null) {
+                if (editedPublication == null) {
                     Log.i(MY_TAG, "got no pub from AddNew");
                     return;
                 }
+                editedPublication.setVersion(editedPublication.getVersion());
                 //=============>
-                AddEditPublicationService.StartSaveEditedPublication(getApplicationContext(), publication);
+                AddEditPublicationService.StartSaveEditedPublication(getApplicationContext(), editedPublication);
             }
         }
         if (resultCode == RESULT_CANCELED) {
@@ -783,6 +787,22 @@ public class PublicationDetailsActivity
                 progressDialog = null;
                 RestartNumOfRegedLoader();
                 ReloadReports();
+                break;
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_EDITED_PUB_SUCCESS:
+                if(editedPublication != null){
+                    editedPublication.setPhotoUrl(null);
+                    editedPublication.setVersion(editedPublication.getVersion() + 1);
+                    publication = editedPublication;
+                    SetPublicationPropertiesToControls();
+                }
+            case ServicesBroadcastReceiver.ACTION_CODE_SAVE_EDITED_PUB_FAIL:
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                Toast.makeText(this,
+                        getString(actionCode == ServicesBroadcastReceiver.ACTION_CODE_SAVE_EDITED_PUB_FAIL
+                                ? R.string.action_failed
+                                : R.string.action_succeeded).replace("{0}", getString(R.string.action_edit_publication)),
+                        Toast.LENGTH_SHORT).show();
                 break;
         }
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_pending_broadcast), MODE_PRIVATE);
@@ -1376,10 +1396,12 @@ public class PublicationDetailsActivity
     }
 
     private void startEndTimeSet() {
-        tv_start_dateTime_details.setText(tv_start_dateTime_details.getText() + " "
-                + CommonUtil.GetDateTimeStringFromGate(publication.getStartingDate()));
-        tv_end_dateTime_details.setText(tv_end_dateTime_details.getText() + " "
-                + CommonUtil.GetDateTimeStringFromGate(publication.getEndingDate()));
+        tv_start_dateTime_details.setText(//tv_start_dateTime_details.getText() + " " +
+                getString(R.string.title_begin_pub_details) + ": " +
+                        CommonUtil.GetDateTimeStringFromGate(publication.getStartingDate()));
+        tv_end_dateTime_details.setText(//tv_end_dateTime_details.getText() + " " +
+                getString(R.string.title_end_pub_details) + ": " +
+                        CommonUtil.GetDateTimeStringFromGate(publication.getEndingDate()));
     }
     //endregion
 }

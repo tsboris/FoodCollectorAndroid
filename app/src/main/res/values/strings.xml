@@ -211,7 +211,7 @@
     <string name="action_edit_publication">עריכת שיתוף</string>
     <string name="action_take_off_air">הפוך ללא פעיל</string>
     <string name="action_delete">מחיקה של שיתוף</string>
-    <string name="action_failed">שעולה נכשלה: {0}</string>
+    <string name="action_failed">פעולה נכשלה: {0}</string>
     <string name="action_succeeded">{0} בוצע בהצלחה!</string>
     <string name="validation_register_name_empty">שדה שם לא יכול להיות ריק</string>
     <string name="validation_register_phone_invalid">מספר טלפון לא תקין</string>
