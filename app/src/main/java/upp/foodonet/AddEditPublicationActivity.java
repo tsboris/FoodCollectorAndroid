@@ -37,11 +37,13 @@ import android.text.TextWatcher;
 import android.text.format.Time;
 import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -95,7 +97,7 @@ import DataModel.FCTypeOfCollecting;
 public class AddEditPublicationActivity extends FragmentActivity
         implements View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, IGotMyLocationCallback, AdapterView.OnItemClickListener, TextWatcher {
+        GoogleApiClient.ConnectionCallbacks, View.OnTouchListener, DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, IGotMyLocationCallback, AdapterView.OnItemClickListener, TextWatcher, TextView.OnEditorActionListener {
 
     private static final String MY_TAG = "food_newPublication";
     public static final String PUBLICATION_KEY = "publication";
@@ -187,6 +189,7 @@ public class AddEditPublicationActivity extends FragmentActivity
 
         et_publication_title = (EditText) findViewById(R.id.et_title_new_publication);
         et_publication_title.setOnClickListener(this);
+        et_publication_title.setOnEditorActionListener(this);
 
         et_address = (EditText) findViewById(R.id.et_address_edit_add_pub);
         et_address.setOnClickListener(this);
@@ -787,6 +790,7 @@ public class AddEditPublicationActivity extends FragmentActivity
                 //SetEditTextIsValid(et_address, true);
                 onDismiss(addressDialog);
                 CommonUtil.SetEditTextIsValid(this, et_address, true);
+                et_additional_info.requestFocus();
                 break;
             case R.id.btn_address_dialog_cancel:
                 if (addressDialog != null)
@@ -997,6 +1001,15 @@ public class AddEditPublicationActivity extends FragmentActivity
                     getResources().getDrawable(R.drawable.validation_wrong));
             iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(v.getId() == R.id.et_title_new_publication && actionId == EditorInfo.IME_ACTION_NEXT){
+            onTouch(et_address, null);
+            return true;
+        }
+        return false;
     }
 
 //    @Override
