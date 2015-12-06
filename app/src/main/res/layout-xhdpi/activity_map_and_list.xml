@@ -171,7 +171,7 @@
                 android:layout_height="@dimen/top_panel_btn_size"
                 android:layout_marginLeft="@dimen/top_panel_btn_margin"
                 android:layout_centerVertical="true"
-                android:src="@drawable/mail_button"
+                android:src="@drawable/feedback_xxh"
                 android:scaleType="fitCenter"
                 android:background="@color/transparent"/>
 
