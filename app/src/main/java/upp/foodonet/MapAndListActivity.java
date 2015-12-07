@@ -1,7 +1,9 @@
 package upp.foodonet;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -37,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.Button;
 
@@ -116,7 +119,7 @@ public class MapAndListActivity
 
     int currentPageIndex;
 
-    ImageButton btn_feedback_dialog;
+    RelativeLayout btn_feedback_dialog;
     EditText et_feedbackText;
     Dialog feedbackDialog;
     ListView lv_side_menu_reg;
@@ -224,7 +227,7 @@ public class MapAndListActivity
         btn_focus_on_my_location.setOnClickListener(this);
         hsv_gallery = (HorizontalScrollView)findViewById(R.id.hsv_image_gallery);
 
-        btn_feedback_dialog = (ImageButton)findViewById(R.id.btn_side_menu_feedback);
+        btn_feedback_dialog = (RelativeLayout)findViewById(R.id.rl_btn_side_menu_feedback);
         btn_feedback_dialog.setOnClickListener(this);
         lv_side_menu_my = (ListView) findViewById(R.id.lv_side_menu_my);
         lv_side_menu_reg = (ListView) findViewById(R.id.lv_side_menu_reg);
@@ -348,10 +351,41 @@ public class MapAndListActivity
             drawerLayout.closeDrawer(ll_sideMenu);
             return;
         }
+        if (currentPageIndex == PAGE_LIST){
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            mainPager.setCurrentItem(0);
+            return;
+        }
+/*
         progressDialog = CommonUtil.ShowProgressDialog(this, "");
         Intent intent = new Intent(this, MyPublicationsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
+*/
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        ForceReturn();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        return;
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.confirmExit))
+                .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+    }
+
+    private void ForceReturn(){
+        finish();
     }
 
     @Override
@@ -421,7 +455,7 @@ public class MapAndListActivity
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(GetBoundsByCenterLatLng(myLocation), width, height, 0);
                 googleMap.animateCamera(cu);
                 break;
-            case R.id.btn_side_menu_feedback:
+            case R.id.rl_btn_side_menu_feedback:
                 feedbackDialog = new Dialog(this);
                 feedbackDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 feedbackDialog.setContentView(R.layout.dialog_send_feedback);

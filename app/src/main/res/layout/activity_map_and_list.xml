@@ -37,7 +37,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/top_panel_text_size"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btn_show_list_allPubs"
@@ -51,7 +51,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/menu_header_button"
             android:textAlignment="center"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <ImageButton
             android:id="@+id/btn_show_map_allPubs"
@@ -64,7 +64,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/location_header_btn"
             android:textAlignment="center"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <FrameLayout
             android:id="@+id/popup_fragment"
@@ -91,50 +91,55 @@
                 android:id="@+id/btn_navigate_take"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/pickup_btn"
                 android:layout_marginTop="3dp"
+                android:layout_weight="1"
                 android:background="@drawable/naivgate_btn_backgroung"
+                android:text="@string/pickup_btn"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
             <Button
                 android:id="@+id/btn_navigate_share"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/share_btn"
                 android:layout_marginTop="3dp"
+                android:layout_weight="1"
                 android:background="@drawable/naivgate_btn_backgroung"
+                android:text="@string/share_btn"
                 android:textSize="@dimen/nav_buttons_text_size" />
 
         </LinearLayout>
 
-        <ImageButton android:id="@+id/btn_center_on_my_location_map"
+        <ImageButton
+            android:id="@+id/btn_center_on_my_location_map"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="250dp"
-            android:src="@drawable/location"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/rounded_button"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:visibility="gone"
-            android:background="@drawable/rounded_button"/>
+            android:src="@drawable/location"
+            android:visibility="gone" />
 
-        <HorizontalScrollView android:id="@+id/hsv_image_gallery"
+        <HorizontalScrollView
+            android:id="@+id/hsv_image_gallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             android:layout_above="@+id/ll_nav_btns_panel"
-            android:background="@drawable/map_my_location_btn_selector"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="6dp"
+            android:background="@color/gallery_normal"
+            android:visibility="visible">
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="@dimen/gallery_panel_bootom_margin_xhdpi"-->
 
-            <LinearLayout android:id="@+id/ll_image_btns_gallery"
+            <LinearLayout
+                android:id="@+id/ll_image_btns_gallery"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </HorizontalScrollView>
 
@@ -165,15 +170,6 @@
                 android:textSize="@dimen/side_menu_text_size"
                 android:textStyle="bold" />
 
-            <ImageButton android:id="@+id/btn_side_menu_feedback"
-                android:layout_width="@dimen/top_panel_btn_size"
-                android:layout_height="@dimen/top_panel_btn_size"
-                android:layout_marginLeft="@dimen/top_panel_btn_margin"
-                android:layout_centerVertical="true"
-                android:src="@drawable/feedback_xxh"
-                android:scaleType="fitCenter"
-                android:background="@color/transparent"/>
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -184,10 +180,10 @@
             <ImageView
                 android:layout_width="@dimen/side_menu_item_icon_size"
                 android:layout_height="@dimen/side_menu_item_icon_size"
-                android:scaleType="fitCenter"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:scaleType="fitCenter"
                 android:src="@drawable/side_menu_collect_icon" />
 
             <TextView
@@ -222,10 +218,10 @@
             <ImageView
                 android:layout_width="@dimen/side_menu_item_icon_size"
                 android:layout_height="@dimen/side_menu_item_icon_size"
-                android:scaleType="fitCenter"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:scaleType="fitCenter"
                 android:src="@drawable/side_menu_donate_icon" />
 
             <TextView
@@ -239,18 +235,6 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
-<!--
-            <Button
-                android:id="@+id/btn_collapse_expand_ll_my"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="B"
-                android:textSize="20sp" />
--->
-
         </RelativeLayout>
 
         <ListView
@@ -263,9 +247,34 @@
             android:listSelector="@drawable/list_selector" />
         <!--android:choiceMode="singleChoice"-->
 
-        <!-- android:id="@+id/list_slidermenu" -->
-    </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/rl_btn_side_menu_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/side_menu_item_height"
+            android:background="@color/side_menu_partition_background">
 
-    <!-- class="com.example.asher.mytestapplication.MarkerPopupFragment" -->
+            <ImageView
+                android:layout_width="@dimen/side_menu_item_icon_size"
+                android:layout_height="@dimen/side_menu_item_icon_size"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:scaleType="fitCenter"
+                android:src="@drawable/feedback_xxh" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:text="@string/side_menu_feedback_title"
+                android:textAlignment="center"
+                android:textColor="@color/list_background"
+                android:textSize="@dimen/side_menu_text_size" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

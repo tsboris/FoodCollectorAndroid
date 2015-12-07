@@ -147,7 +147,6 @@
         android:layout_gravity="start"
         android:background="@color/side_menu_item_background"
         android:orientation="vertical">
-        <!---->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -164,15 +163,6 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size"
                 android:textStyle="bold" />
-
-            <ImageButton android:id="@+id/btn_side_menu_feedback"
-                android:layout_width="@dimen/top_panel_btn_size"
-                android:layout_height="@dimen/top_panel_btn_size"
-                android:layout_marginLeft="@dimen/top_panel_btn_margin"
-                android:layout_centerVertical="true"
-                android:src="@drawable/feedback_xxh"
-                android:scaleType="fitCenter"
-                android:background="@color/transparent"/>
 
         </RelativeLayout>
 
@@ -201,20 +191,6 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
-<!--
-            <Button
-                android:id="@+id/btn_collapse_expand_ll_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="A"
-                android:textSize="20sp" />
--->
-            <!--
-            -->
-
         </RelativeLayout>
 
 
@@ -226,7 +202,6 @@
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
             android:listSelector="@drawable/list_selector" />
-        <!--android:choiceMode="singleChoice"-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -253,18 +228,6 @@
                 android:textColor="@color/list_background"
                 android:textSize="@dimen/side_menu_text_size" />
 
-<!--
-            <Button
-                android:id="@+id/btn_collapse_expand_ll_my"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="B"
-                android:textSize="20sp" />
--->
-
         </RelativeLayout>
 
         <ListView
@@ -275,12 +238,35 @@
             android:divider="@color/list_divider"
             android:dividerHeight="1dp"
             android:listSelector="@drawable/list_selector" />
-        <!--android:choiceMode="singleChoice"-->
 
+        <RelativeLayout
+            android:id="@+id/rl_btn_side_menu_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/side_menu_item_height"
+            android:background="@color/side_menu_partition_background">
 
-        <!-- android:id="@+id/list_slidermenu" -->
+            <ImageView
+                android:layout_width="@dimen/side_menu_item_icon_size"
+                android:layout_height="@dimen/side_menu_item_icon_size"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right_ldpi"
+                android:scaleType="fitCenter"
+                android:src="@drawable/feedback_xxh" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:text="@string/side_menu_feedback_title"
+                android:textAlignment="center"
+                android:textColor="@color/list_background"
+                android:textSize="@dimen/side_menu_text_size" />
+
+        </RelativeLayout>
+
     </LinearLayout>
-
-    <!-- class="com.example.asher.mytestapplication.MarkerPopupFragment" -->
 
 </android.support.v4.widget.DrawerLayout>

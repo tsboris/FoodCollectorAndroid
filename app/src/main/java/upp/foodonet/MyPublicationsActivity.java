@@ -1,6 +1,8 @@
 package upp.foodonet;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -186,10 +188,32 @@ public class MyPublicationsActivity
 
     @Override
     public void onBackPressed() {
+/*
         progressDialog = CommonUtil.ShowProgressDialog(this, "");
         Intent intent = new Intent(this, MapAndListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
+*/
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        ForceReturn();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        return;
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.confirmExit))
+                .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+    }
+
+    private void ForceReturn(){
+        finish();
     }
 
     @Override

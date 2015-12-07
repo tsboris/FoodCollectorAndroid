@@ -25,6 +25,7 @@
     <string name="side_menu_activity_center_title">מרכז פעילות</string>
     <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
     <string name="side_menu_my_active_pubs_part">שיתופים שלי</string>
+    <string name="side_menu_feedback_title">כתוב לנו</string>
     <string name="feedback_validation_text_null">תכתוב לנו משהו</string>
     <string name="feedback_progress_sending">שולח דיווח...</string>
     <string name="feedback_uimessage_thanks">תודה על תגובה!</string>
@@ -92,11 +93,11 @@
 
     <!-- Server strings -->
     <!-- Amazon base url for pictures -->
-    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>-->
-    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
+    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>
+    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>-->
 
-    <!--<string name="server_base_url">https://fd-server.herokuapp.com</string>-->
-    <string name="server_base_url">https://prv-fd-server.herokuapp.com</string>
+    <string name="server_base_url">https://fd-server.herokuapp.com</string>
+    <!--<string name="server_base_url">https://prv-fd-server.herokuapp.com</string>-->
     <string name="server_add_new_publication_path">/publications.json</string>
     <string name="server_edit_publication_path">/publications/{0}.json</string>
     <string name="server_get_publications_path">/publications</string>
@@ -238,6 +239,7 @@
     <!-- Common hebrew -->
 
     <string name="confirmAction">בטוח?</string>
+    <string name="confirmExit">ברצונך לצאת מאפליקציה?</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
 
