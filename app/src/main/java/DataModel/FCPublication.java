@@ -625,14 +625,14 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
         Map<String, Object> publicationData = new HashMap<String, Object>();
         publicationData.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
         publicationData.put(PUBLICATION_TITLE_KEY, getTitle());
-        publicationData.put(PUBLICATION_SUBTITLE_KEY, TextUtils.isEmpty(getSubtitle())? "test subtitle": getSubtitle());
+        publicationData.put(PUBLICATION_SUBTITLE_KEY, TextUtils.isEmpty(getSubtitle())? "": getSubtitle());
         publicationData.put(PUBLICATION_ADDRESS_KEY, getAddress());
         publicationData.put(PUBLICATION_LATITUDE_KEY, getLatitude());
         publicationData.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
         publicationData.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
         publicationData.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
         publicationData.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting() + 1);
-        publicationData.put(PUBLICATION_CONTACT_INFO_KEY, TextUtils.isEmpty(getContactInfo())? "0500000":getContactInfo());
+        publicationData.put(PUBLICATION_CONTACT_INFO_KEY, TextUtils.isEmpty(getContactInfo())? "":getContactInfo());
         publicationData.put(PUBLICATION_PHOTO_URL, "");//getPhotoUrl());
         publicationData.put(PUBLICATION_IS_ON_AIR_KEY, true);//getIsOnAir());
         //publicationData.put(PUBLICATION_UNIQUE_ID_KEY, 0);
