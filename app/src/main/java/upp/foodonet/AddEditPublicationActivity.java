@@ -949,7 +949,7 @@ public class AddEditPublicationActivity extends FragmentActivity
             isGoogleAddress = false;
             if (iv_address_dialog_location_validation != null) {
                 atv_address.setText(myCurrentAddress);
-                addressTmpForEdit = atv_address.getText().toString();
+                addressTmpForEdit = atv_address.getText().toString().replace("null", "").replace(",", " ");
                 iv_address_dialog_location_validation.setImageDrawable(getResources().getDrawable(R.drawable.validation_ok));
                 iv_address_dialog_location_validation.setVisibility(View.VISIBLE);
             }
