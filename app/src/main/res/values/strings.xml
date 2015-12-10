@@ -93,11 +93,24 @@
 
     <!-- Server strings -->
     <!-- Amazon base url for pictures -->
-    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>-->
-    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
 
-    <!--<string name="server_base_url">https://fd-server.herokuapp.com</string>-->
-    <string name="server_base_url">https://prv-fd-server.herokuapp.com</string>
+
+    <!-- Connection strings - PRODUCTION -->
+
+    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>
+    <string name="server_base_url">https://fd-server.herokuapp.com</string>
+    <string name="push_notification_prefix">/topics/global</string>
+
+    <!-- ========================== -->
+
+    <!-- Connection strings - DEV -->
+
+    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>-->
+    <!--<string name="server_base_url">https://prv-fd-server.herokuapp.com</string>-->
+    <!--<string name="push_notification_prefix">/topics/dev</string>-->
+
+    <!-- ========================== -->
+
     <string name="server_add_new_publication_path">/publications.json</string>
     <string name="server_edit_publication_path">/publications/{0}.json</string>
     <string name="server_get_publications_path">/publications</string>

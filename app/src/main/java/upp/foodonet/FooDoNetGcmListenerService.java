@@ -43,11 +43,11 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        if (from.startsWith("/topics/")) {
+//        if (from.startsWith("/topics/")) {
             // message received from some topic.
-        } else {
+//        } else {
             // normal downstream message.
-        }
+//        }
         //region structure of notifications
 //        message = "{\"type\":\"new_publication\",\"data\":{ id:579}}";
 //        message = "{\"type\":\"deleted_publication\",\"data\":{ id:561}}";
@@ -58,9 +58,12 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
 //        pushObject.ID = 574;
         //end region
 
-        pushObject = PushObject.DecodePushObject(data);
-        HandleMessage(pushObject);
-        //sendNotification(message);
+/*
+        if(from.startsWith(getString(R.string.push_notification_prefix))){
+            pushObject = PushObject.DecodePushObject(data);
+            HandleMessage(pushObject);
+        }
+*/
     }
 
     private void HandleMessage(PushObject pushObject) {

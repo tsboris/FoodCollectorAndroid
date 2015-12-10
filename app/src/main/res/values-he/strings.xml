@@ -3,7 +3,6 @@
 
     <string name="app_name">Foodonet</string>
     <string name="title_activity_sql_loader_result">SqlLoaderResultActivity</string>
-    <string name="server_base_url">https://fd-server.herokuapp.com/publications</string>
     <string name="action_settings">Settings</string>
     <string name="show_map_string">הצג מפה</string>
     <string name="title_activity_add_new_fcpublication">AddNewFCPublicationActivity</string>
