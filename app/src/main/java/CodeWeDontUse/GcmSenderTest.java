@@ -19,6 +19,13 @@ import java.net.URL;
  * Created by Asher on 12.10.2015.
  */
 public class GcmSenderTest extends AsyncTask<Void, Void, Void> {
+
+    String topic;
+
+    public GcmSenderTest(String topicsFolder){
+        topic = topicsFolder;
+    }
+
     @Override
     protected Void doInBackground(Void... params) {
         try {
@@ -31,7 +38,7 @@ public class GcmSenderTest extends AsyncTask<Void, Void, Void> {
 
             // Where to send GCM message.
             //jGcmData.put("to", token); ---- use this to send message to specific user (token from DB, created on user's device)
-            jGcmData.put("to", "/topics/global"); //--- use this to send message to ALL registered android users
+            jGcmData.put("to", topic); //--- use this to send message to ALL registered android users
 
             // What to send in GCM message.
             jGcmData.put("data", jData);

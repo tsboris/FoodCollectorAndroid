@@ -141,8 +141,9 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
 
     private void subscribeTopics(String token) throws IOException {
         GcmPubSub pubSub = GcmPubSub.getInstance(this);
-        for (String topic : TOPICS) {
-            pubSub.subscribe(token, "/topics/" + topic, null);
-        }
+        pubSub.subscribe(token, getString(R.string.push_notification_prefix), null);
+//        for (String topic : TOPICS) {
+//
+//        }
     }
 }

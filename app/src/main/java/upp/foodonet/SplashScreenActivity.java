@@ -13,6 +13,7 @@ import android.os.Messenger;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GcmPubSub;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -229,6 +233,9 @@ public class SplashScreenActivity
     private void RegisterIfNotRegisteredYet() {
         if (CommonUtil.GetFromPreferencesIsRegistered(this)) {
             startService(new Intent(this, FooDoNetService.class));
+
+            RepairPushNotifications();
+
             registerTaskFinished = true;
             if(AllLoaded())
                 StartNextActivity();
@@ -266,6 +273,20 @@ public class SplashScreenActivity
 /*
                 break;
 */
+        }
+    }
+
+    private void RepairPushNotifications(){
+        SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_token), MODE_PRIVATE);
+        String token = sp.getString(getString(R.string.shared_preferences_token_key), "");
+        if(!TextUtils.isEmpty(token)){
+            GcmPubSub pubSub = GcmPubSub.getInstance(this);
+            try {
+                pubSub.unsubscribe(token, "/topics/global");
+                pubSub.subscribe(token, getString(R.string.push_notification_prefix), null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

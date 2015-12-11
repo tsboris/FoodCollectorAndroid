@@ -99,7 +99,7 @@
 
     <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>
     <string name="server_base_url">https://fd-server.herokuapp.com</string>
-    <string name="push_notification_prefix">/topics/global</string>
+    <string name="push_notification_prefix">/topics/prod</string>
 
     <!-- ========================== -->
 

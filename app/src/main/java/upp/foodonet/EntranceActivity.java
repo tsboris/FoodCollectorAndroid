@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +46,7 @@ public class EntranceActivity
     //Button btn_pick, btn_share, btn_ask;
     //TextView tv_pick, tv_share;
     RelativeLayout rl_btn_pick, rl_btn_share;
+//    RelativeLayout rl_btn_test;
     boolean isUIBlocked;
     ProgressDialog progressDialog;
 
@@ -89,6 +91,11 @@ public class EntranceActivity
         rl_btn_share.setOnClickListener(this);
         rl_btn_pick = (RelativeLayout)findViewById(R.id.rl_btn_take_entrance_screen);
         rl_btn_pick.setOnClickListener(this);
+
+/*
+        rl_btn_test = (RelativeLayout)findViewById(R.id.rl_btn_test);
+        rl_btn_test.setOnClickListener(this);
+*/
 
     }
 
@@ -167,7 +174,10 @@ public class EntranceActivity
                 break;
 /*
             case R.id.rl_btn_test:
-
+                GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
+                senderTest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                progressDialog.dismiss();
+                isUIBlocked = false;
                 break;
 */
         }

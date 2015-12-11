@@ -58,12 +58,10 @@ public class FooDoNetGcmListenerService extends GcmListenerService implements IF
 //        pushObject.ID = 574;
         //end region
 
-/*
         if(from.startsWith(getString(R.string.push_notification_prefix))){
             pushObject = PushObject.DecodePushObject(data);
             HandleMessage(pushObject);
         }
-*/
     }
 
     private void HandleMessage(PushObject pushObject) {
