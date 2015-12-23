@@ -434,11 +434,16 @@ public class MapAndListActivity
             case R.id.btn_show_list_allPubs:
                 if (currentPageIndex == PAGE_MAP) {
                     mainPager.setCurrentItem(1);
+
+                    btn_show_M.setImageDrawable(getResources().getDrawable(R.drawable.location_header_btn));
+                    btn_show_L.setVisibility(View.GONE);
                 }
                 break;
             case R.id.btn_show_map_allPubs:
                 if (currentPageIndex == PAGE_MAP) {
                     drawerLayout.openDrawer(ll_sideMenu);
+
+                    btn_show_M.setImageDrawable(getResources().getDrawable(R.drawable.menu_header_button));
                 }
                 if (currentPageIndex == PAGE_LIST) {
                     View view = this.getCurrentFocus();
@@ -447,6 +452,9 @@ public class MapAndListActivity
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     mainPager.setCurrentItem(0);
+
+                    btn_show_M.setImageDrawable(getResources().getDrawable(R.drawable.menu_header_button));
+                    btn_show_L.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.btn_center_on_my_location_map:

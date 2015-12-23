@@ -11,9 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/report_dialog_height"
         android:text="@string/report_dialog_report_title"
-        android:textSize="30sp"
+        android:textSize="@dimen/report_dialog_text_size"
         android:textColor="@color/basic_blue"
-        android:layout_gravity="center_horizontal" />
+        android:paddingTop="10dp"
+        android:layout_gravity="center" />
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
@@ -29,7 +30,7 @@
         android:background="@color/transparent"
         android:gravity="right|center"
         android:paddingRight="@dimen/report_dialog_padding_right"
-        android:textSize="20dp"
+        android:textSize="@dimen/report_dialog_text_size"
         android:id="@+id/btn_report_dialog_collected_part"
         android:layout_gravity="center_horizontal" />
 
@@ -40,7 +41,7 @@
         android:background="@color/transparent"
         android:gravity="right|center"
         android:paddingRight="@dimen/report_dialog_padding_right"
-        android:textSize="20dp"
+        android:textSize="@dimen/report_dialog_text_size"
         android:id="@+id/btn_report_dialog_collected_all"
         android:layout_gravity="center_horizontal" />
 
@@ -51,7 +52,7 @@
         android:background="@color/transparent"
         android:gravity="right|center"
         android:paddingRight="@dimen/report_dialog_padding_right"
-        android:textSize="20dp"
+        android:textSize="@dimen/report_dialog_text_size"
         android:id="@+id/btn_report_dialog_found_nothing"
         android:layout_gravity="center_horizontal" />
 

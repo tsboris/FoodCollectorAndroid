@@ -1121,8 +1121,9 @@ public class PublicationDetailsActivity
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Distance > 2km, leave report?").setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();
+            builder.setMessage(getString(R.string.report_big_distance))
+                    .setPositiveButton(getString(R.string.report_big_distance_ok_btn), dialogClickListener)
+                    .setNegativeButton(getString(R.string.report_big_distance_cancel_btn), dialogClickListener).show();
         }
         return false;
     }
