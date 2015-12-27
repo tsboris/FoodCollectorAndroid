@@ -203,6 +203,10 @@
     <string name="report_dialog_report_btn">דווח</string>
     <string name="report_dialog_cancel_btn">בטל</string>
 
+    <string name="report_big_distance">מרחק ממיקום השיתוף גדול מ-2 ק״מ. האם לדווח?</string>
+    <string name="report_big_distance_ok_btn">אישור</string>
+    <string name="report_big_distance_cancel_btn">ביטול</string>
+
     <!-- Dialog publication reports -->
 
     <string name="dialog_pub_reports_title">דיווחי משתמשים</string>

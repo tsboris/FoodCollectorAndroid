@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.gcm.GcmPubSub;
 
 import java.io.File;
@@ -96,6 +97,9 @@ public class SplashScreenActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        //AppEventsLogger.activateApp(this);
+
         if(CommonUtil.GetFromPreferencesIsDataLoaded(this))
             registerTaskFinished = true;
         else if(CommonUtil.GetFromPreferencesIsRegistered(this) && !isLoadDataServiceStarted){
@@ -105,6 +109,12 @@ public class SplashScreenActivity
         }
         if(AllLoaded())
             StartNextActivity();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //AppEventsLogger.deactivateApp(this);
     }
 
     /*
