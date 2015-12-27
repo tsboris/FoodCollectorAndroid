@@ -98,7 +98,7 @@ public class SplashScreenActivity
     protected void onResume() {
         super.onResume();
 
-        //AppEventsLogger.activateApp(this);
+        AppEventsLogger.activateApp(this);
 
         if(CommonUtil.GetFromPreferencesIsDataLoaded(this))
             registerTaskFinished = true;
@@ -114,7 +114,7 @@ public class SplashScreenActivity
     @Override
     protected void onPause() {
         super.onPause();
-        //AppEventsLogger.deactivateApp(this);
+        AppEventsLogger.deactivateApp(this);
     }
 
     /*
