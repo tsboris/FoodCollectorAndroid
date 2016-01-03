@@ -1,5 +1,10 @@
 <resources>
 
+    <!-- Entrance activity -->
+
+    <item name="entrance_side_placeholder_weight" type="dimen" format="float">0.25</item>
+    <item name="entrance_center_placeholder_weight" type="dimen" format="float">0.5</item>
+
     <!-- Images constants -->
 
     <integer name="max_image_width_height">800</integer>
@@ -8,37 +13,21 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="top_panel_height">56dp</dimen>
-    <dimen name="top_panel_height_hdpi">42dp</dimen>
-    <dimen name="top_panel_height_ldpi">36dp</dimen>
+    <dimen name="top_panel_height">36dp</dimen>
     <dimen name="top_panel_text_size">17sp</dimen>
-    <!--<dimen name="top_panel_text_size_ldpi">16dp</dimen>-->
-    <!--<dimen name="top_panel_text_size_hdpi">18dp</dimen>-->
     <dimen name="top_panel_add_pub_plus_size">36dp</dimen>
-    <dimen name="top_panel_add_pub_plus_size_ldpi">24dp</dimen>
-    <dimen name="top_panel_add_pub_plus_size_hdpi">26dp</dimen>
     <dimen name="bottom_nav_btn_img_size">24dp</dimen>
-    <dimen name="bottom_nav_btn_img_size_hdpi">24dp</dimen>
-    <dimen name="bottom_nav_btn_img_size_ldpi">20dp</dimen>
     <dimen name="side_menu_panel_width">280dp</dimen>
-    <dimen name="side_menu_panel_width_ldpi">240dp</dimen>
     <dimen name="side_menu_item_pub_title_width">120dp</dimen>
-    <dimen name="side_menu_item_pub_title_width_ldpi">120dp</dimen>
 
     <dimen name="side_menu_text_size">13sp</dimen>
     <dimen name="side_menu_item_icon_margin_right">24dp</dimen>
-    <dimen name="side_menu_item_icon_margin_right_ldpi">18dp</dimen>
     <dimen name="side_menu_item_title_margin_right">96dp</dimen>
-    <dimen name="side_menu_item_title_margin_right_ldpi">70dp</dimen>
     <dimen name="side_menu_item_score_margin_left">24dp</dimen>
     <dimen name="side_menu_item_height">70dp</dimen>
-    <dimen name="side_menu_item_height_ldpi">60dp</dimen>
     <dimen name="side_menu_item_score_circle_size">40dp</dimen>
-    <dimen name="side_menu_item_score_circle_size_ldpi">36dp</dimen>
     <dimen name="side_menu_item_icon_size">42dp</dimen>
-    <dimen name="side_menu_item_icon_size_ldpi">36dp</dimen>
     <dimen name="side_menu_item_score_circle_margin">15dp</dimen>
-    <dimen name="side_menu_item_score_circle_margin_ldpi">10dp</dimen>
 
     <color name="white">#FFFFFF</color>
     <color name="side_menu_score_circle_red">#B80000</color>
@@ -53,18 +42,14 @@
     <dimen name="pub_details_menu_height">30dp</dimen>
     <dimen name="pub_details_menu_marginRight">14dp</dimen>
     <dimen name="pub_details_menu_marginTop">14dp</dimen>
-    <dimen name="pub_details_menu_marginTop_ldpi">3dp</dimen>
     <dimen name="pub_details_menu_text_size">27sp</dimen>
     <dimen name="pub_details_btn_leave_report_width">40dp</dimen>
     <dimen name="pub_details_btn_leave_report_height">30dp</dimen>
     <dimen name="pub_details_btn_leave_report_marginRight">14dp</dimen>
-    <dimen name="pub_details_btn_leave_report_marginRight_ldpi">7dp</dimen>
     <dimen name="pub_details_btn_leave_report_marginTop">14dp</dimen>
-    <dimen name="pub_details_btn_leave_report_marginTop_ldpi">3dp</dimen>
 
     <dimen name="pub_details_image_size">100dp</dimen>
     <dimen name="pub_details_pub_props_panel_height">180dp</dimen>
-    <dimen name="pub_details_pub_props_panel_height_ldpi">110dp</dimen>
     <dimen name="pub_details_pub_props_ll_width">0dp</dimen>
     <dimen name="pub_details_pub_props_ll_marginLeft">16dp</dimen>
     <dimen name="pub_details_pub_props_ll_marginRight">-40dp</dimen>
@@ -80,14 +65,11 @@
     <dimen name="pub_details_riv_image_rl_width">0dp</dimen>
 
     <dimen name="pub_details_btns_panel_height">90dp</dimen>
-    <dimen name="pub_details_btns_panel_height_ldpi">70dp</dimen>
     <dimen name="pub_details_btn_in_panel_width">0dp</dimen>
     <dimen name="pub_details_btn_in_panel_height">56dp</dimen>
     <dimen name="pub_details_btn_in_panel_marginLeft">10dp</dimen>
     <dimen name="pub_details_btn_in_panel_margin_top">17dp</dimen>
-    <dimen name="pub_details_btn_in_panel_margin_top_ldpi">7dp</dimen>
     <dimen name="pub_details_subtitle_paddingBottomTop">8dp</dimen>
-    <dimen name="pub_details_subtitle_paddingBottomTop_ldpi">4dp</dimen>
     <dimen name="pub_details_subtitle_paddingLeftRight">16dp</dimen>
     <dimen name="pub_details_time_paddingBottomTopRight">16dp</dimen>
     <dimen name="pub_details_time_paddingBottomTop_ldpr">8dp</dimen>
@@ -101,13 +83,13 @@
     <dimen name="pub_details_address_text_size">14sp</dimen>
     <dimen name="pub_details_distance_text_size">12sp</dimen>
     <!-- colors -->
-    
+
     <color name="side_menu_item_background">#555555</color>
     <color name="side_menu_title_background">#2A2A2A</color>
     <color name="side_menu_partition_background">#444444</color>
-    
+
     <!--========-->
-    
+
     <!-- from Test Application -->
     <color name="white_a50">#ff00ff00</color>
     <color name="list_background">#FFFFFF</color>
@@ -129,21 +111,15 @@
     <integer name="map_max_distance_if_location_not_available">30</integer>
     <integer name="map_max_distance_if_location_available">10</integer>
     <integer name="map_refresh_my_location_frequency_milliseconds">30000</integer>
-    
+
     <!-- ==================== -->
 
     <!-- === Map and list == -->
 
-    <dimen name="gallery_panel_bootom_margin_xhdpi">100dp</dimen>
-    <dimen name="gallery_image_btn_height_xhdpi">90dp</dimen>
     <dimen name="nav_buttons_text_size">10sp</dimen>
-    <dimen name="nav_buttons_text_size_ldpi">11sp</dimen>
     <dimen name="top_panel_btn_size">30dp</dimen>
-    <dimen name="top_panel_btn_size_ldpi">25dp</dimen>
     <dimen name="top_panel_btn_margin">14dp</dimen>
-    <dimen name="top_panel_btn_margin_ldpi">6dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
-    <dimen name="all_pubs_filter_btns_margin_top_ldpi">40dp</dimen>
     <color name="buttons_pressed">#D900a3cc</color>
     <color name="gallery_pressed">#D900a3cc</color>
     <drawable name="buttons_pressed">#D900a3cc</drawable>
@@ -155,21 +131,17 @@
 
     <!-- ==================== -->
 
-    
+
     <!-- My/other's publications list -->
 
     <color name="red_for_dot_my_pubs_list">#FF0000</color>
     <color name="green_for_dot_my_pubs_list">#00FF00</color>
     <dimen name="dot_size_my_pubs_list">7dp</dimen>
     <dimen name="my_pubs_list_item_right_left_padding">16dp</dimen>
-    <dimen name="pub_list_item_image_size">90dp</dimen>
-    <dimen name="pub_list_item_image_size_ldpi">80dp</dimen>
     <dimen name="pub_list_item_image_left_margin">16dp</dimen>
     <dimen name="pub_list_item_image_top_bottom_margin">10dp</dimen>
     <integer name="pub_list_item_image_size_others">100</integer>
-    <integer name="pub_list_item_image_size_others_ldpi">90</integer>
     <integer name="pub_list_item_image_size_my">90</integer>
-    <integer name="pub_list_item_image_size_my_ldpi">80</integer>
     <integer name="pub_list_item_image_size_side_menu">42</integer>
     <dimen name="my_pub_list_item_title_text_size">14sp</dimen>
     <dimen name="my_pub_list_item_end_date_text_size">13sp</dimen>
@@ -177,7 +149,6 @@
     <dimen name="my_pub_list_text_block_height">60dp</dimen>
     <dimen name="filter_btns_text_size">16sp</dimen>
     <dimen name="others_list_item_height">110dp</dimen>
-    <dimen name="others_list_item_height_ldpi">90dp</dimen>
 
 
     <!-- ============================ -->
@@ -195,7 +166,6 @@
     <dimen name="add_pub_et_hint_text_size">16sp</dimen>
     <dimen name="add_pub_et_date_text_size">16sp</dimen>
     <dimen name="add_pub_pub_btn_size">30dp</dimen>
-    <dimen name="add_pub_pub_btn_size_ldpi">30dp</dimen>
 
     <dimen name="add_pub_img_height">160dp</dimen>
 
@@ -205,18 +175,12 @@
 
     <dimen name="address_dialog_height">340dp</dimen>
     <dimen name="address_dialog_width">320dp</dimen>
-    <dimen name="address_dialog_height_ldpi">300dp</dimen>
-    <dimen name="address_dialog_width_ldpi">230dp</dimen>
     <dimen name="address_dialog_ll_side_padding">8dp</dimen>
     <dimen name="address_dialog_ll_top_bottom_padding">8dp</dimen>
     <dimen name="address_dialog_edit_field_height">52dp</dimen>
-    <dimen name="address_dialog_edit_field_height_ldpi">46dp</dimen>
     <dimen name="address_dialog_get_curr_location_height">48dp</dimen>
-    <dimen name="address_dialog_get_curr_location_height_ldpi">40dp</dimen>
     <dimen name="address_dialog_history_list_height">144dp</dimen>
-    <dimen name="address_dialog_history_list_height_ldpi">120dp</dimen>
     <dimen name="address_dialog_history_item_height">48dp</dimen>
-    <dimen name="address_dialog_history_item_height_ldpi">40dp</dimen>
     <dimen name="address_dialog_divider_height">12dp</dimen>
     <dimen name="address_dialog_validation_img_size">18dp</dimen>
     <dimen name="address_dialog_history_item_text_size">18sp</dimen>

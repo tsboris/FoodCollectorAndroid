@@ -75,7 +75,7 @@
     <TextView
         android:id="@+id/welcome"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/top_panel_height_hdpi"
+        android:layout_height="@dimen/top_panel_height"
         android:background="@color/basic_blue"
         android:gravity="center"
         android:text="@string/welcome_string"
