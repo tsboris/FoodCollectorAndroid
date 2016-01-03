@@ -4,7 +4,6 @@
     <string name="app_name">Foodonet</string>
     <string name="title_activity_sql_loader_result">SqlLoaderResultActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="show_map_string">הצג מפה</string>
     <string name="title_activity_add_new_fcpublication">AddNewFCPublicationActivity</string>
     <string name="enter_title_string">מה תרצה לשתף?</string>
     <string name="address_string">מאיפה לאסוף?</string>
@@ -12,32 +11,22 @@
     <string name="no_date_set_string">0000–00–00</string>
     <string name="no_time_set_string">00:00:00</string>
     <string name="end_string">ועד-</string>
-    <string name="add_phoneNumber_string">מספר טלפון ליצירת קשר</string>
-    <string name="another_details_string">רוצה לתת פרטים נוספים?</string>
-    <string name="call_to_publisher_string">האם ליצור איתך קשר לפני הגעה?</string>
-    <string name="add_pic_string">רוצה להוסיף תמונה?</string>
-    <string name="publish_string">פרסם</string>
-    <string name="enter_description_name_string">תיאור שם</string>
-    <string name="choose_date_string">תאריך</string>
-    <string name="choose_time_string">שעה</string>
-    <string name="enter_name_string">הוסף שם</string>
-    <string name="free_pickup_string">איסוף חופשי</string>
-    <string name="side_menu_activity_center_title">מרכז פעילות</string>
+    <string name="add_phoneNumber_string">מה מספר הטלפון?</string>
+    <string name="another_details_string">פרטים נוספים</string>
+    <string name="add_pic_string">הוספת תמונה</string>
+    <string name="side_menu_activity_center_title">מרכז הפעילות</string>
     <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
-    <string name="side_menu_my_active_pubs_part">שיתופים שלי</string>
+    <string name="side_menu_my_active_pubs_part">השיתופים שלי</string>
     <string name="side_menu_feedback_title">כתוב לנו</string>
     <string name="feedback_validation_text_null">תכתוב לנו משהו</string>
     <string name="feedback_progress_sending">שולח דיווח...</string>
     <string name="feedback_uimessage_thanks">תודה על תגובה!</string>
-    <string name="publication_details_title">פרטי שיתוף</string>
-    <string name="title_activity_entrance">EntranceActivity</string>
+    <string name="publication_details_title">פרטי השיתוף</string>
     <string name="welcome_string">ברוכים הבאים</string>
     <string name="publish">לשתף מזון</string>
     <string name="pickup">לאסוף מזון</string>
-    <string name="ask_food">לבקש מזון</string>
     <string name="test_btn_text">TEST</string>
-    <string name="title_my_publications">שיתופים שלי</string>
-    <string name="title_all_publications">שיתופים פעילים</string>
+    <string name="title_all_publications">אירועים בקירבתך</string>
     <string name="share_btn">שיתוף</string>
     <string name="pickup_btn">איסוף</string>
     <string name="filter_ending_btn_text">מסתיים</string>
@@ -49,7 +38,7 @@
     <string name="leave_report_pub_details">דווח</string>
     <string name="start_date_time_picker_dialog_title">מתאריך‫:‬</string>
     <string name="end_date_time_picker_dialog_title">ועד תאריך‫:‬</string>
-    <string name="my_pubs_list_end_date_base_string">מסתיים‫:‬ {0}</string>
+    <string name="my_pubs_list_end_date_base_string">פעיל</string>
 
     <!-- Common - check if needed -->
 
@@ -97,17 +86,17 @@
 
     <!-- Connection strings - PRODUCTION -->
 
-    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>
-    <string name="server_base_url">https://fd-server.herokuapp.com</string>
-    <string name="push_notification_prefix">/topics/prod</string>
+    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>-->
+    <!--<string name="server_base_url">https://fd-server.herokuapp.com</string>-->
+    <!--<string name="push_notification_prefix">/topics/prod</string>-->
 
     <!-- ========================== -->
 
     <!-- Connection strings - DEV -->
 
-    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>-->
-    <!--<string name="server_base_url">https://prv-fd-server.herokuapp.com</string>-->
-    <!--<string name="push_notification_prefix">/topics/dev</string>-->
+    <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollectordev</string>
+    <string name="server_base_url">https://prv-fd-server.herokuapp.com</string>
+    <string name="push_notification_prefix">/topics/dev</string>
 
     <!-- ========================== -->
 

@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/top_panel_height_hdpi"
-        android:text="@string/title_my_publications"
+        android:text="@string/side_menu_my_active_pubs_part"
         android:gravity="center"
         android:textColor="@color/white"
         android:background="@color/basic_blue"
