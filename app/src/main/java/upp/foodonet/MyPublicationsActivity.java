@@ -98,9 +98,9 @@ public class MyPublicationsActivity
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if(metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
         else if(metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
         else
             dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
 /*

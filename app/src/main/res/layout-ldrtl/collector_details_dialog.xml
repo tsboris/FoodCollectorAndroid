@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:divider="@drawable/filter_tv_divider_horizontal"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/collector_dialog_height"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/collector_dialog_sign_title"
+        android:textColor="@color/basic_blue"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="@string/collector_dialog_register_text"
+            android:textSize="16dp" />
+
+        <EditText
+            android:id="@+id/et_name_dialog_collector"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/collector_dialog_height"
+            android:layout_marginLeft="@dimen/collector_dialog_margin"
+            android:layout_marginRight="@dimen/collector_dialog_margin"
+            android:hint="@string/collector_dialog_name_et"
+            android:inputType="textShortMessage"
+            android:singleLine="true"
+            android:textColorHighlight="@color/basic_blue"
+            android:textSize="16dp" />
+
+        <EditText
+            android:id="@+id/et_phone_dialog_collector"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/collector_dialog_height"
+            android:layout_marginBottom="@dimen/collector_dialog_margin"
+            android:layout_marginLeft="@dimen/collector_dialog_margin"
+            android:layout_marginRight="@dimen/collector_dialog_margin"
+            android:hint="@string/collector_dialog_phone_et"
+            android:inputType="phone"
+            android:textColorHighlight="@color/basic_blue"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/collector_dialog_height"
+        android:layout_gravity="center_horizontal"
+        android:divider="@drawable/filter_tv_divider_horizontal"
+        android:orientation="horizontal"
+        android:showDividers="middle">
+
+
+        <Button
+            android:id="@+id/btn_cancel_dialog_collector"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:text="@string/collector_dialog_cancel_btn" />
+
+        <Button
+            android:id="@+id/btn_sign_dialog_collector"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:text="@string/collector_dialog_sign_btn" />
+    </LinearLayout>
+</LinearLayout>

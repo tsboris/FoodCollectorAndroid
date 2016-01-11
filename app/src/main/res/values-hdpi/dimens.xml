@@ -107,6 +107,7 @@
 
     <!-- === Map constants == -->
 
+    <dimen name="gallery_image_btn_height">90dp</dimen>
     <item name="map_one_kilometer_for_calculation" type="dimen" format="float">0.009</item>
     <integer name="map_max_distance_if_location_not_available">30</integer>
     <integer name="map_max_distance_if_location_available">10</integer>
