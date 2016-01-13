@@ -28,7 +28,7 @@
         android:layout_marginRight="10dp"
         android:text="+"
         android:textAlignment="center"
-        android:textSize="37sp"
+        android:textSize="@dimen/add_new_pub_btn_text_size"
         android:textColor="@color/white"
         android:background="@color/basic_blue"/>
 

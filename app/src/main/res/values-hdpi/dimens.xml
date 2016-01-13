@@ -118,8 +118,8 @@
     <!-- === Map and list == -->
 
     <dimen name="nav_buttons_text_size">10sp</dimen>
-    <dimen name="top_panel_btn_size">30dp</dimen>
-    <dimen name="top_panel_btn_margin">14dp</dimen>
+    <dimen name="top_panel_btn_size">20dp</dimen>
+    <dimen name="top_panel_btn_margin">12dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
     <color name="buttons_pressed">#D900a3cc</color>
     <color name="gallery_pressed">#D900a3cc</color>
@@ -150,7 +150,11 @@
     <dimen name="my_pub_list_text_block_height">60dp</dimen>
     <dimen name="filter_btns_text_size">16sp</dimen>
     <dimen name="others_list_item_height">110dp</dimen>
-
+    <dimen name="add_new_pub_btn_text_size">25sp</dimen>
+    <dimen name="pub_list_item_image_width">90dp</dimen>
+    <dimen name="pub_list_item_image_height">90dp</dimen>
+    <dimen name="my_pub_list_item_image_width">80dp</dimen>
+    <dimen name="my_pub_list_item_image_height">80dp</dimen>
 
     <!-- ============================ -->
 
@@ -163,10 +167,11 @@
     <color name="edit_text_input_default_color">#000000</color>
     <dimen name="edit_text_height_add_edit_pub">56dp</dimen>
     <dimen name="edit_text_side_margin_add_edit_pub">13dp</dimen>
+    <dimen name="pub_btn_margin_top_add_edit_pub">10dp</dimen>
 
     <dimen name="add_pub_et_hint_text_size">16sp</dimen>
     <dimen name="add_pub_et_date_text_size">16sp</dimen>
-    <dimen name="add_pub_pub_btn_size">30dp</dimen>
+    <dimen name="add_pub_pub_btn_size">20dp</dimen>
 
     <dimen name="add_pub_img_height">160dp</dimen>
 

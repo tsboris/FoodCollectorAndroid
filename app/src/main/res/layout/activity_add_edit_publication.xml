@@ -27,7 +27,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
-                android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub"
+                android:layout_marginTop="@dimen/pub_btn_margin_top_add_edit_pub"
                 android:background="@color/transparent"
                 android:scaleType="fitCenter"
                 android:src="@drawable/done_xxh" />
