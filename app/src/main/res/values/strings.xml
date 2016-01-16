@@ -11,7 +11,7 @@
     <string name="no_date_set_string">0000–00–00</string>
     <string name="no_time_set_string">00:00:00</string>
     <string name="end_string">ועד-</string>
-    <string name="add_phoneNumber_string">מה מספר הטלפון?</string>
+    <string name="add_phone_number_string">מה מספר הטלפון?</string>
     <string name="another_details_string">פרטים נוספים</string>
     <string name="add_pic_string">הוספת תמונה</string>
     <string name="side_menu_activity_center_title">מרכז הפעילות</string>
