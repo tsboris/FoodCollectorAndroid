@@ -39,12 +39,11 @@
         android:layout_alignLeft="@+id/textView"
         android:layout_alignStart="@+id/textView"
         android:layout_below="@+id/tv_my_pubs_title"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
         android:id="@+id/ll_filter_btns"
         android:divider="@drawable/filter_btns_ll_divider_vertical"
         android:showDividers="middle">
         <Button android:id="@+id/btn_publication_ending"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/filter_ending_btn_text"

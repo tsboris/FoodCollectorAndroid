@@ -121,6 +121,7 @@
     <dimen name="top_panel_btn_size">25dp</dimen>
     <dimen name="top_panel_btn_margin">6dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">40dp</dimen>
+    <dimen name="all_pubs_filter_btns_height">22dp</dimen>
     <color name="buttons_pressed">#D900a3cc</color>
     <color name="gallery_pressed">#D900a3cc</color>
     <drawable name="buttons_pressed">#D900a3cc</drawable>
