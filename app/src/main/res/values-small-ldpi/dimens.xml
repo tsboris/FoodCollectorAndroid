@@ -2,8 +2,8 @@
 
     <!-- Entrance activity -->
 
-    <item name="entrance_side_placeholder_weight" type="dimen" format="float">0.25</item>
-    <item name="entrance_center_placeholder_weight" type="dimen" format="float">0.5</item>
+    <item name="entrance_side_placeholder_weight" type="dimen" format="float">0.20</item>
+    <item name="entrance_center_placeholder_weight" type="dimen" format="float">0.6</item>
 
     <!-- Images constants -->
 
@@ -118,7 +118,7 @@
 
     <dimen name="gallery_image_btn_height">90dp</dimen>
     <dimen name="nav_buttons_text_size">11sp</dimen>
-    <dimen name="top_panel_btn_size">25dp</dimen>
+    <dimen name="top_panel_btn_size">20dp</dimen>
     <dimen name="top_panel_btn_margin">6dp</dimen>
     <dimen name="all_pubs_filter_btns_margin_top">40dp</dimen>
     <dimen name="all_pubs_filter_btns_height">22dp</dimen>

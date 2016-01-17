@@ -44,7 +44,6 @@
         android:divider="@drawable/filter_btns_ll_divider_vertical"
         android:showDividers="middle">
         <Button android:id="@+id/btn_publication_ending"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/filter_ending_btn_text"

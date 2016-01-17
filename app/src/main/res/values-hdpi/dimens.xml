@@ -119,9 +119,9 @@
 
     <dimen name="nav_buttons_text_size">10sp</dimen>
     <dimen name="top_panel_btn_size">20dp</dimen>
-    <dimen name="top_panel_btn_margin">12dp</dimen>
-    <dimen name="all_pubs_filter_btns_margin_top">60dp</dimen>
-    <dimen name="all_pubs_filter_btns_height">22dp</dimen>
+    <dimen name="top_panel_btn_margin">10dp</dimen>
+    <dimen name="all_pubs_filter_btns_margin_top">45dp</dimen>
+    <dimen name="all_pubs_filter_btns_height">21dp</dimen>
     <color name="buttons_pressed">#D900a3cc</color>
     <color name="gallery_pressed">#D900a3cc</color>
     <drawable name="buttons_pressed">#D900a3cc</drawable>
