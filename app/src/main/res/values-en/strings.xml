@@ -8,15 +8,15 @@
     <string name="no_date_set_string">0000–00–00</string>
     <string name="no_time_set_string">00:00:00</string>
     <string name="test_btn_text">TEST</string>
-    <string name="filter_ending_btn_text">מסתיים</string>
-    <string name="filter_not_active_btn_text">לא פעיל</string>
-    <string name="filter_closest_btn_text">קרובים</string>
-    <string name="filter_newest_btn_text">חדשים</string>
-    <string name="filter_less_regs_btn_text">הכי זמין</string>
-    <string name="leave_report_pub_details">דווח</string>
-    <string name="start_date_time_picker_dialog_title">מתאריך‫:‬</string>
-    <string name="end_date_time_picker_dialog_title">ועד תאריך‫:‬</string>
-    <string name="my_pubs_list_end_date_base_string">פעיל</string>
+    <string name="filter_ending_btn_text">Ending</string>
+    <string name="filter_not_active_btn_text">Inaactive</string>
+    <string name="filter_closest_btn_text">Colest</string>
+    <string name="filter_newest_btn_text">New</string>
+    <string name="filter_less_regs_btn_text">Most recent</string>
+    <string name="leave_report_pub_details">Report</string>
+    <string name="start_date_time_picker_dialog_title">From:‬</string>
+    <string name="end_date_time_picker_dialog_title">To:</string>
+    <string name="my_pubs_list_end_date_base_string">Active</string>
 
     <!-- Common - check if needed -->
 
@@ -27,25 +27,25 @@
     <string name="title_activity_my_publications_list">MyPublicationsListActivity</string>
 
     <!-- my publication details -->
-    <string name="pub_det_on_the_way_to_take">בדרך לאסוף</string>
-    <string name="pub_det_metr_from_you">מטרים ממקומך</string>
-    <string name="pub_det_calculating_distance">מחשב מרחק...</string>
-    <string name="pub_det_cant_get_distance">מרחק לא ידוע</string>
-    <string name="pub_det_reports_for_pub">דיווחי משתמשים</string>
+    <string name="pub_det_on_the_way_to_take">On the way to collect</string>
+    <string name="pub_det_metr_from_you">Meters from you</string>
+    <string name="pub_det_calculating_distance">Counting distance</string>
+    <string name="pub_det_cant_get_distance">Unknoun distance</string>
+    <string name="pub_det_reports_for_pub">Users reports</string>
     <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
     <string name="participants_report">Report on participants</string>
     <string name="going_to_collect">persons are going to collect</string>
     <string name="cancel_publication">cancel publication</string>
     <string name="cancel_publication_question">Really cancel this publication?</string>
     <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
-    <string name="pub_det_uimessage_failed_register_to_pub">הרשמה לשיתוף נכשלה</string>
-    <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
-    <string name="pub_det_must_register_before_waze">חובה להרשם לשיתוף לפני ניווט אליו</string>
-    <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
-    <string name="pub_list_search_hint">חיפוש</string>
+    <string name="pub_det_uimessage_failed_register_to_pub">Signup is failed</string>
+    <string name="pub_det_uimessage_failed_unregister_from_pub">Unsign</string>
+    <string name="pub_det_must_register_before_waze">You must be Signedup to perform a route</string>
+    <string name="pub_det_sms_default_text">I want to colect</string>
+    <string name="pub_list_search_hint">Search</string>
 
     <!-- Report dialog -->
-    <string name="report_dialog_few_btn_text">לא מצאתי כלום</string>
+    <string name="report_dialog_few_btn_text">Found nothing</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -119,36 +119,37 @@
     <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
     <string name="file_name_part_just_shot">justShot</string>
 
-    <string name="validation_title_empty">שם השיתוף לא יכול להיות ריק</string>
+    <string name="validation_title_empty">Publication name cannot be empty</string>
     <string name="validation_title_too_long">שם השיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
     <string name="validation_address_empty">חובה למלא כתובת</string>
     <string name="validation_phone_number_empty">חובה למלא טלפון</string>
     <string name="validation_phone_number_invalid">מספר הטלפון אינו תקין</string>
     <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות רחוק יותר מתאריך הסיום</string>
 
-    <string name="title_begin_pub_details">התחלה:</string>
-    <string name="title_end_pub_details">סיום:</string>
-    <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
-    <string name="btn_ok_add_pub">בחר</string>
-    <string name="btn_cancel_add_pub">בטל</string>
+    <string name="title_begin_pub_details">Begin time:</string>
+    <string name="title_end_pub_details">End time:</string>
+    <string name="title_date_time_picker_activity">Select date and time</string>
+    <string name="btn_ok_add_pub">Select</string>
+    <string name="btn_cancel_add_pub">Cancel</string>
+    <string name="another_details_string">Other details</string>
     <!-- Address dialog -->
 
-    <string name="get_current_location_checkbox_text">מיקום נוכחי</string>
-    <string name="address_dialog_btn_ok">שמירה</string>
-    <string name="address_dialog_btn_cancel">חזרה</string>
+    <string name="get_current_location_checkbox_text">Current location</string>
+    <string name="address_dialog_btn_ok">Save</string>
+    <string name="address_dialog_btn_cancel">Back</string>
     <string name="validation_location_empty">לצורך יצירת שיתוף יש לציין את מיקומו‫.‬ ניתן ללהקליד כתובת‫,‬ לבחור מההיסטוריה או להשתמש במיקום הנוכחי‫.‬</string>
     <string name="progress_waiting_for_location">מקבל מיקום נוכחי</string>
     <string name="validation_cant_get_my_location">אופס‫..‬ המיקום לא התקבל‫.‬ נסה שוב</string>
-    <string name="address_search">חיפוש כתובת</string>
+    <string name="address_search">Search by adress</string>
 
     <!-- Collector dialog details -->
 
-    <string name="collector_dialog_sign_title">רישום לאיסוף</string>
+    <string name="collector_dialog_sign_title">Signup for publication</string>
     <string name="collector_dialog_register_text">יש למלא פרטי התקשרות כדי להצטרף לאיסוף</string>
-    <string name="collector_dialog_name_et">שם</string>
-    <string name="collector_dialog_phone_et">טלפון</string>
-    <string name="collector_dialog_sign_btn">הרשם</string>
-    <string name="collector_dialog_cancel_btn">בטל</string>
+    <string name="collector_dialog_name_et">Name</string>
+    <string name="collector_dialog_phone_et">Phone</string>
+    <string name="collector_dialog_sign_btn">Signup</string>
+    <string name="collector_dialog_cancel_btn">Cancel</string>
 
     <!-- Collector details -->
     <string name="collector_details_name_too_short">השם אמור להכיל לפחות שני אותיות</string>
@@ -157,13 +158,13 @@
 
     <!-- Report dialog details -->
 
-    <string name="report_dialog_report_title">דווח על איסוף</string>
-    <string name="report_dialog_collected_all_btn">אספתי הכל</string>
-    <string name="report_dialog_cancel_btn">בטל</string>
+    <string name="report_dialog_report_title">Report for publication</string>
+    <string name="report_dialog_collected_all_btn">Collected all</string>
+    <string name="report_dialog_cancel_btn">Cancel</string>
 
     <string name="report_big_distance">מרחק ממיקום השיתוף גדול מ-2 ק״מ. האם לדווח?</string>
-    <string name="report_big_distance_ok_btn">אישור</string>
-    <string name="report_big_distance_cancel_btn">ביטול</string>
+    <string name="report_big_distance_ok_btn">Ok</string>
+    <string name="report_big_distance_cancel_btn">Cancel</string>
 
     <!-- Dialog publication reports -->
 
@@ -173,19 +174,19 @@
     <!-- Publication details -->
 
     <string name="progress_taking_pub_off_air">מעדכן שיתוף</string>
-    <string name="progress_registration_to_pub">הרשמה</string>
-    <string name="progress_unregistering_from_pub">ביטול הרשמה</string>
+    <string name="progress_registration_to_pub">Signup</string>
+    <string name="progress_unregistering_from_pub">Cancel Signup</string>
     <string name="progress_leaving_report">שומר תגובה</string>
     <string name="progress_delete_pub">מוחק שיתוף</string>
     <string name="error_cant_perform_this_action_without_internet">לא ניתן לבצע {0} ללא חיבור לאינטרנט</string>
-    <string name="action_leave_report">השארת תגובה</string>
-    <string name="action_register_to_pub">הרשמה לשיתוף</string>
+    <string name="action_leave_report">Leave report</string>
+    <string name="action_register_to_pub">Signup for publication</string>
     <string name="action_unregister_from_pub">ביטול הרשמה לשיתוף</string>
-    <string name="action_tweet">שיתוף בטוויטר</string>
-    <string name="action_facebook">שיתוף בפייסבוק</string>
+    <string name="action_tweet">Tweet</string>
+    <string name="action_facebook">Share on facebook</string>
     <string name="action_add_new_publication">יצירת שיתוף חדש</string>
-    <string name="action_edit_publication">עריכת שיתוף</string>
-    <string name="action_delete">מחיקה של שיתוף</string>
+    <string name="action_edit_publication">Edit publication</string>
+    <string name="action_delete">Delete publication</string>
     <string name="action_failed">פעולה נכשלה: {0}</string>
     <string name="action_succeeded">{0} בוצע בהצלחה!</string>
     <string name="validation_register_name_empty">שדה שם לא יכול להיות ריק</string>
@@ -195,7 +196,7 @@
 
     <!-- My publications list -->
 
-    <string name="progress_saving">שמירה</string>
+    <string name="progress_saving">Save</string>
     <string name="new_pub_waiting_for_save_on_server">שיתוף תרם נשמר בשרת, נה להמתין</string>
     <string name="progress_saving_on_server">בתהליך שמירה בשרת</string>
     <string name="failed_to_save_new_pub">שמירה נכשלה, תנסה מאוחר יותר</string>
@@ -211,9 +212,9 @@
 
     <!-- Common hebrew -->
 
-    <string name="confirmExit">ברצונך לצאת מאפליקציה?</string>
-    <string name="yes">כן</string>
-    <string name="no">לא</string>
+    <string name="confirmExit">You shure you want to quit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- -->
 
@@ -227,10 +228,10 @@
     
     <!-- Feedback Dialog -->
     
-    <string name="feedback_name_hint">שם שלך</string>
-    <string name="feedback_report_hint">טקסט תגובה</string>
-    <string name="feedback_btn_ok">שלח</string>
-    <string name="feedback_btn_cancel">ביטול</string>
+    <string name="feedback_name_hint">You`r name</string>
+    <string name="feedback_report_hint">Any text here</string>
+    <string name="feedback_btn_ok">Send</string>
+    <string name="feedback_btn_cancel">Cancel</string>
     
     <!-- -->
     

@@ -57,7 +57,7 @@
     <dimen name="pub_details_iv_user_reg_icon_height_width">25dp</dimen>
     <dimen name="pub_details_iv_user_reg_icon_marginRight">22dp</dimen>
     <dimen name="pub_details_tv_num_of_reged_height">40dp</dimen>
-    <dimen name="pub_details_tv_num_of_reged_marginRight">5dp</dimen>
+    <dimen name="pub_details_tv_num_of_reged_marginRight">2dp</dimen>
     <dimen name="pub_details_tv_num_of_reged_text_size">25sp</dimen>
     <dimen name="pub_details_tv_address_marginRight">8dp</dimen>
     <dimen name="pub_details_tv_address_marginTop">15dp</dimen>
