@@ -216,17 +216,17 @@
     <!-- Map -->
     
     <!-- -->
-    <string name="pub_det_km_from_you">{0} km away</string>
+    <string name="pub_det_km_from_you"> km away</string>
     <string name="filter_less_regs_btn_text">Active</string>
     <string name="side_menu_activity_center_title">Activity Center</string>
     <string name="add_pic_string">Add a picture</string>
     <string name="et_subtitle_add_edit_pub">Additional details</string>
-    <string name="enter_title_string">Address Selector</string>
+    <!--<string name="enter_title_string">Address Selector</string>-->
     <string name="notif_new_registered_user">Another user is en route to pickup:</string>
     <string name="btn_take_photo">Camera</string>
     <string name="btn_cancel">Cancel</string>
     <string name="filter_closest_btn_text">Closest</string>
-    <string name="pickup_btn">Collect</string>
+    <!--<string name="pickup_btn">Collect</string>-->
     <string name="no_internet_connection_available_error_message">Communication Issue</string>
     <string name="get_current_location_checkbox_text">Current location</string>
     <string name="pub_det_menu_item_delete">Delete</string>
@@ -238,16 +238,15 @@
     <string name="publication_details_title">Event Details</string>
     <string name="address_string">Event location</string>
     <string name="title_all_publications">Events Near You</string>
-    <string name="pub_det_sms_default_text">I want to pickup %@</string>
+    <string name="pub_det_sms_default_text">I want to pickup </string>
     <string name="collector_details_phone_incorrect">It seems the phone number is incorrect. Please check you have typed it correctly.</string>
     <string name="btn_chose_from_library">Library</string>
-    <string name="side_menu_going_to_take_part">My Pickups</string>
+    <!--<string name="side_menu_going_to_take_part">My Pickups</string>-->
     <string name="side_menu_my_active_pubs_part">My Shares</string>
     <string name="collector_dialog_name_et">Name</string>
     <string name="no">No</string>
     <string name="pub_det_no_reports_for_pub">No reports</string>
     <string name="report_dialog_found_nothing_btn">Nothing Left</string>
-    <string name="report_dialog_found_nothing_btn">Nothing left</string>
     <string name="filter_not_active_btn_text">Off Air</string>
     <string name="filter_active_btn_text">On Air</string>
     <string name="collector_dialog_phone_et">Phone number</string>
@@ -268,13 +267,13 @@
     <string name="feedback_dialog_title">Share your thoughts or anything else</string>
     <string name="title_begin_pub_details">Started:</string>
     <string name="pub_det_menu_item_deactivate">Stop Event</string>
-    <string name="collector_details_phone_incorrect">There are no legit phone numbers</string>
+    <!--<string name="collector_details_phone_incorrect">There are no legit phone numbers</string>-->
     <string name="report_dialog_collected_part_btn">There’s More to Pickup</string>
     <string name="report_dialog_whole_btn_text">There’s more to pickup</string>
     <string name="report_dialog_collected_all_btn">Took All</string>
     <string name="report_dialog_half_btn_text">Took all</string>
     <string name="welcome_string">Welcome</string>
     <string name="enter_title_string">What are you sharing?</string>
-    <string name="add_phoneNumber_string">What's your phone number?</string>
+    <string name="add_phoneNumber_string">What\'s your phone number?</string>
     <string name="yes">Yes</string>
 </resources>
