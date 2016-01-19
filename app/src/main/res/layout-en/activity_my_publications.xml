@@ -7,7 +7,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/top_panel_height_ldpi"
+        android:layout_height="@dimen/top_panel_height"
         android:text="@string/side_menu_my_active_pubs_part"
         android:gravity="center"
         android:textColor="@color/white"
@@ -15,17 +15,20 @@
         android:id="@+id/tv_my_pubs_title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textSize="@dimen/top_panel_text_size"
+        android:textSize="20dp"
         android:textStyle="bold"/>
     <!-- android:layout_alignBottom="@+id/btn_add_new_myPubsLst" -->
 
     <Button android:id="@+id/btn_add_new_myPubsLst"
-        android:layout_width="@dimen/top_panel_height_ldpi"
-        android:layout_height="@dimen/top_panel_height_ldpi"
+        android:layout_width="@dimen/top_panel_height"
+        android:layout_height="@dimen/top_panel_height"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
         android:text="+"
-        android:textSize="@dimen/top_panel_add_pub_plus_size_ldpi"
+        android:textAlignment="center"
+        android:textSize="@dimen/add_new_pub_btn_text_size"
         android:textColor="@color/white"
         android:background="@color/basic_blue"/>
 
@@ -41,7 +44,6 @@
         android:divider="@drawable/filter_btns_ll_divider_vertical"
         android:showDividers="middle">
         <Button android:id="@+id/btn_publication_ending"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/filter_ending_btn_text"
@@ -50,8 +52,7 @@
             android:layout_alignLeft="@+id/textView"
             android:layout_alignStart="@+id/textView"
             android:background="@color/transparent"
-            android:layout_weight="1"
-            android:textSize="@dimen/filter_btns_text_size"/>
+            android:layout_weight="1" />
         <Button android:id="@+id/btn_publication_active"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -61,8 +62,7 @@
             android:layout_below="@+id/textView"
             android:layout_toRightOf="@+id/button2"
             android:layout_toEndOf="@+id/button2"
-            android:layout_weight="1"
-            android:textSize="@dimen/filter_btns_text_size"/>
+            android:layout_weight="1" />
         <Button android:id="@+id/btn_publication_notActive"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -72,8 +72,7 @@
             android:layout_below="@+id/textView"
             android:layout_toRightOf="@+id/button"
             android:layout_toEndOf="@+id/button"
-            android:layout_weight="1"
-            android:textSize="@dimen/filter_btns_text_size"/>
+            android:layout_weight="1" />
     </LinearLayout>
     <!--<SearchView
         android:id="@+id/searchView1"
@@ -106,21 +105,21 @@
         android:layout_alignStart="@+id/lv_my_publications_list"
 -->
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/pickup_btn"
             android:layout_marginTop="3dp"
             android:background="@drawable/naivgate_btn_backgroung"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/pickup_btn"
             android:id="@+id/btn_take_mypubs"
-            android:textSize="@dimen/nav_buttons_text_size_ldpi"
+            android:textSize="@dimen/nav_buttons_text_size"
             android:layout_weight="1" />
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/share_btn"
             android:layout_marginTop="3dp"
             android:background="@drawable/naivgate_btn_backgroung"
-            android:textSize="@dimen/nav_buttons_text_size_ldpi"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/share_btn"
+            android:textSize="@dimen/nav_buttons_text_size"
             android:id="@+id/btn_share_mypubs"
             android:layout_weight="1" />
     </LinearLayout>

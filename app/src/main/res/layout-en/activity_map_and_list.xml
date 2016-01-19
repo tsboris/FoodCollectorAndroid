@@ -180,18 +180,18 @@
             <ImageView
                 android:layout_width="@dimen/side_menu_item_icon_size"
                 android:layout_height="@dimen/side_menu_item_icon_size"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_icon_margin_right"
                 android:scaleType="fitCenter"
                 android:src="@drawable/side_menu_collect_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_title_margin_right"
                 android:text="@string/side_menu_going_to_take_part"
                 android:textAlignment="center"
                 android:textColor="@color/list_background"
@@ -218,18 +218,18 @@
             <ImageView
                 android:layout_width="@dimen/side_menu_item_icon_size"
                 android:layout_height="@dimen/side_menu_item_icon_size"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_icon_margin_right"
                 android:scaleType="fitCenter"
                 android:src="@drawable/side_menu_donate_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_title_margin_right"
                 android:text="@string/side_menu_my_active_pubs_part"
                 android:textAlignment="center"
                 android:textColor="@color/list_background"
@@ -256,18 +256,18 @@
             <ImageView
                 android:layout_width="@dimen/side_menu_item_icon_size"
                 android:layout_height="@dimen/side_menu_item_icon_size"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_icon_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_icon_margin_right"
                 android:scaleType="fitCenter"
                 android:src="@drawable/feedback_xxh" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/side_menu_item_title_margin_right"
+                android:layout_marginLeft="@dimen/side_menu_item_title_margin_right"
                 android:text="@string/side_menu_feedback_title"
                 android:textAlignment="center"
                 android:textColor="@color/list_background"
@@ -275,9 +275,6 @@
 
         </RelativeLayout>
 
-        <!-- android:id="@+id/list_slidermenu" -->
     </LinearLayout>
-
-    <!-- class="com.example.asher.mytestapplication.MarkerPopupFragment" -->
 
 </android.support.v4.widget.DrawerLayout>

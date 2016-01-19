@@ -5,32 +5,10 @@
     <string name="title_activity_sql_loader_result">SqlLoaderResultActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_add_new_fcpublication">AddNewFCPublicationActivity</string>
-    <string name="enter_title_string">מה תרצה לשתף?</string>
-    <string name="address_string">מאיפה לאסוף?</string>
-    <string name="start_string">אפשר לאסוף החל מ-</string>
     <string name="no_date_set_string">0000–00–00</string>
     <string name="no_time_set_string">00:00:00</string>
-    <string name="end_string">ועד-</string>
-    <string name="add_phone_number_string">מה מספר הטלפון?</string>
-    <string name="another_details_string">פרטים נוספים</string>
-    <string name="add_pic_string">הוספת תמונה</string>
-    <string name="side_menu_activity_center_title">מרכז הפעילות</string>
-    <string name="side_menu_going_to_take_part">בדרך לאסוף</string>
-    <string name="side_menu_my_active_pubs_part">השיתופים שלי</string>
-    <string name="side_menu_feedback_title">כתוב לנו</string>
-    <string name="feedback_validation_text_null">תכתוב לנו משהו</string>
-    <string name="feedback_progress_sending">שולח דיווח...</string>
-    <string name="feedback_uimessage_thanks">תודה על תגובה!</string>
-    <string name="publication_details_title">פרטי השיתוף</string>
-    <string name="welcome_string">ברוכים הבאים</string>
-    <string name="publish">לשתף מזון</string>
-    <string name="pickup">לאסוף מזון</string>
     <string name="test_btn_text">TEST</string>
-    <string name="title_all_publications">אירועים בקירבתך</string>
-    <string name="share_btn">שיתוף</string>
-    <string name="pickup_btn">איסוף</string>
     <string name="filter_ending_btn_text">מסתיים</string>
-    <string name="filter_active_btn_text">פעיל</string>
     <string name="filter_not_active_btn_text">לא פעיל</string>
     <string name="filter_closest_btn_text">קרובים</string>
     <string name="filter_newest_btn_text">חדשים</string>
@@ -50,12 +28,10 @@
 
     <!-- my publication details -->
     <string name="pub_det_on_the_way_to_take">בדרך לאסוף</string>
-    <string name="pub_det_km_from_you">"ק''מ ממקומך"</string>
     <string name="pub_det_metr_from_you">מטרים ממקומך</string>
     <string name="pub_det_calculating_distance">מחשב מרחק...</string>
     <string name="pub_det_cant_get_distance">מרחק לא ידוע</string>
     <string name="pub_det_reports_for_pub">דיווחי משתמשים</string>
-    <string name="pub_det_no_reports_for_pub">אין דיווחים</string>
     <string name="title_activity_my_publication_details">MyPublicationDetailsActivity</string>
     <string name="participants_report">Report on participants</string>
     <string name="going_to_collect">persons are going to collect</string>
@@ -65,15 +41,10 @@
     <string name="pub_det_uimessage_failed_register_to_pub">הרשמה לשיתוף נכשלה</string>
     <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
     <string name="pub_det_must_register_before_waze">חובה להרשם לשיתוף לפני ניווט אליו</string>
-    <string name="pub_det_menu_item_edit">ערוך שיתוף</string>
-    <string name="pub_det_menu_item_deactivate">הפוך ללא פעיל</string>
-    <string name="pub_det_menu_item_delete">מחק שיתוף</string>
     <string name="pub_det_sms_default_text">רוצה לבוא לאסוף</string>
     <string name="pub_list_search_hint">חיפוש</string>
 
     <!-- Report dialog -->
-    <string name="report_dialog_whole_btn_text">נשאר עוד</string>
-    <string name="report_dialog_half_btn_text">לקחתי הכול</string>
     <string name="report_dialog_few_btn_text">לא מצאתי כלום</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -187,10 +158,7 @@
     <!-- Report dialog details -->
 
     <string name="report_dialog_report_title">דווח על איסוף</string>
-    <string name="report_dialog_collected_part_btn">אספתי חלק</string>
     <string name="report_dialog_collected_all_btn">אספתי הכל</string>
-    <string name="report_dialog_found_nothing_btn">לא נמצא כלום</string>
-    <string name="report_dialog_report_btn">דווח</string>
     <string name="report_dialog_cancel_btn">בטל</string>
 
     <string name="report_big_distance">מרחק ממיקום השיתוף גדול מ-2 ק״מ. האם לדווח?</string>
@@ -217,7 +185,6 @@
     <string name="action_facebook">שיתוף בפייסבוק</string>
     <string name="action_add_new_publication">יצירת שיתוף חדש</string>
     <string name="action_edit_publication">עריכת שיתוף</string>
-    <string name="action_take_off_air">הפוך ללא פעיל</string>
     <string name="action_delete">מחיקה של שיתוף</string>
     <string name="action_failed">פעולה נכשלה: {0}</string>
     <string name="action_succeeded">{0} בוצע בהצלחה!</string>
@@ -236,7 +203,6 @@
     <!-- Entrance activity -->
 
     <string name="progress_loading">טוען..</string>
-    <string name="no_internet_connection_available_error_message">לא נמצא חיבור לאינטרנט‫.‬ חלק מתכונות האפליקציה לא יהיו זמינות</string>
 
     <!-- SplashScreen -->
 
@@ -245,7 +211,6 @@
 
     <!-- Common hebrew -->
 
-    <string name="confirmAction">בטוח?</string>
     <string name="confirmExit">ברצונך לצאת מאפליקציה?</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
@@ -257,13 +222,11 @@
     <string name="notif_new_pub">שיתוף חדש בקרבתך</string>
     <string name="notif_was_deleted">שיתוף נמחק</string>
     <string name="notif_report">התקבל דיווח חדש על השיתוף</string>
-    <string name="notif_new_registered_user">משתמש חדש נרשם לשיתוף</string>
-    
+
     <!-- -->
     
     <!-- Feedback Dialog -->
     
-    <string name="feedback_dialog_title">שתפו אותנו במחשבות, הצעות או כל מה שתירצו</string>
     <string name="feedback_name_hint">שם שלך</string>
     <string name="feedback_report_hint">טקסט תגובה</string>
     <string name="feedback_btn_ok">שלח</string>
@@ -274,5 +237,39 @@
     <!-- Map -->
     
     <!-- -->
-
+    <string name="pub_det_km_from_you">{0} km away</string>
+    <string name="filter_active_btn_text">Active</string>
+    <string name="side_menu_activity_center_title">Activity Center</string>
+    <string name="add_pic_string">Add a picture</string>
+    <string name="et_subtitle_add_edit_pub">Additional details</string>
+    <string name="address_string">Address Selector</string>
+    <string name="notif_new_registered_user">Another user is en route to pickup:</string>
+    <string name="pickup_btn">Collect</string>
+    <string name="no_internet_connection_available_error_message">Communication Issue</string>
+    <string name="pub_det_menu_item_delete">Delete</string>
+    <string name="confirmAction">Delete Event?</string>
+    <string name="pub_det_menu_item_edit">Edit</string>
+    <string name="side_menu_going_to_take_part">en route</string>
+    <string name="pub_det_no_reports_for_pub">No reports</string>
+    <string name="report_dialog_found_nothing_btn">Nothing left</string>
+    <string name="title_all_publications">Pickup</string>
+    <string name="end_string">Pickup ends:</string>
+    <string name="pickup">Pickup Food</string>
+    <string name="start_string">Pickup starts:</string>
+    <string name="action_take_off_air">Remove Event</string>
+    <string name="report_dialog_report_btn">Report</string>
+    <string name="share_btn">Share</string>
+    <string name="publish">Share Food</string>
+    <string name="feedback_dialog_title">Share your thoughts or anything else</string>
+    <string name="pub_det_menu_item_deactivate">Stop Event</string>
+    <string name="report_dialog_collected_part_btn">There’s More to Pickup</string>
+    <string name="report_dialog_whole_btn_text">There’s more to pickup</string>
+    <string name="report_dialog_half_btn_text">Took all</string>
+    <string name="welcome_string">Welcome</string>
+    <string name="enter_title_string">What are you sharing?</string>
+    <string name="add_phone_number_string">What\'s your phone number?</string>
+    <string name="side_menu_feedback_title"></string>
+    <string name="feedback_progress_sending"></string>
+    <string name="feedback_uimessage_thanks"></string>
+    <string name="feedback_validation_text_null"></string>
 </resources>

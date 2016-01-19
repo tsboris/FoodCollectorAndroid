@@ -22,9 +22,9 @@
     <string name="feedback_progress_sending">שולח דיווח...</string>
     <string name="feedback_uimessage_thanks">תודה על תגובה!</string>
     <string name="publication_details_title">פרטי השיתוף</string>
-    <string name="welcome_string">ברוכים הבאים</string>
-    <string name="publish">לשתף מזון</string>
-    <string name="pickup">לאסוף מזון</string>
+    <string name="welcome_string">Добро пожаловать!</string>
+    <string name="publish">Поделиться продуктами</string>
+    <string name="pickup">Найти продукты</string>
     <string name="test_btn_text">TEST</string>
     <string name="title_all_publications">אירועים בקירבתך</string>
     <string name="share_btn">שיתוף</string>

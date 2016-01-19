@@ -169,9 +169,9 @@ public class MapAndListActivity
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if(metrics.densityDpi < DisplayMetrics.DENSITY_HIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_ldpi);//24dp
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
         else if(metrics.densityDpi < DisplayMetrics.DENSITY_XHIGH)
-            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size_hdpi);//36dp
+            dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);
         else
             dimenID = getResources().getDimensionPixelSize(R.dimen.bottom_nav_btn_img_size);//42dp
 /*
@@ -893,7 +893,7 @@ public class MapAndListActivity
         int screenLayout = this.getResources().getConfiguration().screenLayout;
         screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
 
-        int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height_xhdpi);
+        int size = getResources().getDimensionPixelSize(R.dimen.gallery_image_btn_height);
         ImageButton imageButton = new ImageButton(getApplicationContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
         lp.setMargins(15, 30, 15, 30);

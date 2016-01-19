@@ -27,7 +27,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
-                android:layout_marginTop="@dimen/edit_text_side_margin_add_edit_pub"
+                android:layout_marginTop="@dimen/pub_btn_margin_top_add_edit_pub"
                 android:background="@color/transparent"
                 android:scaleType="fitCenter"
                 android:src="@drawable/done_xxh" />
@@ -69,8 +69,7 @@
                 android:hint="@string/enter_title_string"
                 android:inputType="textShortMessage"
                 android:textColorHighlight="@color/basic_blue"
-                android:textSize="@dimen/add_pub_et_date_text_size"
-                android:nextFocusForward="@id/et_address_edit_add_pub">
+                android:textSize="@dimen/add_pub_et_date_text_size">
                 <!--<requestFocus />-->
             </EditText>
 
@@ -184,7 +183,7 @@
                 android:layout_marginLeft="@dimen/edit_text_side_margin_add_edit_pub"
                 android:layout_marginRight="@dimen/edit_text_side_margin_add_edit_pub"
                 android:ems="10"
-                android:hint="@string/add_phoneNumber_string"
+                android:hint="@string/add_phone_number_string"
                 android:inputType="phone"
                 android:textColorHighlight="@color/basic_blue"
                 android:textSize="@dimen/add_pub_et_date_text_size" />
@@ -216,5 +215,3 @@
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>
-
-

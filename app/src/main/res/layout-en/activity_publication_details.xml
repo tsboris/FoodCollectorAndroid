@@ -7,16 +7,10 @@
     android:orientation="vertical"
     android:showDividers="middle"
     tools:context="upp.foodonet.MyPublicationDetailsActivity">
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/top_panel_height_ldpi">
+        android:layout_height="@dimen/top_panel_height">
 
         <TextView
             android:id="@+id/tv_title_pub_details"
@@ -38,7 +32,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="@dimen/pub_details_menu_marginRight"
-            android:layout_marginTop="@dimen/pub_details_menu_marginTop_ldpi"
+            android:layout_marginTop="@dimen/pub_details_menu_marginTop"
             android:background="@color/basic_blue"
             android:scaleType="fitCenter"
             android:src="@drawable/menu_header_button"
@@ -52,8 +46,8 @@
             android:layout_height="@dimen/pub_details_btn_leave_report_height"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="@dimen/pub_details_btn_leave_report_marginRight_ldpi"
-            android:layout_marginTop="@dimen/pub_details_btn_leave_report_marginTop_ldpi"
+            android:layout_marginRight="@dimen/pub_details_btn_leave_report_marginRight"
+            android:layout_marginTop="@dimen/pub_details_btn_leave_report_marginTop"
             android:background="@color/basic_blue"
             android:text="@string/leave_report_pub_details"
             android:textAlignment="center"
@@ -65,7 +59,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pub_details_pub_props_panel_height_ldpi"
+        android:layout_height="@dimen/pub_details_pub_props_panel_height"
         android:layoutDirection="rtl"
         android:orientation="horizontal">
 
@@ -88,43 +82,43 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true">
 
+                    <ImageView
+                        android:id="@+id/iv_user_reg_icon_pub_details"
+                        android:layout_width="@dimen/pub_details_iv_user_reg_icon_height_width"
+                        android:layout_height="@dimen/pub_details_iv_user_reg_icon_height_width"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/pub_details_iv_user_reg_icon_marginRight"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/user_icon_blue" />
+
+                    <TextView
+                        android:id="@+id/tv_num_of_reged_pub_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
+                        android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
+                        android:textSize="@dimen/pub_details_tv_num_of_reged_text_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
+                        android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
+                        android:text="@string/pub_det_on_the_way_to_take"
+                        android:textSize="@dimen/pub_details_on_the_way_to_take_text_size"
+                        android:textColor="@color/edit_text_input_default_color"/>
+
                 </RelativeLayout>
-
-                <ImageView
-                    android:id="@+id/iv_user_reg_icon_pub_details"
-                    android:layout_width="@dimen/pub_details_iv_user_reg_icon_height_width"
-                    android:layout_height="@dimen/pub_details_iv_user_reg_icon_height_width"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/pub_details_iv_user_reg_icon_marginRight"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/user_icon_blue" />
-
-                <TextView
-                    android:id="@+id/tv_num_of_reged_pub_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/pub_details_tv_num_of_reged_height"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
-                    android:layout_toLeftOf="@+id/iv_user_reg_icon_pub_details"
-                    android:textSize="@dimen/pub_details_tv_num_of_reged_text_size" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/pub_details_tv_num_of_reged_marginRight"
-                    android:layout_toLeftOf="@+id/tv_num_of_reged_pub_details"
-                    android:text="@string/pub_det_on_the_way_to_take"
-                    android:textSize="@dimen/pub_details_on_the_way_to_take_text_size"
-                    android:textColor="@color/edit_text_input_default_color"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/pub_details_pub_props_rl_height"
-                android:layout_weight="2">
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/tv_address_pub_details"
@@ -173,7 +167,8 @@
     <LinearLayout
         android:id="@+id/ll_others_pub_dets_buttons_panel"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pub_details_btns_panel_height_ldpi"
+        android:layout_height="@dimen/pub_details_btns_panel_height"
+
         android:orientation="horizontal">
 
         <ImageButton
@@ -181,7 +176,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -192,7 +187,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -203,7 +198,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -215,7 +210,7 @@
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
             android:layout_marginRight="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -225,7 +220,7 @@
     <LinearLayout
         android:id="@+id/ll_my_pub_dets_buttons_panel"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pub_details_btns_panel_height_ldpi"
+        android:layout_height="@dimen/pub_details_btns_panel_height"
         android:orientation="horizontal">
 
         <ImageButton
@@ -233,7 +228,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -244,7 +239,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -255,7 +250,7 @@
             android:layout_width="@dimen/pub_details_btn_in_panel_width"
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -267,7 +262,7 @@
             android:layout_height="@dimen/pub_details_btn_in_panel_height"
             android:layout_marginLeft="@dimen/pub_details_btn_in_panel_marginLeft"
             android:layout_marginRight="@dimen/pub_details_btn_in_panel_marginLeft"
-            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top_ldpi"
+            android:layout_marginTop="@dimen/pub_details_btn_in_panel_margin_top"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
@@ -279,10 +274,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/pub_details_subtitle_paddingBottomTop_ldpi"
+        android:paddingBottom="@dimen/pub_details_subtitle_paddingBottomTop"
         android:paddingLeft="@dimen/pub_details_subtitle_paddingLeftRight"
         android:paddingRight="@dimen/pub_details_subtitle_paddingLeftRight"
-        android:paddingTop="@dimen/pub_details_subtitle_paddingBottomTop_ldpi">
+        android:paddingTop="@dimen/pub_details_subtitle_paddingBottomTop">
 
         <TextView
             android:id="@+id/tv_subtitle_pub_details"
@@ -297,9 +292,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/pub_details_time_paddingBottomTop_ldpr"
-        android:paddingRight="@dimen/pub_details_time_paddingBottomRight_ldpr"
-        android:paddingTop="@dimen/pub_details_time_paddingBottomTop_ldpr">
+        android:paddingBottom="@dimen/pub_details_time_paddingBottomTopRight"
+        android:paddingRight="@dimen/pub_details_time_paddingBottomTopRight"
+        android:paddingTop="@dimen/pub_details_time_paddingBottomTopRight">
 
         <TextView
             android:id="@+id/tv_start_time_pub_details"
@@ -348,7 +343,9 @@
             android:id="@+id/lv_list_of_reports_pub_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/pub_details_lv_list_of_reports_marginTop"/>
+            android:layout_marginTop="@dimen/pub_details_lv_list_of_reports_marginTop"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"/>
 
     </LinearLayout>
     <!--
@@ -391,6 +388,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     -->
-</LinearLayout>
-</ScrollView>
+
 </LinearLayout>
