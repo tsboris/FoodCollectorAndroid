@@ -17,10 +17,6 @@
     <string name="start_date_time_picker_dialog_title">From:‬</string>
     <string name="end_date_time_picker_dialog_title">To:</string>
     <string name="my_pubs_list_end_date_base_string">Active</string>
-    <string name="leave_report_pub_details">דווח</string>
-    <string name="start_date_time_picker_dialog_title">מתאריך‫:‬</string>
-    <string name="end_date_time_picker_dialog_title">ועד תאריך‫:‬</string>
-    <string name="my_pubs_list_end_date_base_string">פעיל</string>
 
     <!-- Common - check if needed -->
 
@@ -42,9 +38,6 @@
     <string name="cancel_publication">cancel publication</string>
     <string name="cancel_publication_question">Really cancel this publication?</string>
     <string name="pub_det_uimessage_successfully_registered_to_pub">Successfully registered to publication</string>
-    <string name="pub_det_uimessage_failed_register_to_pub">הרשמה לשיתוף נכשלה</string>
-    <string name="pub_det_uimessage_failed_unregister_from_pub">ביטול הרשמה נכשל</string>
-    <string name="pub_det_must_register_before_waze">חובה להרשם לשיתוף לפני ניווט אליו</string>
     <string name="pub_det_uimessage_failed_register_to_pub">Signup is failed</string>
     <string name="pub_det_uimessage_failed_unregister_from_pub">Unsign</string>
     <string name="pub_det_must_register_before_waze">You must be Signedup to perform a route</string>
@@ -139,16 +132,11 @@
     <string name="btn_ok_add_pub">Select</string>
     <string name="btn_cancel_add_pub">Cancel</string>
     <string name="another_details_string">Other details</string>
-    <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
-    <string name="btn_ok_add_pub">בחר</string>
-    <string name="btn_cancel_add_pub">בטל</string>
     <!-- Address dialog -->
 
     <string name="get_current_location_checkbox_text">Current location</string>
     <string name="address_dialog_btn_ok">Save</string>
     <string name="address_dialog_btn_cancel">Back</string>
-    <string name="address_dialog_btn_ok">שמירה</string>
-    <string name="address_dialog_btn_cancel">חזרה</string>
     <string name="validation_location_empty">לצורך יצירת שיתוף יש לציין את מיקומו‫.‬ ניתן ללהקליד כתובת‫,‬ לבחור מההיסטוריה או להשתמש במיקום הנוכחי‫.‬</string>
     <string name="progress_waiting_for_location">מקבל מיקום נוכחי</string>
     <string name="validation_cant_get_my_location">אופס‫..‬ המיקום לא התקבל‫.‬ נסה שוב</string>
@@ -162,7 +150,6 @@
     <string name="collector_dialog_phone_et">Phone</string>
     <string name="collector_dialog_sign_btn">Signup</string>
     <string name="collector_dialog_cancel_btn">Cancel</string>
-    <string name="collector_dialog_cancel_btn">בטל</string>
 
     <!-- Collector details -->
     <string name="collector_details_name_too_short">השם אמור להכיל לפחות שני אותיות</string>
@@ -173,8 +160,7 @@
     <string name="report_dialog_report_title">Report for publication</string>
     <string name="report_dialog_collected_all_btn">Collected all</string>
     <string name="report_dialog_cancel_btn">Cancel</string>
-    <string name="report_dialog_report_title">דווח על איסוף</string>
-    <string name="report_dialog_cancel_btn">בטל</string>
+
 
     <string name="report_big_distance">מרחק ממיקום השיתוף גדול מ-2 ק״מ. האם לדווח?</string>
     <string name="report_big_distance_ok_btn">Ok</string>
@@ -245,75 +231,47 @@
     <string name="feedback_report_hint">Any text here</string>
     <string name="feedback_btn_ok">Send</string>
     <string name="feedback_btn_cancel">Cancel</string>
-    
 
-    <string name="feedback_name_hint">שם שלך</string>
-    <string name="feedback_report_hint">טקסט תגובה</string>
-    <string name="feedback_btn_cancel">ביטול</string>
+
 
     <!-- -->
 
     <!-- Map -->
 
     <!-- -->
-    <string name="pub_det_km_from_you"> km away</string>
-    <string name="filter_less_regs_btn_text">Active</string>
+    <string name="pub_det_km_from_you">{0} km away</string>
+    <string name="filter_active_btn_text">Active</string>
     <string name="side_menu_activity_center_title">Activity Center</string>
     <string name="add_pic_string">Add a picture</string>
     <string name="et_subtitle_add_edit_pub">Additional details</string>
-    <!--<string name="enter_title_string">Address Selector</string>-->
+    <string name="address_string">Address Selector</string>
     <string name="notif_new_registered_user">Another user is en route to pickup:</string>
-    <string name="btn_take_photo">Camera</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="filter_closest_btn_text">Closest</string>
-    <!--<string name="pickup_btn">Collect</string>-->
+    <string name="pickup_btn">Collect</string>
     <string name="no_internet_connection_available_error_message">Communication Issue</string>
-    <string name="get_current_location_checkbox_text">Current location</string>
     <string name="pub_det_menu_item_delete">Delete</string>
     <string name="confirmAction">Delete Event?</string>
     <string name="pub_det_menu_item_edit">Edit</string>
     <string name="side_menu_going_to_take_part">en route</string>
-    <string name="filter_ending_btn_text">Ends</string>
-    <string name="title_end_pub_details">Ends:</string>
-    <string name="publication_details_title">Event Details</string>
-    <string name="address_string">Event location</string>
-    <string name="title_all_publications">Events Near You</string>
-    <string name="pub_det_sms_default_text">I want to pickup </string>
-    <string name="collector_details_phone_incorrect">It seems the phone number is incorrect. Please check you have typed it correctly.</string>
-    <string name="btn_chose_from_library">Library</string>
-    <!--<string name="side_menu_going_to_take_part">My Pickups</string>-->
-    <string name="side_menu_my_active_pubs_part">My Shares</string>
-    <string name="collector_dialog_name_et">Name</string>
-    <string name="no">No</string>
     <string name="pub_det_no_reports_for_pub">No reports</string>
-    <string name="report_dialog_found_nothing_btn">Nothing Left</string>
-    <string name="filter_not_active_btn_text">Off Air</string>
-    <string name="filter_active_btn_text">On Air</string>
-    <string name="collector_dialog_phone_et">Phone number</string>
-    <string name="pickup_btn">Pickup</string>
+    <string name="report_dialog_found_nothing_btn">Nothing left</string>
+    <string name="title_all_publications">Pickup</string>
     <string name="end_string">Pickup ends:</string>
     <string name="pickup">Pickup Food</string>
     <string name="start_string">Pickup starts:</string>
-    <string name="filter_newest_btn_text">Recent</string>
-    <string name="collector_dialog_sign_btn">Register</string>
-    <string name="collector_dialog_sign_title">Register for Pickup</string>
     <string name="action_take_off_air">Remove Event</string>
     <string name="report_dialog_report_btn">Report</string>
-    <string name="dialog_pub_reports_title">Reports</string>
-    <string name="pub_list_search_hint">Search</string>
-    <string name="feedback_btn_ok">Send</string>
     <string name="share_btn">Share</string>
     <string name="publish">Share Food</string>
     <string name="feedback_dialog_title">Share your thoughts or anything else</string>
-    <string name="title_begin_pub_details">Started:</string>
     <string name="pub_det_menu_item_deactivate">Stop Event</string>
-    <!--<string name="collector_details_phone_incorrect">There are no legit phone numbers</string>-->
     <string name="report_dialog_collected_part_btn">There’s More to Pickup</string>
     <string name="report_dialog_whole_btn_text">There’s more to pickup</string>
-    <string name="report_dialog_collected_all_btn">Took All</string>
     <string name="report_dialog_half_btn_text">Took all</string>
     <string name="welcome_string">Welcome</string>
     <string name="enter_title_string">What are you sharing?</string>
-    <string name="add_phoneNumber_string">What\'s your phone number?</string>
-    <string name="yes">Yes</string>
+    <string name="add_phone_number_string">What\'s your phone number?</string>
+    <string name="side_menu_feedback_title"></string>
+    <string name="feedback_progress_sending"></string>
+    <string name="feedback_uimessage_thanks"></string>
+    <string name="feedback_validation_text_null"></string>
 </resources>

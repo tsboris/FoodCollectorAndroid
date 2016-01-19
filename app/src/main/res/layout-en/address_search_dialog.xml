@@ -28,13 +28,13 @@
             android:layout_height="wrap_content"
             android:text=""
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentLeft="true"/>
 
         <TextView android:id="@+id/tv_address_dialog_my_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/cb_use_current_location"
+            android:layout_toRightOf="@+id/cb_use_current_location"
             android:text="@string/get_current_location_checkbox_text"/>
 
         <ImageView android:id="@+id/iv_address_dialog_my_loc_validation"
@@ -50,6 +50,7 @@
 
     <ListView android:id="@+id/lv_address_history"
         android:layout_width="match_parent"
+
         android:layout_height="@dimen/address_dialog_history_list_height"/>
 
     <LinearLayout
