@@ -440,6 +440,7 @@ public class FooDoNetSQLExecuterAsync extends AsyncTask<InternalRequest, Void, V
                 break;
             case InternalRequest.ACTION_PUSH_REPORT_FOR_PUB:
                 InternalRequest irReportFromPush = new InternalRequest(incomingRequest.ActionCommand, publicationsFromDB.get(0));
+                irReportFromPush.Status = InternalRequest.STATUS_OK;
                 callbackHandler.OnSQLTaskComplete(irReportFromPush);
                 break;
             case InternalRequest.ACTION_PUSH_REG:

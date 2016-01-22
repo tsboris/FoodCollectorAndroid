@@ -1398,10 +1398,10 @@ public class PublicationDetailsActivity
 
     private void startEndTimeSet() {
         tv_start_dateTime_details.setText(//tv_start_dateTime_details.getText() + " " +
-                getString(R.string.title_begin_pub_details) + ": " +
+                getString(R.string.title_begin_pub_details) + " " +
                         CommonUtil.GetDateTimeStringFromGate(publication.getStartingDate()));
         tv_end_dateTime_details.setText(//tv_end_dateTime_details.getText() + " " +
-                getString(R.string.title_end_pub_details) + ": " +
+                getString(R.string.title_end_pub_details) + " " +
                         CommonUtil.GetDateTimeStringFromGate(publication.getEndingDate()));
     }
     //endregion
