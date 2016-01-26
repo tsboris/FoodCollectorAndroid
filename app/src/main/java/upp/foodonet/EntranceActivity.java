@@ -46,7 +46,7 @@ public class EntranceActivity
     //Button btn_pick, btn_share, btn_ask;
     //TextView tv_pick, tv_share;
     RelativeLayout rl_btn_pick, rl_btn_share;
-//    RelativeLayout rl_btn_test;
+    RelativeLayout rl_btn_test;
     boolean isUIBlocked;
     ProgressDialog progressDialog;
 
@@ -92,10 +92,8 @@ public class EntranceActivity
         rl_btn_pick = (RelativeLayout)findViewById(R.id.rl_btn_take_entrance_screen);
         rl_btn_pick.setOnClickListener(this);
 
-/*
         rl_btn_test = (RelativeLayout)findViewById(R.id.rl_btn_test);
         rl_btn_test.setOnClickListener(this);
-*/
 
     }
 
@@ -172,14 +170,15 @@ public class EntranceActivity
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
-/*
             case R.id.rl_btn_test:
-                GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
+                /*GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
                 senderTest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 progressDialog.dismiss();
-                isUIBlocked = false;
+                isUIBlocked = false;*/
+                Intent i = new Intent(this , SignInActivity.class);
+                startActivity(i);
+                Toast.makeText(this,"clicked",Toast.LENGTH_LONG).show();
                 break;
-*/
         }
     }
 

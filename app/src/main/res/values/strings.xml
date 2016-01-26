@@ -112,7 +112,7 @@
     <string name="server_post_report_feedback">/feedbacks</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="google_analytics_id">UA-70625355-1</string>
-    <string name="facebook_app_id">1635109600077158</string>
+    <string name="facebook_app_id">1124320050974431</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
@@ -268,8 +268,14 @@
     <string name="feedback_report_hint">טקסט תגובה</string>
     <string name="feedback_btn_ok">שלח</string>
     <string name="feedback_btn_cancel">ביטול</string>
+    <string name="title_activity_sign_in">SignInActivity</string>
     
-    <!-- -->
+    <!--Sign in activity -->
+
+    <string name="sign_in_title">Sharing food changing society</string>
+    <string name="sign_in_subtitle">Ready to get started?</string>
+    <string name="sign_in_footer">Continue without Registration</string>
+    <string name="sign_in_with_title">Sign in with</string>
     
     <!-- Map -->
     

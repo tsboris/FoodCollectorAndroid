@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="upp.foodonet"
     android:versionCode="19"
-    android:versionName="1.0803"> <!-- todo check if this uses-sdk can be removed -->
-
+    android:versionName="1.0803" > <!-- todo check if this uses-sdk can be removed -->
     <!-- for google play -->
-    <!--<uses-configuration
+    <!--
+<uses-configuration
         android:reqFiveWayNav="false"
         android:reqHardKeyboard="false"
         android:reqKeyboardType="undefined"
         android:reqNavigation="undefined"
-        android:reqTouchScreen="undefined"/>-->
-
+        android:reqTouchScreen="undefined"/>
+    -->
     <uses-sdk tools:overrideLibrary="android.support.v17.leanback" />
 
     <!-- For internet -->
@@ -93,14 +93,12 @@
         <meta-data
             android:name="Sender.ID"
             android:value="776321412578" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name=".EntranceActivity"
@@ -184,8 +182,8 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
 
         <provider
@@ -216,6 +214,11 @@
             android:exported="false" >
         </service>
 
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/title_activity_sign_in"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

@@ -112,7 +112,7 @@
     <string name="server_post_report_feedback">/feedbacks</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="google_analytics_id">UA-70625355-1</string>
-    <string name="facebook_app_id">1635109600077158</string>
+    <string name="facebook_app_id">1124320050974431</string>
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
