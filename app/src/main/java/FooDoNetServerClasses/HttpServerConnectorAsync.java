@@ -596,16 +596,6 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     class FCPublicationForDisabling implements ICanWriteSelfToJSONWriter {
 
         @Override
-        public void WriteSelfToJSONWriter(JsonWriter writer) {
-
-        }
-
-        @Override
-        public Map<String, Object> GetJsonMapStringObject() {
-            return null;
-        }
-
-        @Override
         public org.json.simple.JSONObject GetJsonObjectForPost() {
             Map<String, Object> publicationData = new HashMap<String, Object>();
             publicationData.put(FCPublication.PUBLICATION_IS_ON_AIR_KEY, false);//getIsOnAir());
@@ -625,16 +615,6 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         public MyLocationForReport(String imei, Location location) {
             this.imei = imei;
             this.location = location;
-        }
-
-        @Override
-        public void WriteSelfToJSONWriter(JsonWriter writer) {
-
-        }
-
-        @Override
-        public Map<String, Object> GetJsonMapStringObject() {
-            return null;
         }
 
         @Override
@@ -662,16 +642,6 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
 
         @Override
-        public void WriteSelfToJSONWriter(JsonWriter writer) {
-
-        }
-
-        @Override
-        public Map<String, Object> GetJsonMapStringObject() {
-            return null;
-        }
-
-        @Override
         public org.json.simple.JSONObject GetJsonObjectForPost() {
             Map<String, Object> publicationData = new HashMap<String, Object>();
             publicationData.put(FCPublication.PUBLICATION_PUBLISHER_UUID_KEY, Imei);
@@ -685,229 +655,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
-/*
-    private InternalRequest Get(String server_sub_path, FCPublication publication) {
-        String get_publications_url = baseUrl + "/" + server_sub_path;
-        Log.i(MY_TAG, "Get: " + get_publications_url);
-        try {
-            HttpGet httpGet = new HttpGet(get_publications_url);
-            HttpClient client = new DefaultHttpClient();
-            HttpGetWithEntity myGet = new HttpGetWithEntity(get_publications_url);
-            myGet.setEntity(new StringEntity(publication.GetJSONObject().toString(), "UTF8"));
-            HttpResponse response = client.execute(myGet);
-            int resonseStatus = response.getStatusLine().getStatusCode();
-            Log.i(MY_TAG, response.toString());
-            if (resonseStatus == 200) {
-                HttpEntity entity = response.getEntity();
-                String data = EntityUtils.toString(entity);
-                responseJSONArray = new JSONArray(data);
-                responseString = responseJSONArray.toString();
-                Log.i("myTag", responseString);
-            }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
-
-        public HttpGetWithEntity() {
-            super();
-        }
-
-        public HttpGetWithEntity(URI uri) {
-            super();
-            setURI(uri);
-        }
-
-        public HttpGetWithEntity(String uri) {
-            super();
-            setURI(URI.create(uri));
-        }
+    class UserRegistration implements ICanWriteSelfToJSONWriter {
 
         @Override
-        public String getMethod() {
-            return HttpGet.METHOD_NAME;
+        public org.json.simple.JSONObject GetJsonObjectForPost() {
+            return null;
         }
     }
-*/
-/*
-
-    private InternalRequest GetAllPublicationsWithRegisteredUsers(String server_sub_path, String server_sub_sub_path){
-        Get(server_sub_path);
-        ArrayList<FCPublication> fetchedPublications = FCPublication.GetArrayListOfPublicationsFromJSON(responseJSONArray);
-        if(fetchedPublications == null || fetchedPublications.size() == 0){
-
-        }
-        return null;
-    }
-
-
-    private InternalRequest Post(String server_sub_path){
-        String post_url = baseUrl + server_sub_path;
-        try {
-            URL url = new URL(post_url);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            OutputStream outputStream = connection.getOutputStream();
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private InternalRequest PostRegisterUser(String server_sub_path, UserRegisterData registerData) {
-        String post_url = baseUrl + server_sub_path;
-        try {
-            URL url = new URL(post_url);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            OutputStream outputStream = connection.getOutputStream();
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            registerData.WriteSelfToJSONWriter(writer);
-            writer.close();
-            outputStream.close();
-            int connectionResponse = connection.getResponseCode();
-            switch (connectionResponse){
-                case HttpURLConnection.HTTP_OK:
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private InternalRequest Get(String server_sub_path){
-        String get_publications_url = baseUrl + "/" + server_sub_path;
-        Log.i(MY_TAG, "Get: " + get_publications_url);
-        try {
-            HttpGet httpGet = new HttpGet(get_publications_url);
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpResponse response = httpClient.execute(httpGet);
-            int resonseStatus = response.getStatusLine().getStatusCode();
-            Log.i(MY_TAG, response.toString());
-            if(resonseStatus == 200){
-                HttpEntity entity = response.getEntity();
-                String data = EntityUtils.toString(entity);
-                responseJSONArray = new JSONArray(data);
-                responseString = responseJSONArray.toString();
-                Log.i("myTag", responseString);
-            }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;    }
-        */
-
-//    private void TestDeleteWithBody(ICanWriteSelfToJSONWriter object, String connString) {
-//        Map<String, Object> registrationData = new HashMap<String, Object>();
-
-
-//        registrationData.put("publication_id", 384);
-//        registrationData.put("active_device_dev_uuid", "DD42331F-3E58-43E2-979C-6A0AC0E5A5C0");
-//        registrationData.put("date_of_registration", 11243423); //this is for future use.
-//        //if you don't save the registration date, you can pass any number here (or just use this one)
-//        registrationData.put("publication_version", 1);
-//
-//        // make hash map
-//        Map<String, Object> dataToSend = new HashMap<String, Object>();
-//        dataToSend.put("registered_user_for_publication", registrationData);
-
-
-    // convert dataToSend to a valid json object
-//        org.json.simple.JSONObject json = new org.json.simple.JSONObject();
-//        json.putAll(dataToSend);
-//        System.out.println(json);
-
-//        try {
-//
-//            // 1. URL
-//            URL url = new URL(connString);
-//
-//            // 2. Open connection
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//
-//            // 3. Specify DELETE method
-//            conn.setRequestMethod("DELETE");
-//
-//            // 4. Set the headers
-//            conn.setRequestProperty("Content-Type", "application/json");
-//            conn.setRequestProperty("Accept", "application/json");
-//
-//            conn.setDoOutput(true);
-//
-//            // 5. Add JSON data into POST request body
-//
-//            // 5.1 Get connection output stream
-//            // 5.2 write the json to bytes
-//
-//            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-//
-//            org.json.simple.JSONObject json = object.GetJsonObjectForPost();
-//            String tstStr = json.toString();
-//
-//            wr.writeBytes(json.toString());
-//
-//            // 5.3 Send the request
-//            wr.flush();
-//
-//            // 5.5 close
-//            wr.close();
-//
-//            // 6. Get the response
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("\nSending 'DELETE' request to URL : " + url);
-//            System.out.println("Response Code : " + responseCode);
-//
-//            // 7. if the service returns something, this is how you read it back
-//
-//            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            String inputLine;
-//            StringBuffer response = new StringBuffer();
-//
-//            while ((inputLine = in.readLine()) != null) {
-//                response.append(inputLine);
-//            }
-//            in.close();
-//
-//            // 7. Print result
-//            System.out.println(response.toString());
-//
-//        } catch (MalformedURLException e) {
-//
-//            e.printStackTrace();
-//
-//        } catch (IOException e) {
-//
-//            e.printStackTrace();
-//
-//        }
-//    }
 }

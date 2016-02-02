@@ -32,7 +32,7 @@
     <color name="white">#FFFFFF</color>
     <color name="side_menu_score_circle_red">#B80000</color>
 
-    <integer name="min_splash_screen_time">2</integer>
+    <integer name="min_splash_screen_time">0</integer>
     <integer name="fetch_data_scheduler_repeat_time">600</integer>
 
     <!-- pub details screen -->

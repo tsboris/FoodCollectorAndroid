@@ -86,6 +86,7 @@
     <string name="facebook_page_url">https://www.facebook.com/foodonet</string>
 
     <!-- Shared Preferences keys -->
+<!--
     <string name="shared_preferences_token">sp_token</string>
     <string name="shared_preferences_token_key">token_key</string>
     <string name="shared_preferences_my_location_key">my_location_key</string>
@@ -102,6 +103,7 @@
     <string name="shared_preferences_contact_info">contact_info</string>
     <string name="shared_preferences_contact_info_name">contact_info_name</string>
     <string name="shared_preferences_contact_info_phone">contact_info_phone</string>
+-->
 
     <!-- File system keys -->
 

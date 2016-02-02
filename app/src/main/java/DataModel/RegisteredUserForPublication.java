@@ -158,17 +158,6 @@ public class RegisteredUserForPublication implements Serializable, ICanWriteSelf
         return rufp;
     }
 
-
-    @Override
-    public void WriteSelfToJSONWriter(JsonWriter writer) {
-
-    }
-
-    @Override
-    public Map<String, Object> GetJsonMapStringObject() {
-        return null;
-    }
-
     @Override
     public org.json.simple.JSONObject GetJsonObjectForPost() {
         Map<String, Object> deviceData = new HashMap<String, Object>();

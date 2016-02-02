@@ -109,12 +109,6 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
                         getResources().getString(R.string.register_new_device), userData));
     }
 
-    private JSONObject GetRegistrationJSONObject(String imei, String pushKey, Location location){
-        //JSONObject res = new JSONObject();
-        //res.put()
-        return null;
-    }
-
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         //parentForCallback.OnServerRespondedCallback(response);
@@ -122,13 +116,13 @@ public class FooDoNetInstanceIDListenerService extends IntentService implements 
         switch (response.Status){
             case InternalRequest.STATUS_OK:
                 Log.i(MY_TAG, "got server callback registration ok");
-                CommonUtil.PutCommonPreferenceIsRegistered(this, true);
+                CommonUtil.PutCommonPreferenceIsRegisteredDevice(this, true);
 //                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
 //                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS);
                 break;
             case InternalRequest.STATUS_FAIL:
                 Log.i(MY_TAG, "got server callback registration fail");
-                CommonUtil.PutCommonPreferenceIsRegistered(this, false);
+                CommonUtil.PutCommonPreferenceIsRegisteredDevice(this, false);
 //                intent.putExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY,
 //                        ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL);
                 break;

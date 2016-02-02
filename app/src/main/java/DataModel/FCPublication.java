@@ -616,11 +616,6 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     }
 
     @Override
-    public Map<String, Object> GetJsonMapStringObject() {
-        return null;
-    }
-
-    @Override
     public org.json.simple.JSONObject GetJsonObjectForPost() {
         Map<String, Object> publicationData = new HashMap<String, Object>();
         publicationData.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());

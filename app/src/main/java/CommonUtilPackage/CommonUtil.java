@@ -18,9 +18,11 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.amazonaws.util.IOUtils;
+import com.facebook.Profile;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
@@ -408,19 +410,45 @@ public class CommonUtil {
         return sp.getBoolean(context.getString(R.string.shared_preferences_data_loaded_key), false);
     }
 
-    public static void PutCommonPreferenceIsRegistered(Context context, boolean isDataLoaded){
+    public static void PutCommonPreferenceIsRegisteredDevice(Context context, boolean isDataLoaded){
         SharedPreferences sp = context.getSharedPreferences(
-                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
+                context.getString(R.string.shared_preferences_is_device_registered), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean(context.getString(R.string.shared_preferences_is_registered_key), isDataLoaded);
+        editor.putBoolean(context.getString(R.string.shared_preferences_is_device_registered_key), isDataLoaded);
         editor.commit();
         Log.i(MY_TAG, "IsRegistered set to: " + String.valueOf(isDataLoaded));
     }
 
-    public static boolean GetFromPreferencesIsRegistered(Context context){
+    public static boolean GetFromPreferencesIsDeviceRegistered(Context context){
         SharedPreferences sp = context.getSharedPreferences(
-                context.getString(R.string.shared_preferences_is_registered), Context.MODE_PRIVATE);
-        return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_key), false);
+                context.getString(R.string.shared_preferences_is_device_registered), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_is_device_registered_key), false);
+    }
+
+    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, GoogleSignInAccount account){
+        PutCommonPreferencesSocialAccountData(context, "google", account.getDisplayName(), account.getIdToken());
+    }
+
+    private static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, Profile account){
+        PutCommonPreferencesSocialAccountData(context, "facebook", account.getName(), account.getId());
+    }
+
+    private static void PutCommonPreferencesSocialAccountData(Context context, String socialAccountType, String socialAccountName, String socialAccountToken){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(context.getString(R.string.shared_preferences_is_registered_to_google_facebook_key), true);
+        editor.putString(context.getString(R.string.shared_preferences_social_account_type_key), socialAccountType);
+        editor.putString(context.getString(R.string.shared_preferences_social_account_name_key), socialAccountName);
+        editor.putString(context.getString(R.string.shared_preferences_social_account_token_key), socialAccountToken);
+        editor.commit();
+        Log.i(MY_TAG, "Registered to " + socialAccountType + ", name: " + socialAccountName);
+    }
+
+    public static boolean GetFromPreferencesIsRegisteredToGoogleFacebook(Context context){
+        SharedPreferences sp = context.getSharedPreferences(
+                context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
+        return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_to_google_facebook_key), false);
     }
 
     public static boolean RemoveImageByPublication(FCPublication publication, Context context){

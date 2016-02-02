@@ -39,7 +39,7 @@ import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 
 public class SplashScreenActivity
-        extends FooDoNetCustomActivityConnectedToService  {
+        extends FooDoNetCustomActivityConnectedToService {
     private int min_splash_screen_duration;
     ArrayList<FCPublication> publicationsFromDB, publicationsFromServer, publicationsUpdatedList;
     boolean flagWaitTaskFinished, registerTaskFinished;
@@ -50,10 +50,11 @@ public class SplashScreenActivity
     private LinearLayout ll_first_load_info;
     private TextView tv_progress_text;
 
+    private boolean isGoogleFacebookChecked;
     private boolean isLoadDataServiceStarted = false;
 
     private boolean AllLoaded() {
-        return registerTaskFinished && flagWaitTaskFinished;
+        return registerTaskFinished && flagWaitTaskFinished && isGoogleFacebookChecked;
     }
 
 
@@ -61,14 +62,22 @@ public class SplashScreenActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        ll_first_load_info = (LinearLayout)findViewById(R.id.ll_first_load_info);
+        ll_first_load_info = (LinearLayout) findViewById(R.id.ll_first_load_info);
         tv_progress_text = (TextView) findViewById(R.id.tv_progress_text_splash_screen);
         tv_progress_text.setText(getString(R.string.progress_foodonet_loading));
+
+        flagWaitTaskFinished = true;
+
+        RegisterIfNotRegisteredYet();
+
+        //waiter
+/*
         min_splash_screen_duration = getResources().getInteger(R.integer.min_splash_screen_time);
         Point p = new Point(min_splash_screen_duration, 0);
-        RegisterIfNotRegisteredYet();
         SplashScreenHolder ssh = new SplashScreenHolder();
         ssh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, p);
+*/
+
     }
 
 
@@ -100,14 +109,14 @@ public class SplashScreenActivity
 
         AppEventsLogger.activateApp(this);
 
-        if(CommonUtil.GetFromPreferencesIsDataLoaded(this))
+        if (CommonUtil.GetFromPreferencesIsDataLoaded(this))
             registerTaskFinished = true;
-        else if(CommonUtil.GetFromPreferencesIsRegistered(this) && !isLoadDataServiceStarted){
+        else if (CommonUtil.GetFromPreferencesIsDeviceRegistered(this) && !isLoadDataServiceStarted) {
             tv_progress_text.setText(getString(R.string.progress_first_load));
             startService(new Intent(this, FooDoNetService.class));
             isLoadDataServiceStarted = true;
         }
-        if(AllLoaded())
+        if (AllLoaded())
             StartNextActivity();
     }
 
@@ -238,58 +247,69 @@ public class SplashScreenActivity
         // and start next activity
         Intent intent = new Intent(this, EntranceActivity.class);
         this.startActivity(intent);
+        finish();
     }
 
     private void RegisterIfNotRegisteredYet() {
-        if (CommonUtil.GetFromPreferencesIsRegistered(this)) {
-            startService(new Intent(this, FooDoNetService.class));
-
-            RepairPushNotifications();
-
-            registerTaskFinished = true;
-            if(AllLoaded())
-                StartNextActivity();
-            return;
+        if (CommonUtil.GetFromPreferencesIsDeviceRegistered(this)) {
+            RegisterToGoogleFacebookIfNeeded();
         } else {
             File directory = new File(Environment.getExternalStorageDirectory()
                     + getResources().getString(R.string.image_folder_path));
-            if(!directory.exists())
+            if (!directory.exists())
                 directory.mkdirs();
             FooDoNetInstanceIDListenerService.StartRegisterToGCM(this);
         }
+    }
 
+    private void RegisterToGoogleFacebookIfNeeded() {
+        if (CommonUtil.GetFromPreferencesIsRegisteredToGoogleFacebook(this)) {
+            registerTaskFinished = true;
+            RepairPushNotifications();
+            startService(new Intent(this, FooDoNetService.class));
+            isGoogleFacebookChecked = true;
+            if (AllLoaded())
+                StartNextActivity();
+        } else {
+            Intent signInIntent = new Intent(this , SignInActivity.class);
+            startActivityForResult(signInIntent, 0);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        isGoogleFacebookChecked = true;
+        startService(new Intent(this, FooDoNetService.class));
+        isLoadDataServiceStarted = true;
+        tv_progress_text.setText(getString(R.string.progress_first_load));
     }
 
     @Override
     public void onBroadcastReceived(Intent intent) {
         int regResult = 0;
         regResult = intent.getIntExtra(ServicesBroadcastReceiver.BROADCAST_REC_EXTRA_ACTION_KEY, 0);
-        switch (regResult){
+        switch (regResult) {
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_FAIL:
-                Toast.makeText(getBaseContext(), "problem registering device!", Toast.LENGTH_LONG);
-               // return;
+                Toast.makeText(getBaseContext(), "problem registering device!", Toast.LENGTH_LONG).show();
+                // return;
             case ServicesBroadcastReceiver.ACTION_CODE_REGISTRATION_SUCCESS:
                 // if register succeed
-                // start scheduler service
-                startService(new Intent(this, FooDoNetService.class));
-                isLoadDataServiceStarted = true;
-                tv_progress_text.setText(getString(R.string.progress_first_load));
+                // check registration google/
+                RegisterToGoogleFacebookIfNeeded();
                 break;
             case ServicesBroadcastReceiver.ACTION_CODE_RELOAD_DATA_SUCCESS:
                 registerTaskFinished = true;
-                if(AllLoaded())
+                if (AllLoaded())
                     StartNextActivity();
                 break;
-/*
-                break;
-*/
         }
     }
 
-    private void RepairPushNotifications(){
+    private void RepairPushNotifications() {
         SharedPreferences sp = getSharedPreferences(getString(R.string.shared_preferences_token), MODE_PRIVATE);
         String token = sp.getString(getString(R.string.shared_preferences_token_key), "");
-        if(!TextUtils.isEmpty(token)){
+        if (!TextUtils.isEmpty(token)) {
             GcmPubSub pubSub = GcmPubSub.getInstance(this);
             try {
                 pubSub.unsubscribe(token, "/topics/global");

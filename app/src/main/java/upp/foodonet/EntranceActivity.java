@@ -59,41 +59,15 @@ public class EntranceActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
 
-        //startMyPublicationDetailsActivity();
-
-        // Why do we need this?
-        //TextView welcomeView = (TextView) findViewById(R.id.welcome);
-        //welcomeView.setBackgroundColor(Color.BLUE);
-        //=====
-
-/*
-        btn_share = (Button) findViewById(R.id.btn_share_welcomeScreen);
-        tv_share = (TextView) findViewById(R.id.tv_share_welcomeScreen);
-        btn_pick = (Button) findViewById(R.id.btn_pick_welcomeScreen);
-        tv_pick = (TextView) findViewById(R.id.tv_pick_welcomeScreen);
-        btn_ask = (Button) findViewById(R.id.btn_ask_welcomeScreen);
-        btn_pick.setOnClickListener(this);
-        tv_pick.setOnClickListener(this);
-        btn_share.setOnClickListener(this);
-        tv_share.setOnClickListener(this);
-        btn_ask.setOnClickListener(this);
-        Drawable img_give = getResources().getDrawable(R.drawable.first_screen_collect_xxh);
-        Drawable img_take = getResources().getDrawable(R.drawable.first_screen_donate_xxh);
-        Drawable img_ask = getResources().getDrawable(R.drawable.collect_v6_3x);
-        img_give.setBounds(0, 0, 80, 80);
-        img_take.setBounds(0, 0, 80, 80);
-        btn_share.setCompoundDrawables(null, null, img_give, null);
-        btn_pick.setCompoundDrawables(null, null, img_take, null);
-        btn_ask.setCompoundDrawables(null, null, img_ask, null);
-*/
-
         rl_btn_share = (RelativeLayout)findViewById(R.id.rl_btn_give_entrance_screen);
         rl_btn_share.setOnClickListener(this);
         rl_btn_pick = (RelativeLayout)findViewById(R.id.rl_btn_take_entrance_screen);
         rl_btn_pick.setOnClickListener(this);
 
+/*
         rl_btn_test = (RelativeLayout)findViewById(R.id.rl_btn_test);
         rl_btn_test.setOnClickListener(this);
+*/
 
     }
 
@@ -126,20 +100,6 @@ public class EntranceActivity
         return super.onOptionsItemSelected(item);
     }
 
-/*
-    @Override
-    public void OnNotifiedToFetchData() {
-
-    }
-*/
-
-/*
-    @Override
-    public void LoadUpdatedListOfPublications(ArrayList<FCPublication> updatedList) {
-
-    }
-*/
-
     @Override
     public void OnGooglePlayServicesCheckError() {
     }
@@ -170,24 +130,17 @@ public class EntranceActivity
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
-            case R.id.rl_btn_test:
-                /*GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
+            /*case R.id.rl_btn_test:
+                GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
                 senderTest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 progressDialog.dismiss();
-                isUIBlocked = false;*/
-                Intent i = new Intent(this , SignInActivity.class);
-                startActivity(i);
-                Toast.makeText(this,"clicked",Toast.LENGTH_LONG).show();
-                break;
+                isUIBlocked = false;
+                break;*/
         }
     }
 
     private void PostGoogleAnalyticsBtnPressed(String btnName){
         CommonUtil.PostGoogleAnalyticsUIEvent(getApplicationContext(), "EntranceActivity", btnName, "button pressed");
-    }
-
-    public void StartFeedbackPopup(Context context){
-
     }
 
     @Override
@@ -203,19 +156,6 @@ public class EntranceActivity
                 Log.i(MY_TAG, "new report added: " + request.publicationForSaving.getTitle() + ": " + (request.Status == InternalRequest.STATUS_OK ? "ok" : "fail"));
                 break;
         }
-
-/*        Toast.makeText(getBaseContext(), "this code should not be reached", Toast.LENGTH_LONG);
-
-        if(request.publicationForSaving == null){
-            Log.e(MY_TAG, "got null request.publicationForSaving");
-            return;
-        }
-        HttpServerConnectorAsync postNewPubTask
-                = new HttpServerConnectorAsync(getResources().getString(R.string.server_base_url), this);
-        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_PUBLICATION, request.publicationForSaving);
-        ir.ServerSubPath = getResources().getString(R.string.server_add_new_publication_path);
-        postNewPubTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
-*/
     }
 
     @Override
