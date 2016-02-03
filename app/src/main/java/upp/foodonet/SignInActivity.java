@@ -141,12 +141,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.sing_in_btn_facebook:
                 //Toast.makeText(this,"face",Toast.LENGTH_LONG).show();
+                callbackManager = CallbackManager.Factory.create();
                 facebookCallback = InitFacebookCallback();
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
 
                 break;
             case R.id.sing_in_btn_google:
-                callbackManager = CallbackManager.Factory.create();
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 //Toast.makeText(this,"google",Toast.LENGTH_LONG).show();
