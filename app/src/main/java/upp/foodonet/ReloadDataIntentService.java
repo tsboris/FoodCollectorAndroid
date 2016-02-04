@@ -36,7 +36,7 @@ public class ReloadDataIntentService
     final int taskActivity = 4;
 
     int currentIndexInWorkPlan;
-    int[] workPlan = new int[]{taskServer, taskSQL, taskImages, taskActivity};
+    int[] workPlan = new int[]{taskServer, taskSQL, taskActivity}; //taskImages,
 
     public int secondsToWait;
     private String serverBaseUrl;

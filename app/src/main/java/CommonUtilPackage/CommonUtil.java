@@ -429,7 +429,7 @@ public class CommonUtil {
         PutCommonPreferencesSocialAccountData(context, "google", account.getDisplayName(), account.getIdToken());
     }
 
-    private static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, Profile account){
+    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, Profile account){
         PutCommonPreferencesSocialAccountData(context, "facebook", account.getName(), account.getId());
     }
 

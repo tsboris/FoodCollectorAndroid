@@ -49,7 +49,7 @@ import java.util.Arrays;
 
 import CommonUtilPackage.CommonUtil;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener, FacebookCallback<LoginResult> {
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -84,6 +84,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         continueWithoutRegistration = (TextView) findViewById(R.id.sign_in_tv_continue);
         continueWithoutRegistration.setOnClickListener(this);
+
+        callbackManager = CallbackManager.Factory.create();
 
         if (profile != null) {
             Toast.makeText(this, profile.getId(), Toast.LENGTH_LONG).show();
@@ -141,7 +143,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.sing_in_btn_facebook:
                 //Toast.makeText(this,"face",Toast.LENGTH_LONG).show();
-                callbackManager = CallbackManager.Factory.create();
                 facebookCallback = InitFacebookCallback();
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
 
@@ -159,6 +160,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(0);
+        finish();
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
@@ -186,26 +193,26 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private FacebookCallback<LoginResult> InitFacebookCallback() {
         FacebookSdk.sdkInitialize(getApplicationContext());
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        profile = Profile.getCurrentProfile();
-
-                        Toast.makeText(getApplicationContext(), profile.getFirstName() + " is logged to Facebook", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        Toast.makeText(getApplicationContext(), "LogIn error", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        LoginManager.getInstance().registerCallback(callbackManager, this);
+//                new FacebookCallback<LoginResult>() {
+//
+//                    @Override
+//                    public void onSuccess(LoginResult loginResult) {
+//                        profile = Profile.getCurrentProfile();
+//
+//                        Toast.makeText(getApplicationContext(), profile.getFirstName() + " is logged to Facebook", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onCancel() {
+//                        Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onError(FacebookException exception) {
+//                        Toast.makeText(getApplicationContext(), "LogIn error", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
         accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -266,6 +273,24 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(getApplicationContext(), "Login error", Toast.LENGTH_SHORT).show();
             }
         };
+    }
+
+    @Override
+    public void onSuccess(LoginResult loginResult) {
+        profile = Profile.getCurrentProfile();
+        CommonUtil.PutCommonPreferencesIsRegisteredGoogleFacebook(this, profile);
+        setResult(1);
+        finish();
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onError(FacebookException error) {
+
     }
 }
 
