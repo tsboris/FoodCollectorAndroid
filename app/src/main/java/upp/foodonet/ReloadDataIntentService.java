@@ -32,8 +32,8 @@ public class ReloadDataIntentService
 
     final int taskServer = 1;
     final int taskSQL = 2;
-    final int taskImages = 3;
-    final int taskActivity = 4;
+    //final int taskImages = 3;
+    final int taskActivity = 3;
 
     int currentIndexInWorkPlan;
     int[] workPlan = new int[]{taskServer, taskSQL, taskActivity}; //taskImages,
@@ -105,15 +105,15 @@ public class ReloadDataIntentService
                         new InternalRequest(InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER, fetchedFromServer, null));
                 sqlExecuter = null;
                 break;
-            case taskImages:
-                maxImageWidthHeight = getResources().getInteger(R.integer.max_image_width_height);
-                DownloadImageTask imageTask
-                        = new DownloadImageTask(this,
-                        getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
-                        getResources().getString(R.string.image_folder_path));
-                imageTask.setRequestHashMap(needToLoadImages);
-                imageTask.execute();
-                break;
+//            case taskImages:
+//                maxImageWidthHeight = getResources().getInteger(R.integer.max_image_width_height);
+//                DownloadImageTask imageTask
+//                        = new DownloadImageTask(this,
+//                        getResources().getString(R.string.amazon_base_url_for_images), maxImageWidthHeight,
+//                        getResources().getString(R.string.image_folder_path));
+//                imageTask.setRequestHashMap(needToLoadImages);
+//                imageTask.execute();
+//                break;
             case taskActivity:
                 Log.i(MY_TAG, "Perfoming task " + workPlan[currentIndexInWorkPlan]);
                 moveIndexToNextTaskFromPlan();
@@ -130,7 +130,8 @@ public class ReloadDataIntentService
     }
 
     private void moveIndexToNextTaskFromPlan(){
-        currentIndexInWorkPlan = (currentIndexInWorkPlan + 1 >= workPlan.length? 0 : ++currentIndexInWorkPlan);
+        currentIndexInWorkPlan =
+                (currentIndexInWorkPlan + 1 >= workPlan.length? 0 : ++currentIndexInWorkPlan);
     }
 
 
@@ -151,11 +152,12 @@ public class ReloadDataIntentService
             case InternalRequest.ACTION_SQL_UPDATE_DB_PUBLICATIONS_FROM_SERVER:
                 Log.i(MY_TAG, "finished task sql");
                 loadedFromSQL = request.publications;
-                if(request.listOfPubsToFetchImageFor == null || request.listOfPubsToFetchImageFor.size() == 0){
-                    moveIndexToNextTaskFromPlan();
-                } else {
-                    needToLoadImages = request.listOfPubsToFetchImageFor;
-                 }
+//                if(request.listOfPubsToFetchImageFor == null || request.listOfPubsToFetchImageFor.size() == 0){
+//                    moveIndexToNextTaskFromPlan();
+//                } else {
+//                    needToLoadImages = request.listOfPubsToFetchImageFor;
+//                 }
+                //moveIndexToNextTaskFromPlan();
                 DoNextTaskFromWorkPlan();
                 break;
             case InternalRequest.ACTION_SQL_UPDATE_IMAGES_FOR_PUBLICATIONS:

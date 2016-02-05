@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
+import FooDoNetServerClasses.DownloadImageTask;
+import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 import CommonUtilPackage.InternalRequest;
 import FooDoNetServiceUtil.FooDoNetCustomActivityConnectedToService;
@@ -39,7 +41,8 @@ import FooDoNetServiceUtil.ServicesBroadcastReceiver;
 
 
 public class SplashScreenActivity
-        extends FooDoNetCustomActivityConnectedToService {
+        extends FooDoNetCustomActivityConnectedToService
+        implements IFooDoNetServerCallback {
     private int min_splash_screen_duration;
     ArrayList<FCPublication> publicationsFromDB, publicationsFromServer, publicationsUpdatedList;
     boolean flagWaitTaskFinished, registerTaskFinished;
@@ -217,6 +220,13 @@ public class SplashScreenActivity
         }
     };
 
+    @Override
+    public void OnServerRespondedCallback(InternalRequest response) {
+        startService(new Intent(this, FooDoNetService.class));
+        isLoadDataServiceStarted = true;
+        tv_progress_text.setText(getString(R.string.progress_first_load));
+    }
+
     private class SplashScreenHolder extends AsyncTask<Point, Void, Void> {
 
 
@@ -280,9 +290,26 @@ public class SplashScreenActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         isGoogleFacebookChecked = true;
-        startService(new Intent(this, FooDoNetService.class));
-        isLoadDataServiceStarted = true;
-        tv_progress_text.setText(getString(R.string.progress_first_load));
+        switch (resultCode){
+            case 1:
+                InternalRequest ir = (InternalRequest)data.getSerializableExtra(InternalRequest.INTERNAL_REQUEST_EXTRA_KEY);
+                if(ir != null){
+                    if(ir.PhotoURL != null){
+                        DownloadImageTask imageTask = new DownloadImageTask(ir.PhotoURL, 100, getString(R.string.image_folder_path));
+                        imageTask.execute();
+                    }
+                    HttpServerConnectorAsync connectorAsync
+                            = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
+                    connectorAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
+                    return;
+                }
+                Log.e(MY_TAG, "InternalRequest extra null");
+                break;
+            default:
+                Log.i(MY_TAG, "User decided not to login with google/facebook");
+                OnServerRespondedCallback(null);
+                break;
+        }
     }
 
     @Override

@@ -1,11 +1,14 @@
 package CommonUtilPackage;
 
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -18,9 +21,11 @@ import DataModel.UserRegisterData;
 /**
  * Created by Asher on 23-Jul-15.
  */
-public class InternalRequest {
+public class InternalRequest implements Serializable {
 
     private static final String MY_TAG = "food_internalRequest";
+
+    public static final String INTERNAL_REQUEST_EXTRA_KEY = "internal_request";
 
     public static final int ACTION_GET_ALL_PUBLICATIONS = 0;
     public static final int ACTION_POST_NEW_PUBLICATION = 1;
@@ -51,6 +56,8 @@ public class InternalRequest {
     public static final int ACTION_PUSH_PUB_DELETED = 26;
     public static final int ACTION_PUSH_REPORT_FOR_PUB = 27;
     public static final int ACTION_PUSH_REG = 28;
+    public static final int ACTION_POST_NEW_USER = 29;
+    public static final int ACTION_POST_EDIT_USER = 30;
     public static final int ACTION_POST_FEEDBACK = 99;
 
     public static final int STATUS_OK = 1;
@@ -74,6 +81,17 @@ public class InternalRequest {
     public PublicationReport publicationReport;
     public Location location;
     public String imei;
+
+    // for registering/editing user
+    public String SocialNetworkID;
+    public String SocialNetworkType;
+    public String SocialNetworkToken;
+    public String PhoneNumber;
+    public String Email;
+    public String UserName;
+    public String DeviceUUID;
+    public boolean IsLoggedIn;
+    public String PhotoURL;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;

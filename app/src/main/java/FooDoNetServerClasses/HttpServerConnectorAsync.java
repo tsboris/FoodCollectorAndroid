@@ -394,6 +394,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 }
                 return "";
             //endregion
+            //region POST FEEDBACK
             case InternalRequest.ACTION_POST_FEEDBACK:
                 FeedbackReport fr
                         = new FeedbackReport(
@@ -402,6 +403,21 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                         params[0].publicationReport.getDevice_uuid());
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, fr, false);
                 return "";
+            //endregion
+            //region POST USER
+            case InternalRequest.ACTION_POST_NEW_USER:
+                UserRegistrationAddEdit registration = new UserRegistrationAddEdit();
+                registration.IsLoggedIn = true;
+                registration.SocialNetworkType = params[0].SocialNetworkType;
+                registration.SocialNetworkID = params[0].SocialNetworkID;
+                registration.Token = params[0].SocialNetworkToken;
+                registration.PhoneNumber = params[0].PhoneNumber;
+                registration.Email = params[0].Email;
+                registration.UserName = params[0].UserName;
+                registration.DeviceUUID = params[0].DeviceUUID;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registration, false);
+                return "";
+            //endregion
             default:
                 return "";
         }
@@ -454,6 +470,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
 
             switch (connectionResponse) {
                 case HttpURLConnection.HTTP_OK:
+                case HttpURLConnection.HTTP_CREATED:
                     isSuccess = true;
                     if (isForResult) {
                         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -572,6 +589,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 Log.i(MY_TAG, "send feedback complete: " + (isSuccess ? "ok" : "fail"));
                 InternalRequest irFeedback = new InternalRequest(Action_Command_ID, isSuccess);
                 callbackListener.OnServerRespondedCallback(irFeedback);
+                break;
+            case InternalRequest.ACTION_POST_NEW_USER:
+                Log.i(MY_TAG, "post new user complete: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irNewUser = new InternalRequest(Action_Command_ID, isSuccess);
+                callbackListener.OnServerRespondedCallback(irNewUser);
+                break;
         }
     }
 
@@ -655,11 +678,43 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
         }
     }
 
-    class UserRegistration implements ICanWriteSelfToJSONWriter {
+    class UserRegistrationAddEdit implements ICanWriteSelfToJSONWriter {
+
+        private final String USER_JSON_KEY_USER = "user";
+        private final String USER_JSON_KEY_IDENTITY_PROVIDER = "identity_provider";
+        private final String USER_JSON_KEY_IDENTITY_PROVIDER_USER_ID = "identity_provider_user_id";
+        private final String USER_JSON_KEY_IDENTITY_PROVIDER_TOKEN = "identity_provider_token";
+        private final String USER_JSON_KEY_PHONE_NUMBER = "phone_number";
+        private final String USER_JSON_KEY_IDENTITY_PROVIDER_EMAIL = "identity_provider_email";
+        private final String USER_JSON_KEY_USER_NAME = "identity_provider_user_name";
+        private final String USER_JSON_KEY_IS_LOGGED_IN = "is_logged_in";
+        private final String USER_JSON_KEY_ACTIVE_DEVICE_DEV_UUID = "active_device_dev_uuid";
+
+        public String SocialNetworkID;
+        public String SocialNetworkType;
+        public String Token;
+        public String PhoneNumber;
+        public String Email;
+        public String UserName;
+        public String DeviceUUID;
+        public boolean IsLoggedIn;
 
         @Override
         public org.json.simple.JSONObject GetJsonObjectForPost() {
-            return null;
+            Map<String, Object> userData = new HashMap<String, Object>();
+            userData.put(USER_JSON_KEY_IDENTITY_PROVIDER, SocialNetworkType);
+            userData.put(USER_JSON_KEY_IDENTITY_PROVIDER_USER_ID, SocialNetworkID);
+            userData.put(USER_JSON_KEY_IDENTITY_PROVIDER_TOKEN, Token);
+            userData.put(USER_JSON_KEY_PHONE_NUMBER, PhoneNumber);
+            userData.put(USER_JSON_KEY_IDENTITY_PROVIDER_EMAIL, Email);
+            userData.put(USER_JSON_KEY_USER_NAME, UserName);
+            userData.put(USER_JSON_KEY_IS_LOGGED_IN, IsLoggedIn);
+            userData.put(USER_JSON_KEY_ACTIVE_DEVICE_DEV_UUID, DeviceUUID);
+            Map<String, Object> dataToSend = new HashMap<String, Object>();
+            dataToSend.put(USER_JSON_KEY_USER, userData);
+            org.json.simple.JSONObject json = new org.json.simple.JSONObject();
+            json.putAll(dataToSend);
+            return json;
         }
     }
 }

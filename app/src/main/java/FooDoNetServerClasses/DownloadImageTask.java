@@ -2,6 +2,7 @@ package FooDoNetServerClasses;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -33,8 +34,13 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     private static final String MY_TAG = "DownloadImageTask";
 
+    private static final String AVATAR_PICTURE_FILE_NAME = "avatar.jpeg";
+
+    private boolean isAvatarPicture;
+
     IDownloadImageCallBack callback;
     String baseUrl;
+    String avatarUrl;
 
     private int maxImageWidthHeight;
     private String imageFolderPath;
@@ -48,6 +54,16 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
         resultImages = null;
         this.maxImageWidthHeight = maxImageWidthHeight;
         this.imageFolderPath = imageFolderPath;
+        isAvatarPicture = false;
+    }
+
+    public DownloadImageTask(String photoUrl, int maxImageWidthHeight, String imageFolderPath){
+        this.callback = null;
+        avatarUrl = photoUrl;
+        resultImages = null;
+        this.maxImageWidthHeight = maxImageWidthHeight;
+        this.imageFolderPath = imageFolderPath;
+        isAvatarPicture = true;
     }
 
     public synchronized void setRequestHashMap(Map<Integer, Integer> urls){
@@ -61,59 +77,65 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
     }
 
     protected Void doInBackground(Void... params) {
-        resultImages = new HashMap<>();
-        if(request == null || request.size() == 0)
-            return null;
-        Set<Integer> pubIDs = request.keySet();
-        for (int id : pubIDs) {
-            String fileName = String.valueOf(id)
-                    + "." + String.valueOf(request.get(id)) + ".jpg";
-            String url = baseUrl + "/" + fileName;
+        if(isAvatarPicture){
             InputStream is = null;
-            try {
-
-                HttpURLConnection connection = null;
-                URL urlurl = new URL(url);
-                connection = (HttpURLConnection) urlurl.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setReadTimeout(5000);
-                connection.setConnectTimeout(1000);
-                connection.setUseCaches(false);
-                is = connection.getInputStream();
-
-                //is = new java.net.URL(url).openStream();
-                byte[] result = IOUtils.toByteArray(is);
-                result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
-                Log.i(MY_TAG, "Compressed image to " + (int)Math.round(result.length/1024) + " kb");
-
-                File photo=new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
-
-                if (photo.exists()) {
-                    photo.delete();
-                }
-
-                try {
-                    FileOutputStream fos=new FileOutputStream(photo.getPath());
-
-                    fos.write(result);
-                    fos.close();
-                }
-                catch (java.io.IOException e) {
-                    Log.e(MY_TAG, "cant save image");
-                }
-                //resultImages.put(id, result);
-                Log.i(MY_TAG, "succeeded load image " + photo.getPath());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                //e.printStackTrace();
-                Log.e(MY_TAG, "cant load image for: " + fileName);
-            } finally {
-                if (is != null) try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            LoadPicture(is, avatarUrl, AVATAR_PICTURE_FILE_NAME);
+            Log.i(MY_TAG, "loaded avatar picture from " + avatarUrl);
+        } else {
+            resultImages = new HashMap<>();
+            if (request == null || request.size() == 0)
+                return null;
+            Set<Integer> pubIDs = request.keySet();
+            for (int id : pubIDs) {
+                String fileName = String.valueOf(id)
+                        + "." + String.valueOf(request.get(id)) + ".jpg";
+                String url = baseUrl + "/" + fileName;
+                InputStream is = null;
+                LoadPicture(is, url, fileName);
+//                try {
+//
+//                    HttpURLConnection connection = null;
+//                    URL urlurl = new URL(url);
+//                    connection = (HttpURLConnection) urlurl.openConnection();
+//                    connection.setRequestMethod("GET");
+//                    connection.setReadTimeout(5000);
+//                    connection.setConnectTimeout(1000);
+//                    connection.setUseCaches(false);
+//                    is = connection.getInputStream();
+//
+//                    //is = new java.net.URL(url).openStream();
+//                    byte[] result = IOUtils.toByteArray(is);
+//                    result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
+//                    Log.i(MY_TAG, "Compressed image to " + (int) Math.round(result.length / 1024) + " kb");
+//
+//                    File photo = new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
+//
+//                    if (photo.exists()) {
+//                        photo.delete();
+//                    }
+//
+//                    try {
+//                        FileOutputStream fos = new FileOutputStream(photo.getPath());
+//
+//                        fos.write(result);
+//                        fos.close();
+//                    } catch (java.io.IOException e) {
+//                        Log.e(MY_TAG, "cant save image");
+//                    }
+//                    //resultImages.put(id, result);
+//                    Log.i(MY_TAG, "succeeded load image " + photo.getPath());
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    //e.printStackTrace();
+//                    Log.e(MY_TAG, "cant load image for: " + fileName);
+//                } finally {
+//                    if (is != null) try {
+//                        is.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         }
         return null;
@@ -121,6 +143,55 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        callback.OnImageDownloaded(null);
+        if(callback != null)
+            callback.OnImageDownloaded(null);
+    }
+
+    private void LoadPicture(InputStream is, String url, String fileName){
+        try {
+
+            HttpURLConnection connection = null;
+            URL urlurl = new URL(url);
+            connection = (HttpURLConnection) urlurl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(1000);
+            connection.setUseCaches(false);
+            is = connection.getInputStream();
+
+            //is = new java.net.URL(url).openStream();
+            byte[] result = IOUtils.toByteArray(is);
+            result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
+            Log.i(MY_TAG, "Compressed image to " + (int) Math.round(result.length / 1024) + " kb");
+
+            File photo = new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
+
+            if (photo.exists()) {
+                photo.delete();
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(photo.getPath());
+
+                fos.write(result);
+                fos.close();
+            } catch (java.io.IOException e) {
+                Log.e(MY_TAG, "cant save image");
+            }
+            //resultImages.put(id, result);
+            Log.i(MY_TAG, "succeeded load image " + photo.getPath());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            //e.printStackTrace();
+            Log.e(MY_TAG, "cant load image for: " + fileName);
+        } finally {
+            if (is != null) try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
