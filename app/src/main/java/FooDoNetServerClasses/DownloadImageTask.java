@@ -79,7 +79,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         if(isAvatarPicture){
             InputStream is = null;
-            LoadPicture(is, avatarUrl, AVATAR_PICTURE_FILE_NAME);
+            CommonUtil.LoadAndSavePicture(is, avatarUrl, maxImageWidthHeight, imageFolderPath, AVATAR_PICTURE_FILE_NAME);
             Log.i(MY_TAG, "loaded avatar picture from " + avatarUrl);
         } else {
             resultImages = new HashMap<>();
@@ -91,7 +91,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
                         + "." + String.valueOf(request.get(id)) + ".jpg";
                 String url = baseUrl + "/" + fileName;
                 InputStream is = null;
-                LoadPicture(is, url, fileName);
+                CommonUtil.LoadAndSavePicture(is, url, maxImageWidthHeight, imageFolderPath, fileName);
 //                try {
 //
 //                    HttpURLConnection connection = null;
@@ -147,51 +147,4 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
             callback.OnImageDownloaded(null);
     }
 
-    private void LoadPicture(InputStream is, String url, String fileName){
-        try {
-
-            HttpURLConnection connection = null;
-            URL urlurl = new URL(url);
-            connection = (HttpURLConnection) urlurl.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setReadTimeout(5000);
-            connection.setConnectTimeout(1000);
-            connection.setUseCaches(false);
-            is = connection.getInputStream();
-
-            //is = new java.net.URL(url).openStream();
-            byte[] result = IOUtils.toByteArray(is);
-            result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
-            Log.i(MY_TAG, "Compressed image to " + (int) Math.round(result.length / 1024) + " kb");
-
-            File photo = new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
-
-            if (photo.exists()) {
-                photo.delete();
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(photo.getPath());
-
-                fos.write(result);
-                fos.close();
-            } catch (java.io.IOException e) {
-                Log.e(MY_TAG, "cant save image");
-            }
-            //resultImages.put(id, result);
-            Log.i(MY_TAG, "succeeded load image " + photo.getPath());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            //e.printStackTrace();
-            Log.e(MY_TAG, "cant load image for: " + fileName);
-        } finally {
-            if (is != null) try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 }

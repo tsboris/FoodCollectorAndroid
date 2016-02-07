@@ -13,6 +13,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.net.http.AndroidHttpClient;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -33,6 +34,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +44,12 @@ import java.util.Map;
 
 import android.provider.Settings.Secure;
 import android.widget.EditText;
+import android.widget.ImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
 
 import DataModel.FCPublication;
 import upp.foodonet.R;
@@ -175,7 +185,7 @@ public class CommonUtil {
     }
 
     public static BitmapDrawable GetBitmapDrawableFromFile(String fileName, String imageSubFolder, int width, int heigth) {
-        if(fileName == null || fileName.length() == 0) return null;
+        if (fileName == null || fileName.length() == 0) return null;
         File photo = new File(fileName);
         if (!photo.exists())
             photo = new File(Environment.getExternalStorageDirectory() + imageSubFolder, fileName);
@@ -324,8 +334,8 @@ public class CommonUtil {
 
     }
 
-    public static String GetDateTimeStringFromGate(Date date){
-        if(date == null)
+    public static String GetDateTimeStringFromGate(Date date) {
+        if (date == null)
             return "";
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -343,10 +353,10 @@ public class CommonUtil {
         return hours + ":" + minutes + " " + days + "/" + month + "/" + years;
     }
 
-    public static Map<String, LatLng> GetPreviousAddressesMapFromCursor(Cursor cursor){
+    public static Map<String, LatLng> GetPreviousAddressesMapFromCursor(Cursor cursor) {
         Map<String, LatLng> result = new HashMap<>();
-        if(cursor.moveToFirst())
-            do{
+        if (cursor.moveToFirst())
+            do {
                 result.put(cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_ADDRESS_KEY)),
                         new LatLng(cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LATITUDE_KEY)),
                                 cursor.getDouble(cursor.getColumnIndex(FCPublication.PUBLICATION_LONGITUDE_KEY))));
@@ -354,32 +364,37 @@ public class CommonUtil {
         return result;
     }
 
-    public static BitmapDrawable GetImageFromFileForPublicationCursor(Context context, Cursor cursor, int imageSize){
+    public static BitmapDrawable GetImageFromFileForPublicationCursor(Context context, Cursor cursor, int imageSize) {
         final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
         final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
         final boolean cursorHasPhotoUrl = cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL) != -1;
         String imagePath = "";
-        if(cursorHasPhotoUrl)
+        if (cursorHasPhotoUrl)
             imagePath = cursor.getString(cursor.getColumnIndex(FCPublication.PUBLICATION_PHOTO_URL));
         return GetImageFromFileForPublication(context, id, version, imagePath, imageSize);
     }
 
-    public static BitmapDrawable GetImageFromFileForPublication(Context context, int id, int version, String imagePath, int imageSize){
+    public static BitmapDrawable GetImageFromFileForPublication(Context context, int id, int version, String imagePath, int imageSize) {
         BitmapDrawable imageDrawable = null;
-        if (id <= 0) {
-            Log.i(MY_TAG, "negative id");
-            imageDrawable = CommonUtil.GetBitmapDrawableFromFile("n" + (id * -1) + "." + version + ".jpg",
-                    context.getString(R.string.image_folder_path), imageSize, imageSize);
-        } else
-            imageDrawable = CommonUtil.GetBitmapDrawableFromFile(id + "." + version + ".jpg",
-                    context.getString(R.string.image_folder_path), imageSize, imageSize);
-        if(imageDrawable == null && imagePath != null && imagePath.length() > 0){
+        String fileName = GetFileNameByIdAndVersion(id, version);
+        imageDrawable = CommonUtil.GetBitmapDrawableFromFile(fileName,
+                context.getString(R.string.image_folder_path), imageSize, imageSize);
+
+        if (imageDrawable == null && imagePath != null && imagePath.length() > 0) {
             imageDrawable = CommonUtil.GetBitmapDrawableFromFile(imagePath, "", imageSize, imageSize);
         }
         return imageDrawable;
     }
 
-    public static ProgressDialog ShowProgressDialog(Context context, String message){
+    public static String GetFileNameByIdAndVersion(int id, int version) {
+        if (id <= 0) {
+            return "n" + (id * -1) + "." + version + ".jpg";
+        } else {
+            return id + "." + version + ".jpg";
+        }
+    }
+
+    public static ProgressDialog ShowProgressDialog(Context context, String message) {
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -388,14 +403,14 @@ public class CommonUtil {
         return progressDialog;
     }
 
-    public static String GetFileNameByPublication(FCPublication publication){
+    public static String GetFileNameByPublication(FCPublication publication) {
         return String.valueOf(publication.getUniqueId() > 0
                 ? String.valueOf(publication.getUniqueId())
                 : "n" + String.valueOf(publication.getUniqueId() * -1))
                 + "." + String.valueOf(publication.getVersion()) + ".jpg";
     }
 
-    public static void PutCommonPreferenceIsDataLoaded(Context context, boolean isDataLoaded){
+    public static void PutCommonPreferenceIsDataLoaded(Context context, boolean isDataLoaded) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -404,13 +419,13 @@ public class CommonUtil {
         Log.i(MY_TAG, "IsDataLoaded set to: " + String.valueOf(isDataLoaded));
     }
 
-    public static boolean GetFromPreferencesIsDataLoaded(Context context){
+    public static boolean GetFromPreferencesIsDataLoaded(Context context) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_data_loaded), Context.MODE_PRIVATE);
         return sp.getBoolean(context.getString(R.string.shared_preferences_data_loaded_key), false);
     }
 
-    public static void PutCommonPreferenceIsRegisteredDevice(Context context, boolean isDataLoaded){
+    public static void PutCommonPreferenceIsRegisteredDevice(Context context, boolean isDataLoaded) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_is_device_registered), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -419,21 +434,21 @@ public class CommonUtil {
         Log.i(MY_TAG, "IsRegistered set to: " + String.valueOf(isDataLoaded));
     }
 
-    public static boolean GetFromPreferencesIsDeviceRegistered(Context context){
+    public static boolean GetFromPreferencesIsDeviceRegistered(Context context) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_is_device_registered), Context.MODE_PRIVATE);
         return sp.getBoolean(context.getString(R.string.shared_preferences_is_device_registered_key), false);
     }
 
-    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, GoogleSignInAccount account){
+    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, GoogleSignInAccount account) {
         PutCommonPreferencesSocialAccountData(context, "google", account.getDisplayName(), account.getIdToken());
     }
 
-    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, Profile account){
+    public static void PutCommonPreferencesIsRegisteredGoogleFacebook(Context context, Profile account) {
         PutCommonPreferencesSocialAccountData(context, "facebook", account.getName(), account.getId());
     }
 
-    private static void PutCommonPreferencesSocialAccountData(Context context, String socialAccountType, String socialAccountName, String socialAccountToken){
+    private static void PutCommonPreferencesSocialAccountData(Context context, String socialAccountType, String socialAccountName, String socialAccountToken) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -445,22 +460,22 @@ public class CommonUtil {
         Log.i(MY_TAG, "Registered to " + socialAccountType + ", name: " + socialAccountName);
     }
 
-    public static boolean GetFromPreferencesIsRegisteredToGoogleFacebook(Context context){
+    public static boolean GetFromPreferencesIsRegisteredToGoogleFacebook(Context context) {
         SharedPreferences sp = context.getSharedPreferences(
                 context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
         return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_to_google_facebook_key), false);
     }
 
-    public static boolean RemoveImageByPublication(FCPublication publication, Context context){
+    public static boolean RemoveImageByPublication(FCPublication publication, Context context) {
         File img = new File(Environment.getExternalStorageDirectory()
                 + context.getString(R.string.image_folder_path), GetFileNameByPublication(publication));
-        if(!img.exists()) return true;
+        if (!img.exists()) return true;
         return img.delete();
     }
 
-    public static void ReportLocationToServer(Context context){
+    public static void ReportLocationToServer(Context context) {
         GetMyLocationAsync locationAsync = new GetMyLocationAsync(
-                (LocationManager)context.getSystemService(Context.LOCATION_SERVICE), context);
+                (LocationManager) context.getSystemService(Context.LOCATION_SERVICE), context);
         locationAsync.switchToReportLocationMode(true);
         locationAsync.setIMEI(GetIMEI(context));
         locationAsync.execute();
@@ -489,20 +504,69 @@ public class CommonUtil {
         field.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 
-    private static Tracker GetGoogleAnalyticsTracker(Context context){
+    private static Tracker GetGoogleAnalyticsTracker(Context context) {
         return GoogleAnalytics.getInstance(context).newTracker(context.getString(R.string.google_analytics_id));
     }
 
-    public static void PostGoogleAnalyticsUIEvent(Context context, String screenName, String uiControlName, String uiEventType){
+    public static void PostGoogleAnalyticsUIEvent(Context context, String screenName, String uiControlName, String uiEventType) {
         Tracker tracker = GetGoogleAnalyticsTracker(context);
         tracker.setScreenName(screenName);
         tracker.send(new HitBuilders.EventBuilder().setCategory("UI").setAction(uiEventType).setLabel(uiControlName).build());
     }
 
-    public static void PostGoogleAnalyticsActivityOpened(Context context, String screenName){
+    public static void PostGoogleAnalyticsActivityOpened(Context context, String screenName) {
         Tracker tracker = GetGoogleAnalyticsTracker(context);
         tracker.setScreenName(screenName);
         tracker.send(new HitBuilders.EventBuilder().setCategory("ActivityOpened").build());
+    }
+
+    public static Bitmap LoadAndSavePicture(InputStream is, String url, int maxImageWidthHeight, String imageFolderPath, String fileName) {
+        InputStream inputStream = is;
+        try {
+            HttpURLConnection connection = null;
+            URL urlurl = new URL(url);
+            connection = (HttpURLConnection) urlurl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(1000);
+            connection.setUseCaches(false);
+            inputStream = connection.getInputStream();
+
+            //is = new java.net.URL(url).openStream();
+            byte[] result = IOUtils.toByteArray(inputStream);
+            result = CommonUtil.CompressImageByteArrayByMaxSize(result, maxImageWidthHeight);
+            Log.i(MY_TAG, "Compressed image to " + (int) Math.round(result.length / 1024) + " kb");
+
+            File photo = new File(Environment.getExternalStorageDirectory() + imageFolderPath, fileName);
+
+            if (photo.exists()) {
+                photo.delete();
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(photo.getPath());
+
+                fos.write(result);
+                fos.close();
+            } catch (java.io.IOException e) {
+                Log.e(MY_TAG, "cant save image");
+            }
+            //resultImages.put(id, result);
+            Log.i(MY_TAG, "succeeded load and image " + photo.getPath());
+            return BitmapFactory.decodeByteArray(result, 0, result.length);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            //e.printStackTrace();
+            Log.e(MY_TAG, "cant load image for: " + fileName);
+        } finally {
+            if (inputStream != null) try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 }
