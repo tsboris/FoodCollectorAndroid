@@ -72,47 +72,6 @@ public class SideMenuCursorAdapter extends CursorAdapter {
 
         SetPublicationImage(cursor, riv_image, context.getResources().getInteger(R.integer.pub_list_item_image_size_side_menu));
 
-/*
-        riv_image.setImageDrawable(context.getResources().getDrawable(R.drawable.default_publication_icon_side_menu));
-        final int id = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_UNIQUE_ID_KEY));
-        final int version = cursor.getInt(cursor.getColumnIndex(FCPublication.PUBLICATION_VERSION_KEY));
-        File photo = new File(Environment.getExternalStorageDirectory()
-                + context.getString(R.string.image_folder_path), id + "." + version + ".jpg");
-        if (!photo.exists()) return;
-        try {
-            FileInputStream fis = new FileInputStream(photo.getPath());
-            byte[] imageBytes = IOUtils.toByteArray(fis);
-            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 42, 42);
-            Drawable image = new BitmapDrawable(bImage);
-            riv_image.setImageDrawable(image);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
-
-/*
-        byte[] imageBytes = cursor.getBlob(cursor.getColumnIndex(FCPublication.PUBLICATION_IMAGE_BYTEARRAY_KEY));
-        if(imageBytes != null && imageBytes.length > 0){
-            Bitmap bImage = CommonUtil.decodeScaledBitmapFromByteArray(imageBytes, 42, 42);
-            Drawable image = new BitmapDrawable(bImage);//BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)
-            riv_image.setImageDrawable(image);
-        } else {
-            riv_image.setImageDrawable(context.getResources().getDrawable(R.drawable.default_publication_icon_side_menu));
-        }
-*/
-
-/*
-        OvalShape ovalShape = new OvalShape();
-        float size = context.getResources().getDimension(R.dimen.side_menu_item_score_circle_size);
-        ovalShape.resize(size, size);
-        ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
-        shapeDrawable.getPaint()
-                .setColor(context.getResources()
-                        .getColor(R.color.side_menu_score_circle_red));
-        tv_score.setBackground(shapeDrawable);
-*/
     }
 
     private void SetPublicationImage(Cursor cursor, ImageView publicationImage, int imageSize) {

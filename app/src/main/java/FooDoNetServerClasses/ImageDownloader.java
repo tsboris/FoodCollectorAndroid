@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -32,18 +33,33 @@ public class ImageDownloader {
     String imageRepositoryBaseUrl;
     ImageDictionarySyncronized imageDictionary;
 
-    public ImageDownloader(Context context, ImageDictionarySyncronized imageDictionary){
+    public ImageDownloader(Context context, ImageDictionarySyncronized imageDictionary) {
         this.context = context;
-        defaultBitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.foodonet_logo_200_200);
+        defaultBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.foodonet_logo_200_200);
         imageFolderPath = context.getString(R.string.image_folder_path);
         imageRepositoryBaseUrl = context.getString(R.string.amazon_base_url_for_images);
         this.imageDictionary = imageDictionary;
     }
 
-    public void Download(int publicationID, int publicationVersion, ImageView imageView){
+    public void Download(int publicationID, int publicationVersion, ImageView imageView) {
+
+/*
+        if (publicationID == 0 && publicationVersion == 0) {
+            BitmapDrawable bitmapDrawable = CommonUtil.GetBitmapDrawableFromFile("avatar1.jpeg", context.getString(R.string.image_folder_path), 100, 100);
+            String fileName = "882.1.jpg";
+            if (bitmapDrawable == null) {
+                ForceDownload(0, fileName, imageFolderPath, imageRepositoryBaseUrl, imageView);
+            } else {
+                Toast.makeText(context, "file found on sd-card, should add to dict", Toast.LENGTH_LONG).show();
+                imageView.setImageDrawable(bitmapDrawable);
+            }
+            return;
+        }
+*/
+
         BitmapDrawable bitmapDrawable = CommonUtil.GetImageFromFileForPublication(context, publicationID, publicationVersion, null, 100);
         String fileName = CommonUtil.GetFileNameByIdAndVersion(publicationID, publicationVersion);
-        if(bitmapDrawable == null){
+        if (bitmapDrawable == null) {
             ForceDownload(publicationID, fileName, imageFolderPath, imageRepositoryBaseUrl, imageView);
         } else {
             imageDictionary.Put(publicationID, bitmapDrawable);
@@ -55,17 +71,17 @@ public class ImageDownloader {
     private void ForceDownload(int id, String fileName, String imageFolderPath, String imageRepositoryBaseUrl, ImageView imageView) {
         // State sanity: url is guaranteed to never be null in DownloadedDrawable and cache keys.
         if (fileName == null) {
-            imageView.setImageDrawable(null);
+            //imageView.setImageDrawable(null);
             return;
         }
 
         if (CancelPotentialDownload(fileName, imageView)) {
 
             BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, id, fileName, imageRepositoryBaseUrl, imageFolderPath, imageDictionary);
-                    DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task, defaultBitmap, context.getResources());
-                    imageView.setImageDrawable(downloadedDrawable);
-                    imageView.setMinimumHeight(156);
-                    task.execute();
+            DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task, defaultBitmap, context.getResources());
+            imageView.setImageDrawable(downloadedDrawable);
+            //imageView.setMinimumHeight(156);
+            task.execute();
 
         }
     }
@@ -89,7 +105,7 @@ public class ImageDownloader {
         if (imageView != null) {
             Drawable drawable = imageView.getDrawable();
             if (drawable instanceof DownloadedDrawable) {
-                DownloadedDrawable downloadedDrawable = (DownloadedDrawable)drawable;
+                DownloadedDrawable downloadedDrawable = (DownloadedDrawable) drawable;
                 return downloadedDrawable.getBitmapDownloaderTask();
             }
         }
@@ -104,7 +120,7 @@ public class ImageDownloader {
         private final WeakReference<ImageView> imageViewReference;
         private final WeakReference<ImageDictionarySyncronized> imageDictionary;
 
-        private String getImageUrl(){
+        private String getImageUrl() {
             return baseUrl + "/" + fileName;
         }
 
@@ -130,10 +146,11 @@ public class ImageDownloader {
          */
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if(bitmap == null){
-                if(imageDictionary != null){
+            if (bitmap == null) {
+                if (imageDictionary != null) {
                     ImageDictionarySyncronized dictionary = imageDictionary.get();
                     dictionary.Put(publicationID, new BitmapDrawable(defaultBitmap));
+                    return;
                 }
             }
 
@@ -150,7 +167,7 @@ public class ImageDownloader {
                 if ((this == bitmapDownloaderTask)) {
                     imageView.setImageBitmap(bitmap);
                 }
-                if(imageDictionary != null){
+                if (imageDictionary != null) {
                     ImageDictionarySyncronized dictionary = imageDictionary.get();
                     dictionary.Put(publicationID, new BitmapDrawable(bitmap));
                 }

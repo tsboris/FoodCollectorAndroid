@@ -106,6 +106,8 @@
             android:noHistory="true"
             android:screenOrientation="portrait" >
         </activity>
+
+        <activity android:name=".TestActivity"/>
         <!--
         <activity
             android:name=".AddNewFCPublicationActivity"

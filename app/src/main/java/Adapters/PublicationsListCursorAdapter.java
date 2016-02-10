@@ -191,6 +191,7 @@ public class PublicationsListCursorAdapter extends CursorAdapter {
 //                imageDictionary.put(id, imageDrawable);
 //            } else
 //                publicationImage.setImageDrawable(context.getResources().getDrawable(R.drawable.foodonet_logo_200_200));
-        }
+        } else
+            publicationImage.setImageDrawable(imageDrawable);
     }
 }

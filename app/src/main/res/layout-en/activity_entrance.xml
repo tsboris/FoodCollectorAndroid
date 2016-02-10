@@ -63,7 +63,6 @@
                         android:textSize="20dp"
                         android:textStyle="bold"/>
                 </RelativeLayout>
-<!--
                                 <RelativeLayout android:id="@+id/rl_btn_test"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -85,7 +84,6 @@
                                         android:textSize="@dimen/top_panel_text_size"
                                         android:textStyle="bold"/>
                                 </RelativeLayout>
--->
             </LinearLayout>
         </RelativeLayout>
         <RelativeLayout

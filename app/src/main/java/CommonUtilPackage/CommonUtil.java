@@ -553,7 +553,9 @@ public class CommonUtil {
             }
             //resultImages.put(id, result);
             Log.i(MY_TAG, "succeeded load and image " + photo.getPath());
-            return BitmapFactory.decodeByteArray(result, 0, result.length);
+            //return BitmapFactory.decodeByteArray(result, 0, result.length);
+            Bitmap b = BitmapFactory.decodeByteArray(result, 0, result.length);
+            return b;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

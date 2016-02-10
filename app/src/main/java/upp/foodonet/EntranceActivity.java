@@ -64,10 +64,8 @@ public class EntranceActivity
         rl_btn_pick = (RelativeLayout)findViewById(R.id.rl_btn_take_entrance_screen);
         rl_btn_pick.setOnClickListener(this);
 
-/*
         rl_btn_test = (RelativeLayout)findViewById(R.id.rl_btn_test);
         rl_btn_test.setOnClickListener(this);
-*/
 
     }
 
@@ -130,12 +128,16 @@ public class EntranceActivity
                 Intent myPubsIntent = new Intent(this, MyPublicationsActivity.class);
                 startActivity(myPubsIntent);
                 break;
-            /*case R.id.rl_btn_test:
+            case R.id.rl_btn_test:
+/*
                 GcmSenderTest senderTest = new GcmSenderTest(getString(R.string.push_notification_prefix));
                 senderTest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+*/
                 progressDialog.dismiss();
                 isUIBlocked = false;
-                break;*/
+                Intent intent = new Intent(this, TestActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
