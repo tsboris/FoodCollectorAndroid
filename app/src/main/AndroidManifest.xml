@@ -54,7 +54,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!-- android:noHistory="true" -->
+        <!-- android:noHistory="true" -->
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -106,8 +106,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait" >
         </activity>
-
-        <activity android:name=".TestActivity"/>
+        <activity android:name=".TestActivity" />
         <!--
         <activity
             android:name=".AddNewFCPublicationActivity"
@@ -220,6 +219,10 @@
             android:name=".SignInActivity"
             android:label="@string/title_activity_sign_in"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".RegisterPhoneActivity"
+            android:label="@string/title_activity_register_phone" >
         </activity>
     </application>
 

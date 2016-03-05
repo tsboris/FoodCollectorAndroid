@@ -57,19 +57,25 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     public static final String FACEBOOK_KEY = "facebook";
     public static final String GOOGLE_KEY = "google";
     public static final String FOODONET_KEY = "foodonet";
+    public static final String PHONE_KEY = "phone_number";
+    public static final String AVATAR_KEY = "avatar";
+    public static final String NETWORKTYPE_KEY = "networktype";
+    public static final String USER_NAME = "user_name";
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+    private static final int RC_REG_PHONE_NUM = 1;
     ImageButton signInGoogle;
     public Profile profile;
     ImageButton faceLogIn;
+    GoogleSignInAccount account;
     TextView continueWithoutRegistration;
     ProfileTracker profileTracker;
     AccessTokenTracker accessTokenTracker;
     public CallbackManager callbackManager;
     private GoogleApiClient mGoogleApiClient;
     private boolean isFacebookTrackingStarted;
-
+    private InternalRequest ir;
 
     public FacebookCallback<LoginResult> facebookCallback;
 
@@ -127,6 +133,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+        else if (requestCode == RC_REG_PHONE_NUM) {
+            String phoneNumber = data.getStringExtra(PHONE_KEY);
+            ir.PhoneNumber = phoneNumber;
+            Intent dataUserRegistrationIntent = new Intent();
+            dataUserRegistrationIntent.putExtra(InternalRequest.INTERNAL_REQUEST_EXTRA_KEY, ir);
+            setResult(1, dataUserRegistrationIntent);
+            finish();
+        }
     }
 
     @Override
@@ -175,38 +189,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount account = result.getSignInAccount();
-            CommonUtil.PutCommonPreferencesIsRegisteredGoogleFacebook(this, account);
-            InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_USER);
-            ir.SocialNetworkType = GOOGLE_KEY;
-            ir.SocialNetworkID = account.getId();
-            ir.SocialNetworkToken = "token1"; //account.getIdToken();
-            ir.PhoneNumber = "0545645";
-            ir.Email = account.getEmail();
-            ir.UserName = account.getDisplayName();
-            ir.IsLoggedIn = true;
-            ir.DeviceUUID = CommonUtil.GetIMEI(this);
-            ir.ServerSubPath = getString(R.string.server_post_register_user);
-            Uri photoUri = account.getPhotoUrl();
-            if(photoUri != null)
-                ir.PhotoURL = photoUri.toString();
-            Intent dataUserRegistrationIntent = new Intent();
-            dataUserRegistrationIntent.putExtra(InternalRequest.INTERNAL_REQUEST_EXTRA_KEY, ir);
-            setResult(1, dataUserRegistrationIntent);
-            finish();
-            //Toast.makeText(this, acct.getDisplayName(), Toast.LENGTH_LONG).show();
-            /*mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            updateUI(true);*/
-        } else {
-            // Signed out, show unauthenticated UI.
-            //updateUI(false);
-            Toast.makeText(this, "Login error", Toast.LENGTH_LONG).show();
-        }
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -223,6 +205,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 //                        profile = Profile.getCurrentProfile();
 //
 //                        Toast.makeText(getApplicationContext(), profile.getFirstName() + " is logged to Facebook", Toast.LENGTH_SHORT).show();
+//
+//                        Intent regPhoneIntent = new Intent(getApplicationContext(), RegisterPhoneActivity.class);
+//                        startActivityForResult(regPhoneIntent, RC_REG_PHONE_NUM);
 //                    }
 //
 //                    @Override
@@ -297,12 +282,62 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         };
     }
 
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            account = result.getSignInAccount();
+            CommonUtil.PutCommonPreferencesIsRegisteredGoogleFacebook(this, account);
+            CreateGoogleInternalRequest();
+            Intent regPhoneIntent = new Intent(getApplicationContext(), RegisterPhoneActivity.class);
+            regPhoneIntent.putExtra(AVATAR_KEY, ir.PhotoURL);
+            regPhoneIntent.putExtra(NETWORKTYPE_KEY, ir.SocialNetworkType);
+            regPhoneIntent.putExtra(USER_NAME, ir.UserName);
+            startActivityForResult(regPhoneIntent, RC_REG_PHONE_NUM);
+            //Toast.makeText(this, acct.getDisplayName(), Toast.LENGTH_LONG).show();
+            /*mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            updateUI(true);*/
+        } else {
+            // Signed out, show unauthenticated UI.
+            //updateUI(false);
+            Toast.makeText(this, "Login error", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void CreateGoogleInternalRequest()
+    {
+        ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_USER);
+        ir.SocialNetworkType = GOOGLE_KEY;
+        ir.SocialNetworkID = account.getId();
+        ir.SocialNetworkToken = "token1"; //account.getIdToken();
+        ir.PhoneNumber = "0545645";
+        ir.Email = account.getEmail();
+        ir.UserName = account.getDisplayName();
+        ir.IsLoggedIn = true;
+        ir.DeviceUUID = CommonUtil.GetIMEI(this);
+        ir.ServerSubPath = getString(R.string.server_post_register_user);
+        Uri photoUri = account.getPhotoUrl();
+        if(photoUri != null)
+            ir.PhotoURL = photoUri.toString();
+    }
+
+
     @Override
     public void onSuccess(LoginResult loginResult) {
         profile = Profile.getCurrentProfile();
         CommonUtil.PutCommonPreferencesIsRegisteredGoogleFacebook(this, profile);
-        InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_USER);
-        ir.SocialNetworkType = FACEBOOK_KEY;
+        CreateFacebookInternalRequest();
+        Intent regPhoneIntent = new Intent(getApplicationContext(), RegisterPhoneActivity.class);
+        regPhoneIntent.putExtra(NETWORKTYPE_KEY, ir.SocialNetworkType);
+        regPhoneIntent.putExtra(USER_NAME, ir.UserName);
+        regPhoneIntent.putExtra(AVATAR_KEY, ir.PhotoURL);
+        startActivityForResult(regPhoneIntent, RC_REG_PHONE_NUM);
+    }
+
+    public void CreateFacebookInternalRequest()
+    {
+        ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_USER);
+            ir.SocialNetworkType = FACEBOOK_KEY;
         ir.SocialNetworkID = profile.getId();
         ir.SocialNetworkToken = "";
         ir.PhoneNumber = "";
@@ -312,10 +347,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         ir.DeviceUUID = CommonUtil.GetIMEI(this);
         ir.PhotoURL = profile.getProfilePictureUri(100, 100).getPath();
         ir.ServerSubPath = getString(R.string.server_post_register_user);
-        Intent dataUserRegistrationIntent = new Intent();
-        dataUserRegistrationIntent.putExtra(InternalRequest.INTERNAL_REQUEST_EXTRA_KEY, ir);
-        setResult(1, dataUserRegistrationIntent);
-        finish();
     }
 
     @Override

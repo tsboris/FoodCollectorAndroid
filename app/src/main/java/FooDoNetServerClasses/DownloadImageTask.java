@@ -1,11 +1,14 @@
 package FooDoNetServerClasses;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.amazonaws.util.IOUtils;
 
@@ -26,10 +29,12 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import CommonUtilPackage.CommonUtil;
+import CommonUtilPackage.ImageDictionarySyncronized;
 
 /**
  * Created by ah on 31/08/15.
  */
+
 public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     private static final String MY_TAG = "DownloadImageTask";
@@ -47,6 +52,10 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     Map<Integer, Integer> request;
     Map<Integer, byte[]> resultImages;
+    private Bitmap imageAvatar;
+    private ImageView imageView;
+
+    //private final WeakReference<ImageView> imageViewReference;
 
     public DownloadImageTask(IDownloadImageCallBack callBack, String baseUrlImages, int maxImageWidthHeight, String imageFolderPath) {
         this.callback = callBack;
@@ -55,9 +64,21 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
         this.maxImageWidthHeight = maxImageWidthHeight;
         this.imageFolderPath = imageFolderPath;
         isAvatarPicture = false;
+        this.imageView = null;
     }
 
-    public DownloadImageTask(String photoUrl, int maxImageWidthHeight, String imageFolderPath){
+    public DownloadImageTask(String photoUrl, int maxImageWidthHeight, String imageFolderPath) {
+        this.callback = null;
+        avatarUrl = photoUrl;
+        resultImages = null;
+        this.maxImageWidthHeight = maxImageWidthHeight;
+        this.imageFolderPath = imageFolderPath;
+        isAvatarPicture = true;
+        this.imageView = null;
+    }
+
+    public DownloadImageTask(String photoUrl, int maxImageWidthHeight, String imageFolderPath, ImageView imageView) {
+        this.imageView = imageView;
         this.callback = null;
         avatarUrl = photoUrl;
         resultImages = null;
@@ -66,20 +87,20 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
         isAvatarPicture = true;
     }
 
-    public synchronized void setRequestHashMap(Map<Integer, Integer> urls){
-        if(urls == null || urls.size() == 0)
+    public synchronized void setRequestHashMap(Map<Integer, Integer> urls) {
+        if (urls == null || urls.size() == 0)
             return;
-        if(request == null)
+        if (request == null)
             request = new HashMap<>();
         Set<Integer> set = urls.keySet();
-        for(int i : set)
+        for (int i : set)
             request.put(i, urls.get(i));
     }
 
     protected Void doInBackground(Void... params) {
-        if(isAvatarPicture){
+        if (isAvatarPicture) {
             InputStream is = null;
-            CommonUtil.LoadAndSavePicture(is, avatarUrl, maxImageWidthHeight, imageFolderPath, AVATAR_PICTURE_FILE_NAME);
+            imageAvatar = CommonUtil.LoadAndSavePicture(is, avatarUrl, maxImageWidthHeight, imageFolderPath, AVATAR_PICTURE_FILE_NAME);
             Log.i(MY_TAG, "loaded avatar picture from " + avatarUrl);
         } else {
             resultImages = new HashMap<>();
@@ -143,8 +164,12 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if(callback != null)
-            callback.OnImageDownloaded(null);
-    }
+        if(imageAvatar != null && this.imageView != null)
+            this.imageView.setImageBitmap(imageAvatar);
 
+        if (callback != null) {
+            callback.OnImageDownloaded(null);
+        }
+    }
 }
+

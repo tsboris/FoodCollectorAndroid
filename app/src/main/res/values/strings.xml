@@ -86,11 +86,14 @@
 
     <!-- Connection strings - PRODUCTION -->
 
-    <!--<string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string>-->
-    <!--<string name="server_base_url">https://fd-server.herokuapp.com</string>-->
-    <!--<string name="push_notification_prefix">/topics/prod</string>-->
+
+    <!-- <string name="amazon_base_url_for_images">https://s3.amazonaws.com/foodcollector</string> -->
+    <!-- <string name="server_base_url">https://fd-server.herokuapp.com</string> -->
+    <!-- <string name="push_notification_prefix">/topics/prod</string> -->
+
 
     <!-- ========================== -->
+
 
     <!-- Connection strings - DEV -->
 
@@ -113,12 +116,11 @@
     <string name="server_post_register_user">/users</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="google_analytics_id">UA-70625355-1</string>
-    <string name="facebook_app_id">1124320050974431</string><!--1635109600077158-->
+    <string name="facebook_app_id">451780775026519</string> <!-- 1635109600077158 -->
     <string name="register_new_device">/active_devices.json</string>
     <string name="title_activity_my_publications">MyPublicationsActivity</string>
     <string name="title_activity_publication_details">PublicationDetailsActivity</string>
     <string name="title_fullSizeImg_activity">FullSizeImgActivity</string>
-
     <string name="hashtag">#FooDoNet</string>
     <string name="facebook_page_url">https://www.facebook.com/foodonet</string>
 
@@ -141,7 +143,6 @@
     <string name="shared_preferences_contact_info">contact_info</string>
     <string name="shared_preferences_contact_info_name">contact_info_name</string>
     <string name="shared_preferences_contact_info_phone">contact_info_phone</string>
-
     <string name="shared_preferences_social_account_type_key">social_account_type</string>
     <string name="shared_preferences_social_account_name_key">social_account_name</string>
     <string name="shared_preferences_social_account_token_key">social_account_token</string>
@@ -154,14 +155,12 @@
 
     <string name="regex_israel_phone_number">^0?([57][02345678])(\\-)?\\d{7}$</string>
     <string name="file_name_part_just_shot">justShot</string>
-
     <string name="validation_title_empty">שם השיתוף לא יכול להיות ריק</string>
     <string name="validation_title_too_long">שם השיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
     <string name="validation_address_empty">חובה למלא כתובת</string>
     <string name="validation_phone_number_empty">חובה למלא טלפון</string>
     <string name="validation_phone_number_invalid">מספר הטלפון אינו תקין</string>
     <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות רחוק יותר מתאריך הסיום</string>
-
     <string name="title_begin_pub_details">התחלה:</string>
     <string name="title_end_pub_details">סיום:</string>
     <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
@@ -199,7 +198,6 @@
     <string name="report_dialog_found_nothing_btn">לא נמצא כלום</string>
     <string name="report_dialog_report_btn">דווח</string>
     <string name="report_dialog_cancel_btn">בטל</string>
-
     <string name="report_big_distance">מרחק ממיקום השיתוף גדול מ-2 ק״מ. האם לדווח?</string>
     <string name="report_big_distance_ok_btn">אישור</string>
     <string name="report_big_distance_cancel_btn">ביטול</string>
@@ -233,6 +231,7 @@
 
     <!-- All publications list -->
 
+
     <!-- My publications list -->
 
     <string name="progress_saving">שמירה</string>
@@ -257,7 +256,8 @@
     <string name="yes">כן</string>
     <string name="no">לא</string>
 
-    <!-- -->
+    <!--  -->
+
 
     <!-- Notification messages -->
 
@@ -265,27 +265,33 @@
     <string name="notif_was_deleted">שיתוף נמחק</string>
     <string name="notif_report">התקבל דיווח חדש על השיתוף</string>
     <string name="notif_new_registered_user">משתמש חדש נרשם לשיתוף</string>
-    
-    <!-- -->
-    
+
+    <!--  -->
+
+
     <!-- Feedback Dialog -->
-    
+
     <string name="feedback_dialog_title">שתפו אותנו במחשבות, הצעות או כל מה שתירצו</string>
     <string name="feedback_name_hint">שם שלך</string>
     <string name="feedback_report_hint">טקסט תגובה</string>
     <string name="feedback_btn_ok">שלח</string>
     <string name="feedback_btn_cancel">ביטול</string>
     <string name="title_activity_sign_in">SignInActivity</string>
-    
-    <!--Sign in activity -->
+
+    <!-- Sign in activity -->
 
     <string name="sign_in_title">Sharing food changing society</string>
     <string name="sign_in_subtitle">Ready to get started?</string>
     <string name="sign_in_footer">Continue without Registration</string>
     <string name="sign_in_with_title">Sign in with</string>
-    
-    <!-- Map -->
-    
-    <!-- -->
 
+    <!-- Map -->
+
+
+    <!--  -->
+
+    <string name="title_activity_register_phone">RegisterPhoneActivity</string>
+    <string name="welcome_reg_number_string">ברוכים הבאים ל FOODONET</string>
+    <string name="btn_start_sharing_string">התחל לשתף</string>
+    <string name="last_step_string">LAST STEP TO START</string>
 </resources>
