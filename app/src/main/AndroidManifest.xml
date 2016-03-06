@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="upp.foodonet"
     android:versionCode="19"
-    android:versionName="1.0803" > <!-- todo check if this uses-sdk can be removed -->
+    android:versionName="1.0803">
+    <!-- todo check if this uses-sdk can be removed -->
     <!-- for google play -->
     <!--
 <uses-configuration
@@ -43,11 +44,11 @@
         android:allowBackup="true"
         android:icon="@drawable/foodonet_logo_200_200"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".SplashScreenActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,7 +60,7 @@
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
@@ -104,8 +105,7 @@
             android:name=".EntranceActivity"
             android:label="@string/app_name"
             android:noHistory="true"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity android:name=".TestActivity" />
         <!--
         <activity
@@ -134,25 +134,23 @@
         <service
             android:name=".FooDoNetService"
             android:enabled="true"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
         <activity
             android:name=".MapAndListActivity"
             android:label="@string/title_activity_map_and_list"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <service
             android:name=".FooDoNetGcmListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
             android:name=".FooDoNetInstanceIDListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
@@ -167,25 +165,21 @@
         <activity
             android:name=".MyPublicationsActivity"
             android:label="@string/title_activity_my_publications"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".PublicationDetailsActivity"
             android:label="@string/title_activity_publication_details"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".FullSizeImgActivity"
             android:label="@string/title_fullSizeImg_activity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
@@ -194,36 +188,31 @@
 
         <service
             android:name=".ReloadDataIntentService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
         <service
             android:name=".RegisterUnregisterReportService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
         <activity
             android:name=".AddEditPublicationActivity"
             android:label="@string/title_activity_add_edit_publication"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <service
             android:name=".AddEditPublicationService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
 
         <activity
             android:name=".SignInActivity"
             android:label="@string/title_activity_sign_in"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".RegisterPhoneActivity"
-            android:label="@string/title_activity_register_phone" >
-        </activity>
+            android:label="@string/title_activity_register_phone"></activity>
+        <activity android:name=".GroupsActivity"></activity>
     </application>
 
 </manifest>

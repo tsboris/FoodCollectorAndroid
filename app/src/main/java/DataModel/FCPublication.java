@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import CommonUtilPackage.CommonUtil;
 import upp.foodonet.PublicationDetailsActivity;
 
 /**
@@ -109,43 +110,21 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
     public boolean IsEqualTo(FCPublication otherPublication){
         if(getUniqueId() != otherPublication.getUniqueId()) return false;
         if(getVersion() != otherPublication.getVersion()) return false;
-        if(CheckIfStringsDiffer(getTitle(), otherPublication.getTitle())) return false;
-        if(CheckIfStringsDiffer(getSubtitle(), otherPublication.getSubtitle())) return false;
-        if(CheckIfStringsDiffer(getPublisherUID(), otherPublication.getPublisherUID()))return false;
-        if(CheckIfStringsDiffer(getAddress(), otherPublication.getAddress())) return false;
+        if(CommonUtil.CheckIfStringsDiffer(getTitle(), otherPublication.getTitle())) return false;
+        if(CommonUtil.CheckIfStringsDiffer(getSubtitle(), otherPublication.getSubtitle())) return false;
+        if(CommonUtil.CheckIfStringsDiffer(getPublisherUID(), otherPublication.getPublisherUID()))return false;
+        if(CommonUtil.CheckIfStringsDiffer(getAddress(), otherPublication.getAddress())) return false;
         if(getStartingDateUnixTime() != otherPublication.getStartingDateUnixTime()) return false;
         if (getEndingDateUnixTime() != otherPublication.getEndingDateUnixTime()) return false;
         if(getTypeOfCollecting() != otherPublication.getTypeOfCollecting()) return false;
         if(getLatitude() != otherPublication.getLatitude()) return false;
         if(getLongitude() != otherPublication.getLongitude()) return false;
-        if(CheckIfStringsDiffer(getContactInfo(), otherPublication.getContactInfo())) return false;
+        if(CommonUtil.CheckIfStringsDiffer(getContactInfo(), otherPublication.getContactInfo())) return false;
         if(getIsOnAir() != otherPublication.getIsOnAir()) return false;
-        if(CheckIfStringsDiffer(getPhotoUrl(), otherPublication.getPhotoUrl())) return false;
+        if(CommonUtil.CheckIfStringsDiffer(getPhotoUrl(), otherPublication.getPhotoUrl())) return false;
         if(!TextUtils.isEmpty(otherPublication.getPhotoUrl())) return false;
         return true;
     }
-
-    private boolean CheckIfStringsDiffer(String string1, String string2){
-        if(string1 == null && string2 != null) return true;
-        if(string1 != null && string2 == null) return true;
-        if(string1 == null && string2 == null) return false;
-        return (string1.compareTo(string2) != 0);
-    }
-
-    // Create a new Item from data packaged in an Intent
-/*  public FCPublication(Intent intent) {
-
-        title = intent.getStringExtra(PUBLICATION_TITLE_KEY);
-        //photoUrl = Uri.parse( intent.getStringExtra(PUBLICATION_PHOTO_URL));
-    }
-
-    public static void packageIntent(Intent intent, String title, Uri photoUrl) {
-
-        intent.putExtra(PUBLICATION_TITLE_KEY, title);
-        intent.putExtra(PUBLICATION_PHOTO_URL, photoUrl);
-
-    }
-*/
 
     private int uniqueId;
 
@@ -564,55 +543,6 @@ public class FCPublication implements Serializable, ICanWriteSelfToJSONWriter {
             return null;
         }
         return new AbstractMap.SimpleEntry<Integer, Integer>(idValue, versionValue);
-    }
-
-    public JSONObject GetJSONObject() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put(PUBLICATION_UNIQUE_ID_KEY, getUniqueId());
-            jsonObject.put(PUBLICATION_PUBLISHER_UUID_KEY, getPublisherUID());
-            jsonObject.put(PUBLICATION_TITLE_KEY, getTitle());
-            jsonObject.put(PUBLICATION_SUBTITLE_KEY, getSubtitle());
-            jsonObject.put(PUBLICATION_VERSION_KEY, getVersion());
-            jsonObject.put(PUBLICATION_ADDRESS_KEY, getAddress());
-            jsonObject.put(PUBLICATION_TYPE_OF_COLLECTION_KEY, getTypeOfCollecting());
-            jsonObject.put(PUBLICATION_LATITUDE_KEY, getLatitude());
-            jsonObject.put(PUBLICATION_LONGITUDE_KEY, getLongitude());
-            jsonObject.put(PUBLICATION_STARTING_DATE_KEY, getStartingDateUnixTime());
-            jsonObject.put(PUBLICATION_ENDING_DATE_KEY, getEndingDateUnixTime());
-            jsonObject.put(PUBLICATION_CONTACT_INFO_KEY, getContactInfo());
-            jsonObject.put(PUBLICATION_PHOTO_URL, getPhotoUrl());
-            jsonObject.put(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY, getCountOfRegisteredUsers());
-            jsonObject.put(PUBLICATION_IS_ON_AIR_KEY, getIsOnAir());
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return jsonObject;
-    }
-
-    public void WriteSelfToJSONWriter(JsonWriter writer){
-        try {
-            writer.beginObject();
-            writer.name(PUBLICATION_UNIQUE_ID_KEY_JSON).value(getUniqueId());
-            writer.name(PUBLICATION_VERSION_KEY).value(getVersion());
-            writer.name(PUBLICATION_TITLE_KEY).value(getTitle());
-            writer.name(PUBLICATION_SUBTITLE_KEY).value(getSubtitle());
-            writer.name(PUBLICATION_PUBLISHER_UUID_KEY).value(getPublisherUID());
-            writer.name(PUBLICATION_ADDRESS_KEY).value(getAddress());
-            writer.name(PUBLICATION_TYPE_OF_COLLECTION_KEY).value(getTypeOfCollecting());
-            writer.name(PUBLICATION_LATITUDE_KEY).value(getLatitude());
-            writer.name(PUBLICATION_LONGITUDE_KEY).value(getLongitude());
-            writer.name(PUBLICATION_STARTING_DATE_KEY).value(getStartingDateUnixTime());
-            writer.name(PUBLICATION_ENDING_DATE_KEY).value(getEndingDateUnixTime());
-            writer.name(PUBLICATION_CONTACT_INFO_KEY).value(getContactInfo());
-            writer.name(PUBLICATION_PHOTO_URL).value(getPhotoUrl());
-            writer.name(PUBLICATION_COUNT_OF_REGISTER_USERS_KEY).value(getCountOfRegisteredUsers());
-            writer.name(PUBLICATION_IS_ON_AIR_KEY).value(getIsOnAir());
-            writer.endObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

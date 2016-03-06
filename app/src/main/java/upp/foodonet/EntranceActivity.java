@@ -135,7 +135,7 @@ public class EntranceActivity
 */
                 progressDialog.dismiss();
                 isUIBlocked = false;
-                Intent intent = new Intent(this, TestActivity.class);
+                Intent intent = new Intent(this, GroupsActivity.class);
                 startActivity(intent);
                 break;
         }

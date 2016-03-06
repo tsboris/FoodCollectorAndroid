@@ -571,4 +571,12 @@ public class CommonUtil {
         return null;
     }
 
+
+    public static boolean CheckIfStringsDiffer(String string1, String string2){
+        if(string1 == null && string2 != null) return true;
+        if(string1 != null && string2 == null) return true;
+        if(string1 == null && string2 == null) return false;
+        return (string1.compareTo(string2) != 0);
+    }
+
 }
