@@ -67,6 +67,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private static final int RC_REG_PHONE_NUM = 1;
     ImageButton signInGoogle;
     public Profile profile;
+    public String facebookEmail;
     ImageButton faceLogIn;
     GoogleSignInAccount account;
     TextView continueWithoutRegistration;
@@ -107,7 +108,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void InitGoogleLogin() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
+                .requestEmail()//.requestIdToken()
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -165,7 +166,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.sing_in_btn_facebook:
                 //Toast.makeText(this,"face",Toast.LENGTH_LONG).show();
                 facebookCallback = InitFacebookCallback();
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends", "email"));
 
                 break;
             case R.id.sing_in_btn_google:
@@ -254,14 +255,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 // Application code
                                 try {
                                     String s = object.getString("locale");
-
+                                    facebookEmail = object.getString("email");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,link");
+                parameters.putString("fields", "id,name,link,email");
                 request.setParameters(parameters);
                 request.executeAsync();
 
@@ -341,7 +342,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         ir.SocialNetworkID = profile.getId();
         ir.SocialNetworkToken = "";
         ir.PhoneNumber = "";
-        ir.Email = "";
+        ir.Email = facebookEmail;
         ir.UserName = profile.getName();
         ir.IsLoggedIn = true;
         ir.DeviceUUID = CommonUtil.GetIMEI(this);

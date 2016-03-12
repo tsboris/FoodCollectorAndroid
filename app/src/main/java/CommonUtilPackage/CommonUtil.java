@@ -579,4 +579,16 @@ public class CommonUtil {
         return (string1.compareTo(string2) != 0);
     }
 
+    public static int GetMyUserID(Context context){
+        SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
+        return sp.getInt("user_id", -1);
+    }
+
+    public static boolean SaveMyUserID(Context context, int userID){
+        SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("user_id", userID);
+        return editor.commit();
+    }
+
 }

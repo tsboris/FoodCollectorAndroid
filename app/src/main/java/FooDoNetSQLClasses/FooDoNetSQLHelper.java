@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import DataModel.FCPublication;
+import DataModel.Group;
+import DataModel.GroupMember;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 
@@ -18,7 +20,7 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
     private static final String MY_TAG = "food_SQLHelper";
 
     public static final String FC_DATABASE_NAME = "FoodCollector.db";
-    public static final int FC_DATABASE_VERSION = 11;
+    public static final int FC_DATABASE_VERSION = 12;
 
     public static final int FILTER_ID_LIST_ALL_BY_CLOSEST = 0;
     public static final int FILTER_ID_LIST_ALL_BY_NEWEST = 1;
@@ -42,6 +44,8 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
         FCPublicationsTable.onCreate(db);
         RegisteredForPublicationTable.onCreate(db);
         PublicationReportsTable.onCreate(db);
+        GroupTable.onCreate(db);
+        GroupMemberTable.onCreate(db);
     }
 
     @Override
@@ -49,6 +53,8 @@ public class FooDoNetSQLHelper extends SQLiteOpenHelper {
         FCPublicationsTable.onUpgrade(db);
         RegisteredForPublicationTable.onUpgrade(db);
         PublicationReportsTable.onUpgrade(db);
+        GroupTable.onUpgrade(db);
+        GroupMemberTable.onUpgrade(db);
     }
 
     public static String GetRawSelectPublicationsForListByFilterID(int filterID, String... params) {

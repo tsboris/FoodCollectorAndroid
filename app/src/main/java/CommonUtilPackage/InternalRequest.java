@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import DataModel.FCPublication;
+import DataModel.Group;
 import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -58,7 +59,9 @@ public class InternalRequest implements Serializable {
     public static final int ACTION_PUSH_REG = 28;
     public static final int ACTION_POST_NEW_USER = 29;
     public static final int ACTION_POST_EDIT_USER = 30;
+    public static final int ACTION_POST_NEW_GROUP = 31;
     public static final int ACTION_POST_FEEDBACK = 99;
+
 
     public static final int STATUS_OK = 1;
     public static final int STATUS_FAIL = 0;
@@ -92,6 +95,8 @@ public class InternalRequest implements Serializable {
     public String DeviceUUID;
     public boolean IsLoggedIn;
     public String PhotoURL;
+
+    public Group group;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;
@@ -178,6 +183,11 @@ public class InternalRequest implements Serializable {
     public InternalRequest(int com, long pubId){
         ActionCommand = com;
         PublicationID = pubId;
+    }
+
+    public InternalRequest(int com, Group group){
+        ActionCommand = com;
+        this.group = group;
     }
 
 }
