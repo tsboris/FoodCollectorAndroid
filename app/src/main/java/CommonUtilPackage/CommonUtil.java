@@ -571,4 +571,8 @@ public class CommonUtil {
         return null;
     }
 
+    public static String GetNetworkUrl(String baseUrl, String photoURL ) {
+        return  baseUrl + photoURL + "?type=large";
+    }
+
 }

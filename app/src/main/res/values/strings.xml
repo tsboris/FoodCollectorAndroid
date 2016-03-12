@@ -288,10 +288,11 @@
     <!-- Map -->
 
 
-    <!--  -->
+    <!-- Register Phone Activity -->
 
     <string name="title_activity_register_phone">RegisterPhoneActivity</string>
     <string name="welcome_reg_number_string">ברוכים הבאים ל FOODONET</string>
     <string name="btn_start_sharing_string">התחל לשתף</string>
     <string name="last_step_string">LAST STEP TO START</string>
+    <string name="facebook_url">https://graph.facebook.com/</string>
 </resources>
