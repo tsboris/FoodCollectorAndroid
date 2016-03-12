@@ -50,7 +50,7 @@
         android:textStyle="bold"/>
 
     <EditText
-        android:id="@+id/et_additional_info_add_edit_pub"
+        android:id="@+id/et_phone"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="@string/add_phone_number_string"
