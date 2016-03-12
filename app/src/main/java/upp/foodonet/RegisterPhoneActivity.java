@@ -1,6 +1,9 @@
 package upp.foodonet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -10,15 +13,18 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.w3c.dom.Text;
 
+import CommonUtilPackage.CommonUtil;
 import FooDoNetServerClasses.DownloadImageTask;
 import UIUtil.RoundedImageView;
 
@@ -26,7 +32,7 @@ import UIUtil.RoundedImageView;
 
 public class RegisterPhoneActivity extends Activity implements View.OnClickListener{
 
-    private EditText et_additional_info;
+    private EditText et_phone_number;
     private Button btn_register;
     private TextView tv_profile_name;
     public static final String PHONE_KEY = "phone_number";
@@ -41,8 +47,8 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_phone);
 
-        et_additional_info = (EditText) findViewById(R.id.et_additional_info_add_edit_pub);
-        et_additional_info.setInputType(InputType.TYPE_CLASS_NUMBER);
+        et_phone_number = (EditText) findViewById(R.id.et_phone);
+        et_phone_number.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         btn_register = (Button) findViewById(R.id.btn_register_phone);
         btn_register.setOnClickListener(this);
@@ -55,9 +61,10 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
             String socialNetworkType = i.getStringExtra(NETWORKTYPE_KEY);
             String baseUrl = "";
             if(socialNetworkType.equals(FACEBOOK_KEY))
-                baseUrl = "https://graph.facebook.com/";
+                baseUrl = getString(R.string.facebook_url);
             ImageView userProfileImage = (ImageView) findViewById(R.id.iv_user_profile_img);
-            DownloadImageTask imageTask = new DownloadImageTask(baseUrl + photoURL + "?type=large",
+            String networkUrl = CommonUtil.GetNetworkUrl(baseUrl, photoURL);
+            DownloadImageTask imageTask = new DownloadImageTask(networkUrl,
                     1024, getString(R.string.image_folder_path), userProfileImage);
             imageTask.execute();
         }
@@ -89,19 +96,59 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void OnImageDownloaded(Bitmap result) {
-//        Bitmap roundBmp = RoundedImageView.getRoundedCroppedBitmap(result, 200);
-//        ImageView avatarImg = (ImageView)findViewById(R.id.iv_user_profile_img);
-//        avatarImg.setImageBitmap(roundBmp);
-//    }
+    @Override
+    public void onBackPressed() {
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        ForceReturn();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        return;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.confirmExit))
+                .setPositiveButton(getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getString(R.string.no), dialogClickListener).show();
+    }
+
+    private void ForceReturn(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        //finish();
+    }
+
+    private boolean ValidatePhoneField() {
+        if (et_phone_number.getText().length() == 0) {
+            CommonUtil.SetEditTextIsValid(this, et_phone_number, false);
+            Toast.makeText(this, getString(R.string.validation_phone_number_empty), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if (!CommonUtil.CheckPhoneNumberString(this, et_phone_number.getText().toString())) {
+            CommonUtil.SetEditTextIsValid(this, et_phone_number, false);
+            Toast.makeText(this, getString(R.string.validation_phone_number_invalid), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        CommonUtil.SetEditTextIsValid(this, et_phone_number, true);
+        return true;
+    }
+
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_register_phone:
+                if (!ValidatePhoneField()) return;
                 Intent phoneIntent = new Intent();
-                phoneIntent.putExtra(PHONE_KEY, et_additional_info.getText());
+                phoneIntent.putExtra(PHONE_KEY, et_phone_number.getText());
                 // return data Intent and finish
                 setResult(RESULT_OK, phoneIntent);
                 finish();

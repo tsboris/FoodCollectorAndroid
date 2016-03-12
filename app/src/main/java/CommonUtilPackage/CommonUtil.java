@@ -579,6 +579,10 @@ public class CommonUtil {
         return (string1.compareTo(string2) != 0);
     }
 
+    public static String GetNetworkUrl(String baseUrl, String photoURL ) {
+        return  baseUrl + photoURL + "?type=large";
+    }
+
     public static int GetMyUserID(Context context){
         SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
         return sp.getInt("user_id", -1);

@@ -118,7 +118,7 @@
     <string name="validation_title_too_long">שם השיתוף ארוך מדיי, אורך מקסימאלי: {0} תווים</string>
     <string name="validation_address_empty">חובה למלא כתובת</string>
     <string name="validation_phone_number_empty">חובה למלא טלפון</string>
-    <string name="validation_phone_number_invalid">מספר הטלפון אינו תקין</string>
+    <string name="validation_phone_number_invalid">You entered invalid number</string>
     <string name="validation_start_date_after_end_date">תאריך התחלה לא יכול להיות רחוק יותר מתאריך הסיום</string>
 
     <string name="title_date_time_picker_activity">בחר תאריך ושעה</string>
