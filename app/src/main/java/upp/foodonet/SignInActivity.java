@@ -4,11 +4,15 @@ package upp.foodonet;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +49,8 @@ import org.json.JSONObject;
 
 import android.net.Uri;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import CommonUtilPackage.CommonUtil;
@@ -100,6 +106,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         continueWithoutRegistration.setOnClickListener(this);
 
         callbackManager = CallbackManager.Factory.create();
+
+        //new way to get SHA1 key
+        //printKeyHash();
 
         if (profile != null) {
             Toast.makeText(this, profile.getId(), Toast.LENGTH_LONG).show();
@@ -256,6 +265,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 try {
                                     String s = object.getString("locale");
                                     facebookEmail = object.getString("email");
+                                    Log.i(MY_TAG, "facebook email: " + facebookEmail);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -340,9 +350,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_USER);
             ir.SocialNetworkType = FACEBOOK_KEY;
         ir.SocialNetworkID = profile.getId();
-        ir.SocialNetworkToken = "";
+        ir.SocialNetworkToken = "token1";
         ir.PhoneNumber = "";
-        ir.Email = facebookEmail;
+        ir.Email = "email_from_facebook";
         ir.UserName = profile.getName();
         ir.IsLoggedIn = true;
         ir.DeviceUUID = CommonUtil.GetIMEI(this);
@@ -358,6 +368,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onError(FacebookException error) {
 
+    }
+
+    private void printKeyHash() {
+        // Add code to print out the key hash
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("upp.foodonet", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d(MY_TAG, "KeyHash: " + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(MY_TAG, e.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(MY_TAG, e.toString());
+        }
     }
 }
 

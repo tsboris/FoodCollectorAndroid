@@ -35,7 +35,6 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
     private EditText et_phone_number;
     private Button btn_register;
     private TextView tv_profile_name;
-    public static final String PHONE_KEY = "phone_number";
     public static final String AVATAR_KEY = "avatar";
     public static final String USER_NAME = "user_name";
     public static final String NETWORKTYPE_KEY = "networktype";
@@ -148,7 +147,7 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
             case R.id.btn_register_phone:
                 if (!ValidatePhoneField()) return;
                 Intent phoneIntent = new Intent();
-                phoneIntent.putExtra(PHONE_KEY, et_phone_number.getText());
+                phoneIntent.putExtra(SignInActivity.PHONE_KEY, et_phone_number.getText().toString());
                 // return data Intent and finish
                 setResult(RESULT_OK, phoneIntent);
                 finish();

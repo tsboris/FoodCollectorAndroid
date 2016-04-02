@@ -183,8 +183,9 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider451780775026519"
+            android:authorities="com.facebook.app.FacebookContentProvider"
             android:exported="true" />
+        <!-- 451780775026519 -->
 
         <service
             android:name=".ReloadDataIntentService"

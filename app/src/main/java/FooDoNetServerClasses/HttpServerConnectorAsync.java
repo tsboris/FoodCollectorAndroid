@@ -415,7 +415,7 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 registration.Email = params[0].Email;
                 registration.UserName = params[0].UserName;
                 registration.DeviceUUID = params[0].DeviceUUID;
-                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registration, false);
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registration, true);
                 return "";
             //endregion
             default:
