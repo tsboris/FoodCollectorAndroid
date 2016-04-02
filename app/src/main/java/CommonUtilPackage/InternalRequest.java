@@ -95,6 +95,7 @@ public class InternalRequest implements Serializable {
     public String DeviceUUID;
     public boolean IsLoggedIn;
     public String PhotoURL;
+    public int newUserID;
 
     public Group group;
 

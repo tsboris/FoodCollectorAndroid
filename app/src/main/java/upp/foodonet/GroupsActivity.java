@@ -37,7 +37,7 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(this, "name empty", Toast.LENGTH_SHORT).show();
                 HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
                 Group g = new Group(et_group_name.getText().toString(), CommonUtil.GetMyUserID(this));
-                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_GROUP, g);
+                InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_GROUP, getString(R.string.server_post_new_group), g);
                 connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
                 break;
         }
@@ -46,5 +46,8 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
         Toast.makeText(this, "saving group " + (response.Status == InternalRequest.STATUS_OK ? "succeeded" : "failed"), Toast.LENGTH_SHORT).show();
+        if(response.Status == InternalRequest.STATUS_OK && response.group != null){
+            getContentResolver().insert(FooDoNetSQLProvider.URI_INSERT_NEW_GROUP, response.group.GetContentValuesRow());
+        }
     }
 }

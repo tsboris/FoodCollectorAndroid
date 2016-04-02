@@ -84,7 +84,7 @@ public class ReloadDataIntentService
     }
 
     private void DoNextTaskFromWorkPlan() {
-        //if(true)return; //todo: this temporary turns of scheduler
+        if(true)return; //todo: this temporary turns of scheduler
         Log.i(MY_TAG, "DoingNextTaskFromPlan");
         switch (workPlan[currentIndexInWorkPlan]) {
             case taskServer:

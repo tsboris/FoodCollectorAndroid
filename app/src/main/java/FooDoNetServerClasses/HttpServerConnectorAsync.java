@@ -41,6 +41,7 @@ import java.util.Map;
 
 import CommonUtilPackage.InternalRequest;
 import DataModel.FCPublication;
+import DataModel.Group;
 import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -73,6 +74,8 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
     private PublicationReport publicationReport;
     private FCPublication publication;
     public ArrayList<RegisteredUserForPublication> registeredUsers;
+    private int newUserID;
+    private Group group;
 
     private int Action_Command_ID;
     private long publicationID;
@@ -209,12 +212,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     return "";
                 }
                 publicationForSaving = params[0].publicationForSaving;
-                for(int i = 0; i < 1; i++){
+                for (int i = 0; i < 1; i++) {
                     MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
-                    if(!TextUtils.isEmpty(responseString))
+                    if (!TextUtils.isEmpty(responseString))
                         i = 1;
                 }
-                if(TextUtils.isEmpty(responseString))
+                if (TextUtils.isEmpty(responseString))
                     return "";
                 try {
                     AbstractMap.SimpleEntry<Integer, Integer> responsePair = FCPublication.ParseServerResponseToNewPublication(new JSONObject(responseString));
@@ -416,6 +419,34 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 registration.UserName = params[0].UserName;
                 registration.DeviceUUID = params[0].DeviceUUID;
                 MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, registration, true);
+                if (!isSuccess || TextUtils.isEmpty(responseString)) {
+                    Log.e(MY_TAG, "failed to register user and get id");
+                } else {
+                    try {
+                        JSONObject obj = new JSONObject(responseString);
+                        newUserID = obj.getInt("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                isSuccess = newUserID > 0;
+                return "";
+            //endregion
+            //region POST GROUP
+            case InternalRequest.ACTION_POST_NEW_GROUP:
+                group = (Group)params[0].canWriteSelfToJSONWriterObject;
+                MakeServerRequest(REQUEST_METHOD_POST, server_sub_path, params[0].canWriteSelfToJSONWriterObject, true);
+                if (!isSuccess || TextUtils.isEmpty(responseString)) {
+                    Log.e(MY_TAG, "failed to create group");
+                } else {
+                    try {
+                        JSONObject groupObj = new JSONObject(responseString);
+                        group.Set_id(groupObj.getInt("id"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                isSuccess = group.Get_id() > 0;
                 return "";
             //endregion
             default:
@@ -593,7 +624,14 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
             case InternalRequest.ACTION_POST_NEW_USER:
                 Log.i(MY_TAG, "post new user complete: " + (isSuccess ? "ok" : "fail"));
                 InternalRequest irNewUser = new InternalRequest(Action_Command_ID, isSuccess);
+                irNewUser.newUserID = newUserID;
                 callbackListener.OnServerRespondedCallback(irNewUser);
+                break;
+            case InternalRequest.ACTION_POST_NEW_GROUP:
+                Log.i(MY_TAG, "post new group complete: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irGroupResponse = new InternalRequest(Action_Command_ID, isSuccess);
+                irGroupResponse.group = group;
+                callbackListener.OnServerRespondedCallback(irGroupResponse);
                 break;
         }
     }

@@ -222,6 +222,8 @@ public class SplashScreenActivity
 
     @Override
     public void OnServerRespondedCallback(InternalRequest response) {
+        if(response.newUserID > 0)
+            CommonUtil.SaveMyUserID(this, response.newUserID);
         startService(new Intent(this, FooDoNetService.class));
         isLoadDataServiceStarted = true;
         tv_progress_text.setText(getString(R.string.progress_first_load));

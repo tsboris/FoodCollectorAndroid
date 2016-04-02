@@ -22,10 +22,12 @@ import java.util.HashSet;
 
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
+import DataModel.Group;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetSQLClasses.FCPublicationsTable;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
+import FooDoNetSQLClasses.GroupTable;
 import FooDoNetSQLClasses.PublicationReportsTable;
 import FooDoNetSQLClasses.RegisteredForPublicationTable;
 
@@ -63,6 +65,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int REPORT_NEW_NEGATIVE_ID = 70;
     private static final int PREVIOUS_ADDRESSES = 80;
     private static final int REPORTS_LIST_FOR_PUBLICATION = 90;
+    private static final int GROUP = 100;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -106,6 +109,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_REPORTS_LIST_FOR_PUB = "/ReportsListForPublication";
 
     private static final String EXT_PUBLICATION_REMOVE_COMPLETELY = "/RemovePublicationCompletely";
+
+    private static final String EXT_GROUP = "/Group";
 
     public static final String BASE_STRING_FOR_URI = "content://" + AUTHORITY + "/" + BASE_PATH;
 
@@ -160,6 +165,8 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REPORTS_LIST_FOR_PUB);
     public static final Uri URI_REMOVE_PUBLICATION_COMPLETELY
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REMOVE_COMPLETELY);
+    public static final Uri URI_INSERT_NEW_GROUP
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_GROUP);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
@@ -194,6 +201,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_REPORTS_LIST_FOR_PUB + "/#", REPORTS_LIST_FOR_PUBLICATION);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REMOVE_COMPLETELY + "/#", PUBLICATION_DELETE_COMPLETELY);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBS_FOR_MAP_MARKERS, PUBLICATIONS_FOR_MAP_MARKERS);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP, GROUP);
     }
 
     @Override
@@ -325,6 +333,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 break;
             case PUBLICATION_REPORT:
                 id = db.insert(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME, null, values);
+                break;
+            case GROUP:
+                id = db.insert(GroupTable.GROUP_TABLE_NAME, null, values);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -501,6 +512,9 @@ public class FooDoNetSQLProvider extends ContentProvider {
                         {FCPublication.PUBLICATION_ADDRESS_KEY,
                                 FCPublication.PUBLICATION_LATITUDE_KEY,
                                 FCPublication.PUBLICATION_LONGITUDE_KEY};
+                break;
+            case GROUP:
+                available = Group.GetColumnNamesArray();
                 break;
 //            case REPORTS_LIST_FOR_PUBLICATION:
 //                available = new String[]
