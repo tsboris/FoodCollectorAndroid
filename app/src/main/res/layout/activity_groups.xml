@@ -14,17 +14,45 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/et_group_name"
-            android:hint="GROUP NAME"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_group_create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CREATE"/>
+            <EditText
+                android:id="@+id/et_group_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="GROUP NAME" />
+
+            <Button
+                android:id="@+id/btn_group_create"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CREATE" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_get_groups_by_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GET GROUPS BY USER" />
+
+            <TextView
+                android:id="@+id/tv_groups_by_user_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="false" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

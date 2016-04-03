@@ -449,6 +449,11 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 isSuccess = group.Get_id() > 0;
                 return "";
             //endregion
+            //region GET GROUPS BY USER
+            case InternalRequest.ACTION_GET_GROUPS_BY_USER:
+                MakeServerRequest(REQUEST_METHOD_GET, server_sub_path, null, true);
+                return "";
+            //endregioin
             default:
                 return "";
         }
@@ -632,6 +637,12 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                 InternalRequest irGroupResponse = new InternalRequest(Action_Command_ID, isSuccess);
                 irGroupResponse.group = group;
                 callbackListener.OnServerRespondedCallback(irGroupResponse);
+                break;
+            case InternalRequest.ACTION_GET_GROUPS_BY_USER:
+                Log.i(MY_TAG, "get groups by user complete: " + (isSuccess ? "ok" : "fail"));
+                InternalRequest irGroupsByUser = new InternalRequest(Action_Command_ID, isSuccess);
+                irGroupsByUser.resultString = responseString;
+                callbackListener.OnServerRespondedCallback(irGroupsByUser);
                 break;
         }
     }

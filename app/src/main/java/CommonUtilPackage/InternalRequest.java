@@ -60,6 +60,7 @@ public class InternalRequest implements Serializable {
     public static final int ACTION_POST_NEW_USER = 29;
     public static final int ACTION_POST_EDIT_USER = 30;
     public static final int ACTION_POST_NEW_GROUP = 31;
+    public static final int ACTION_GET_GROUPS_BY_USER = 32;
     public static final int ACTION_POST_FEEDBACK = 99;
 
 
@@ -84,6 +85,7 @@ public class InternalRequest implements Serializable {
     public PublicationReport publicationReport;
     public Location location;
     public String imei;
+    public String resultString;
 
     // for registering/editing user
     public String SocialNetworkID;
