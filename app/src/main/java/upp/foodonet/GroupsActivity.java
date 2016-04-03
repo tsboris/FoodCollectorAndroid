@@ -47,7 +47,7 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
     public void OnServerRespondedCallback(InternalRequest response) {
         Toast.makeText(this, "saving group " + (response.Status == InternalRequest.STATUS_OK ? "succeeded" : "failed"), Toast.LENGTH_SHORT).show();
         if(response.Status == InternalRequest.STATUS_OK && response.group != null){
-            getContentResolver().insert(FooDoNetSQLProvider.URI_INSERT_NEW_GROUP, response.group.GetContentValuesRow());
+            getContentResolver().insert(FooDoNetSQLProvider.URI_GROUP, response.group.GetContentValuesRow());
         }
     }
 }

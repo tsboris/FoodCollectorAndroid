@@ -23,10 +23,12 @@ import java.util.HashSet;
 import CommonUtilPackage.CommonUtil;
 import DataModel.FCPublication;
 import DataModel.Group;
+import DataModel.GroupMember;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
 import FooDoNetSQLClasses.FCPublicationsTable;
 import FooDoNetSQLClasses.FooDoNetSQLHelper;
+import FooDoNetSQLClasses.GroupMemberTable;
 import FooDoNetSQLClasses.GroupTable;
 import FooDoNetSQLClasses.PublicationReportsTable;
 import FooDoNetSQLClasses.RegisteredForPublicationTable;
@@ -66,6 +68,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final int PREVIOUS_ADDRESSES = 80;
     private static final int REPORTS_LIST_FOR_PUBLICATION = 90;
     private static final int GROUP = 100;
+    private static final int GROUP_BY_ID = 101;
+    private static final int GROUP_MEMBERS_BY_GROUP_ID = 105;
+    private static final int GROUP_MEMBER_BY_MEMBER_ID = 110;
+    private static final int GROUP_MEMBER = 111;
 
     private static final String AUTHORITY = "foodonet.foodcollector.sqlprovider";
 
@@ -111,6 +117,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
     private static final String EXT_PUBLICATION_REMOVE_COMPLETELY = "/RemovePublicationCompletely";
 
     private static final String EXT_GROUP = "/Group";
+
+    private static final String EXT_GROUP_MEMBER = "/GroupMembers";
+
+    private static final String EXT_GROUP_MEMBERS_BY_GROUP = "GroupMembersByGroup";
 
     public static final String BASE_STRING_FOR_URI = "content://" + AUTHORITY + "/" + BASE_PATH;
 
@@ -165,8 +175,11 @@ public class FooDoNetSQLProvider extends ContentProvider {
             = Uri.parse(BASE_STRING_FOR_URI + EXT_REPORTS_LIST_FOR_PUB);
     public static final Uri URI_REMOVE_PUBLICATION_COMPLETELY
             = Uri.parse(BASE_STRING_FOR_URI + EXT_PUBLICATION_REMOVE_COMPLETELY);
-    public static final Uri URI_INSERT_NEW_GROUP
+    public static final Uri URI_GROUP
             = Uri.parse(BASE_STRING_FOR_URI + EXT_GROUP);
+    public static final Uri URI_GROUP_MEMBERS
+            = Uri.parse(BASE_STRING_FOR_URI + EXT_GROUP_MEMBER);
+    public static final Uri URI_GROUP_MEMBERS_BY_GROUP = Uri.parse(BASE_STRING_FOR_URI + EXT_GROUP_MEMBERS_BY_GROUP);
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/publications";
 
@@ -202,6 +215,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBLICATION_REMOVE_COMPLETELY + "/#", PUBLICATION_DELETE_COMPLETELY);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_PUBS_FOR_MAP_MARKERS, PUBLICATIONS_FOR_MAP_MARKERS);
         sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP, GROUP);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP + "/#", GROUP_BY_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP_MEMBER, GROUP_MEMBER);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP_MEMBER + "/#", GROUP_MEMBER_BY_MEMBER_ID);
+        sURIMatcher.addURI(AUTHORITY, BASE_PATH + EXT_GROUP_MEMBERS_BY_GROUP + "/#", GROUP_MEMBERS_BY_GROUP_ID);
     }
 
     @Override
@@ -245,10 +262,10 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 int filterID = Integer.parseInt(filterIDStr);
                 String stringFilter = "";
                 imei = CommonUtil.GetIMEI(this.getContext());
-                if(filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER
+                if (filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_TEXT_FILTER
                         || filterID == FooDoNetSQLHelper.FILTER_ID_LIST_MY_BY_TEXT_FILTER)
                     stringFilter = CommonUtil.GetFilterStringFromPreferences(this.getContext());
-                if(filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST){
+                if (filterID == FooDoNetSQLHelper.FILTER_ID_LIST_ALL_BY_CLOSEST) {
                     LatLng myLocation = CommonUtil.GetFilterLocationFromPreferences(this.getContext());
                     String rawSelect = FooDoNetSQLHelper.GetRawSelectPublicationsForListByFilterID(
                             filterID, imei, String.valueOf(myLocation.latitude),
@@ -301,13 +318,30 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case PUBLICATIONS_FOR_MAP_MARKERS:
                 return database.getReadableDatabase()
                         .rawQuery(FooDoNetSQLHelper.RAW_SELECT_ALL_PUBS_FOR_MAP_MARKERS, null);
+            case GROUP:
+                queryBuilder.setTables(GroupTable.GROUP_TABLE_NAME);
+                break;
+            case GROUP_BY_ID:
+                queryBuilder.setTables(GroupTable.GROUP_TABLE_NAME);
+                queryBuilder.appendWhere(Group.GROUP_ID_KEY + " = " + uri.getLastPathSegment());
+                break;
+            case GROUP_MEMBERS_BY_GROUP_ID:
+                queryBuilder.setTables(GroupMemberTable.GROUP_MEMBER_TABLE_NAME);
+                queryBuilder.appendWhere(GroupMember.GROUP_MEMBER_GROUP_ID_KEY + " = " + uri.getLastPathSegment());
+                break;
+            case GROUP_MEMBER:
+                queryBuilder.setTables(GroupMemberTable.GROUP_MEMBER_TABLE_NAME);
+                break;
+            case GROUP_MEMBER_BY_MEMBER_ID:
+                queryBuilder.setTables(GroupMemberTable.GROUP_MEMBER_TABLE_NAME);
+                queryBuilder.appendWhere(GroupMember.GROUP_MEMBER_ID_KEY + " = " + uri.getLastPathSegment());
+                break;
 //            case REPORTS_LIST_FOR_PUBLICATION:
 //                return database.getReadableDatabase()
 //                        .rawQuery(FooDoNetSQLHelper.RAW_SELECT_REPORTS_FOR_PUB_DETAILS.replace("{0}", String.valueOf(uri.getLastPathSegment())), null);
             default:
-                throw new IllegalArgumentException("Unknown URI: " +  uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-
         SQLiteDatabase db = database.getWritableDatabase();
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -337,10 +371,13 @@ public class FooDoNetSQLProvider extends ContentProvider {
             case GROUP:
                 id = db.insert(GroupTable.GROUP_TABLE_NAME, null, values);
                 break;
+            case GROUP_MEMBER:
+                id = db.insert(GroupMemberTable.GROUP_MEMBER_TABLE_NAME, null, values);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        if(id == -1)
+        if (id == -1)
             Log.e(MY_TAG, "failed inserting: " + uri);
         getContext().getContentResolver().notifyChange(uri, null);
         return Uri.parse(BASE_PATH + "/" + id);
@@ -352,16 +389,16 @@ public class FooDoNetSQLProvider extends ContentProvider {
         SQLiteDatabase db = database.getWritableDatabase();
         int rowsDeleted = 0;
         String id;
-        switch (uriType){
+        switch (uriType) {
             case PUBLICATIONS:
                 rowsDeleted = db.delete(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME, selection, selectionArgs);
                 break;
             case PUBLICATION_ID:
             case PUBLICATION_ID_NEGATIVE:
                 id = uri.getLastPathSegment();
-                if(uriType == PUBLICATION_ID_NEGATIVE)
+                if (uriType == PUBLICATION_ID_NEGATIVE)
                     id = "-" + id;
-                if(TextUtils.isEmpty(selection)){
+                if (TextUtils.isEmpty(selection)) {
                     rowsDeleted = db.delete(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
                             FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + id, null);
                 } else {
@@ -371,29 +408,29 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 break;
             case DELETE_REG_FOR_PUBLICATION:
                 id = uri.getLastPathSegment();
-                if(TextUtils.isEmpty(selection)){
+                if (TextUtils.isEmpty(selection)) {
                     rowsDeleted
                             = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                             RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + "=" + id, null);
-                }else {
+                } else {
                     rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                             RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_ID + "=" + id + selection, selectionArgs);
                 }
                 break;
             case DELETE_REG_USER_BY_PUB_ID:
                 id = uri.getLastPathSegment();
-                if(TextUtils.isEmpty(selection)){
+                if (TextUtils.isEmpty(selection)) {
                     rowsDeleted
                             = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                             RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id, null);
-                }else {
+                } else {
                     rowsDeleted = db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
                             RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id + selection, selectionArgs);
                 }
                 break;
             case PUBLICATION_REPORT_ID:
                 id = uri.getLastPathSegment();
-                if(TextUtils.isEmpty(selection)) {
+                if (TextUtils.isEmpty(selection)) {
                     rowsDeleted = db.delete(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME,
                             PublicationReport.PUBLICATION_REPORT_FIELD_KEY_ID + "=" + id, null);
                 } else {
@@ -407,17 +444,29 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 break;
             case PUBLICATION_DELETE_COMPLETELY:
                 id = uri.getLastPathSegment();
-                if(TextUtils.isEmpty(id)){
+                if (TextUtils.isEmpty(id)) {
                     Log.e(MY_TAG, "empty id");
                     return -1;
                 }
                 rowsDeleted = 0;
                 rowsDeleted += db.delete(PublicationReportsTable.PUBLICATION_REPORTS_TABLE_NAME,
-                                        PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID + "=" + id, null);
+                        PublicationReport.PUBLICATION_REPORT_FIELD_KEY_PUBLICATION_ID + "=" + id, null);
                 rowsDeleted += db.delete(RegisteredForPublicationTable.REGISTERED_FOR_PUBLICATION_TABLE_NAME,
-                                        RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id, null);
+                        RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_PUBLICATION_ID + "=" + id, null);
                 rowsDeleted += db.delete(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
-                                        FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + id, null);
+                        FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + id, null);
+                return rowsDeleted;
+            case GROUP_BY_ID:
+                rowsDeleted = 0;
+                rowsDeleted += db.delete(GroupMemberTable.GROUP_MEMBER_TABLE_NAME,
+                        GroupMember.GROUP_MEMBER_GROUP_ID_KEY + " = " + uri.getLastPathSegment(), null);
+                rowsDeleted += db.delete(GroupTable.GROUP_TABLE_NAME,
+                        Group.GROUP_ID_KEY + " = " + uri.getLastPathSegment(), null);
+                return rowsDeleted;
+            case GROUP_MEMBER_BY_MEMBER_ID:
+                rowsDeleted = 0;
+                rowsDeleted += db.delete(GroupMemberTable.GROUP_MEMBER_TABLE_NAME,
+                        GroupMember.GROUP_MEMBER_ID_KEY + " = " + uri.getLastPathSegment(), null);
                 return rowsDeleted;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -432,14 +481,14 @@ public class FooDoNetSQLProvider extends ContentProvider {
         SQLiteDatabase db = database.getWritableDatabase();
         int rowsUpdated = 0;
 
-        switch (uriType){
+        switch (uriType) {
             case PUBLICATIONS:
                 rowsUpdated = db.update(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
                         values, selection, selectionArgs);
                 break;
             case PUBLICATION_ID:
                 String id = uri.getLastPathSegment();
-                if(TextUtils.isEmpty(selection)){
+                if (TextUtils.isEmpty(selection)) {
                     rowsUpdated = db.update(FCPublicationsTable.FCPUBLICATIONS_TABLE_NAME,
                             values, FCPublication.PUBLICATION_UNIQUE_ID_KEY + "=" + id, null);
                 } else {
@@ -464,6 +513,14 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 }
 */
                 break;
+            case GROUP_BY_ID:
+                rowsUpdated = db.update(GroupTable.GROUP_TABLE_NAME,
+                        values, Group.GROUP_ID_KEY + "=" + uri.getLastPathSegment(), null);
+                break;
+            case GROUP_MEMBER_BY_MEMBER_ID:
+                rowsUpdated = db.update(GroupMemberTable.GROUP_MEMBER_TABLE_NAME,
+                        values, GroupMember.GROUP_MEMBER_ID_KEY + " = " + uri.getLastPathSegment(), null);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
@@ -473,7 +530,7 @@ public class FooDoNetSQLProvider extends ContentProvider {
 
     private void checkColumns(String[] projection, int action) {
         String[] available;
-        switch (action){
+        switch (action) {
             case PUBLICATIONS:
             case PUBLICATION_ID:
             case PUBLICATION_ID_NEGATIVE:
@@ -493,13 +550,13 @@ public class FooDoNetSQLProvider extends ContentProvider {
                 available = RegisteredUserForPublication.GetColumnNamesArray();
                 break;
             case GET_NEW_NEGATIVE_ID_CODE:
-                available = new String[] {FCPublication.PUBLICATION_NEW_NEGATIVE_ID};
+                available = new String[]{FCPublication.PUBLICATION_NEW_NEGATIVE_ID};
                 break;
             case REGS_FOR_PUBLICATION_NEW_NEGATIVE_ID:
-                available = new String[] {RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID};
+                available = new String[]{RegisteredUserForPublication.REGISTERED_FOR_PUBLICATION_KEY_NEW_NEGATIVE_ID};
                 break;
             case REPORT_NEW_NEGATIVE_ID:
-                available = new String[] {PublicationReport.PUBLICATION_REPORT_FIELD_KEY_NEG_ID};
+                available = new String[]{PublicationReport.PUBLICATION_REPORT_FIELD_KEY_NEG_ID};
                 break;
             case PUBLICATION_REPORT:
             case PUBLICATION_REPORT_ID:
@@ -514,7 +571,13 @@ public class FooDoNetSQLProvider extends ContentProvider {
                                 FCPublication.PUBLICATION_LONGITUDE_KEY};
                 break;
             case GROUP:
+            case GROUP_BY_ID:
                 available = Group.GetColumnNamesArray();
+                break;
+            case GROUP_MEMBERS_BY_GROUP_ID:
+            case GROUP_MEMBER:
+            case GROUP_MEMBER_BY_MEMBER_ID:
+                available = GroupMember.GetColumnNamesArray();
                 break;
 //            case REPORTS_LIST_FOR_PUBLICATION:
 //                available = new String[]
