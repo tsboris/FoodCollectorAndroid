@@ -12,6 +12,7 @@ import android.widget.Toast;
 import CommonUtilPackage.CommonUtil;
 import CommonUtilPackage.InternalRequest;
 import DataModel.Group;
+import DataModel.GroupMember;
 import FooDoNetServerClasses.HttpServerConnectorAsync;
 import FooDoNetServerClasses.IFooDoNetServerCallback;
 
@@ -43,7 +44,12 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(this, "name empty", Toast.LENGTH_SHORT).show();
                 HttpServerConnectorAsync connector = new HttpServerConnectorAsync(getString(R.string.server_base_url), (IFooDoNetServerCallback)this);
                 Group g = new Group(et_group_name.getText().toString(), CommonUtil.GetMyUserID(this));
+                GroupMember owner = new GroupMember(0, CommonUtil.GetMyUserID(this), 0, true,
+                                                    CommonUtil.GetMyPhoneNumberFromPreferences(this),
+                                                    CommonUtil.GetSocialAccountNameFromPreferences(this));
                 InternalRequest ir = new InternalRequest(InternalRequest.ACTION_POST_NEW_GROUP, getString(R.string.server_post_new_group), g);
+                ir.groupOwner = owner;
+                ir.MembersServerSubPath = getString(R.string.server_post_add_members_to_group);
                 connector.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ir);
                 break;
             case R.id.btn_get_groups_by_user:

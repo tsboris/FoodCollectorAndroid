@@ -9,6 +9,9 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Asher on 05.03.2016.
@@ -139,6 +142,11 @@ public class GroupMember implements ICanWriteSelfToJSONWriter {
 
     @Override
     public JSONObject GetJsonObjectForPost() {
-        return null;
+        Map<String,Object> memberMap = new HashMap<>();
+        memberMap.put(GROUP_MEMBER_NAME_KEY, get_name());
+        memberMap.put(GROUP_MEMBER_USER_ID_KEY, get_user_id());
+        memberMap.put(GROUP_MEMBER_IS_ADMIN_KEY, get_is_admin());
+        memberMap.put(GROUP_MEMBER_PHONE_NUMBER_KEY, get_phone_number());
+        return new JSONObject(memberMap);
     }
 }

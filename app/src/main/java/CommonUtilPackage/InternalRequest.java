@@ -14,6 +14,7 @@ import java.util.Map;
 
 import DataModel.FCPublication;
 import DataModel.Group;
+import DataModel.GroupMember;
 import DataModel.ICanWriteSelfToJSONWriter;
 import DataModel.PublicationReport;
 import DataModel.RegisteredUserForPublication;
@@ -100,6 +101,9 @@ public class InternalRequest implements Serializable {
     public int newUserID;
 
     public Group group;
+    public GroupMember groupOwner;
+    public ArrayList<GroupMember> groupMembersToAdd;
+    public String MembersServerSubPath;
 
     public InternalRequest(int actionCommand, JSONObject obj, String sub_path) {
         ActionCommand = actionCommand;

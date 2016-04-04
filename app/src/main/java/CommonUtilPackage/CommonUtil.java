@@ -450,7 +450,7 @@ public class CommonUtil {
 
     private static void PutCommonPreferencesSocialAccountData(Context context, String socialAccountType, String socialAccountName, String socialAccountToken) {
         SharedPreferences sp = context.getSharedPreferences(
-                context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
+                context.getString(R.string.shared_preferences_google_facebook_data_token), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(context.getString(R.string.shared_preferences_is_registered_to_google_facebook_key), true);
         editor.putString(context.getString(R.string.shared_preferences_social_account_type_key), socialAccountType);
@@ -460,9 +460,16 @@ public class CommonUtil {
         Log.i(MY_TAG, "Registered to " + socialAccountType + ", name: " + socialAccountName);
     }
 
+    public static String GetSocialAccountNameFromPreferences(Context context) {
+        SharedPreferences sp
+                = context.getSharedPreferences(context.getString(R.string.shared_preferences_google_facebook_data_token),
+                                                Context.MODE_PRIVATE);
+        return sp.getString(context.getString(R.string.shared_preferences_social_account_name_key), "");
+    }
+
     public static boolean GetFromPreferencesIsRegisteredToGoogleFacebook(Context context) {
         SharedPreferences sp = context.getSharedPreferences(
-                context.getString(R.string.shared_preferences_is_registered_to_google_facebook), Context.MODE_PRIVATE);
+                context.getString(R.string.shared_preferences_google_facebook_data_token), Context.MODE_PRIVATE);
         return sp.getBoolean(context.getString(R.string.shared_preferences_is_registered_to_google_facebook_key), false);
     }
 
@@ -572,26 +579,38 @@ public class CommonUtil {
     }
 
 
-    public static boolean CheckIfStringsDiffer(String string1, String string2){
-        if(string1 == null && string2 != null) return true;
-        if(string1 != null && string2 == null) return true;
-        if(string1 == null && string2 == null) return false;
+    public static boolean CheckIfStringsDiffer(String string1, String string2) {
+        if (string1 == null && string2 != null) return true;
+        if (string1 != null && string2 == null) return true;
+        if (string1 == null && string2 == null) return false;
         return (string1.compareTo(string2) != 0);
     }
 
-    public static String GetNetworkUrl(String baseUrl, String photoURL ) {
-        return  baseUrl + photoURL + "?type=large";
+    public static String GetNetworkUrl(String baseUrl, String photoURL) {
+        return baseUrl + photoURL + "?type=large";
     }
 
-    public static int GetMyUserID(Context context){
-        SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
-        return sp.getInt("user_id", -1);
+    public static int GetMyUserID(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.shared_preferences_user_data_token), Context.MODE_PRIVATE);
+        return sp.getInt(context.getString(R.string.shared_preferences_user_data_id_key), -1);
     }
 
-    public static boolean SaveMyUserID(Context context, int userID){
-        SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
+    public static boolean SaveMyUserID(Context context, int userID) {
+        SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.shared_preferences_user_data_token), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt("user_id", userID);
+        editor.putInt(context.getString(R.string.shared_preferences_user_data_id_key), userID);
+        return editor.commit();
+    }
+
+    public static String GetMyPhoneNumberFromPreferences(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.shared_preferences_user_data_token), Context.MODE_PRIVATE);
+        return sp.getString(context.getString(R.string.shared_preferences_user_data_phone_num_key), "");
+    }
+
+    public static boolean SaveMyPhoneNumberToPreferences(Context context, String phoneNum) {
+        SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.shared_preferences_user_data_token), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(context.getString(R.string.shared_preferences_user_data_phone_num_key), phoneNum);
         return editor.commit();
     }
 

@@ -116,6 +116,7 @@
     <string name="server_post_register_user">/users</string>
     <string name="server_post_new_group">/groups</string>
     <string name="server_get_groups_by_user">/users/{0}/groups</string>
+    <string name="server_post_add_members_to_group">/groups/{0}/group_members</string>
     <string name="notifications_server_id">585244341740</string>
     <string name="google_analytics_id">UA-70440205-1</string><!--UA-70625355-1-->
     <string name="facebook_app_id">694275220709803</string> <!-- 1635109600077158 451780775026519-->
@@ -138,7 +139,7 @@
     <string name="shared_preferences_data_loaded_key">data_loaded_key</string>
     <string name="shared_preferences_is_device_registered">is_registered</string>
     <string name="shared_preferences_is_device_registered_key">is_registered_key</string>
-    <string name="shared_preferences_is_registered_to_google_facebook">is_registered_googlefacebook</string>
+    <string name="shared_preferences_google_facebook_data_token">is_registered_googlefacebook</string>
     <string name="shared_preferences_is_registered_to_google_facebook_key">is_registered_googlefacebook_key</string>
     <string name="shared_preferences_pending_broadcast">pending_broadcast</string>
     <string name="shared_preferences_pending_broadcast_value">pending_broadcast_value</string>
@@ -148,6 +149,9 @@
     <string name="shared_preferences_social_account_type_key">social_account_type</string>
     <string name="shared_preferences_social_account_name_key">social_account_name</string>
     <string name="shared_preferences_social_account_token_key">social_account_token</string>
+    <string name="shared_preferences_user_data_token">user_data</string>
+    <string name="shared_preferences_user_data_id_key">user_id</string>
+    <string name="shared_preferences_user_data_phone_num_key">user_phone_num</string>
 
     <!-- File system keys -->
 

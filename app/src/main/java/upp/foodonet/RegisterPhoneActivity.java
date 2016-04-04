@@ -146,6 +146,7 @@ public class RegisterPhoneActivity extends Activity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_register_phone:
                 if (!ValidatePhoneField()) return;
+                CommonUtil.SaveMyPhoneNumberToPreferences(this, et_phone_number.getText().toString());
                 Intent phoneIntent = new Intent();
                 phoneIntent.putExtra(SignInActivity.PHONE_KEY, et_phone_number.getText().toString());
                 // return data Intent and finish
