@@ -147,6 +147,7 @@ public class GroupMember implements ICanWriteSelfToJSONWriter {
         memberMap.put(GROUP_MEMBER_USER_ID_KEY, get_user_id());
         memberMap.put(GROUP_MEMBER_IS_ADMIN_KEY, get_is_admin());
         memberMap.put(GROUP_MEMBER_PHONE_NUMBER_KEY, get_phone_number());
+        memberMap.put(GROUP_MEMBER_GROUP_ID_KEY, get_group_id());
         return new JSONObject(memberMap);
     }
 }

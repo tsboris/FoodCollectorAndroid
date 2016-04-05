@@ -449,9 +449,10 @@ public class HttpServerConnectorAsync extends AsyncTask<InternalRequest, Void, S
                     }
                 }
                 if(group.Get_id() > 0){
+                    params[0].groupOwner.set_group_id(group.Get_id());
                     GroupMembersForPost memberOwner = new GroupMembersForPost();
                     memberOwner.AddGroupMembers(params[0].groupOwner);
-                    MakeServerRequest(REQUEST_METHOD_POST, params[0].MembersServerSubPath.replace("{0}", String.valueOf(group.Get_id())), memberOwner, true);
+                    MakeServerRequest(REQUEST_METHOD_POST, params[0].MembersServerSubPath, memberOwner, true);
                     if(!isSuccess || TextUtils.isEmpty(responseString))
                         Log.e(MY_TAG, "failed to add admin groupMember");
                 } else
